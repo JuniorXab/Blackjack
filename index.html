@@ -527,7 +527,7 @@ body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);display:
   <div style="font-size:11px;color:rgba(255,255,255,.3);letter-spacing:3px;text-transform:uppercase;margin-top:24px;">by Junior Zabala</div>
 </div>
 
-<div class="fullscreen hidden" id="scWelcome" style="display:none;">
+<div class="fullscreen hidden" id="scWelcome">
   <div class="wl-suits">♠ ♥ ♦ ♣</div>
   <div class="wl-title">BlackJack</div>
   <div class="wl-sub">Multijugador · Mesa compartida</div>
@@ -3962,12 +3962,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Splash intro
   setTimeout(() => {
     const splash = document.getElementById('scSplash');
+    const welcome = document.getElementById('scWelcome');
     if (splash) {
       splash.style.opacity = '0';
       setTimeout(() => {
         splash.style.display = 'none';
-        show('scWelcome');
+        if (welcome) { welcome.classList.remove('hidden'); welcome.style.display = 'flex'; }
       }, 600);
+    } else if (welcome) {
+      welcome.classList.remove('hidden'); welcome.style.display = 'flex';
     }
   }, 1800);
 
