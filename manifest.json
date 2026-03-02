@@ -1,0 +1,39 @@
+{
+  "name": "BlackJack Royale",
+  "short_name": "BlackJack",
+  "description": "BlackJack multijugador en tiempo real con chat de voz",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#042e10",
+  "theme_color": "#0a6b2e",
+  "lang": "es",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "icon-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Jugar Solo",
+      "short_name": "Solo",
+      "description": "Jugar contra el dealer",
+      "url": "./index.html?mode=solo"
+    }
+  ]
+}
