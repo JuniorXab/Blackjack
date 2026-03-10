@@ -1132,7 +1132,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 /* Action log */
 .rm-action-log{text-align:center;font-size:11px;color:rgba(255,255,255,.8);padding:3px 16px;min-height:18px;flex-shrink:0;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.5);}
 /* My area — pinned to bottom */
-.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;}
+.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;padding-bottom:calc(62px + env(safe-area-inset-bottom));}
 .rm-me-top{display:flex;align-items:center;gap:8px;padding:0 12px 5px;}
 .rm-me-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;border:2px solid transparent;}
 .rm-me-av.active{border-color:#f0d060;box-shadow:0 0 10px rgba(240,208,96,.4);}
@@ -1147,7 +1147,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
 .rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
 /* MY HAND */
-.rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px;padding-bottom:calc(6px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none;min-height:92px;}
+.rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px 8px;overflow-x:auto;scrollbar-width:none;min-height:92px;}
 .rm-hand-row::-webkit-scrollbar{display:none;}
 
 /* ═══ REAL PLAYING CARD ═══ */
@@ -2640,9 +2640,10 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
         <div class="rm-bar-opp-score" id="rmBarOppScore">—</div>
       </div>
     </div>
-    <div id="rmExtraOpp" style="display:flex;gap:4px;flex:1;justify-content:center;"></div>
     <div class="rm-bar-pot">Pozo $<span id="rmPot">0</span></div>
   </div>
+  <!-- Extra opponents row (3-4 players) — hidden when 2 players -->
+  <div id="rmExtraOpp" style="display:none;flex-direction:row;gap:12px;justify-content:center;align-items:flex-end;padding:4px 12px 0;background:rgba(0,0,0,.15);flex-shrink:0;"></div>
 
   <!-- Opponent cards fan -->
   <div class="rm-opp-area">
@@ -10796,17 +10797,36 @@ function rmRenderOpponentFan(room){
     }
   }
 
-  // Extra opponents (3-4 players)
+  // Extra opponents (3-4 players) — show mini fans in their own row
   const extra=opponents.slice(1);
   const extraEl=document.getElementById('rmExtraOpp');
   if(extraEl){
     extraEl.innerHTML='';
+    extraEl.style.display=extra.length?'flex':'none';
     extra.forEach(([pid2,p2])=>{
       const isAct=room.currentTurn===pid2;
-      const div=document.createElement('div');
-      div.style.cssText=`display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.3);border-radius:16px;padding:3px 8px 3px 4px;border:1px solid ${isAct?'#f0d060':'rgba(255,255,255,.12)'};`;
-      div.innerHTML=`<div style="width:22px;height:22px;border-radius:50%;background:${p2.color||'#9b59b6'};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;">${(p2.name||'?')[0].toUpperCase()}</div><span style="font-size:9px;font-weight:700;color:#fff;">${escHtml((p2.name||'?').split(' ')[0])}</span><span style="font-size:8px;color:rgba(255,255,255,.4);margin-left:2px;">${(p2.hand||[]).length}</span>`;
-      extraEl.appendChild(div);
+      const count=Math.max((p2.hand||[]).length,1);
+      const show=Math.min(count,8);
+      const fanWrap=document.createElement('div');
+      fanWrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px;';
+      const miniFan=document.createElement('div');
+      miniFan.style.cssText='position:relative;height:36px;width:'+(show*10+24)+'px;';
+      for(let i=0;i<show;i++){
+        const mc=document.createElement('div');
+        const pos=(i-(show-1)/2);
+        mc.style.cssText=`position:absolute;width:22px;height:32px;border-radius:4px;
+          background:#e8e8e8;border:1px solid #bbb;box-shadow:0 1px 3px rgba(0,0,0,.4);
+          transform-origin:bottom center;transform:rotate(${pos*4}deg) translateX(${pos*10}px);
+          left:50%;margin-left:-11px;z-index:${i};overflow:hidden;`;
+        mc.innerHTML='<div style="position:absolute;inset:2px;border-radius:2px;background:repeating-linear-gradient(45deg,#c0392b 0px,#c0392b 2px,#922b21 2px,#922b21 4px);"></div>';
+        miniFan.appendChild(mc);
+      }
+      fanWrap.appendChild(miniFan);
+      const nameRow=document.createElement('div');
+      nameRow.style.cssText=`display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border-radius:10px;padding:2px 7px 2px 4px;border:1px solid ${isAct?'#f0d060':'rgba(255,255,255,.1)'};`;
+      nameRow.innerHTML=`<div style="width:16px;height:16px;border-radius:50%;background:${p2.color||'#9b59b6'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">${(p2.name||'?')[0].toUpperCase()}</div><span style="font-size:9px;font-weight:700;color:#fff;">${escHtml((p2.name||'?').split(' ')[0])}</span><span style="font-size:8px;color:rgba(255,255,255,.4);">·${(p2.hand||[]).length}</span>`;
+      fanWrap.appendChild(nameRow);
+      extraEl.appendChild(fanWrap);
     });
   }
 }
