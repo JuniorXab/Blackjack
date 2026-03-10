@@ -1071,7 +1071,26 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 #scRummy{background:#2c5f3e;flex-direction:column;overflow:hidden;}
 /* Timer bar */
 .rm-timer-wrap{height:3px;background:rgba(0,0,0,.25);flex-shrink:0;}
+/* Timer urgency */
 .rm-timer-bar{height:100%;background:linear-gradient(90deg,#f0d060,#e67e22);transition:width 1s linear;}
+.rm-timer-bar.urgent{background:linear-gradient(90deg,#e74c3c,#c0392b);animation:rmTimerPulse .5s infinite alternate;}
+@keyframes rmTimerPulse{from{opacity:1}to{opacity:.6}}
+/* Card fly animation */
+@keyframes rmCardFly{
+  0%{transform:translate(0,0) scale(1.1) rotate(-5deg);opacity:1;}
+  100%{transform:translate(var(--fly-x),var(--fly-y)) scale(.7) rotate(10deg);opacity:0;}
+}
+.rm-card-flying{
+  position:fixed;z-index:9999;pointer-events:none;
+  animation:rmCardFly .35s cubic-bezier(.4,0,.6,1) forwards;
+}
+/* Card land animation on discard pile */
+@keyframes rmCardLand{
+  0%{transform:scale(1.15) rotate(-8deg);opacity:.7;}
+  60%{transform:scale(1.05) rotate(2deg);}
+  100%{transform:scale(1) rotate(0deg);opacity:1;}
+}
+.rm-discard-land{animation:rmCardLand .3s ease-out;}
 /* Top bar */
 .rm-bar{display:flex;align-items:center;padding:8px 12px 6px;flex-shrink:0;gap:8px;background:rgba(0,0,0,.25);}
 .rm-bar-back{width:32px;height:32px;background:rgba(0,0,0,.35);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -1113,7 +1132,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 /* Action log */
 .rm-action-log{text-align:center;font-size:11px;color:rgba(255,255,255,.8);padding:3px 16px;min-height:18px;flex-shrink:0;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.5);}
 /* My area — pinned to bottom */
-.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;padding-bottom:env(safe-area-inset-bottom);}
+.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;}
 .rm-me-top{display:flex;align-items:center;gap:8px;padding:0 12px 5px;}
 .rm-me-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;border:2px solid transparent;}
 .rm-me-av.active{border-color:#f0d060;box-shadow:0 0 10px rgba(240,208,96,.4);}
@@ -1128,7 +1147,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
 .rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
 /* MY HAND */
-.rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px 6px;overflow-x:auto;scrollbar-width:none;min-height:92px;}
+.rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px;padding-bottom:calc(6px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none;min-height:92px;}
 .rm-hand-row::-webkit-scrollbar{display:none;}
 
 /* ═══ REAL PLAYING CARD ═══ */
@@ -1176,6 +1195,21 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
   background:repeating-linear-gradient(45deg,#c0392b 0px,#c0392b 3px,#922b21 3px,#922b21 6px);
 }
 
+/* Card fly animation */
+@keyframes rmCardFly {
+  0%   { transform: translateY(0) scale(1) rotate(0deg); opacity:1; }
+  60%  { transform: translateY(-60px) scale(1.15) rotate(-8deg); opacity:1; }
+  100% { transform: translateY(-20px) scale(0.7) rotate(4deg); opacity:0; }
+}
+@keyframes rmCardLand {
+  0%   { transform: scale(1.3) rotate(-6deg); opacity:0.6; }
+  100% { transform: scale(1) rotate(0deg); opacity:1; }
+}
+.rm-card-flying { animation: rmCardFly 0.35s ease-in forwards; pointer-events:none; }
+.rm-discard-land { animation: rmCardLand 0.25s ease-out; }
+/* Timer urgency */
+@keyframes rmTimerPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.rm-timer-bar.urgent { background:linear-gradient(90deg,#e74c3c,#c0392b); animation:rmTimerPulse 0.6s ease-in-out infinite; }
 /* WIN OVERLAY */
 .rm-win-overlay{position:absolute;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;}
 .rm-win-title{font-size:36px;font-weight:900;color:#f0d060;text-align:center;}
@@ -2643,8 +2677,7 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
         <div class="rm-me-score"><span id="rmHandCount">0</span> cartas · $<span id="rmPot2">0</span></div>
       </div>
       <div class="rm-me-actions">
-        <button class="rm-act-btn rm-act-sort" onclick="rmSortHand()">⇅</button>
-        <button class="rm-act-btn rm-act-discard" id="rmDiscardBtn" onclick="rmDiscardSelected()" disabled>⬇ Descartar</button>
+        <button class="rm-act-btn rm-act-sort" onclick="rmSortHand()" title="Ordenar">⇅</button>
         <button class="rm-act-btn rm-act-declare" id="rmDeclareBtn" onclick="rmOpenDeclare()" disabled>🏆 Declarar</button>
       </div>
     </div>
@@ -3069,6 +3102,30 @@ function playTone(freq, dur=0.08, type='triangle', vol=0.18, delay=0) {
 function sfxCard() {
   playTone(900, 0.04, 'square', 0.08);
   playTone(650, 0.06, 'triangle', 0.10, 0.03);
+}
+// ── RUMMY SFX ──────────────────────────────
+function sfxRmCard() { // soft card slide
+  if(!soundPrefs.cards) return;
+  playTone(1100,0.03,'triangle',0.06);
+  playTone(700,0.05,'sine',0.07,0.02);
+}
+function sfxRmDiscard() { // card placed on pile
+  if(!soundPrefs.cards) return;
+  playTone(500,0.04,'triangle',0.08);
+  playTone(350,0.06,'sine',0.05,0.03);
+}
+function sfxRmDrag() { // drag card
+  if(!soundPrefs.cards) return;
+  playTone(900,0.02,'sine',0.04);
+}
+function sfxRmTick(pct) { // timer tick — urgent when low
+  if(!soundPrefs.chips) return;
+  if(pct>0.3) return; // only when <30%
+  playTone(pct<0.1?880:660, 0.05,'square',pct<0.1?0.12:0.07);
+}
+function sfxRmDeclare() {
+  if(!soundPrefs.wins) return;
+  [523,659,784,1047].forEach((f,i)=>playTone(f,0.12,'triangle',0.13,i*0.1));
 }
 // ── ROULETTE SFX ──────────────────────────
 function sfxRlChip() {
@@ -10177,8 +10234,169 @@ let rmHasTakenCard=false;
 let rmDeclGroups=[[],[],[]]; // for declare modal
 let rmDeclSelected=null, rmDeclSelectedSrc=null; // {src:'hand'|'g0'|'g1'|'g2', idx}
 let rmBotTimers=[];
+// Timer
+let rmTurnTimerInterval=null, rmTurnSecondsLeft=30;
+const RM_TURN_SECONDS=30;
+// Animation tracking
+let _rmLastDiscardCard=null; // track last discard for animation
 
-// ── Helpers ─────────────────────────────────────
+// ── TURN TIMER ────────────────────────────────────
+function rmStartTimer(){
+  rmStopTimer();
+  rmTurnSecondsLeft=RM_TURN_SECONDS;
+  const bar=document.getElementById('rmTimerBar');
+  if(bar){ bar.style.width='100%'; bar.style.transition='none'; bar.classList.remove('urgent'); }
+  rmTurnTimerInterval=setInterval(()=>{
+    rmTurnSecondsLeft--;
+    const pct=rmTurnSecondsLeft/RM_TURN_SECONDS;
+    const bar=document.getElementById('rmTimerBar');
+    if(bar){
+      bar.style.transition='width 1s linear';
+      bar.style.width=(pct*100)+'%';
+      if(pct<=0.3&&!bar.classList.contains('urgent')) bar.classList.add('urgent');
+    }
+    sfxRmTick(pct);
+    if(rmTurnSecondsLeft<=0){
+      rmStopTimer();
+      // Auto-discard: pick least valuable card or first if none selected
+      if(rmPhase==='myturn_discard'){
+        if(rmSelectedIdx===null) rmSelectedIdx=rmMyHand.length-1;
+        rmDiscardSelected();
+        toast('⏱ Tiempo — carta descartada automáticamente',2500);
+      } else if(rmPhase==='myturn_take'){
+        rmTakeDeck();
+        toast('⏱ Tiempo — tomó del mazo automáticamente',2500);
+      }
+    }
+  },1000);
+}
+
+function rmStopTimer(){
+  if(rmTurnTimerInterval){ clearInterval(rmTurnTimerInterval); rmTurnTimerInterval=null; }
+  const bar=document.getElementById('rmTimerBar');
+  if(bar){ bar.classList.remove('urgent'); bar.style.transition='none'; bar.style.width='100%'; }
+}
+
+// ── CARD FLY ANIMATION ────────────────────────────
+function rmAnimateDiscard(cardIdx, onDone){
+  // Find the card element in the hand row and animate it flying to discard pile
+  const handEl=document.getElementById('rmHandEl');
+  const discardEl=document.getElementById('rmDiscardPile');
+  if(!handEl||!discardEl){ onDone&&onDone(); return; }
+  const cards=[...handEl.querySelectorAll('.rm-card')];
+  // Account for separator divs (not cards) — find by data-cardIdx
+  const cardEl=cards.find(c=>parseInt(c.dataset.cardIdx)===cardIdx)||cards[cardIdx];
+  if(!cardEl){ onDone&&onDone(); return; }
+
+  const from=cardEl.getBoundingClientRect();
+  const to=discardEl.getBoundingClientRect();
+
+  // Clone for animation
+  const clone=cardEl.cloneNode(true);
+  clone.style.cssText=`position:fixed;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;z-index:9999;pointer-events:none;transition:none;margin:0;`;
+  document.body.appendChild(clone);
+  cardEl.style.opacity='0';
+
+  const dx=to.left+to.width/2-(from.left+from.width/2);
+  const dy=to.top+to.height/2-(from.top+from.height/2);
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      clone.style.transition='transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s';
+      clone.style.transform=`translate(${dx}px,${dy}px) scale(0.85) rotate(5deg)`;
+      clone.style.opacity='0.5';
+    });
+  });
+
+  setTimeout(()=>{
+    clone.remove();
+    // Flash discard pile
+    if(discardEl){ discardEl.classList.add('rm-discard-land'); setTimeout(()=>discardEl.classList.remove('rm-discard-land'),250); }
+    sfxRmDiscard();
+    onDone&&onDone();
+  },310);
+}
+
+// ── Rummy sounds ──────────────────────────────────
+function sfxRmCardSlide(){
+  if(!soundPrefs.cards) return;
+  playTone(1800,.04,'sine',.06);
+  playTone(1400,.05,'sine',.04,.03);
+}
+function sfxRmCardTake(){
+  if(!soundPrefs.cards) return;
+  playTone(900,.05,'triangle',.08);
+  playTone(1200,.04,'sine',.06,.04);
+}
+function sfxRmCardDiscard(){
+  if(!soundPrefs.cards) return;
+  playTone(600,.06,'triangle',.07);
+  playTone(400,.08,'sine',.05,.05);
+}
+function sfxRmTimerUrgent(){
+  if(!soundPrefs.chips) return;
+  playTone(880,.05,'square',.05);
+}
+function sfxRmDeclare(){
+  if(!soundPrefs.wins) return;
+  [523,659,784,1047].forEach((f,i)=>playTone(f,.15,'sine',.12,i*.08));
+}
+
+// ── Turn timer ────────────────────────────────────
+function rmStartTurnTimer(){
+  rmStopTurnTimer();
+  rmTurnSecondsLeft=RM_TURN_SECONDS;
+  const bar=document.getElementById('rmTimerBar');
+  if(bar){ bar.style.width='100%'; bar.classList.remove('urgent'); }
+  rmTurnTimerInterval=setInterval(()=>{
+    rmTurnSecondsLeft--;
+    const pct=Math.max(0,(rmTurnSecondsLeft/RM_TURN_SECONDS)*100);
+    const bar=document.getElementById('rmTimerBar');
+    if(bar){
+      bar.style.width=pct+'%';
+      if(rmTurnSecondsLeft<=10&&!bar.classList.contains('urgent')){
+        bar.classList.add('urgent');
+        sfxRmTimerUrgent();
+      }
+    }
+    if(rmTurnSecondsLeft<=0){
+      rmStopTurnTimer();
+      // Auto-discard: pick selected or first card
+      if(rmPhase==='myturn_discard'){
+        if(rmSelectedIdx===null) rmSelectedIdx=0;
+        rmDiscardSelected();
+      } else if(rmPhase==='myturn_take'){
+        rmTakeDeck(); // auto-take from deck
+      }
+    }
+  },1000);
+}
+function rmStopTurnTimer(){
+  if(rmTurnTimerInterval){ clearInterval(rmTurnTimerInterval); rmTurnTimerInterval=null; }
+  const bar=document.getElementById('rmTimerBar');
+  if(bar){ bar.style.width='100%'; bar.classList.remove('urgent'); }
+}
+
+// ── Card fly animation ─────────────────────────────
+function rmAnimateCardToDiscard(cardEl){
+  if(!cardEl) return;
+  const discard=document.getElementById('rmDiscardPile');
+  if(!discard) return;
+  const from=cardEl.getBoundingClientRect();
+  const to=discard.getBoundingClientRect();
+  const flyEl=cardEl.cloneNode(true);
+  flyEl.className='rm-card-flying '+(cardEl.className.replace('selected',''));
+  flyEl.style.cssText+=`left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;`;
+  flyEl.style.setProperty('--fly-x',(to.left-from.left+to.width/2-from.width/2)+'px');
+  flyEl.style.setProperty('--fly-y',(to.top-from.top+to.height/2-from.height/2)+'px');
+  document.body.appendChild(flyEl);
+  flyEl.addEventListener('animationend',()=>{
+    flyEl.remove();
+    // Land animation on discard pile
+    const dp=document.getElementById('rmDiscardPile');
+    if(dp){ dp.classList.add('rm-discard-land'); setTimeout(()=>dp.classList.remove('rm-discard-land'),300); }
+  });
+}
 function rmMakeDeck(){
   const deck=[];
   for(let d=0;d<2;d++){
@@ -10351,10 +10569,11 @@ let _rmDeclActiveGroup = 0; // which group is selected in declare modal
 
 function rmShowLobby(){
   ['scLobby','scGameSelect','scRummy'].forEach(id=>hide(id));
-  // Reset code panel
   const cp=document.getElementById('rmCodePanel');
   if(cp) cp.style.display='none';
   show('scRummyLobby'); bnShow();
+  // Check if user has an active session to reconnect
+  setTimeout(rmTryReconnect, 300);
 }
 
 function rmSelectBet(v){
@@ -10448,11 +10667,41 @@ async function rmJoinRoom(){
 function rmListenRoom(code){
   if(rmRoomRef) rmRoomRef.off();
   rmRoomRef=db.ref(`${RM_PATH}/${code}`);
+  // Save session so user can reconnect if they navigate away
+  try{ localStorage.setItem('rm_session', JSON.stringify({code, uid:myId, t:Date.now()})); } catch(e){}
   rmRoomRef.on('value',snap=>{
-    if(!snap.exists()){ toast('La sala fue cerrada'); rmLeave(); return; }
+    if(!snap.exists()){ toast('La sala fue cerrada'); rmClearSession(); rmLeave(); return; }
     rmCurrentRoom=snap.val();
     rmHandleRoomUpdate(rmCurrentRoom);
   });
+}
+
+function rmClearSession(){
+  try{ localStorage.removeItem('rm_session'); } catch(e){}
+}
+
+async function rmTryReconnect(){
+  let sess; try{ sess=JSON.parse(localStorage.getItem('rm_session')||'null'); } catch(e){}
+  if(!sess||!sess.code||sess.uid!==myId) return;
+  // Only reconnect if session is less than 2 hours old
+  if(Date.now()-sess.t > 2*60*60*1000){ rmClearSession(); return; }
+  if(!db) return;
+  const snap = await db.ref(`${RM_PATH}/${sess.code}`).once('value');
+  if(!snap.exists()){ rmClearSession(); return; }
+  const room = snap.val();
+  if(room.status==='done'||!room.players?.[myId]){ rmClearSession(); return; }
+  // Room still active — ask to rejoin
+  const yes = confirm(`🃏 Tenías una partida de Rummy activa (sala ${sess.code}). ¿Reconectar?`);
+  if(!yes){ rmClearSession(); return; }
+  rmBet = room.bet||50;
+  rmRoomCode = sess.code;
+  rmIsHost = room.host===myId;
+  rmSoloMode = false;
+  rmGroups=[[],[],[]]; rmSelectedIdx=null;
+  hide('scRummyLobby'); hide('scGameSelect');
+  show('scRummy'); bnSync('scRummy');
+  rmListenRoom(sess.code);
+  toast('✅ Reconectado a la partida',2000);
 }
 
 function rmHandleRoomUpdate(room){
@@ -10598,6 +10847,18 @@ function rmRenderGame(room){
   rmHasTakenCard=room.hasTaken||false;
   rmPhase=isMyTurn?(rmHasTakenCard?'myturn_discard':'myturn_take'):'oppturn';
 
+  // Timer: start on my turn, stop on opp turn
+  if(isMyTurn && rmPhase!=='oppturn'){
+    // Only restart if turn just became mine
+    if(!rmTurnTimerInterval) rmStartTurnTimer();
+  } else {
+    rmStopTurnTimer();
+  }
+
+  // Timer: start on my turn, stop otherwise
+  if(isMyTurn){ if(!rmTurnTimerInterval) rmStartTimer(); }
+  else rmStopTimer();
+
   // Deck
   const deck=room.deck||[];
   const discard=room.discardPile||[];
@@ -10694,9 +10955,6 @@ function rmSelectCard(i){
 }
 
 function rmUpdateButtons(){
-  const canDiscard = rmPhase==='myturn_discard' && rmHasTakenCard && rmSelectedIdx!==null;
-  const db1=document.getElementById('rmDiscardBtn');
-  if(db1) db1.disabled=!canDiscard;
   // Auto-check declare: scan current hand arrangement for valid 4-4-3
   const canDeclare = rmPhase==='myturn_discard' && rmHasTakenCard && rmHandIsValid443();
   const db2=document.getElementById('rmDeclareBtn');
@@ -10767,6 +11025,7 @@ function rmRenderHandDraggable(){
     card.addEventListener('touchstart',e=>{
       _rmDragIdx=i; _rmDragOverIdx=i;
       card.style.opacity='0.5';
+      sfxRmDrag();
       e.stopPropagation();
     },{passive:true});
 
@@ -10778,6 +11037,7 @@ function rmRenderHandDraggable(){
         const over=parseInt(target.dataset.cardIdx);
         if(!isNaN(over)&&over!==_rmDragOverIdx){
           _rmDragOverIdx=over;
+          sfxRmCardSlide();
           // Move in array immediately for live preview
           const moved=rmMyHand.splice(_rmDragIdx,1)[0];
           rmMyHand.splice(_rmDragOverIdx,0,moved);
@@ -10818,16 +11078,18 @@ async function rmTakeDeckBase(){
   }
   const card=deck.pop();
   rmMyHand.push(card);
-  const updHand=[...rmMyHand];
+  sfxRmCard();
+  rmStopTimer();
   const la={type:'took_deck',name:(myName||'').split(' ')[0]};
-  playTone(440,.05,'sine',.08);
   rmHasTakenCard=true; rmPhase='myturn_discard';
+  const updHand=[...rmMyHand];
   if(rmSoloMode){
-    Object.assign(rmCurrentRoom,{deck,['players']: {...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:updHand}},hasTaken:true,lastAction:la});
+    Object.assign(rmCurrentRoom,{deck,discardPile:discard,['players']:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:updHand}},hasTaken:true,lastAction:la});
     rmHandleRoomUpdate(rmCurrentRoom);
   } else {
-    await db.ref(`${RM_PATH}/${rmRoomCode}`).update({deck,[`players/${myId}/hand`]:updHand,hasTaken:true,lastAction:la,botThinking:false});
+    await db.ref(`${RM_PATH}/${rmRoomCode}`).update({deck,discardPile:discard,[`players/${myId}/hand`]:updHand,hasTaken:true,lastAction:la,botThinking:false});
   }
+  rmStartTimer();
 }
 
 async function rmTakeDiscardBase(){
@@ -10841,9 +11103,10 @@ async function rmTakeDiscardBase(){
   if(!discard.length) return;
   const card=discard.pop();
   rmMyHand.push(card);
-  const isJk=card.rank==='JK'; const sym=isJk?'':RM_SUIT_SYM[card.suit]||'';
+  const isJk=card.rank==='JK';
   const la={type:'took_discard',name:(myName||'').split(' ')[0],rank:isJk?'🃏':card.rank,suit:card.suit};
-  playTone(520,.05,'sine',.08);
+  sfxRmCard();
+  rmStopTimer();
   rmHasTakenCard=true; rmPhase='myturn_discard';
   const updHand=[...rmMyHand];
   if(rmSoloMode){
@@ -10852,20 +11115,25 @@ async function rmTakeDiscardBase(){
   } else {
     await db.ref(`${RM_PATH}/${rmRoomCode}`).update({discardPile:discard,[`players/${myId}/hand`]:updHand,hasTaken:true,lastAction:la,botThinking:false});
   }
+  rmStartTimer();
 }
 
 async function rmDiscardSelectedBase(){
   if(rmSelectedIdx===null||!rmHasTakenCard) return;
   const room=rmCurrentRoom; if(!room) return;
-  const card=rmMyHand.splice(rmSelectedIdx,1)[0];
+  const idxToDiscard=rmSelectedIdx;
+  const card=rmMyHand[idxToDiscard];
+  // Animate card flying to discard pile, then commit
+  await new Promise(resolve=>rmAnimateDiscard(idxToDiscard, resolve));
+  rmMyHand.splice(idxToDiscard,1);
   rmSelectedIdx=null;
+  rmStopTimer();
   const discard=[...(room.discardPile||[]),card];
   const order=room.turnOrder||[];
   const idx=order.indexOf(myId);
   const nextId=order[(idx+1)%order.length];
   const isJk=card.rank==='JK';
   const la={type:'discarded',name:(myName||'').split(' ')[0],rank:isJk?'🃏':card.rank,suit:card.suit};
-  playTone(330,.07,'sine',.07);
   const allCards=[...rmMyHand];
   rmPhase='oppturn';
   if(rmSoloMode){
@@ -10990,6 +11258,10 @@ async function rmConfirmDeclare(){
   const room=rmCurrentRoom; if(!room) return;
   if(!rmCanDeclare(rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2])){ toast('❌ Grupos inválidos'); return; }
   rmCloseDeclare();
+  rmStopTimer();
+  sfxRmDeclare();
+  rmStopTurnTimer();
+  sfxRmDeclare();
   const players=room.players||{};
   const pids=Object.keys(players);
   const betAmt=room.bet||rmBet;
@@ -11061,10 +11333,12 @@ async function rmPlayAgain(){
 
 function rmLeave(){
   rmBotTimers.forEach(clearTimeout); rmBotTimers=[];
+  rmStopTimer();
   if(!rmSoloMode&&db&&rmRoomCode){
     db.ref(`${RM_PATH}/${rmRoomCode}/players/${myId}`).remove();
   }
   if(rmRoomRef){ rmRoomRef.off(); rmRoomRef=null; }
+  rmClearSession();
   rmRoomCode=''; rmIsHost=false; rmCurrentRoom=null;
   rmMyHand=[]; rmGroups=[[],[],[]]; rmSelectedIdx=null; rmPhase='idle';
   hide('scRummy'); rmShowLobby();
