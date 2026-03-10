@@ -1082,7 +1082,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-bar-opp-score{font-size:9px;color:rgba(255,255,255,.5);}
 .rm-bar-pot{font-size:11px;font-weight:900;color:#f0d060;background:rgba(0,0,0,.3);border-radius:10px;padding:4px 10px;flex-shrink:0;}
 /* Opponent fan area — flex:1 to fill middle space */
-.rm-opp-area{flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:6px 16px 4px;}
+.rm-opp-area{flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:4px 16px 0;}
 .rm-opp-fan{display:flex;align-items:flex-end;justify-content:center;height:76px;position:relative;width:100%;max-width:320px;}
 .rm-opp-fan-card{width:46px;height:66px;border-radius:7px;position:absolute;box-shadow:1px 2px 6px rgba(0,0,0,.55);transform-origin:bottom center;
   background:#e8e8e8;
@@ -2650,6 +2650,7 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
     </div>
     <!-- My hand (overlapping cards, scrollable) -->
     <div class="rm-hand-row" id="rmHandEl"></div>
+    <div id="rmGroupHint" style="text-align:center;font-size:10px;color:rgba(255,255,255,.4);padding:2px 0 4px;letter-spacing:.5px;">Arrastra para ordenar · 4 · 4 · 3</div>
   </div>
 
   <!-- Wait overlay (non-blocking, just dims) -->
@@ -10640,8 +10641,7 @@ function rmRenderGame(room){
   }
 
   // Buttons
-  document.getElementById('rmDiscardBtn').disabled=!(isMyTurn&&rmHasTakenCard&&rmSelectedIdx!==null);
-  document.getElementById('rmDeclareBtn').disabled=!(isMyTurn&&rmHasTakenCard);
+  rmUpdateButtons();
 
   // Opponent fan
   rmRenderOpponentFan(room);
@@ -10683,25 +10683,42 @@ function rmMakeRealCard(c, selected=false){
 }
 
 function rmRenderHand(){
-  const el=document.getElementById('rmHandEl');
-  if(!el) return;
-  el.innerHTML='';
-  const cnt=document.getElementById('rmHandCount');
-  if(cnt) cnt.textContent=rmMyHand.length;
-
-  rmMyHand.forEach((c,i)=>{
-    const card = rmMakeRealCard(c, i===rmSelectedIdx);
-    card.style.zIndex = i===rmSelectedIdx ? 20 : i;
-    card.onclick = ()=>rmSelectCard(i);
-    el.appendChild(card);
-  });
+  rmRenderHandDraggable();
 }
 
 function rmSelectCard(i){
   if(rmPhase!=='myturn_discard') return;
   rmSelectedIdx=rmSelectedIdx===i?null:i;
   rmRenderHand();
-  document.getElementById('rmDiscardBtn').disabled=!(rmSelectedIdx!==null&&rmHasTakenCard);
+  rmUpdateButtons();
+}
+
+function rmUpdateButtons(){
+  const canDiscard = rmPhase==='myturn_discard' && rmHasTakenCard && rmSelectedIdx!==null;
+  const db1=document.getElementById('rmDiscardBtn');
+  if(db1) db1.disabled=!canDiscard;
+  // Auto-check declare: scan current hand arrangement for valid 4-4-3
+  const canDeclare = rmPhase==='myturn_discard' && rmHasTakenCard && rmHandIsValid443();
+  const db2=document.getElementById('rmDeclareBtn');
+  if(db2) db2.disabled=!canDeclare;
+  // Update hint
+  const hint=document.getElementById('rmGroupHint');
+  if(hint && rmMyHand.length===11){
+    const g0=rmMyHand.slice(0,4), g1=rmMyHand.slice(4,8), g2=rmMyHand.slice(8,11);
+    const v0=rmValidGroup(g0), v1=rmValidGroup(g1), v2=rmValidGroup(g2);
+    const sym=g=>`<span style="color:${g?'#2ecc71':'rgba(255,255,255,.3)'}">${g?'✓':'○'}</span>`;
+    hint.innerHTML=`Grupo 1 (4): ${sym(v0)} &nbsp; Grupo 2 (4): ${sym(v1)} &nbsp; Grupo 3 (3): ${sym(v2)}`;
+    if(canDeclare) hint.innerHTML='<span style="color:#f0d060;font-weight:700;">✅ ¡Listo para declarar!</span>';
+  }
+}
+
+// Check if current hand order already forms 4-4-3 groups (first 4, next 4, last 3)
+function rmHandIsValid443(){
+  if(rmMyHand.length!==11) return false;
+  const g0=rmMyHand.slice(0,4);
+  const g1=rmMyHand.slice(4,8);
+  const g2=rmMyHand.slice(8,11);
+  return rmValidGroup(g0)&&rmValidGroup(g1)&&rmValidGroup(g2);
 }
 
 function rmSortHand(){
@@ -10710,7 +10727,78 @@ function rmSortHand(){
     if(a.suit!==b.suit) return RM_SUITS.indexOf(a.suit)-RM_SUITS.indexOf(b.suit);
     return RM_RANK_VAL[a.rank]-RM_RANK_VAL[b.rank];
   });
-  rmSelectedIdx=null; rmRenderHand();
+  rmSelectedIdx=null; rmRenderHand(); rmUpdateButtons();
+}
+
+// ── DRAG TO REORDER HAND ──────────────────────────
+let _rmDragIdx=null, _rmDragOverIdx=null;
+
+function rmRenderHandDraggable(){
+  const el=document.getElementById('rmHandEl');
+  if(!el) return;
+  el.innerHTML='';
+  const cnt=document.getElementById('rmHandCount');
+  if(cnt) cnt.textContent=rmMyHand.length;
+
+  // Group separators: first 4 | next 4 | last 3
+  const SIZES=[4,4,3];
+  let gStart=0;
+  rmMyHand.forEach((c,i)=>{
+    // Group divider line
+    let gIdx=0,acc=0;
+    for(let g=0;g<SIZES.length;g++){acc+=SIZES[g];if(i<acc){gIdx=g;break;}}
+    const prevAcc=SIZES.slice(0,gIdx).reduce((s,x)=>s+x,0);
+    if(i===prevAcc && i>0){
+      const sep=document.createElement('div');
+      sep.style.cssText='width:3px;height:60px;background:rgba(255,255,255,.18);border-radius:2px;flex-shrink:0;margin:0 2px;align-self:center;';
+      el.appendChild(sep);
+    }
+
+    const card=rmMakeRealCard(c, i===rmSelectedIdx);
+    card.style.zIndex=i===rmSelectedIdx?20:i;
+
+    // Click to select
+    card.onclick=(e)=>{
+      if(_rmDragIdx!==null) return; // was a drag
+      rmSelectCard(i);
+    };
+
+    // Touch drag
+    card.addEventListener('touchstart',e=>{
+      _rmDragIdx=i; _rmDragOverIdx=i;
+      card.style.opacity='0.5';
+      e.stopPropagation();
+    },{passive:true});
+
+    card.addEventListener('touchmove',e=>{
+      const t=e.touches[0];
+      const els=document.elementsFromPoint(t.clientX,t.clientY);
+      const target=els.find(el=>el.dataset&&el.dataset.cardIdx!==undefined);
+      if(target){
+        const over=parseInt(target.dataset.cardIdx);
+        if(!isNaN(over)&&over!==_rmDragOverIdx){
+          _rmDragOverIdx=over;
+          // Move in array immediately for live preview
+          const moved=rmMyHand.splice(_rmDragIdx,1)[0];
+          rmMyHand.splice(_rmDragOverIdx,0,moved);
+          _rmDragIdx=_rmDragOverIdx;
+          rmSelectedIdx=null;
+          rmRenderHandDraggable();
+          rmUpdateButtons();
+        }
+      }
+      e.preventDefault();
+    },{passive:false});
+
+    card.addEventListener('touchend',e=>{
+      _rmDragIdx=null; _rmDragOverIdx=null;
+      rmRenderHandDraggable();
+      rmUpdateButtons();
+    },{passive:true});
+
+    card.dataset.cardIdx=i;
+    el.appendChild(card);
+  });
 }
 
 // Groups removed from main screen — only in declare modal
@@ -10743,6 +10831,10 @@ async function rmTakeDeckBase(){
 }
 
 async function rmTakeDiscardBase(){
+  // If a card is selected and we already took → discard that card
+  if(rmPhase==='myturn_discard' && rmHasTakenCard && rmSelectedIdx!==null){
+    await rmDiscardSelectedBase(); return;
+  }
   if(rmPhase!=='myturn_take') return;
   const room=rmCurrentRoom; if(!room) return;
   const discard=[...(room.discardPile||[])];
@@ -10795,7 +10887,10 @@ rmDiscardSelected=rmDiscardSelectedBase;
 // ── Declare ───────────────────────────────────────
 function rmOpenDeclare(){
   if(!rmHasTakenCard){ toast('⚠️ Primero toma una carta'); return; }
-  rmDeclGroups=[[],[],[]]; _rmDeclActiveGroup=0;
+  if(rmMyHand.length!==11){ toast('⚠️ Necesitas 11 cartas'); return; }
+  // Pre-fill groups from current hand arrangement
+  rmDeclGroups=[rmMyHand.slice(0,4), rmMyHand.slice(4,8), rmMyHand.slice(8,11)];
+  _rmDeclActiveGroup=0;
   document.getElementById('rmDeclareModal').style.display='flex';
   rmRenderDeclareModal();
 }
