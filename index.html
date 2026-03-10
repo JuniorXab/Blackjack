@@ -9733,6 +9733,7 @@ function bnGo(tab){
     currentGame='';
     chatScreenOpen();
     show('scChat');
+    navPush('scChat');
     bnSetActive('chat');
     return;
   }
@@ -9759,12 +9760,15 @@ function bnGo(tab){
   if(tab==='lobby'){
     mlRefresh();
     show('scMainLobby');
+    navPush('scMainLobby');
   } else if(tab==='games'){
     document.getElementById('gsBal').textContent = myBal.toLocaleString();
     show('scGameSelect');
+    navPush('scGameSelect');
   } else if(tab==='profile'){
     pfRefresh();
     show('scProfile');
+    navPush('scProfile');
   }
   bnSetActive(tab);
 }
@@ -9775,10 +9779,78 @@ function bnSync(screenId){
     scMainLobby:'lobby', scGameSelect:'games', scProfile:'profile', scChat:'chat',
     scSlots:'games', scCrash:'games', scMines:'games',
     scDice:'games', scPlinko:'games', scRoulette:'games',
-    scRouletteLobby:'games', scLobby:'games', scFootball:'games'
+    scRouletteLobby:'games', scLobby:'games', scFootball:'games',
+    scRummyLobby:'games', scRummy:'games'
   };
   bnSetActive(map[screenId]||'');
+  // Push a history state so the phone's back button is intercepted
+  navPush(screenId);
 }
+
+// ── Back-button (History API) ─────────────────────
+let _navDepth = 0;
+function navPush(screenId) {
+  _navDepth++;
+  history.pushState({ screen: screenId, depth: _navDepth }, '', '');
+}
+
+window.addEventListener('popstate', function(e) {
+  // Always push a new state so we never actually go "back" in browser history
+  // Instead we handle navigation ourselves
+  const state = e.state;
+
+  // Determine which screen is currently visible
+  const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
+    'scSlots','scCrash','scMines','scDice','scPlinko','scFootball',
+    'scGameSelect','scProfile','scChat','scMainLobby'];
+
+  let current = '';
+  for (const id of screens) {
+    const el = document.getElementById(id);
+    if (el && !el.classList.contains('hidden') && el.style.display !== 'none') {
+      current = id; break;
+    }
+  }
+
+  // Decide what "back" means for each screen
+  switch(current) {
+    // In-game screens → go to game select (or rummy lobby)
+    case 'scRummy':
+      rmLeave(); break;
+    case 'scRummyLobby':
+      goGameSelect(); break;
+    case 'scLobby':       // BJ multiplayer lobby
+      leaveRoom(); goGameSelect(); break;
+    case 'scRoulette':
+      goGameSelect(); break;
+    case 'scRouletteLobby':
+      goGameSelect(); break;
+    case 'scSlots':
+    case 'scCrash':
+    case 'scMines':
+    case 'scDice':
+    case 'scPlinko':
+    case 'scFootball':
+      goGameSelect(); break;
+    // Game select → main lobby
+    case 'scGameSelect':
+      bnGo('lobby'); break;
+    // Profile / chat → main lobby
+    case 'scProfile':
+    case 'scChat':
+      bnGo('lobby'); break;
+    // Main lobby → do nothing (would exit app — just re-push)
+    case 'scMainLobby':
+    default:
+      history.pushState({ screen: 'scMainLobby', depth: 0 }, '', '');
+      break;
+  }
+});
+
+// Seed initial history state on load so the first popstate has something to catch
+(function() {
+  history.replaceState({ screen: 'scMainLobby', depth: 0 }, '', '');
+})();
 
 // ── Chat Screen ──────────────────────────────────
 let _chatScreenRef = null, _chatScreenListener = null;
