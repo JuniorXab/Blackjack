@@ -9404,7 +9404,7 @@ function stopVoice() {
 
 // Voice button shown in joinRoomDb instead (no override needed)
 
-// Firebase ya está disponible porque sus <script> están en el <head> (síncronos)
+// Firebase ya está disponible porque sus scripts están en el head (síncronos)
 
 // ═══════════════════════════════════════════
 //  LOBBY CARD BACKGROUND ANIMATION
@@ -10482,10 +10482,8 @@ function rmRenderDiscard(discardTop, canTake){
   document.getElementById('rmDiscardSuit').textContent=sym;
   const top2=document.getElementById('rmDiscardTop2');
   const bot2=document.getElementById('rmDiscardBot2');
-  if(top2){ top2.style.display='block'; top2.textContent=(isJk?'🃏':discardTop.rank+'
-'+sym); }
-  if(bot2){ bot2.style.display='block'; bot2.textContent=(isJk?'🃏':discardTop.rank+'
-'+sym); }
+  if(top2){ top2.style.display='block'; top2.textContent=(isJk?'🃏':discardTop.rank+'\n'+sym); }
+  if(bot2){ bot2.style.display='block'; bot2.textContent=(isJk?'🃏':discardTop.rank+'\n'+sym); }
 }
 
 function rmRenderGame(room){
