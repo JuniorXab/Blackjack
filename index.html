@@ -1015,6 +1015,113 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .gs-card-dice:hover{box-shadow:0 0 30px rgba(52,152,219,.15);}
 .gs-card-football{background:linear-gradient(135deg,rgba(192,57,43,.18),rgba(41,128,185,.15));border:1px solid rgba(160,80,100,.4);}
 .gs-card-football:hover{box-shadow:0 0 30px rgba(192,57,43,.2);}
+.gs-card-rummy{background:linear-gradient(135deg,rgba(155,89,182,.18),rgba(52,152,219,.12));border:1px solid rgba(155,89,182,.4);}
+.gs-card-rummy:hover{box-shadow:0 0 30px rgba(155,89,182,.2);}
+
+/* ════════ RUMMY ════════ */
+#scRummyLobby{background:radial-gradient(ellipse at 50% 20%,#12082a,#04080f);overflow-y:auto;justify-content:flex-start;}
+.rm-lobby-wrap{width:100%;max-width:420px;margin:0 auto;padding:20px 16px 90px;}
+.rm-logo{text-align:center;margin-bottom:24px;}
+.rm-logo-icon{font-size:52px;margin-bottom:6px;}
+.rm-logo-title{font-size:26px;font-weight:900;letter-spacing:4px;color:#fff;}
+.rm-logo-sub{font-size:9px;color:rgba(155,89,182,.7);letter-spacing:3px;margin-top:2px;}
+.rm-section{margin-bottom:14px;}
+.rm-section-title{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;font-weight:700;margin-bottom:8px;}
+.rm-btn{width:100%;padding:16px;border-radius:16px;border:none;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;transition:transform .12s,box-shadow .15s;}
+.rm-btn:active{transform:scale(.97);}
+.rm-btn-create{background:linear-gradient(135deg,#8e44ad,#6c3483);color:#fff;box-shadow:0 4px 20px rgba(142,68,173,.35);margin-bottom:10px;}
+.rm-btn-join{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;}
+.rm-input{width:100%;padding:14px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(155,89,182,.25);border-radius:14px;color:#fff;font-size:15px;font-weight:700;letter-spacing:3px;text-align:center;outline:none;box-sizing:border-box;margin-bottom:8px;}
+.rm-input::placeholder{color:rgba(255,255,255,.2);letter-spacing:1px;}
+.rm-bet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.rm-bet-opt{padding:10px 6px;border-radius:12px;border:1px solid rgba(155,89,182,.25);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:13px;font-weight:700;text-align:center;cursor:pointer;transition:all .12s;}
+.rm-bet-opt.sel{background:rgba(142,68,173,.3);border-color:#8e44ad;color:#fff;box-shadow:0 0 12px rgba(142,68,173,.3);}
+.rm-solo-btn{width:100%;padding:14px;border-radius:16px;border:1px dashed rgba(155,89,182,.3);background:rgba(155,89,182,.05);color:rgba(255,255,255,.5);font-size:13px;font-weight:700;cursor:pointer;margin-top:6px;}
+
+/* ── RUMMY GAME SCREEN ── */
+#scRummy{background:radial-gradient(ellipse at 50% 0%,#0d0520,#04080f);flex-direction:column;overflow:hidden;}
+.rm-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;flex-shrink:0;}
+.rm-topbar-title{font-size:11px;font-weight:900;letter-spacing:2px;color:rgba(155,89,182,.9);}
+.rm-topbar-info{font-size:10px;color:rgba(255,255,255,.4);}
+.rm-pot{font-size:12px;font-weight:900;color:#f0d060;}
+/* Table area */
+.rm-table{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+/* Other players strip */
+.rm-opponents{display:flex;gap:8px;padding:6px 12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.rm-opponents::-webkit-scrollbar{display:none;}
+.rm-opponent{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px 12px;min-width:90px;text-align:center;flex-shrink:0;transition:border-color .3s;}
+.rm-opponent.active-turn{border-color:#f0d060;box-shadow:0 0 12px rgba(240,208,96,.2);}
+.rm-opp-name{font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;margin:0 auto;}
+.rm-opp-cards{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;}
+.rm-opp-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;margin:0 auto 4px;}
+/* Center area: deck + discard */
+.rm-center{display:flex;align-items:center;justify-content:center;gap:20px;padding:10px 0;flex-shrink:0;}
+.rm-deck-pile{width:56px;height:80px;border-radius:8px;background:linear-gradient(135deg,#1a0535,#2d1060);border:2px solid rgba(155,89,182,.5);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;position:relative;box-shadow:3px 3px 0 rgba(0,0,0,.4);transition:transform .1s;}
+.rm-deck-pile:active{transform:scale(.95);}
+.rm-deck-count{position:absolute;bottom:3px;right:5px;font-size:8px;color:rgba(255,255,255,.4);font-weight:700;}
+.rm-discard-pile{width:56px;height:80px;border-radius:8px;border:2px solid rgba(240,208,96,.3);display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;position:relative;transition:transform .1s;box-shadow:3px 3px 0 rgba(0,0,0,.4);}
+.rm-discard-pile:active{transform:scale(.95);}
+.rm-discard-pile.can-take{border-color:#f0d060;box-shadow:0 0 14px rgba(240,208,96,.3);}
+.rm-center-label{text-align:center;margin-top:4px;font-size:8px;color:rgba(255,255,255,.3);letter-spacing:1px;}
+.rm-status-msg{text-align:center;font-size:11px;color:rgba(255,255,255,.5);padding:0 16px 6px;flex-shrink:0;min-height:18px;}
+/* My hand */
+.rm-my-hand-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:0 8px 4px;}
+.rm-hand-label{font-size:8px;color:rgba(255,255,255,.25);letter-spacing:2px;text-align:center;margin-bottom:4px;flex-shrink:0;}
+.rm-hand-scroll{flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;padding:4px 6px 8px;gap:4px;scrollbar-width:none;}
+.rm-hand-scroll::-webkit-scrollbar{display:none;}
+/* Cards */
+.rm-card{width:46px;height:68px;border-radius:7px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .12s,box-shadow .12s;font-size:13px;font-weight:900;line-height:1.1;border:2px solid transparent;user-select:none;}
+.rm-card:active{transform:translateY(-4px) scale(1.04);}
+.rm-card.selected{transform:translateY(-10px);border-color:#9b59b6;box-shadow:0 6px 18px rgba(155,89,182,.5);}
+.rm-card.hearts,.rm-card.diamonds{color:#c0392b;}
+.rm-card.spades,.rm-card.clubs{color:#1a1a2e;}
+.rm-card.joker{color:#8e44ad;background:linear-gradient(135deg,#f8f0ff,#e8d5ff);}
+.rm-card .rm-card-top{position:absolute;top:3px;left:4px;font-size:9px;font-weight:900;line-height:1;}
+.rm-card .rm-card-bot{position:absolute;bottom:3px;right:4px;font-size:9px;font-weight:900;line-height:1;transform:rotate(180deg);}
+.rm-card .rm-card-suit{font-size:20px;}
+/* Groups panel */
+.rm-groups{background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);padding:6px 10px 8px;flex-shrink:0;}
+.rm-groups-label{font-size:8px;color:rgba(255,255,255,.25);letter-spacing:2px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
+.rm-groups-row{display:flex;gap:6px;}
+.rm-group-slot{flex:1;min-height:52px;border:1px dashed rgba(155,89,182,.25);border-radius:10px;padding:4px;display:flex;flex-wrap:wrap;gap:2px;align-items:center;justify-content:center;transition:border-color .2s;position:relative;}
+.rm-group-slot.valid{border-color:#2ecc71;background:rgba(46,204,113,.05);}
+.rm-group-slot.invalid{border-color:#e74c3c;background:rgba(231,76,60,.05);}
+.rm-group-slot-lbl{position:absolute;top:2px;left:5px;font-size:7px;color:rgba(255,255,255,.2);font-weight:700;}
+.rm-mini-card{width:26px;height:36px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;cursor:pointer;flex-shrink:0;border:1px solid rgba(0,0,0,.1);}
+.rm-mini-card.hearts,.rm-mini-card.diamonds{color:#c0392b;}
+.rm-mini-card.spades,.rm-mini-card.clubs{color:#1a1a2e;}
+.rm-mini-card.joker{color:#8e44ad;background:linear-gradient(135deg,#f8f0ff,#e8d5ff);}
+/* Action bar */
+.rm-actions{display:flex;gap:8px;padding:8px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:rgba(4,8,14,.95);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.rm-action-btn{flex:1;padding:12px 6px;border-radius:14px;border:none;font-size:12px;font-weight:900;cursor:pointer;transition:transform .1s,opacity .2s;letter-spacing:.5px;}
+.rm-action-btn:active{transform:scale(.96);}
+.rm-action-btn:disabled{opacity:.3;cursor:not-allowed;}
+.rm-btn-declare{background:linear-gradient(135deg,#f0d060,#d4a017);color:#1a1000;}
+.rm-btn-discard{background:linear-gradient(135deg,#e74c3c,#922b21);color:#fff;}
+.rm-btn-sort{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);}
+/* Win screen overlay */
+.rm-win-overlay{position:absolute;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;}
+.rm-win-title{font-size:32px;font-weight:900;color:#f0d060;text-align:center;}
+.rm-win-sub{font-size:14px;color:rgba(255,255,255,.7);text-align:center;}
+.rm-win-groups{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px;}
+.rm-win-group{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:12px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.rm-win-group-lbl{font-size:9px;color:#2ecc71;font-weight:700;width:100%;margin-bottom:2px;}
+.rm-waiting-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(255,255,255,.6);border-radius:0;}
+/* Declare modal */
+.rm-declare-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.92);display:none;flex-direction:column;overflow-y:auto;}
+.rm-declare-wrap{max-width:420px;margin:0 auto;padding:20px 14px 30px;width:100%;}
+.rm-declare-title{font-size:18px;font-weight:900;color:#f0d060;margin-bottom:4px;text-align:center;}
+.rm-declare-sub{font-size:10px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;letter-spacing:1px;}
+.rm-declare-group{margin-bottom:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;}
+.rm-declare-group-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:8px;letter-spacing:1px;}
+.rm-declare-slots{display:flex;flex-wrap:wrap;gap:5px;min-height:40px;}
+.rm-declare-slot{width:36px;height:50px;border-radius:6px;border:1px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.rm-declare-hand{display:flex;flex-wrap:wrap;gap:5px;padding:10px;background:rgba(255,255,255,.03);border-radius:12px;margin-bottom:12px;min-height:52px;}
+.rm-declare-actions{display:flex;gap:8px;}
+.rm-declare-btn{flex:1;padding:14px;border-radius:14px;border:none;font-size:13px;font-weight:900;cursor:pointer;}
+.rm-declare-btn-confirm{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;}
+.rm-declare-btn-cancel{background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);}
+.rm-declare-valid-msg{text-align:center;font-size:11px;margin-bottom:8px;min-height:16px;font-weight:700;}
 
 /* ════════ SHARED MINI-GAME SHELL ════════ */
 .mg-screen{background:#080c10;display:flex!important;flex-direction:column;height:calc(100dvh - 62px);overflow:hidden;padding:0!important;align-items:stretch!important;justify-content:flex-start!important;}
@@ -1451,6 +1558,11 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
       <div class="gs-card-icon">⚽</div>
       <div class="gs-card-name">Football Studio</div>
       <div class="gs-card-desc">Local · Empate · Visitante</div>
+    </div>
+    <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')">
+      <div class="gs-card-icon">🃏</div>
+      <div class="gs-card-name">Rummy</div>
+      <div class="gs-card-desc">2-4 jugadores · 4+4+3 cartas</div>
     </div>
   </div>
   <div class="gs-bal">Tus fichas: <span id="gsBal">0</span></div>
@@ -2334,7 +2446,133 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
   </div>
 </div>
 
-<!-- ════════ PRIVATE CHAT MODAL ════════ -->
+<!-- ════════ RUMMY LOBBY ════════ -->
+<div class="fullscreen hidden" id="scRummyLobby">
+  <div class="rm-lobby-wrap">
+    <button onclick="goGameSelect()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;padding:6px 14px;margin-bottom:20px;">← Juegos</button>
+    <div class="rm-logo">
+      <div class="rm-logo-icon">🃏</div>
+      <div class="rm-logo-title">RUMMY</div>
+      <div class="rm-logo-sub">4 + 4 + 3 · DOS BARAJAS · JOKERS</div>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-title">APUESTA POR JUGADOR</div>
+      <div class="rm-bet-grid" id="rmBetGrid">
+        <div class="rm-bet-opt sel" data-v="50" onclick="rmSelectBet(50)">$50</div>
+        <div class="rm-bet-opt" data-v="100" onclick="rmSelectBet(100)">$100</div>
+        <div class="rm-bet-opt" data-v="300" onclick="rmSelectBet(300)">$300</div>
+        <div class="rm-bet-opt" data-v="500" onclick="rmSelectBet(500)">$500</div>
+        <div class="rm-bet-opt" data-v="1000" onclick="rmSelectBet(1000)">$1000</div>
+        <div class="rm-bet-opt" data-v="2000" onclick="rmSelectBet(2000)">$2000</div>
+      </div>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-title">MULTIJUGADOR (2–4 jugadores)</div>
+      <button class="rm-btn rm-btn-create" onclick="rmCreateRoom()">✦ Crear sala</button>
+      <input class="rm-input" id="rmJoinInput" placeholder="CÓDIGO DE SALA" maxlength="6"
+        style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+      <button class="rm-btn rm-btn-join" onclick="rmJoinRoom()">Unirse a sala</button>
+    </div>
+
+    <div class="rm-section">
+      <div class="rm-section-title">MODO SOLO</div>
+      <button class="rm-solo-btn" onclick="rmStartSolo()">🤖 Jugar vs Bot</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ RUMMY GAME ════════ -->
+<div class="fullscreen hidden" id="scRummy">
+  <!-- Top bar -->
+  <div class="rm-topbar">
+    <div>
+      <div class="rm-topbar-title">🃏 RUMMY</div>
+      <div class="rm-topbar-info" id="rmRoomInfo">Sala —</div>
+    </div>
+    <div class="rm-pot">Pozo: $<span id="rmPot">0</span></div>
+    <button onclick="rmLeave()" style="background:none;border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px 10px;">Salir</button>
+  </div>
+
+  <div class="rm-table" id="rmTable" style="position:relative;">
+    <!-- Waiting overlay (shown between turns) -->
+    <div class="rm-waiting-overlay" id="rmWaitOverlay" style="display:none;">⏳ Esperando turno...</div>
+
+    <!-- Opponents -->
+    <div class="rm-opponents" id="rmOpponents"></div>
+
+    <!-- Center: deck + discard -->
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="rm-center">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div class="rm-deck-pile" id="rmDeckBtn" onclick="rmTakeDeck()">🂠<span class="rm-deck-count" id="rmDeckCount">—</span></div>
+          <div class="rm-center-label">MAZO</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div class="rm-discard-pile" id="rmDiscardPile" onclick="rmTakeDiscard()"><span id="rmDiscardTop" style="font-size:28px;">—</span></div>
+          <div class="rm-center-label">DESCARTE</div>
+        </div>
+      </div>
+      <div class="rm-status-msg" id="rmStatusMsg">Esperando jugadores...</div>
+    </div>
+
+    <!-- My hand -->
+    <div class="rm-my-hand-wrap">
+      <div class="rm-hand-label">TU MANO (<span id="rmHandCount">0</span>)</div>
+      <div class="rm-hand-scroll" id="rmHandEl"></div>
+    </div>
+
+    <!-- Groups -->
+    <div class="rm-groups">
+      <div class="rm-groups-label">
+        <span>MIS GRUPOS</span>
+        <span id="rmGroupsValid" style="font-size:9px;color:rgba(255,255,255,.3);">Arrastra cartas seleccionadas</span>
+      </div>
+      <div class="rm-groups-row" id="rmGroupsRow">
+        <div class="rm-group-slot" id="rmG0" onclick="rmMoveToGroup(0)"><div class="rm-group-slot-lbl">G1 (4)</div></div>
+        <div class="rm-group-slot" id="rmG1" onclick="rmMoveToGroup(1)"><div class="rm-group-slot-lbl">G2 (4)</div></div>
+        <div class="rm-group-slot" id="rmG2" onclick="rmMoveToGroup(2)"><div class="rm-group-slot-lbl">G3 (3)</div></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="rm-actions">
+      <button class="rm-action-btn rm-btn-sort" onclick="rmSortHand()">⇅ Orden</button>
+      <button class="rm-action-btn rm-btn-discard" id="rmDiscardBtn" onclick="rmDiscardSelected()" disabled>⬇ Descartar</button>
+      <button class="rm-action-btn rm-btn-declare" id="rmDeclareBtn" onclick="rmOpenDeclare()" disabled>🏆 Declarar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ RUMMY DECLARE MODAL ════════ -->
+<div id="rmDeclareModal" style="display:none;position:fixed;inset:0;z-index:9980;background:rgba(0,0,0,.95);flex-direction:column;overflow-y:auto;">
+  <div class="rm-declare-wrap">
+    <div class="rm-declare-title">🏆 Declarar victoria</div>
+    <div class="rm-declare-sub">ORGANIZA TUS CARTAS EN 3 GRUPOS · 4 + 4 + 3</div>
+
+    <div class="rm-declare-group">
+      <div class="rm-declare-group-title">GRUPO 1 — 4 cartas</div>
+      <div class="rm-declare-slots" id="rmDeclG0"></div>
+    </div>
+    <div class="rm-declare-group">
+      <div class="rm-declare-group-title">GRUPO 2 — 4 cartas</div>
+      <div class="rm-declare-slots" id="rmDeclG1"></div>
+    </div>
+    <div class="rm-declare-group">
+      <div class="rm-declare-group-title">GRUPO 3 — 3 cartas</div>
+      <div class="rm-declare-slots" id="rmDeclG2"></div>
+    </div>
+
+    <div class="rm-declare-group-title" style="padding:0 4px;margin-bottom:6px;">TU MANO (toca para mover)</div>
+    <div class="rm-declare-hand" id="rmDeclHand"></div>
+    <div class="rm-declare-valid-msg" id="rmDeclValidMsg"></div>
+    <div class="rm-declare-actions">
+      <button class="rm-declare-btn rm-declare-btn-cancel" onclick="rmCloseDeclare()">Cancelar</button>
+      <button class="rm-declare-btn rm-declare-btn-confirm" id="rmDeclConfirmBtn" onclick="rmConfirmDeclare()" disabled>✓ Confirmar</button>
+    </div>
+  </div>
+</div>
 <div id="privateChatModal">
   <div class="pc-topbar">
     <button class="pc-back" onclick="closePrivateChat()">←</button>
@@ -6274,7 +6512,7 @@ function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
   if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
-  ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scPlinko','scMainLobby','scFootball'].forEach(id=>hide(id));
+  ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scPlinko','scMainLobby','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -6292,7 +6530,7 @@ function goMainLobby(){
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
   if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
-  ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scPlinko','scGameSelect','scFootball'].forEach(id=>hide(id));
+  ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scPlinko','scGameSelect','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
   currentGame='';
   mlRefresh();
   show('scMainLobby');
@@ -6401,7 +6639,7 @@ function mlSignOut(){
   // Hide everything
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scPlinko','scFootball'];
+    'scMines','scDice','scPlinko','scFootball','scRummyLobby','scRummy'];
   allScreens.forEach(id => hide(id));
   bnHide();
   show('scWelcome');
@@ -6545,6 +6783,7 @@ const ML_GAME_STATS_KEYS = [
   {key:'plinko',   icon:'🎯', name:'Plinko'},
   {key:'roulette', icon:'🎡', name:'Ruleta'},
   {key:'football', icon:'⚽', name:'Football Studio'},
+  {key:'rummy',    icon:'🃏', name:'Rummy'},
 ];
 
 function mlOpenStats(){
@@ -6785,6 +7024,8 @@ function selectGame(game) {
     startPlinko();
   } else if (game === 'football') {
     startFootball();
+  } else if (game === 'rummy') {
+    rmShowLobby();
   }
 }
 
@@ -9391,7 +9632,7 @@ function bnGo(tab){
     if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
     const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scPlinko','scFootball'];
+      'scMines','scDice','scPlinko','scFootball','scRummyLobby','scRummy'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -9415,7 +9656,7 @@ function bnGo(tab){
 
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scPlinko','scFootball'];
+    'scMines','scDice','scPlinko','scFootball','scRummyLobby','scRummy'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -9719,6 +9960,855 @@ function fsRenderHist(){
     d.textContent = o==='h'?'L':o==='a'?'V':'X';
     el.appendChild(d);
   });
+}
+
+// ════════════════════════════════════════════════════════
+//  RUMMY — Motor completo
+// ════════════════════════════════════════════════════════
+const RM_PATH = 'casino-rummy';
+const RM_SUITS = ['spades','hearts','diamonds','clubs'];
+const RM_RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const RM_SUIT_SYM = {spades:'♠',hearts:'♥',diamonds:'♦',clubs:'♣'};
+const RM_RANK_VAL = {A:1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,J:11,Q:12,K:13};
+
+let rmRoomCode='', rmIsHost=false, rmSoloMode=false;
+let rmRoomRef=null, rmCurrentRoom=null;
+let rmMyHand=[], rmGroups=[[],[],[]], rmSelectedIdx=null;
+let rmBet=50, rmPhase='idle'; // idle|waiting|myturn|oppturn|done
+let rmHasTakenCard=false;
+let rmDeclGroups=[[],[],[]]; // for declare modal
+let rmDeclSelected=null, rmDeclSelectedSrc=null; // {src:'hand'|'g0'|'g1'|'g2', idx}
+let rmBotTimers=[];
+
+// ── Helpers ─────────────────────────────────────
+function rmMakeDeck(){
+  const deck=[];
+  for(let d=0;d<2;d++){
+    RM_SUITS.forEach(s=>{ RM_RANKS.forEach(r=>{ deck.push({suit:s,rank:r,id:`${s}_${r}_${d}`}); }); });
+    deck.push({suit:'joker',rank:'JK',id:`joker_${d}a`});
+    deck.push({suit:'joker',rank:'JK',id:`joker_${d}b`});
+  }
+  return deck;
+}
+function rmShuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+function rmCardLabel(c){ return c.rank==='JK'?'🃏':`${c.rank}${RM_SUIT_SYM[c.suit]}`; }
+function rmCardEl(c, small=false){
+  const div=document.createElement('div');
+  div.className=`${small?'rm-mini-card':'rm-card'} ${c.rank==='JK'?'joker':c.suit}`;
+  if(small){
+    div.textContent=rmCardLabel(c);
+  } else {
+    div.innerHTML=`<div class="rm-card-top">${c.rank==='JK'?'🃏':c.rank}<br>${c.rank==='JK'?'':RM_SUIT_SYM[c.suit]}</div><div class="rm-card-suit">${c.rank==='JK'?'🃏':RM_SUIT_SYM[c.suit]}</div><div class="rm-card-bot">${c.rank==='JK'?'🃏':c.rank}<br>${c.rank==='JK'?'':RM_SUIT_SYM[c.suit]}</div>`;
+  }
+  return div;
+}
+function rmGenCode(){ return Math.random().toString(36).substring(2,8).toUpperCase(); }
+
+// ── Validation ───────────────────────────────────
+function rmIsJoker(c){ return c.rank==='JK'; }
+
+function rmValidGroup(cards){
+  if(!cards||cards.length<3) return false;
+  const real=cards.filter(c=>!rmIsJoker(c));
+  const jokers=cards.filter(c=>rmIsJoker(c));
+  if(real.length===0) return false;
+
+  // Try same rank (set)
+  const setValid=(()=>{
+    const r=real[0].rank;
+    return real.every(c=>c.rank===r);
+  })();
+  if(setValid) return true;
+
+  // Try straight flush (run) — same suit, consecutive ranks
+  const runValid=(()=>{
+    if(real.length===0) return false;
+    const suit=real[0].suit;
+    if(!real.every(c=>c.suit===suit)) return false;
+    // Get rank values, handle Ace as both 1 and 14
+    const vals=real.map(c=>RM_RANK_VAL[c.rank]).sort((a,b)=>a-b);
+    // Fill jokers: check if the gap between min and max <= total cards-1
+    const span=vals[vals.length-1]-vals[0];
+    if(span>=cards.length) return false; // too wide even with jokers
+    // Check no duplicates in real cards
+    const uniqueVals=new Set(vals);
+    if(uniqueVals.size!==vals.length) return false;
+    // Check jokers can fill gaps
+    const gaps=[];
+    for(let i=1;i<vals.length;i++) for(let g=1;g<vals[i]-vals[i-1];g++) gaps.push(g);
+    if(gaps.length>jokers.length) return false;
+    // Also try Ace as 14
+    const highVals=real.map(c=>c.rank==='A'?14:RM_RANK_VAL[c.rank]).sort((a,b)=>a-b);
+    const highSpan=highVals[highVals.length-1]-highVals[0];
+    if(highSpan<cards.length){
+      const hgaps=[];
+      for(let i=1;i<highVals.length;i++) for(let g=1;g<highVals[i]-highVals[i-1];g++) hgaps.push(g);
+      if(hgaps.length<=jokers.length) return true;
+    }
+    return true;
+  })();
+  return runValid;
+}
+
+function rmCanDeclare(g0,g1,g2){
+  return g0.length===4&&g1.length===4&&g2.length===3&&
+    rmValidGroup(g0)&&rmValidGroup(g1)&&rmValidGroup(g2);
+}
+
+// ── Bot logic ────────────────────────────────────
+function rmBotThink(hand, discardTop){
+  // Score hand: try to find best grouping, decide what to take and what to discard
+  // Strategy: identify partial groups, complete them
+  const rankGroups={}, suitRuns={};
+  hand.forEach(c=>{
+    if(rmIsJoker(c)) return;
+    (rankGroups[c.rank]=rankGroups[c.rank]||[]).push(c);
+    (suitRuns[c.suit]=suitRuns[c.suit]||[]).push(c);
+  });
+
+  // Find which card is least useful (discard candidate)
+  const scores=hand.map((c,i)=>{
+    if(rmIsJoker(c)) return {i,score:100};
+    let score=0;
+    score+=(rankGroups[c.rank]||[]).length*10;
+    const sameSuit=(suitRuns[c.suit]||[]).map(x=>RM_RANK_VAL[x.rank]).sort((a,b)=>a-b);
+    const myVal=RM_RANK_VAL[c.rank];
+    // adjacency
+    if(sameSuit.includes(myVal-1)||sameSuit.includes(myVal+1)||sameSuit.includes(myVal-2)||sameSuit.includes(myVal+2)) score+=6;
+    return {i,score};
+  });
+  scores.sort((a,b)=>a.score-b.score);
+  const discardIdx=scores[0].i;
+
+  // Should we take the discard?
+  let takeDiscard=false;
+  if(discardTop&&!rmIsJoker(discardTop)){
+    const testHand=[...hand,discardTop];
+    const testRG={};
+    testHand.forEach(c=>{ if(!rmIsJoker(c)) (testRG[c.rank]=testRG[c.rank]||[]).push(c); });
+    if((testRG[discardTop.rank]||[]).length>=3) takeDiscard=true;
+    // Check if it extends a run
+    const sameSuit=hand.filter(c=>!rmIsJoker(c)&&c.suit===discardTop.suit).map(c=>RM_RANK_VAL[c.rank]);
+    const dv=RM_RANK_VAL[discardTop.rank];
+    if(sameSuit.filter(v=>Math.abs(v-dv)<=2).length>=2) takeDiscard=true;
+  }
+
+  return {discardIdx, takeDiscard};
+}
+
+function rmBotBestArrangement(hand){
+  // Try to find valid 4+4+3 from bot hand (brute-force with heuristics)
+  // Separate jokers
+  const jokers=hand.filter(rmIsJoker);
+  const real=hand.filter(c=>!rmIsJoker(c));
+
+  // Try sets first then runs
+  function tryArrange(cards, jk, sizes){
+    if(sizes.length===0) return cards.length===0?[]:null;
+    const sz=sizes[0];
+    const rest=sizes.slice(1);
+    // Try all combinations of sz from cards
+    const combos=getCombinations(cards,sz);
+    for(const combo of combos){
+      // Check if valid with jokers available
+      for(let jUsed=0;jUsed<=jk;jUsed++){
+        if(combo.length+jUsed===sz){
+          const fakeJokers=Array.from({length:jUsed},(_,i)=>({suit:'joker',rank:'JK',id:'jk_tmp_'+i}));
+          const grp=[...combo,...fakeJokers];
+          if(grp.length===sz&&rmValidGroup(grp)){
+            const remaining=cards.filter(c=>!combo.includes(c));
+            const sub=tryArrange(remaining,jk-jUsed,rest);
+            if(sub!==null) return [grp,...sub];
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  function getCombinations(arr, k){
+    if(k===0) return [[]];
+    if(arr.length<k) return [];
+    const [first,...rest]=arr;
+    return [...getCombinations(rest,k-1).map(c=>[first,...c]), ...getCombinations(rest,k)];
+  }
+
+  // Try 4+4+3 and 4+3+4 and 3+4+4
+  for(const sizes of [[4,4,3],[4,3,4],[3,4,4]]){
+    const res=tryArrange(real, jokers.length, sizes);
+    if(res) return res;
+  }
+  return null;
+}
+
+// ── Lobby & Room ─────────────────────────────────
+function rmShowLobby(){
+  ['scLobby','scGameSelect','scRummy'].forEach(id=>hide(id));
+  show('scRummyLobby'); bnShow();
+  document.getElementById('gsBal') && (document.getElementById('gsBal').textContent=myBal.toLocaleString());
+}
+
+function rmSelectBet(v){
+  rmBet=v;
+  document.querySelectorAll('.rm-bet-opt').forEach(el=>{
+    el.classList.toggle('sel', parseInt(el.dataset.v)===v);
+  });
+}
+
+async function rmCreateRoom(){
+  if(!myId.startsWith('g_')){ toast('⚠️ Necesitas cuenta Google'); return; }
+  if(myBal<rmBet){ toast('⚠️ Saldo insuficiente para apostar $'+rmBet); return; }
+  if(!db) return;
+  const code=rmGenCode();
+  rmRoomCode=code; rmIsHost=true; rmSoloMode=false;
+  const playerData={uid:myId,name:myName,color:myColor||'#9b59b6',bal:myBal,ready:false};
+  await db.ref(`${RM_PATH}/${code}`).set({
+    status:'lobby', bet:rmBet, host:myId,
+    createdAt:Date.now(), round:0,
+    players:{[myId]:playerData}
+  });
+  db.ref(`${RM_PATH}/${code}/players/${myId}`).onDisconnect().remove();
+  toast('✦ Sala creada: '+code, 3000);
+  rmListenRoom(code);
+  hide('scRummyLobby'); show('scRummy'); bnSync('scRummy');
+  rmRenderWaiting();
+}
+
+async function rmJoinRoom(){
+  if(!myId.startsWith('g_')){ toast('⚠️ Necesitas cuenta Google'); return; }
+  const code=(document.getElementById('rmJoinInput').value||'').trim().toUpperCase();
+  if(code.length<4){ toast('⚠️ Código inválido'); return; }
+  if(!db) return;
+  const snap=await db.ref(`${RM_PATH}/${code}`).once('value');
+  if(!snap.exists()){ toast('❌ Sala no encontrada'); return; }
+  const room=snap.val();
+  if(room.status!=='lobby'){ toast('❌ La partida ya comenzó'); return; }
+  const count=Object.keys(room.players||{}).length;
+  if(count>=4){ toast('❌ Sala llena (máx 4 jugadores)'); return; }
+  if(myBal<room.bet){ toast('⚠️ Saldo insuficiente ($'+room.bet+' requeridos)'); return; }
+  rmBet=room.bet; rmRoomCode=code; rmIsHost=false; rmSoloMode=false;
+  await db.ref(`${RM_PATH}/${code}/players/${myId}`).set({uid:myId,name:myName,color:myColor||'#9b59b6',bal:myBal,ready:false});
+  db.ref(`${RM_PATH}/${code}/players/${myId}`).onDisconnect().remove();
+  rmListenRoom(code);
+  hide('scRummyLobby'); show('scRummy'); bnSync('scRummy');
+}
+
+function rmListenRoom(code){
+  if(rmRoomRef) rmRoomRef.off();
+  rmRoomRef=db.ref(`${RM_PATH}/${code}`);
+  rmRoomRef.on('value',snap=>{
+    if(!snap.exists()){ toast('La sala fue cerrada'); rmLeave(); return; }
+    rmCurrentRoom=snap.val();
+    rmHandleRoomUpdate(rmCurrentRoom);
+  });
+}
+
+function rmHandleRoomUpdate(room){
+  if(!room) return;
+  document.getElementById('rmRoomInfo').textContent = rmSoloMode?'Solo vs Bot':`Sala: ${rmRoomCode} · $${room.bet||rmBet}`;
+  document.getElementById('rmPot').textContent = ((room.bet||rmBet)*Object.keys(room.players||{}).length).toLocaleString();
+
+  if(room.status==='lobby'){ rmRenderWaiting(room); return; }
+  if(room.status==='playing'){ rmRenderGame(room); return; }
+  if(room.status==='done'){ rmRenderDone(room); return; }
+}
+
+function rmRenderWaiting(room){
+  const players=room?Object.values(room.players||{}):[{name:myName}];
+  const count=players.length;
+  document.getElementById('rmStatusMsg').textContent=`Esperando jugadores... (${count}/4) — Mínimo 2`;
+  document.getElementById('rmHandEl').innerHTML='';
+  document.getElementById('rmOpponents').innerHTML='';
+  document.getElementById('rmDeckBtn').style.opacity='.3';
+  document.getElementById('rmDiscardPile').style.opacity='.3';
+  // Show player list in status
+  const names=players.map(p=>p.name.split(' ')[0]).join(', ');
+  document.getElementById('rmStatusMsg').innerHTML=
+    `<div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;">Sala: <b style="color:#9b59b6">${rmRoomCode}</b> · Comparte el código</div>`+
+    `<div>${names}</div>`+
+    (rmIsHost&&count>=2?`<button onclick="rmHostStart()" style="margin-top:8px;padding:8px 24px;background:linear-gradient(135deg,#8e44ad,#6c3483);border:none;border-radius:12px;color:#fff;font-weight:900;font-size:13px;cursor:pointer;">▶ Iniciar partida</button>`:'');
+  document.getElementById('rmDiscardBtn').disabled=true;
+  document.getElementById('rmDeclareBtn').disabled=true;
+}
+
+async function rmHostStart(){
+  const room=rmCurrentRoom;
+  if(!room) return;
+  const pids=Object.keys(room.players||{});
+  if(pids.length<2){ toast('⚠️ Mínimo 2 jugadores'); return; }
+
+  // Collect bets
+  const betAmt=room.bet||rmBet;
+  const updates={};
+  pids.forEach(pid=>{ updates[`${RM_PATH}/${rmRoomCode}/players/${pid}/paid`]=betAmt; });
+
+  // Build & shuffle deck
+  const deck=rmShuffle(rmMakeDeck());
+  // Deal 10 cards to each player
+  const hands={};
+  pids.forEach(pid=>{ hands[pid]=deck.splice(0,10); });
+  // First discard
+  const firstDiscard=deck.splice(0,1);
+
+  updates[`${RM_PATH}/${rmRoomCode}/status`]='playing';
+  updates[`${RM_PATH}/${rmRoomCode}/deck`]=deck;
+  updates[`${RM_PATH}/${rmRoomCode}/discardPile`]=firstDiscard;
+  updates[`${RM_PATH}/${rmRoomCode}/turnOrder`]=pids;
+  updates[`${RM_PATH}/${rmRoomCode}/currentTurn`]=pids[0];
+  updates[`${RM_PATH}/${rmRoomCode}/round`]=1;
+  updates[`${RM_PATH}/${rmRoomCode}/hasTaken`]=false;
+  pids.forEach(pid=>{ updates[`${RM_PATH}/${rmRoomCode}/players/${pid}/hand`]=hands[pid]; });
+
+  await db.ref().update(updates);
+}
+
+function rmRenderGame(room){
+  if(!room) return;
+  const myP=room.players?.[myId];
+  if(!myP) return;
+  rmMyHand=myP.hand||[];
+
+  const isMyTurn=room.currentTurn===myId;
+  rmHasTakenCard=room.hasTaken||false;
+  rmPhase=isMyTurn?(rmHasTakenCard?'myturn_discard':'myturn_take'):'oppturn';
+
+  // Deck & discard
+  const deck=room.deck||[];
+  const discard=room.discardPile||[];
+  const discardTop=discard[discard.length-1]||null;
+
+  document.getElementById('rmDeckCount').textContent=deck.length;
+  document.getElementById('rmDeckBtn').style.opacity=isMyTurn&&!rmHasTakenCard?'1':'.4';
+  document.getElementById('rmDeckBtn').style.cursor=isMyTurn&&!rmHasTakenCard?'pointer':'default';
+
+  const dp=document.getElementById('rmDiscardPile');
+  const dt=document.getElementById('rmDiscardTop');
+  if(discardTop){
+    dt.textContent=rmCardLabel(discardTop);
+    dp.style.background=discardTop.suit==='joker'?'linear-gradient(135deg,#f8f0ff,#e8d5ff)':(discardTop.suit==='hearts'||discardTop.suit==='diamonds'?'#fff8f8':'#f8f8ff');
+    dp.style.color=discardTop.suit==='hearts'||discardTop.suit==='diamonds'?'#c0392b':'#1a1a2e';
+    dp.className='rm-discard-pile'+(isMyTurn&&!rmHasTakenCard?' can-take':'');
+    dp.style.cursor=isMyTurn&&!rmHasTakenCard?'pointer':'default';
+  } else { dt.textContent='—'; dp.className='rm-discard-pile'; }
+
+  // Status
+  if(isMyTurn){
+    document.getElementById('rmStatusMsg').textContent = rmHasTakenCard?'✅ Tomaste carta — ahora descarta o declara':'👆 Tu turno — toma del mazo o el descarte';
+  } else {
+    const turnName=(room.players?.[room.currentTurn]?.name||'Alguien').split(' ')[0];
+    document.getElementById('rmStatusMsg').textContent=`⏳ Turno de ${turnName}...`;
+  }
+
+  // Wait overlay
+  document.getElementById('rmWaitOverlay').style.display=isMyTurn?'none':'flex';
+
+  // Buttons
+  document.getElementById('rmDiscardBtn').disabled=!(isMyTurn&&rmHasTakenCard&&rmSelectedIdx!==null);
+  document.getElementById('rmDeclareBtn').disabled=!(isMyTurn&&rmHasTakenCard);
+
+  // Render my hand
+  rmRenderHand();
+
+  // Render opponents
+  const opEl=document.getElementById('rmOpponents');
+  opEl.innerHTML='';
+  Object.entries(room.players||{}).forEach(([pid,p])=>{
+    if(pid===myId) return;
+    const isActive=room.currentTurn===pid;
+    const div=document.createElement('div');
+    div.className='rm-opponent'+(isActive?' active-turn':'');
+    const av=document.createElement('div');
+    av.className='rm-opp-avatar';
+    av.style.background=p.color||'#9b59b6';
+    av.textContent=(p.name||'?')[0].toUpperCase();
+    div.appendChild(av);
+    const nm=document.createElement('div'); nm.className='rm-opp-name'; nm.textContent=p.name||'Jugador'; div.appendChild(nm);
+    const cr=document.createElement('div'); cr.className='rm-opp-cards'; cr.textContent=(p.hand||[]).length+' cartas'; div.appendChild(cr);
+    opEl.appendChild(div);
+  });
+
+  // Bot turn
+  if(rmSoloMode&&room.currentTurn==='bot'&&!room.botThinking){
+    db.ref(`${RM_PATH}/${rmRoomCode}/botThinking`).set(true);
+    setTimeout(()=>rmBotTurn(room), 1200+Math.random()*800);
+  }
+}
+
+function rmRenderHand(){
+  const el=document.getElementById('rmHandEl');
+  el.innerHTML=''; document.getElementById('rmHandCount').textContent=rmMyHand.length;
+  rmMyHand.forEach((c,i)=>{
+    const card=rmCardEl(c);
+    if(i===rmSelectedIdx) card.classList.add('selected');
+    card.onclick=()=>rmSelectCard(i);
+    el.appendChild(card);
+  });
+  // Re-render groups (in case cards were moved)
+  rmRenderGroups();
+}
+
+function rmRenderGroups(){
+  const sizes=[4,4,3];
+  const labels=['G1 (4)','G2 (4)','G3 (3)'];
+  [0,1,2].forEach(gi=>{
+    const slot=document.getElementById('rmG'+gi);
+    if(!slot) return;
+    const cards=rmGroups[gi];
+    const valid=rmValidGroup(cards);
+    slot.className='rm-group-slot'+(cards.length>0?(valid?' valid':' invalid'):'');
+    // Clear and re-add label
+    slot.innerHTML=`<div class="rm-group-slot-lbl">${labels[gi]}</div>`;
+    cards.forEach((c,ci)=>{
+      const mc=rmCardEl(c,true);
+      mc.onclick=(e)=>{ e.stopPropagation(); rmMoveGroupToHand(gi,ci); };
+      slot.appendChild(mc);
+    });
+  });
+  // Update declare button label based on groups validity
+  const allValid=rmCanDeclare(rmGroups[0],rmGroups[1],rmGroups[2]);
+  const decBtn=document.getElementById('rmDeclareBtn');
+  if(decBtn&&rmPhase==='myturn_discard'){
+    decBtn.style.background=allValid?'linear-gradient(135deg,#f0d060,#d4a017)':'linear-gradient(135deg,#8e44ad,#6c3483)';
+    decBtn.style.color=allValid?'#1a1000':'#fff';
+    decBtn.textContent=allValid?'🏆 Declarar':'📋 Organizar';
+  }
+  document.getElementById('rmGroupsValid').textContent=
+    rmGroups.some(g=>g.length>0)?(rmCanDeclare(rmGroups[0],rmGroups[1],rmGroups[2])?'✅ ¡Listo para declarar!':'Arrastra cartas seleccionadas'):'Selecciona cartas y toca un grupo';
+}
+
+function rmSelectCard(i){
+  if(rmPhase!=='myturn_discard') return;
+  rmSelectedIdx=rmSelectedIdx===i?null:i;
+  rmRenderHand();
+  document.getElementById('rmDiscardBtn').disabled=!(rmSelectedIdx!==null&&rmHasTakenCard);
+}
+
+function rmMoveToGroup(gi){
+  if(rmSelectedIdx===null) return;
+  if(rmGroups[gi].length>=(gi===2?3:4)){ toast('⚠️ Grupo lleno'); return; }
+  const card=rmMyHand.splice(rmSelectedIdx,1)[0];
+  rmGroups[gi].push(card);
+  rmSelectedIdx=null;
+  rmRenderHand();
+  document.getElementById('rmDiscardBtn').disabled=true;
+}
+
+function rmMoveGroupToHand(gi, ci){
+  const card=rmGroups[gi].splice(ci,1)[0];
+  rmMyHand.push(card);
+  rmRenderHand();
+}
+
+function rmSortHand(){
+  rmMyHand.sort((a,b)=>{
+    if(a.rank==='JK') return 1; if(b.rank==='JK') return -1;
+    if(a.suit!==b.suit) return RM_SUITS.indexOf(a.suit)-RM_SUITS.indexOf(b.suit);
+    return RM_RANK_VAL[a.rank]-RM_RANK_VAL[b.rank];
+  });
+  rmSelectedIdx=null; rmRenderHand();
+}
+
+// ── Card taking actions ───────────────────────────
+async function rmTakeDeck(){
+  if(rmPhase!=='myturn_take') return;
+  const room=rmCurrentRoom; if(!room) return;
+  let deck=[...(room.deck||[])];
+  let discard=[...(room.discardPile||[])];
+  if(deck.length===0){
+    if(discard.length<=1){ toast('⚠️ No hay cartas'); return; }
+    const top=discard.pop();
+    deck=rmShuffle([...discard]);
+    discard=[top];
+    toast('🔀 Mazo barajado',1500);
+  }
+  const card=deck.pop();
+  rmMyHand.push(card);
+  playTone(440,.05,'sine',.08);
+  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
+    deck, [`players/${myId}/hand`]:rmMyHand, hasTaken:true
+  });
+  rmHasTakenCard=true; rmPhase='myturn_discard';
+  rmRenderHand();
+  document.getElementById('rmDeckBtn').style.opacity='.4';
+  document.getElementById('rmDiscardBtn').disabled=true;
+  document.getElementById('rmDeclareBtn').disabled=false;
+}
+
+async function rmTakeDiscard(){
+  if(rmPhase!=='myturn_take') return;
+  const room=rmCurrentRoom; if(!room) return;
+  const discard=[...(room.discardPile||[])];
+  if(!discard.length) return;
+  const card=discard.pop();
+  rmMyHand.push(card);
+  playTone(520,.05,'sine',.08);
+  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
+    discardPile:discard, [`players/${myId}/hand`]:rmMyHand, hasTaken:true
+  });
+  rmHasTakenCard=true; rmPhase='myturn_discard';
+  rmRenderHand();
+  document.getElementById('rmDiscardBtn').disabled=true;
+  document.getElementById('rmDeclareBtn').disabled=false;
+}
+
+async function rmDiscardSelected(){
+  if(rmSelectedIdx===null||!rmHasTakenCard) return;
+  const room=rmCurrentRoom; if(!room) return;
+  const card=rmMyHand.splice(rmSelectedIdx,1)[0];
+  rmSelectedIdx=null;
+  const discard=[...(room.discardPile||[]),card];
+  // Advance turn
+  const order=room.turnOrder||[];
+  const idx=order.indexOf(myId);
+  const nextId=order[(idx+1)%order.length];
+  playTone(330,.07,'sine',.07);
+  // Put all group cards back in hand for Firebase (groups are local only)
+  const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
+  rmGroups=[[],[],[]];
+  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
+    discardPile:discard, [`players/${myId}/hand`]:allCards,
+    currentTurn:nextId, hasTaken:false, botThinking:false
+  });
+  rmPhase='oppturn';
+  rmRenderHand();
+}
+
+// ── Declare ───────────────────────────────────────
+function rmOpenDeclare(){
+  if(!rmHasTakenCard){ toast('⚠️ Primero toma una carta'); return; }
+  // Populate declare modal with current hand + groups merged back
+  rmDeclGroups=[...rmGroups[0].map(c=>({...c}))].length>0
+    ?[rmGroups[0].slice(),rmGroups[1].slice(),rmGroups[2].slice()]
+    :[[],[],[]];
+  // Hand = local hand (groups not yet merged)
+  document.getElementById('rmDeclareModal').style.display='flex';
+  rmRenderDeclareModal();
+}
+
+function rmCloseDeclare(){
+  document.getElementById('rmDeclareModal').style.display='none';
+}
+
+function rmRenderDeclareModal(){
+  const hand=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
+  // Show unassigned cards as hand in declare modal
+  const assigned=new Set([...rmDeclGroups[0],...rmDeclGroups[1],...rmDeclGroups[2]].map(c=>c.id));
+  const unassigned=hand.filter(c=>!assigned.has(c.id));
+
+  [0,1,2].forEach(gi=>{
+    const el=document.getElementById('rmDeclG'+gi);
+    el.innerHTML='';
+    rmDeclGroups[gi].forEach((c,ci)=>{
+      const div=rmCardEl(c,true);
+      div.style.cursor='pointer';
+      div.onclick=()=>{ rmDeclGroups[gi].splice(ci,1); rmRenderDeclareModal(); };
+      el.appendChild(div);
+    });
+    // Placeholder click area
+    const ph=document.createElement('div');
+    ph.style.cssText='min-width:30px;min-height:40px;flex:1;cursor:pointer;';
+    ph.onclick=()=>{
+      if(rmDeclSelected===null) return;
+      const {src,idx,id}=rmDeclSelected;
+      const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
+      const card=allCards.find(c=>c.id===id);
+      if(!card) return;
+      // Remove from source group if already placed
+      [0,1,2].forEach(g=>{ rmDeclGroups[g]=rmDeclGroups[g].filter(c=>c.id!==id); });
+      const maxSize=[4,4,3][gi];
+      if(rmDeclGroups[gi].length>=maxSize){ toast('⚠️ Grupo lleno'); rmDeclSelected=null; rmRenderDeclareModal(); return; }
+      rmDeclGroups[gi].push(card);
+      rmDeclSelected=null; rmRenderDeclareModal();
+    };
+    el.appendChild(ph);
+  });
+
+  // Hand
+  const handEl=document.getElementById('rmDeclHand');
+  handEl.innerHTML='';
+  const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
+  allCards.forEach((c,i)=>{
+    const inGroup=[...rmDeclGroups[0],...rmDeclGroups[1],...rmDeclGroups[2]].some(x=>x.id===c.id);
+    const div=rmCardEl(c,true);
+    div.style.opacity=inGroup?'.3':'1';
+    div.style.cursor='pointer';
+    if(rmDeclSelected&&rmDeclSelected.id===c.id) div.style.outline='2px solid #9b59b6';
+    div.onclick=()=>{
+      if(inGroup){ // remove from group
+        [0,1,2].forEach(g=>{ rmDeclGroups[g]=rmDeclGroups[g].filter(x=>x.id!==c.id); });
+        rmDeclSelected=null;
+      } else {
+        rmDeclSelected={id:c.id};
+      }
+      rmRenderDeclareModal();
+    };
+    handEl.appendChild(div);
+  });
+
+  // Validate
+  const v0=rmDeclGroups[0].length===4&&rmValidGroup(rmDeclGroups[0]);
+  const v1=rmDeclGroups[1].length===4&&rmValidGroup(rmDeclGroups[1]);
+  const v2=rmDeclGroups[2].length===3&&rmValidGroup(rmDeclGroups[2]);
+  const allValid=v0&&v1&&v2;
+  const totalAssigned=rmDeclGroups[0].length+rmDeclGroups[1].length+rmDeclGroups[2].length;
+  const totalCards=allCards.length;
+
+  const msg=document.getElementById('rmDeclValidMsg');
+  const confirm=document.getElementById('rmDeclConfirmBtn');
+  if(allValid&&totalAssigned===totalCards){
+    msg.style.color='#2ecc71'; msg.textContent='✅ ¡Combinación válida! Listo para declarar';
+    confirm.disabled=false;
+  } else {
+    const issues=[];
+    if(!v0) issues.push(`G1:${rmDeclGroups[0].length}/4${rmDeclGroups[0].length===4?' ❌':''}`);
+    if(!v1) issues.push(`G2:${rmDeclGroups[1].length}/4${rmDeclGroups[1].length===4?' ❌':''}`);
+    if(!v2) issues.push(`G3:${rmDeclGroups[2].length}/3${rmDeclGroups[2].length===3?' ❌':''}`);
+    if(totalAssigned<totalCards) issues.push(`${totalCards-totalAssigned} sin asignar`);
+    msg.style.color='rgba(255,255,255,.4)'; msg.textContent=issues.join(' · ')||'Asigna todas las cartas';
+    confirm.disabled=true;
+  }
+}
+
+async function rmConfirmDeclare(){
+  const room=rmCurrentRoom; if(!room) return;
+  // Final validation
+  if(!rmCanDeclare(rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2])){ toast('❌ Grupos inválidos'); return; }
+  rmCloseDeclare();
+
+  // Collect bet from all players
+  const players=room.players||{};
+  const pids=Object.keys(players);
+  const betAmt=room.bet||rmBet;
+  const totalPot=betAmt*pids.length;
+
+  // Deduct from all (already paid on join — no double deduction)
+  // Winner gets pot
+  myBal+=totalPot; saveLocal(); updateRanking(); mgUpdateBal('mnBal');
+  mlRecordGameStat('rummy',true,totalPot-betAmt);
+
+  // Write win to Firebase
+  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
+    status:'done', winner:myId, winnerName:myName,
+    winGroups:[rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2]],
+    pot:totalPot
+  });
+
+  // Deduct bet from other players locally (they handle their own)
+  coinBurst(totalPot-betAmt, window.innerWidth/2, 200);
+  bigBurst(); sfxWin();
+}
+
+function rmRenderDone(room){
+  if(!room) return;
+  const isWinner=room.winner===myId;
+  const pot=room.pot||0;
+  const betAmt=room.bet||rmBet;
+
+  if(!isWinner){
+    // Deduct bet
+    myBal=Math.max(0,myBal-betAmt); saveLocal(); updateRanking();
+    mlRecordGameStat('rummy',false,-betAmt);
+    toast(`🏆 ${room.winnerName||'Alguien'} declaró victoria. Perdiste $${betAmt}`, 4000);
+  }
+
+  // Show win overlay
+  const table=document.getElementById('rmTable');
+  let overlay=document.getElementById('rmWinOverlay');
+  if(!overlay){
+    overlay=document.createElement('div'); overlay.id='rmWinOverlay';
+    overlay.className='rm-win-overlay'; table.appendChild(overlay);
+  }
+  const groups=room.winGroups||[];
+  overlay.innerHTML=`
+    <div class="rm-win-title">${isWinner?'🏆 ¡GANASTE!':'😔 '+escHtml(room.winnerName||'Jugador')+' ganó'}</div>
+    <div class="rm-win-sub">${isWinner?'+$'+(pot-betAmt)+' ganados':'−$'+betAmt+' perdidos'}</div>
+    <div class="rm-win-groups">${groups.map((g,i)=>`
+      <div class="rm-win-group">
+        <div class="rm-win-group-lbl">GRUPO ${i+1} ${rmValidGroup(g)?'✅':''}</div>
+        ${g.map(c=>`<div class="rm-mini-card ${c.rank==='JK'?'joker':c.suit}">${rmCardLabel(c)}</div>`).join('')}
+      </div>`).join('')}
+    </div>
+    <button onclick="rmPlayAgain()" style="padding:14px 32px;background:linear-gradient(135deg,#8e44ad,#6c3483);border:none;border-radius:16px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;margin-top:6px;">🔄 Jugar otra vez</button>
+    <button onclick="rmLeave()" style="padding:10px 24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;">Salir</button>`;
+  overlay.style.display='flex';
+}
+
+async function rmPlayAgain(){
+  const overlay=document.getElementById('rmWinOverlay');
+  if(overlay) overlay.style.display='none';
+  if(rmSoloMode){ rmStartSolo(); return; }
+  if(!rmIsHost) return;
+  // Reset room to lobby
+  const room=rmCurrentRoom; if(!room) return;
+  const pids=Object.keys(room.players||{});
+  const updates={};
+  updates[`${RM_PATH}/${rmRoomCode}/status`]='lobby';
+  updates[`${RM_PATH}/${rmRoomCode}/winner`]=null;
+  updates[`${RM_PATH}/${rmRoomCode}/winGroups`]=null;
+  updates[`${RM_PATH}/${rmRoomCode}/deck`]=null;
+  updates[`${RM_PATH}/${rmRoomCode}/discardPile`]=null;
+  updates[`${RM_PATH}/${rmRoomCode}/hasTaken`]=false;
+  updates[`${RM_PATH}/${rmRoomCode}/botThinking`]=false;
+  pids.forEach(pid=>{ updates[`${RM_PATH}/${rmRoomCode}/players/${pid}/hand`]=null; });
+  await db.ref().update(updates);
+  rmGroups=[[],[],[]]; rmSelectedIdx=null;
+}
+
+function rmLeave(){
+  rmBotTimers.forEach(clearTimeout); rmBotTimers=[];
+  if(!rmSoloMode&&db&&rmRoomCode){
+    db.ref(`${RM_PATH}/${rmRoomCode}/players/${myId}`).remove();
+  }
+  if(rmRoomRef){ rmRoomRef.off(); rmRoomRef=null; }
+  rmRoomCode=''; rmIsHost=false; rmCurrentRoom=null;
+  rmMyHand=[]; rmGroups=[[],[],[]]; rmSelectedIdx=null; rmPhase='idle';
+  hide('scRummy'); rmShowLobby();
+}
+
+// ── Solo mode ─────────────────────────────────────
+function rmStartSolo(){
+  if(myBal<rmBet){ toast('⚠️ Saldo insuficiente'); return; }
+  rmSoloMode=true; rmIsHost=true;
+  rmRoomCode='SOLO'; rmBotTimers=[];
+  rmGroups=[[],[],[]]; rmSelectedIdx=null;
+  hide('scRummyLobby'); show('scRummy'); bnSync('scRummy');
+
+  const deck=rmShuffle(rmMakeDeck());
+  const myHand=deck.splice(0,10);
+  const botHand=deck.splice(0,10);
+  const firstDiscard=deck.splice(0,1);
+
+  // Simulate Firebase room locally
+  rmCurrentRoom={
+    status:'playing', bet:rmBet, host:myId,
+    players:{[myId]:{uid:myId,name:myName,color:myColor||'#9b59b6',hand:myHand},
+             bot:{uid:'bot',name:'🤖 Bot',color:'#e74c3c',hand:botHand}},
+    deck, discardPile:firstDiscard,
+    turnOrder:[myId,'bot'], currentTurn:myId,
+    hasTaken:false, botThinking:false, round:1
+  };
+  rmHandleRoomUpdate(rmCurrentRoom);
+  toast('🃏 Partida vs Bot — ¡Empieza tú!',2000);
+}
+
+// Solo mode: local state patch instead of Firebase
+function rmLocalUpdate(patch){
+  Object.assign(rmCurrentRoom, patch);
+  rmHandleRoomUpdate(rmCurrentRoom);
+}
+
+async function rmTakeDeckSolo(){
+  if(!rmSoloMode){ return rmTakeDeck(); }
+  if(rmPhase!=='myturn_take') return;
+  let deck=[...rmCurrentRoom.deck];
+  let discard=[...rmCurrentRoom.discardPile];
+  if(!deck.length){
+    if(discard.length<=1){ toast('⚠️ No hay cartas'); return; }
+    const top=discard.pop(); deck=rmShuffle([...discard]); discard=[top];
+    toast('🔀 Mazo barajado',1500);
+  }
+  const card=deck.pop();
+  rmMyHand.push(card);
+  playTone(440,.05,'sine',.08);
+  rmLocalUpdate({deck, [`players`]:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:rmMyHand}}, hasTaken:true});
+}
+
+async function rmTakeDiscardSolo(){
+  if(!rmSoloMode){ return rmTakeDiscard(); }
+  if(rmPhase!=='myturn_take') return;
+  const discard=[...rmCurrentRoom.discardPile];
+  if(!discard.length) return;
+  const card=discard.pop();
+  rmMyHand.push(card);
+  playTone(520,.05,'sine',.08);
+  rmLocalUpdate({discardPile:discard, players:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:rmMyHand}}, hasTaken:true});
+}
+
+// Override take functions to route through solo
+const _rmTakeDeckOrig=rmTakeDeck, _rmTakeDiscardOrig=rmTakeDiscard;
+// eslint-disable-next-line no-func-assign
+rmTakeDeck=function(){ if(rmSoloMode) rmTakeDeckSolo(); else _rmTakeDeckOrig(); };
+// eslint-disable-next-line no-func-assign
+rmTakeDiscard=function(){ if(rmSoloMode) rmTakeDiscardSolo(); else _rmTakeDiscardOrig(); };
+
+async function rmDiscardSelectedSolo(){
+  if(!rmSoloMode) return;
+  if(rmSelectedIdx===null||!rmHasTakenCard) return;
+  const card=rmMyHand.splice(rmSelectedIdx,1)[0];
+  rmSelectedIdx=null;
+  const discard=[...rmCurrentRoom.discardPile, card];
+  const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
+  rmGroups=[[],[],[]];
+  rmLocalUpdate({
+    discardPile:discard,
+    players:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:allCards}},
+    currentTurn:'bot', hasTaken:false, botThinking:false
+  });
+  // Trigger bot
+  setTimeout(()=>rmBotTurnSolo(), 1000+Math.random()*700);
+}
+
+function rmBotTurnSolo(){
+  const room=rmCurrentRoom;
+  const botHand=[...(room.players?.bot?.hand||[])];
+  const discard=[...(room.discardPile||[])];
+  const discardTop=discard[discard.length-1]||null;
+  let deck=[...(room.deck||[])];
+
+  const {discardIdx, takeDiscard}=rmBotThink(botHand, discardTop);
+
+  // Take card
+  if(takeDiscard&&discard.length>0){
+    botHand.push(discard.pop());
+  } else {
+    if(!deck.length){
+      if(discard.length>1){ const top=discard.pop(); deck=rmShuffle([...discard]); discard.length=0; discard.push(top); }
+    }
+    if(deck.length) botHand.push(deck.pop());
+  }
+
+  // Check if bot can win
+  const botArr=rmBotBestArrangement(botHand);
+  if(botArr&&botArr.length===3&&rmCanDeclare(botArr[0],botArr[1],botArr[2])){
+    // Bot wins!
+    const pot=(room.bet||rmBet)*2;
+    myBal=Math.max(0,myBal-(room.bet||rmBet)); saveLocal(); updateRanking();
+    mlRecordGameStat('rummy',false,-(room.bet||rmBet));
+    rmLocalUpdate({
+      status:'done', winner:'bot', winnerName:'🤖 Bot',
+      winGroups:botArr, pot, players:{...room.players,bot:{...room.players.bot,hand:botHand}}, deck
+    });
+    return;
+  }
+
+  // Discard
+  let dIdx=discardIdx;
+  if(dIdx>=botHand.length) dIdx=botHand.length-1;
+  const discarded=botHand.splice(dIdx,1)[0];
+  discard.push(discarded);
+  playTone(330,.06,'sine',.06);
+  rmLocalUpdate({
+    discardPile:discard, deck,
+    players:{...room.players,bot:{...room.players.bot,hand:botHand}},
+    currentTurn:myId, hasTaken:false, botThinking:false
+  });
+}
+
+// Patch discard to use solo version
+const _rmDiscardOrig=rmDiscardSelected;
+// eslint-disable-next-line no-func-assign
+rmDiscardSelected=function(){ if(rmSoloMode) rmDiscardSelectedSolo(); else _rmDiscardOrig(); };
+
+// Bot turn for Firebase multiplayer (host runs it)
+async function rmBotTurn(room){
+  // Not used in current impl (no bot in multiplayer), placeholder for future
+}
+
+// ── Firebase cleanup on room player removal ──────
+function rmCheckRoomEmpty(room){
+  if(!room||!rmIsHost) return;
+  const pids=Object.keys(room.players||{});
+  if(pids.length===0&&db){ db.ref(`${RM_PATH}/${rmRoomCode}`).remove(); }
 }
 </script>
 
