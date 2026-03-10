@@ -1019,109 +1019,176 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .gs-card-rummy:hover{box-shadow:0 0 30px rgba(155,89,182,.2);}
 
 /* ════════ RUMMY ════════ */
+/* LOBBY */
 #scRummyLobby{background:radial-gradient(ellipse at 50% 20%,#12082a,#04080f);overflow-y:auto;justify-content:flex-start;}
-.rm-lobby-wrap{width:100%;max-width:420px;margin:0 auto;padding:20px 16px 90px;}
-.rm-logo{text-align:center;margin-bottom:24px;}
-.rm-logo-icon{font-size:52px;margin-bottom:6px;}
-.rm-logo-title{font-size:26px;font-weight:900;letter-spacing:4px;color:#fff;}
-.rm-logo-sub{font-size:9px;color:rgba(155,89,182,.7);letter-spacing:3px;margin-top:2px;}
-.rm-section{margin-bottom:14px;}
-.rm-section-title{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;font-weight:700;margin-bottom:8px;}
-.rm-btn{width:100%;padding:16px;border-radius:16px;border:none;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;transition:transform .12s,box-shadow .15s;}
-.rm-btn:active{transform:scale(.97);}
-.rm-btn-create{background:linear-gradient(135deg,#8e44ad,#6c3483);color:#fff;box-shadow:0 4px 20px rgba(142,68,173,.35);margin-bottom:10px;}
-.rm-btn-join{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;}
-.rm-input{width:100%;padding:14px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(155,89,182,.25);border-radius:14px;color:#fff;font-size:15px;font-weight:700;letter-spacing:3px;text-align:center;outline:none;box-sizing:border-box;margin-bottom:8px;}
-.rm-input::placeholder{color:rgba(255,255,255,.2);letter-spacing:1px;}
-.rm-bet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-.rm-bet-opt{padding:10px 6px;border-radius:12px;border:1px solid rgba(155,89,182,.25);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:13px;font-weight:700;text-align:center;cursor:pointer;transition:all .12s;}
-.rm-bet-opt.sel{background:rgba(142,68,173,.3);border-color:#8e44ad;color:#fff;box-shadow:0 0 12px rgba(142,68,173,.3);}
-.rm-solo-btn{width:100%;padding:14px;border-radius:16px;border:1px dashed rgba(155,89,182,.3);background:rgba(155,89,182,.05);color:rgba(255,255,255,.5);font-size:13px;font-weight:700;cursor:pointer;margin-top:6px;}
+.rm-lobby-wrap{width:100%;max-width:420px;margin:0 auto;padding:16px 16px 100px;}
+.rm-lobby-header{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.rm-lobby-back{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;padding:7px 14px;}
+.rm-logo-inline{display:flex;align-items:center;gap:8px;}
+.rm-logo-icon{font-size:28px;}
+.rm-logo-title{font-size:20px;font-weight:900;letter-spacing:3px;color:#fff;}
+.rm-logo-sub{font-size:8px;color:rgba(155,89,182,.6);letter-spacing:2px;}
+/* Bet chips */
+.rm-bet-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;font-weight:700;margin-bottom:10px;}
+.rm-bet-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:16px;}
+.rm-bet-chips::-webkit-scrollbar{display:none;}
+.rm-chip{width:56px;height:56px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:11px;font-weight:900;transition:transform .12s,box-shadow .15s;background:rgba(0,0,0,.4);}
+.rm-chip:active{transform:scale(.93);}
+.rm-chip.sel{transform:scale(1.1);box-shadow:0 0 18px currentColor;}
+.rm-chip[data-v="50"]{border-color:#27ae60;color:#2ecc71;}
+.rm-chip[data-v="100"]{border-color:#2980b9;color:#3498db;}
+.rm-chip[data-v="300"]{border-color:#d35400;color:#e67e22;}
+.rm-chip[data-v="500"]{border-color:#8e44ad;color:#9b59b6;}
+.rm-chip[data-v="1000"]{border-color:#c0392b;color:#e74c3c;}
+.rm-chip[data-v="2000"]{border-color:#b7950b;color:#f0d060;}
+/* Cards preview in lobby */
+.rm-lobby-cards{display:flex;justify-content:center;margin-bottom:20px;height:60px;position:relative;}
+.rm-lobby-card-prev{position:absolute;width:38px;height:54px;border-radius:6px;border:2px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#1a0535,#2d1060);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+/* Action cards */
+.rm-action-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.rm-action-card{border-radius:16px;padding:16px;cursor:pointer;transition:transform .12s;text-align:center;position:relative;overflow:hidden;}
+.rm-action-card:active{transform:scale(.97);}
+.rm-action-card.create{background:linear-gradient(135deg,rgba(142,68,173,.3),rgba(108,52,131,.2));border:1px solid rgba(142,68,173,.5);}
+.rm-action-card.solo{background:linear-gradient(135deg,rgba(46,204,113,.15),rgba(39,174,96,.08));border:1px solid rgba(46,204,113,.3);}
+.rm-action-card-icon{font-size:28px;margin-bottom:6px;}
+.rm-action-card-title{font-size:13px;font-weight:900;color:#fff;margin-bottom:3px;}
+.rm-action-card-sub{font-size:9px;color:rgba(255,255,255,.4);}
+/* Join section */
+.rm-join-row{display:flex;gap:8px;}
+.rm-join-input{flex:1;padding:14px;background:rgba(255,255,255,.06);border:1px solid rgba(155,89,182,.3);border-radius:14px;color:#fff;font-size:16px;font-weight:900;letter-spacing:4px;text-align:center;outline:none;}
+.rm-join-btn{padding:14px 20px;background:rgba(155,89,182,.25);border:1px solid rgba(155,89,182,.4);border-radius:14px;color:#9b59b6;font-weight:900;font-size:13px;cursor:pointer;}
+/* Room code panel */
+.rm-code-panel{background:rgba(142,68,173,.1);border:1px solid rgba(142,68,173,.3);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;display:none;}
+.rm-code-val{font-size:32px;font-weight:900;letter-spacing:8px;color:#fff;margin:8px 0;}
+.rm-code-copy{background:rgba(255,255,255,.08);border:none;border-radius:10px;color:rgba(255,255,255,.6);padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer;margin-top:4px;}
+.rm-players-list{margin-top:10px;}
+.rm-player-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.rm-player-row:last-child{border:none;}
+.rm-start-btn{width:100%;padding:16px;border-radius:16px;border:none;background:linear-gradient(135deg,#8e44ad,#6c3483);color:#fff;font-size:16px;font-weight:900;cursor:pointer;margin-top:12px;box-shadow:0 4px 20px rgba(142,68,173,.4);}
+.rm-start-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ── RUMMY GAME SCREEN ── */
-#scRummy{background:radial-gradient(ellipse at 50% 0%,#0d0520,#04080f);flex-direction:column;overflow:hidden;}
-.rm-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;flex-shrink:0;}
-.rm-topbar-title{font-size:11px;font-weight:900;letter-spacing:2px;color:rgba(155,89,182,.9);}
-.rm-topbar-info{font-size:10px;color:rgba(255,255,255,.4);}
-.rm-pot{font-size:12px;font-weight:900;color:#f0d060;}
-/* Table area */
-.rm-table{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
-/* Other players strip */
-.rm-opponents{display:flex;gap:8px;padding:6px 12px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
-.rm-opponents::-webkit-scrollbar{display:none;}
-.rm-opponent{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px 12px;min-width:90px;text-align:center;flex-shrink:0;transition:border-color .3s;}
-.rm-opponent.active-turn{border-color:#f0d060;box-shadow:0 0 12px rgba(240,208,96,.2);}
-.rm-opp-name{font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;margin:0 auto;}
-.rm-opp-cards{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;}
-.rm-opp-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;margin:0 auto 4px;}
-/* Center area: deck + discard */
-.rm-center{display:flex;align-items:center;justify-content:center;gap:20px;padding:10px 0;flex-shrink:0;}
-.rm-deck-pile{width:56px;height:80px;border-radius:8px;background:linear-gradient(135deg,#1a0535,#2d1060);border:2px solid rgba(155,89,182,.5);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;position:relative;box-shadow:3px 3px 0 rgba(0,0,0,.4);transition:transform .1s;}
-.rm-deck-pile:active{transform:scale(.95);}
-.rm-deck-count{position:absolute;bottom:3px;right:5px;font-size:8px;color:rgba(255,255,255,.4);font-weight:700;}
-.rm-discard-pile{width:56px;height:80px;border-radius:8px;border:2px solid rgba(240,208,96,.3);display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;position:relative;transition:transform .1s;box-shadow:3px 3px 0 rgba(0,0,0,.4);}
-.rm-discard-pile:active{transform:scale(.95);}
-.rm-discard-pile.can-take{border-color:#f0d060;box-shadow:0 0 14px rgba(240,208,96,.3);}
-.rm-center-label{text-align:center;margin-top:4px;font-size:8px;color:rgba(255,255,255,.3);letter-spacing:1px;}
-.rm-status-msg{text-align:center;font-size:11px;color:rgba(255,255,255,.5);padding:0 16px 6px;flex-shrink:0;min-height:18px;}
-/* My hand */
-.rm-my-hand-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:0 8px 4px;}
-.rm-hand-label{font-size:8px;color:rgba(255,255,255,.25);letter-spacing:2px;text-align:center;margin-bottom:4px;flex-shrink:0;}
-.rm-hand-scroll{flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;padding:4px 6px 8px;gap:4px;scrollbar-width:none;}
-.rm-hand-scroll::-webkit-scrollbar{display:none;}
-/* Cards */
-.rm-card{width:46px;height:68px;border-radius:7px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .12s,box-shadow .12s;font-size:13px;font-weight:900;line-height:1.1;border:2px solid transparent;user-select:none;}
-.rm-card:active{transform:translateY(-4px) scale(1.04);}
-.rm-card.selected{transform:translateY(-10px);border-color:#9b59b6;box-shadow:0 6px 18px rgba(155,89,182,.5);}
-.rm-card.hearts,.rm-card.diamonds{color:#c0392b;}
-.rm-card.spades,.rm-card.clubs{color:#1a1a2e;}
-.rm-card.joker{color:#8e44ad;background:linear-gradient(135deg,#f8f0ff,#e8d5ff);}
-.rm-card .rm-card-top{position:absolute;top:3px;left:4px;font-size:9px;font-weight:900;line-height:1;}
-.rm-card .rm-card-bot{position:absolute;bottom:3px;right:4px;font-size:9px;font-weight:900;line-height:1;transform:rotate(180deg);}
-.rm-card .rm-card-suit{font-size:20px;}
-/* Groups panel */
-.rm-groups{background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);padding:6px 10px 8px;flex-shrink:0;}
-.rm-groups-label{font-size:8px;color:rgba(255,255,255,.25);letter-spacing:2px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
-.rm-groups-row{display:flex;gap:6px;}
-.rm-group-slot{flex:1;min-height:52px;border:1px dashed rgba(155,89,182,.25);border-radius:10px;padding:4px;display:flex;flex-wrap:wrap;gap:2px;align-items:center;justify-content:center;transition:border-color .2s;position:relative;}
-.rm-group-slot.valid{border-color:#2ecc71;background:rgba(46,204,113,.05);}
-.rm-group-slot.invalid{border-color:#e74c3c;background:rgba(231,76,60,.05);}
-.rm-group-slot-lbl{position:absolute;top:2px;left:5px;font-size:7px;color:rgba(255,255,255,.2);font-weight:700;}
-.rm-mini-card{width:26px;height:36px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;cursor:pointer;flex-shrink:0;border:1px solid rgba(0,0,0,.1);}
-.rm-mini-card.hearts,.rm-mini-card.diamonds{color:#c0392b;}
-.rm-mini-card.spades,.rm-mini-card.clubs{color:#1a1a2e;}
-.rm-mini-card.joker{color:#8e44ad;background:linear-gradient(135deg,#f8f0ff,#e8d5ff);}
-/* Action bar */
-.rm-actions{display:flex;gap:8px;padding:8px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:rgba(4,8,14,.95);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
-.rm-action-btn{flex:1;padding:12px 6px;border-radius:14px;border:none;font-size:12px;font-weight:900;cursor:pointer;transition:transform .1s,opacity .2s;letter-spacing:.5px;}
-.rm-action-btn:active{transform:scale(.96);}
-.rm-action-btn:disabled{opacity:.3;cursor:not-allowed;}
-.rm-btn-declare{background:linear-gradient(135deg,#f0d060,#d4a017);color:#1a1000;}
-.rm-btn-discard{background:linear-gradient(135deg,#e74c3c,#922b21);color:#fff;}
-.rm-btn-sort{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);}
-/* Win screen overlay */
-.rm-win-overlay{position:absolute;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;}
-.rm-win-title{font-size:32px;font-weight:900;color:#f0d060;text-align:center;}
-.rm-win-sub{font-size:14px;color:rgba(255,255,255,.7);text-align:center;}
-.rm-win-groups{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px;}
-.rm-win-group{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.25);border-radius:12px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
-.rm-win-group-lbl{font-size:9px;color:#2ecc71;font-weight:700;width:100%;margin-bottom:2px;}
-.rm-waiting-overlay{position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(255,255,255,.6);border-radius:0;}
-/* Declare modal */
-.rm-declare-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.92);display:none;flex-direction:column;overflow-y:auto;}
-.rm-declare-wrap{max-width:420px;margin:0 auto;padding:20px 14px 30px;width:100%;}
-.rm-declare-title{font-size:18px;font-weight:900;color:#f0d060;margin-bottom:4px;text-align:center;}
-.rm-declare-sub{font-size:10px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:16px;letter-spacing:1px;}
-.rm-declare-group{margin-bottom:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;}
-.rm-declare-group-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:8px;letter-spacing:1px;}
-.rm-declare-slots{display:flex;flex-wrap:wrap;gap:5px;min-height:40px;}
-.rm-declare-slot{width:36px;height:50px;border-radius:6px;border:1px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.rm-declare-hand{display:flex;flex-wrap:wrap;gap:5px;padding:10px;background:rgba(255,255,255,.03);border-radius:12px;margin-bottom:12px;min-height:52px;}
-.rm-declare-actions{display:flex;gap:8px;}
-.rm-declare-btn{flex:1;padding:14px;border-radius:14px;border:none;font-size:13px;font-weight:900;cursor:pointer;}
-.rm-declare-btn-confirm{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;}
-.rm-declare-btn-cancel{background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);}
-.rm-declare-valid-msg{text-align:center;font-size:11px;margin-bottom:8px;min-height:16px;font-weight:700;}
+/* ── GAME SCREEN ── */
+#scRummy{background:#2c5f3e;flex-direction:column;overflow:hidden;position:relative;}
+/* Top bar */
+.rm-bar{display:flex;align-items:center;padding:10px 14px 6px;flex-shrink:0;gap:8px;background:rgba(0,0,0,.2);}
+.rm-bar-back{width:34px;height:34px;background:rgba(0,0,0,.3);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rm-bar-opp{flex:1;display:flex;align-items:center;gap:8px;min-width:0;}
+.rm-bar-opp-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;border:3px solid transparent;transition:border-color .3s;flex-shrink:0;}
+.rm-bar-opp-av.active{border-color:#f0d060;box-shadow:0 0 12px rgba(240,208,96,.5);}
+.rm-bar-opp-name{font-size:12px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rm-bar-opp-score{font-size:9px;color:rgba(255,255,255,.5);}
+.rm-bar-pot{font-size:11px;font-weight:900;color:#f0d060;background:rgba(0,0,0,.3);border-radius:10px;padding:4px 10px;flex-shrink:0;}
+/* Timer bar */
+.rm-timer-wrap{height:3px;background:rgba(0,0,0,.25);flex-shrink:0;}
+.rm-timer-bar{height:100%;background:linear-gradient(90deg,#f0d060,#e67e22);transition:width 1s linear;}
+
+/* OPPONENT CARDS fan */
+.rm-opp-area{flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:8px 16px 4px;}
+.rm-opp-fan{display:flex;align-items:flex-end;justify-content:center;height:72px;position:relative;width:100%;max-width:340px;}
+.rm-opp-fan-card{width:44px;height:64px;border-radius:7px;background:linear-gradient(145deg,#8B0000,#c0392b);border:2px solid rgba(255,200,200,.2);position:absolute;box-shadow:1px 2px 5px rgba(0,0,0,.5);transform-origin:bottom center;
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0px,rgba(255,255,255,.03) 2px,transparent 2px,transparent 8px);}
+
+/* CENTER area */
+.rm-center-area{display:flex;align-items:center;justify-content:center;gap:14px;padding:8px 0 2px;flex-shrink:0;}
+.rm-deck-count-label{font-size:26px;font-weight:900;color:rgba(255,255,255,.6);min-width:32px;text-align:right;text-shadow:0 1px 4px rgba(0,0,0,.5);}
+.rm-deck{width:64px;height:90px;border-radius:9px;background:linear-gradient(145deg,#8B0000,#c0392b);border:2px solid rgba(255,150,150,.25);
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0px,rgba(255,255,255,.04) 2px,transparent 2px,transparent 8px);
+  box-shadow:3px 3px 0 rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.4);cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;transition:transform .12s;}
+.rm-deck:active{transform:scale(.93);}
+.rm-deck-inner{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;font-weight:700;text-align:center;line-height:1.4;}
+.rm-deck-badge{position:absolute;bottom:4px;right:6px;font-size:9px;font-weight:900;color:rgba(255,255,255,.5);}
+.rm-discard{width:64px;height:90px;border-radius:9px;border:2px solid rgba(240,208,96,.4);box-shadow:3px 3px 0 rgba(0,0,0,.35),0 4px 16px rgba(0,0,0,.3);cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:transform .12s;background:#fff;}
+.rm-discard:active{transform:scale(.93);}
+.rm-discard.can-take{border-color:#f0d060;box-shadow:0 0 20px rgba(240,208,96,.5),3px 3px 0 rgba(0,0,0,.3);}
+.rm-discard-empty{background:rgba(0,0,0,.15);border:2px dashed rgba(255,255,255,.2);}
+.rm-discard-card-val{font-size:16px;font-weight:900;line-height:1;}
+.rm-discard-card-suit{font-size:26px;line-height:1;}
+.rm-discard-card-top{position:absolute;top:4px;left:5px;font-size:10px;font-weight:900;line-height:1.1;white-space:pre;}
+.rm-discard-card-bot{position:absolute;bottom:4px;right:5px;font-size:10px;font-weight:900;line-height:1.1;transform:rotate(180deg);white-space:pre;}
+
+/* Action log */
+.rm-action-log{text-align:center;font-size:11px;color:rgba(255,255,255,.7);padding:4px 16px 2px;min-height:18px;flex-shrink:0;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.4);}
+
+/* My area */
+.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.2);padding-top:6px;}
+.rm-me-top{display:flex;align-items:center;gap:8px;padding:0 12px 6px;}
+.rm-me-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;border:2px solid transparent;}
+.rm-me-av.active{border-color:#f0d060;box-shadow:0 0 10px rgba(240,208,96,.4);}
+.rm-me-info{flex:1;min-width:0;}
+.rm-me-name{font-size:11px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rm-me-score{font-size:9px;color:rgba(255,255,255,.45);}
+.rm-me-actions{display:flex;gap:5px;flex-shrink:0;}
+.rm-act-btn{padding:7px 10px;border-radius:10px;border:none;font-size:10px;font-weight:900;cursor:pointer;transition:transform .1s,opacity .15s;white-space:nowrap;}
+.rm-act-btn:active{transform:scale(.95);}
+.rm-act-btn:disabled{opacity:.3;cursor:not-allowed;}
+.rm-act-sort{background:rgba(255,255,255,.15);color:#fff;}
+.rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
+.rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
+
+/* MY HAND — overlapping like real cards */
+.rm-hand-row{display:flex;align-items:flex-end;padding:0 10px 10px;padding-bottom:calc(10px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none;min-height:90px;position:relative;}
+.rm-hand-row::-webkit-scrollbar{display:none;}
+
+/* Real card style */
+.rm-card{width:52px;height:76px;border-radius:8px;background:#fff;border:1px solid rgba(0,0,0,.12);box-shadow:2px 2px 6px rgba(0,0,0,.4);cursor:pointer;flex-shrink:0;position:relative;transition:transform .15s,box-shadow .15s,border-color .15s;user-select:none;}
+.rm-card + .rm-card{margin-left:-24px;}
+.rm-card.selected{transform:translateY(-22px);box-shadow:0 10px 24px rgba(0,0,0,.6);z-index:20;border-color:#8e44ad;border-width:2px;}
+.rm-card.selected + .rm-card{margin-left:-24px;}
+.rm-card:not(.selected):active{transform:translateY(-8px);z-index:5;}
+.rm-card-top{position:absolute;top:3px;left:4px;font-size:11px;font-weight:900;line-height:1.2;text-align:left;}
+.rm-card-bot{position:absolute;bottom:3px;right:4px;font-size:11px;font-weight:900;line-height:1.2;transform:rotate(180deg);}
+.rm-card-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;line-height:1;}
+.rm-card.r{color:#c0392b;}
+.rm-card.b{color:#1a1a2e;}
+.rm-card.jk{background:linear-gradient(135deg,#f0e8ff,#dcc8ff);color:#7d3db0;border-color:#9b59b6;}
+
+/* Face-down card */
+.rm-card-back{width:44px;height:64px;border-radius:7px;background:linear-gradient(145deg,#8B0000,#c0392b);
+  background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0px,rgba(255,255,255,.04) 2px,transparent 2px,transparent 8px);
+  border:2px solid rgba(255,150,150,.2);box-shadow:1px 2px 5px rgba(0,0,0,.45);flex-shrink:0;}
+
+/* WIN OVERLAY */
+.rm-win-overlay{position:absolute;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;}
+.rm-win-title{font-size:36px;font-weight:900;color:#f0d060;text-align:center;}
+.rm-win-sub{font-size:15px;color:rgba(255,255,255,.7);text-align:center;}
+.rm-win-groups{display:flex;flex-direction:column;gap:8px;width:100%;max-width:340px;max-height:40vh;overflow-y:auto;}
+.rm-win-group{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);border-radius:12px;padding:8px 12px;}
+.rm-win-group-lbl{font-size:8px;color:#2ecc71;font-weight:700;margin-bottom:5px;letter-spacing:1px;}
+.rm-win-group-cards{display:flex;gap:4px;flex-wrap:wrap;}
+.rm-mini-card{width:30px;height:42px;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;border:1px solid rgba(0,0,0,.1);}
+.rm-mini-card.r{color:#c0392b;}
+.rm-mini-card.b{color:#1a1a2e;}
+.rm-mini-card.jk{background:linear-gradient(135deg,#f0e8ff,#dcc8ff);color:#7d3db0;}
+
+/* DECLARE MODAL */
+#rmDeclareModal{position:fixed;inset:0;z-index:9980;background:rgba(5,2,18,.96);flex-direction:column;overflow-y:auto;}
+.rm-decl-wrap{max-width:430px;margin:0 auto;padding:16px 14px 30px;width:100%;}
+.rm-decl-topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.rm-decl-back{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);padding:7px 14px;font-size:12px;cursor:pointer;}
+.rm-decl-title{font-size:15px;font-weight:900;color:#f0d060;}
+.rm-decl-valid{font-size:10px;font-weight:700;margin-left:auto;}
+.rm-decl-group{margin-bottom:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
+.rm-decl-group-hdr{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;}
+.rm-decl-group-title{font-size:9px;font-weight:900;color:rgba(255,255,255,.5);letter-spacing:1px;}
+.rm-decl-group-status{font-size:9px;font-weight:700;}
+.rm-decl-group-cards{display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px 10px;min-height:56px;align-items:center;}
+.rm-decl-group-card{position:relative;}
+.rm-decl-remove{position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:#e74c3c;border-radius:50%;font-size:8px;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:900;z-index:2;}
+.rm-decl-hand-title{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;font-weight:700;padding:0 4px;margin-bottom:6px;}
+.rm-decl-hand{display:flex;flex-wrap:wrap;gap:5px;background:rgba(255,255,255,.03);border-radius:12px;padding:10px;margin-bottom:10px;min-height:52px;}
+.rm-decl-hand-card{cursor:pointer;opacity:1;transition:opacity .15s;}
+.rm-decl-hand-card.used{opacity:.2;pointer-events:none;}
+.rm-decl-confirm-area{display:flex;gap:8px;}
+.rm-decl-msg{text-align:center;font-size:11px;min-height:16px;font-weight:700;margin-bottom:8px;}
+.rm-decl-btn{flex:1;padding:14px;border-radius:14px;border:none;font-size:13px;font-weight:900;cursor:pointer;}
+.rm-decl-btn-ok{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;}
+.rm-decl-btn-ok:disabled{opacity:.35;cursor:not-allowed;}
+.rm-decl-btn-cancel{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);}
+
+/* WAITING OVERLAY */
+.rm-wait-screen{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:50;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.rm-wait-pill{background:rgba(0,0,0,.7);border-radius:20px;padding:10px 20px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);}
+
 
 /* ════════ SHARED MINI-GAME SHELL ════════ */
 .mg-screen{background:#080c10;display:flex!important;flex-direction:column;height:calc(100dvh - 62px);overflow:hidden;padding:0!important;align-items:stretch!important;justify-content:flex-start!important;}
@@ -2449,130 +2516,159 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 <!-- ════════ RUMMY LOBBY ════════ -->
 <div class="fullscreen hidden" id="scRummyLobby">
   <div class="rm-lobby-wrap">
-    <button onclick="goGameSelect()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;padding:6px 14px;margin-bottom:20px;">← Juegos</button>
-    <div class="rm-logo">
-      <div class="rm-logo-icon">🃏</div>
-      <div class="rm-logo-title">RUMMY</div>
-      <div class="rm-logo-sub">4 + 4 + 3 · DOS BARAJAS · JOKERS</div>
-    </div>
-
-    <div class="rm-section">
-      <div class="rm-section-title">APUESTA POR JUGADOR</div>
-      <div class="rm-bet-grid" id="rmBetGrid">
-        <div class="rm-bet-opt sel" data-v="50" onclick="rmSelectBet(50)">$50</div>
-        <div class="rm-bet-opt" data-v="100" onclick="rmSelectBet(100)">$100</div>
-        <div class="rm-bet-opt" data-v="300" onclick="rmSelectBet(300)">$300</div>
-        <div class="rm-bet-opt" data-v="500" onclick="rmSelectBet(500)">$500</div>
-        <div class="rm-bet-opt" data-v="1000" onclick="rmSelectBet(1000)">$1000</div>
-        <div class="rm-bet-opt" data-v="2000" onclick="rmSelectBet(2000)">$2000</div>
+    <div class="rm-lobby-header">
+      <button class="rm-lobby-back" onclick="goGameSelect()">← Juegos</button>
+      <div class="rm-logo-inline">
+        <div class="rm-logo-icon">🃏</div>
+        <div>
+          <div class="rm-logo-title">RUMMY</div>
+          <div class="rm-logo-sub">4 + 4 + 3 · DOS BARAJAS</div>
+        </div>
       </div>
     </div>
-
-    <div class="rm-section">
-      <div class="rm-section-title">MULTIJUGADOR (2–4 jugadores)</div>
-      <button class="rm-btn rm-btn-create" onclick="rmCreateRoom()">✦ Crear sala</button>
-      <input class="rm-input" id="rmJoinInput" placeholder="CÓDIGO DE SALA" maxlength="6"
-        style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
-      <button class="rm-btn rm-btn-join" onclick="rmJoinRoom()">Unirse a sala</button>
+    <div class="rm-bet-label">APUESTA POR JUGADOR</div>
+    <div class="rm-bet-chips" id="rmBetChips">
+      <div class="rm-chip sel" data-v="50" onclick="rmSelectBet(50)"><span>$</span><span>50</span></div>
+      <div class="rm-chip" data-v="100" onclick="rmSelectBet(100)"><span>$</span><span>100</span></div>
+      <div class="rm-chip" data-v="300" onclick="rmSelectBet(300)"><span>$</span><span>300</span></div>
+      <div class="rm-chip" data-v="500" onclick="rmSelectBet(500)"><span>$</span><span>500</span></div>
+      <div class="rm-chip" data-v="1000" onclick="rmSelectBet(1000)"><span>$</span><span>1K</span></div>
+      <div class="rm-chip" data-v="2000" onclick="rmSelectBet(2000)"><span>$</span><span>2K</span></div>
     </div>
-
-    <div class="rm-section">
-      <div class="rm-section-title">MODO SOLO</div>
-      <button class="rm-solo-btn" onclick="rmStartSolo()">🤖 Jugar vs Bot</button>
+    <div class="rm-action-cards">
+      <div class="rm-action-card create" onclick="rmCreateRoom()">
+        <div class="rm-action-card-icon">👥</div>
+        <div class="rm-action-card-title">Crear sala</div>
+        <div class="rm-action-card-sub">2–4 jugadores</div>
+      </div>
+      <div class="rm-action-card solo" onclick="rmStartSolo()">
+        <div class="rm-action-card-icon">🤖</div>
+        <div class="rm-action-card-title">Vs Bot</div>
+        <div class="rm-action-card-sub">Modo solo</div>
+      </div>
+    </div>
+    <div class="rm-code-panel" id="rmCodePanel">
+      <div style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;">CÓDIGO DE SALA</div>
+      <div class="rm-code-val" id="rmCodeVal">——</div>
+      <button class="rm-code-copy" onclick="rmCopyCode()">📋 Copiar código</button>
+      <div class="rm-players-list" id="rmLobbyPlayers"></div>
+      <button class="rm-start-btn" id="rmStartBtn" onclick="rmHostStart()" disabled>Esperando jugadores...</button>
+    </div>
+    <div class="rm-join-row" id="rmJoinRow">
+      <input class="rm-join-input" id="rmJoinInput" placeholder="CÓDIGO" maxlength="6"
+        oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')rmJoinRoom()">
+      <button class="rm-join-btn" onclick="rmJoinRoom()">Unirse</button>
     </div>
   </div>
 </div>
 
 <!-- ════════ RUMMY GAME ════════ -->
-<div class="fullscreen hidden" id="scRummy">
-  <!-- Top bar -->
-  <div class="rm-topbar">
-    <div>
-      <div class="rm-topbar-title">🃏 RUMMY</div>
-      <div class="rm-topbar-info" id="rmRoomInfo">Sala —</div>
+<div class="fullscreen hidden" id="scRummy" style="overflow:hidden;display:flex;flex-direction:column;">
+  <!-- Timer -->
+  <div class="rm-timer-wrap"><div class="rm-timer-bar" id="rmTimerBar" style="width:100%;"></div></div>
+
+  <!-- Opponent top bar -->
+  <div class="rm-bar">
+    <button class="rm-bar-back" onclick="rmLeave()">←</button>
+    <div class="rm-bar-opp">
+      <div class="rm-bar-opp-av" id="rmBarOppAv" style="background:#e74c3c;">?</div>
+      <div style="min-width:0;">
+        <div class="rm-bar-opp-name" id="rmBarOppName">Oponente</div>
+        <div class="rm-bar-opp-score" id="rmBarOppScore">—</div>
+      </div>
     </div>
-    <div class="rm-pot">Pozo: $<span id="rmPot">0</span></div>
-    <button onclick="rmLeave()" style="background:none;border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.4);font-size:11px;cursor:pointer;padding:4px 10px;">Salir</button>
+    <div id="rmExtraOpp" style="display:flex;gap:4px;flex:1;justify-content:center;"></div>
+    <div class="rm-bar-pot">Pozo $<span id="rmPot">0</span></div>
   </div>
 
-  <div class="rm-table" id="rmTable" style="position:relative;">
-    <!-- Waiting overlay (shown between turns) -->
-    <div class="rm-waiting-overlay" id="rmWaitOverlay" style="display:none;">⏳ Esperando turno...</div>
+  <!-- Opponent cards fan -->
+  <div class="rm-opp-area">
+    <div class="rm-opp-fan" id="rmOppFan"></div>
+  </div>
 
-    <!-- Opponents -->
-    <div class="rm-opponents" id="rmOpponents"></div>
-
-    <!-- Center: deck + discard -->
-    <div style="display:flex;flex-direction:column;align-items:center;">
-      <div class="rm-center">
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div class="rm-deck-pile" id="rmDeckBtn" onclick="rmTakeDeck()">🂠<span class="rm-deck-count" id="rmDeckCount">—</span></div>
-          <div class="rm-center-label">MAZO</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div class="rm-discard-pile" id="rmDiscardPile" onclick="rmTakeDiscard()"><span id="rmDiscardTop" style="font-size:28px;">—</span></div>
-          <div class="rm-center-label">DESCARTE</div>
-        </div>
-      </div>
-      <div class="rm-status-msg" id="rmStatusMsg">Esperando jugadores...</div>
+  <!-- Deck + discard -->
+  <div class="rm-center-area">
+    <div class="rm-deck-count-label" id="rmDeckCountLabel">—</div>
+    <div class="rm-deck" id="rmDeckBtn" onclick="rmTakeDeck()">
+      <div class="rm-deck-inner">R<br>U<br>M<br>M<br>Y</div>
     </div>
-
-    <!-- My hand -->
-    <div class="rm-my-hand-wrap">
-      <div class="rm-hand-label">TU MANO (<span id="rmHandCount">0</span>)</div>
-      <div class="rm-hand-scroll" id="rmHandEl"></div>
-    </div>
-
-    <!-- Groups -->
-    <div class="rm-groups">
-      <div class="rm-groups-label">
-        <span>MIS GRUPOS</span>
-        <span id="rmGroupsValid" style="font-size:9px;color:rgba(255,255,255,.3);">Arrastra cartas seleccionadas</span>
+    <div class="rm-discard rm-discard-empty" id="rmDiscardPile" onclick="rmTakeDiscard()">
+      <div class="rm-discard-card-top" id="rmDiscardTop2" style="display:none;"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div id="rmDiscardVal" style="font-size:16px;font-weight:900;line-height:1;">—</div>
+        <div id="rmDiscardSuit" style="font-size:26px;line-height:1;"></div>
       </div>
-      <div class="rm-groups-row" id="rmGroupsRow">
-        <div class="rm-group-slot" id="rmG0" onclick="rmMoveToGroup(0)"><div class="rm-group-slot-lbl">G1 (4)</div></div>
-        <div class="rm-group-slot" id="rmG1" onclick="rmMoveToGroup(1)"><div class="rm-group-slot-lbl">G2 (4)</div></div>
-        <div class="rm-group-slot" id="rmG2" onclick="rmMoveToGroup(2)"><div class="rm-group-slot-lbl">G3 (3)</div></div>
+      <div class="rm-discard-card-bot" id="rmDiscardBot2" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Action log (what opponent did) -->
+  <div class="rm-action-log" id="rmActionLog">Esperando jugadores...</div>
+
+  <!-- My player info + buttons -->
+  <div class="rm-me-area">
+    <div class="rm-me-top">
+      <div class="rm-me-av" id="rmMeAv" style="background:#9b59b6;">Y</div>
+      <div class="rm-me-info">
+        <div class="rm-me-name" id="rmMeName">Tú</div>
+        <div class="rm-me-score"><span id="rmHandCount">0</span> cartas · $<span id="rmPot2">0</span></div>
+      </div>
+      <div class="rm-me-actions">
+        <button class="rm-act-btn rm-act-sort" onclick="rmSortHand()">⇅</button>
+        <button class="rm-act-btn rm-act-discard" id="rmDiscardBtn" onclick="rmDiscardSelected()" disabled>⬇ Descartar</button>
+        <button class="rm-act-btn rm-act-declare" id="rmDeclareBtn" onclick="rmOpenDeclare()" disabled>🏆 Declarar</button>
       </div>
     </div>
+    <!-- My hand (overlapping cards, scrollable) -->
+    <div class="rm-hand-row" id="rmHandEl"></div>
+  </div>
 
-    <!-- Actions -->
-    <div class="rm-actions">
-      <button class="rm-action-btn rm-btn-sort" onclick="rmSortHand()">⇅ Orden</button>
-      <button class="rm-action-btn rm-btn-discard" id="rmDiscardBtn" onclick="rmDiscardSelected()" disabled>⬇ Descartar</button>
-      <button class="rm-action-btn rm-btn-declare" id="rmDeclareBtn" onclick="rmOpenDeclare()" disabled>🏆 Declarar</button>
-    </div>
+  <!-- Wait overlay (non-blocking, just dims) -->
+  <div class="rm-wait-screen" id="rmWaitOverlay" style="display:none;">
+    <div class="rm-wait-pill" id="rmWaitMsg">Turno del oponente...</div>
   </div>
 </div>
 
 <!-- ════════ RUMMY DECLARE MODAL ════════ -->
-<div id="rmDeclareModal" style="display:none;position:fixed;inset:0;z-index:9980;background:rgba(0,0,0,.95);flex-direction:column;overflow-y:auto;">
-  <div class="rm-declare-wrap">
-    <div class="rm-declare-title">🏆 Declarar victoria</div>
-    <div class="rm-declare-sub">ORGANIZA TUS CARTAS EN 3 GRUPOS · 4 + 4 + 3</div>
-
-    <div class="rm-declare-group">
-      <div class="rm-declare-group-title">GRUPO 1 — 4 cartas</div>
-      <div class="rm-declare-slots" id="rmDeclG0"></div>
+<div id="rmDeclareModal" style="display:none;position:fixed;inset:0;z-index:9980;background:rgba(5,2,18,.97);flex-direction:column;overflow-y:auto;">
+  <div class="rm-decl-wrap">
+    <div class="rm-decl-topbar">
+      <button class="rm-decl-back" onclick="rmCloseDeclare()">← Cancelar</button>
+      <div class="rm-decl-title">🏆 Declarar</div>
+      <div class="rm-decl-valid" id="rmDeclValidBadge" style="color:rgba(255,255,255,.3);">0/11</div>
     </div>
-    <div class="rm-declare-group">
-      <div class="rm-declare-group-title">GRUPO 2 — 4 cartas</div>
-      <div class="rm-declare-slots" id="rmDeclG1"></div>
+    <div class="rm-decl-group">
+      <div class="rm-decl-group-hdr">
+        <div class="rm-decl-group-title">GRUPO 1 · 4 cartas</div>
+        <div class="rm-decl-group-status" id="rmDeclStat0" style="color:rgba(255,255,255,.25);">0/4</div>
+      </div>
+      <div class="rm-decl-group-cards" id="rmDeclG0"></div>
     </div>
-    <div class="rm-declare-group">
-      <div class="rm-declare-group-title">GRUPO 3 — 3 cartas</div>
-      <div class="rm-declare-slots" id="rmDeclG2"></div>
+    <div class="rm-decl-group">
+      <div class="rm-decl-group-hdr">
+        <div class="rm-decl-group-title">GRUPO 2 · 4 cartas</div>
+        <div class="rm-decl-group-status" id="rmDeclStat1" style="color:rgba(255,255,255,.25);">0/4</div>
+      </div>
+      <div class="rm-decl-group-cards" id="rmDeclG1"></div>
     </div>
-
-    <div class="rm-declare-group-title" style="padding:0 4px;margin-bottom:6px;">TU MANO (toca para mover)</div>
-    <div class="rm-declare-hand" id="rmDeclHand"></div>
-    <div class="rm-declare-valid-msg" id="rmDeclValidMsg"></div>
-    <div class="rm-declare-actions">
-      <button class="rm-declare-btn rm-declare-btn-cancel" onclick="rmCloseDeclare()">Cancelar</button>
-      <button class="rm-declare-btn rm-declare-btn-confirm" id="rmDeclConfirmBtn" onclick="rmConfirmDeclare()" disabled>✓ Confirmar</button>
+    <div class="rm-decl-group">
+      <div class="rm-decl-group-hdr">
+        <div class="rm-decl-group-title">GRUPO 3 · 3 cartas</div>
+        <div class="rm-decl-group-status" id="rmDeclStat2" style="color:rgba(255,255,255,.25);">0/3</div>
+      </div>
+      <div class="rm-decl-group-cards" id="rmDeclG2"></div>
+    </div>
+    <div class="rm-decl-hand-title">TU MANO — toca para asignar al grupo activo</div>
+    <div class="rm-decl-hand" id="rmDeclHand"></div>
+    <div class="rm-decl-msg" id="rmDeclMsg" style="color:rgba(255,255,255,.35);">Asigna tus 11 cartas en los 3 grupos</div>
+    <div class="rm-decl-confirm-area">
+      <button class="rm-decl-btn rm-decl-btn-cancel" onclick="rmCloseDeclare()">Cancelar</button>
+      <button class="rm-decl-btn rm-decl-btn-ok" id="rmDeclConfirmBtn" onclick="rmConfirmDeclare()" disabled>✓ Confirmar</button>
     </div>
   </div>
 </div>
+
+
 <div id="privateChatModal">
   <div class="pc-topbar">
     <button class="pc-back" onclick="closePrivateChat()">←</button>
@@ -9992,13 +10088,19 @@ function rmMakeDeck(){
 }
 function rmShuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
 function rmCardLabel(c){ return c.rank==='JK'?'🃏':`${c.rank}${RM_SUIT_SYM[c.suit]}`; }
-function rmCardEl(c, small=false){
+function rmCardColor(c){ return (c.suit==='hearts'||c.suit==='diamonds')?'r':'b'; }
+function rmCardEl(c, mini=false){
   const div=document.createElement('div');
-  div.className=`${small?'rm-mini-card':'rm-card'} ${c.rank==='JK'?'joker':c.suit}`;
-  if(small){
-    div.textContent=rmCardLabel(c);
+  if(c.rank==='JK'){
+    div.className=mini?'rm-mini-card jk':'rm-card jk';
+    if(mini){ div.textContent='🃏'; }
+    else { div.innerHTML='<div class="rm-card-top">🃏</div><div class="rm-card-center">🃏</div><div class="rm-card-bot">🃏</div>'; }
   } else {
-    div.innerHTML=`<div class="rm-card-top">${c.rank==='JK'?'🃏':c.rank}<br>${c.rank==='JK'?'':RM_SUIT_SYM[c.suit]}</div><div class="rm-card-suit">${c.rank==='JK'?'🃏':RM_SUIT_SYM[c.suit]}</div><div class="rm-card-bot">${c.rank==='JK'?'🃏':c.rank}<br>${c.rank==='JK'?'':RM_SUIT_SYM[c.suit]}</div>`;
+    const col=rmCardColor(c);
+    const sym=RM_SUIT_SYM[c.suit];
+    div.className=mini?`rm-mini-card ${col}`:`rm-card ${col}`;
+    if(mini){ div.textContent=c.rank+sym; }
+    else { div.innerHTML=`<div class="rm-card-top">${c.rank}<br>${sym}</div><div class="rm-card-center">${sym}</div><div class="rm-card-bot">${c.rank}<br>${sym}</div>`; }
   }
   return div;
 }
@@ -10142,17 +10244,28 @@ function rmBotBestArrangement(hand){
 }
 
 // ── Lobby & Room ─────────────────────────────────
+let _rmLastActionLog = '';
+let _rmDeclActiveGroup = 0; // which group is selected in declare modal
+
 function rmShowLobby(){
   ['scLobby','scGameSelect','scRummy'].forEach(id=>hide(id));
+  // Reset code panel
+  const cp=document.getElementById('rmCodePanel');
+  if(cp) cp.style.display='none';
   show('scRummyLobby'); bnShow();
-  document.getElementById('gsBal') && (document.getElementById('gsBal').textContent=myBal.toLocaleString());
 }
 
 function rmSelectBet(v){
   rmBet=v;
-  document.querySelectorAll('.rm-bet-opt').forEach(el=>{
+  document.querySelectorAll('.rm-chip').forEach(el=>{
     el.classList.toggle('sel', parseInt(el.dataset.v)===v);
   });
+}
+
+function rmCopyCode(){
+  const code=document.getElementById('rmCodeVal').textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(code).then(()=>toast('✅ Código copiado: '+code,2000));
+  else{ const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('✅ Código copiado',1500); }
 }
 
 async function rmCreateRoom(){
@@ -10161,17 +10274,50 @@ async function rmCreateRoom(){
   if(!db) return;
   const code=rmGenCode();
   rmRoomCode=code; rmIsHost=true; rmSoloMode=false;
-  const playerData={uid:myId,name:myName,color:myColor||'#9b59b6',bal:myBal,ready:false};
+  const playerData={uid:myId,name:myName,color:myColor||'#9b59b6',ready:false};
   await db.ref(`${RM_PATH}/${code}`).set({
-    status:'lobby', bet:rmBet, host:myId,
-    createdAt:Date.now(), round:0,
+    status:'lobby', bet:rmBet, host:myId, createdAt:Date.now(), round:0,
     players:{[myId]:playerData}
   });
   db.ref(`${RM_PATH}/${code}/players/${myId}`).onDisconnect().remove();
-  toast('✦ Sala creada: '+code, 3000);
-  rmListenRoom(code);
-  hide('scRummyLobby'); show('scRummy'); bnSync('scRummy');
-  rmRenderWaiting();
+  // Show code panel in lobby
+  const cp=document.getElementById('rmCodePanel');
+  if(cp){ cp.style.display='block'; document.getElementById('rmCodeVal').textContent=code; }
+  const sb=document.getElementById('rmStartBtn');
+  if(sb){ sb.disabled=true; sb.textContent='Esperando jugadores... (1/4)'; }
+  rmListenLobby(code);
+}
+
+function rmListenLobby(code){
+  if(rmRoomRef) rmRoomRef.off();
+  rmRoomRef=db.ref(`${RM_PATH}/${code}`);
+  rmRoomRef.on('value',snap=>{
+    if(!snap.exists()){ toast('La sala fue cerrada'); return; }
+    const room=snap.val();
+    rmCurrentRoom=room;
+    if(room.status==='playing'){
+      // Game started — switch to game screen
+      rmRoomRef.off();
+      hide('scRummyLobby'); show('scRummy'); bnSync('scRummy');
+      rmListenRoom(code);
+      return;
+    }
+    // Update lobby player list
+    const players=Object.values(room.players||{});
+    const plEl=document.getElementById('rmLobbyPlayers');
+    if(plEl) plEl.innerHTML=players.map(p=>`
+      <div class="rm-player-row">
+        <div style="width:28px;height:28px;border-radius:50%;background:${p.color||'#9b59b6'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;">${(p.name||'?')[0].toUpperCase()}</div>
+        <div style="font-size:12px;font-weight:700;color:#fff;">${escHtml(p.name||'Jugador')}</div>
+        ${p.uid===room.host?'<div style="font-size:9px;color:#f0d060;margin-left:auto;">HOST</div>':''}
+      </div>`).join('');
+    const sb=document.getElementById('rmStartBtn');
+    if(sb&&rmIsHost){
+      const can=players.length>=2;
+      sb.disabled=!can;
+      sb.textContent=can?`▶ Iniciar (${players.length} jugadores)`:`Esperando... (${players.length}/4 mín 2)`;
+    }
+  });
 }
 
 async function rmJoinRoom(){
@@ -10184,13 +10330,17 @@ async function rmJoinRoom(){
   const room=snap.val();
   if(room.status!=='lobby'){ toast('❌ La partida ya comenzó'); return; }
   const count=Object.keys(room.players||{}).length;
-  if(count>=4){ toast('❌ Sala llena (máx 4 jugadores)'); return; }
+  if(count>=4){ toast('❌ Sala llena'); return; }
   if(myBal<room.bet){ toast('⚠️ Saldo insuficiente ($'+room.bet+' requeridos)'); return; }
   rmBet=room.bet; rmRoomCode=code; rmIsHost=false; rmSoloMode=false;
-  await db.ref(`${RM_PATH}/${code}/players/${myId}`).set({uid:myId,name:myName,color:myColor||'#9b59b6',bal:myBal,ready:false});
+  await db.ref(`${RM_PATH}/${code}/players/${myId}`).set({uid:myId,name:myName,color:myColor||'#9b59b6',ready:false});
   db.ref(`${RM_PATH}/${code}/players/${myId}`).onDisconnect().remove();
-  rmListenRoom(code);
-  hide('scRummyLobby'); show('scRummy'); bnSync('scRummy');
+  // Show code panel
+  const cp=document.getElementById('rmCodePanel');
+  if(cp){ cp.style.display='block'; document.getElementById('rmCodeVal').textContent=code; }
+  const sb=document.getElementById('rmStartBtn');
+  if(sb){ sb.textContent='Esperando al host...'; sb.disabled=true; }
+  rmListenLobby(code);
 }
 
 function rmListenRoom(code){
@@ -10205,51 +10355,30 @@ function rmListenRoom(code){
 
 function rmHandleRoomUpdate(room){
   if(!room) return;
-  document.getElementById('rmRoomInfo').textContent = rmSoloMode?'Solo vs Bot':`Sala: ${rmRoomCode} · $${room.bet||rmBet}`;
-  document.getElementById('rmPot').textContent = ((room.bet||rmBet)*Object.keys(room.players||{}).length).toLocaleString();
-
+  const pot=(room.bet||rmBet)*Object.keys(room.players||{}).length;
+  const potEl=document.getElementById('rmPot'); if(potEl) potEl.textContent=pot.toLocaleString();
+  const pot2El=document.getElementById('rmPot2'); if(pot2El) pot2El.textContent=pot.toLocaleString();
   if(room.status==='lobby'){ rmRenderWaiting(room); return; }
   if(room.status==='playing'){ rmRenderGame(room); return; }
   if(room.status==='done'){ rmRenderDone(room); return; }
 }
 
 function rmRenderWaiting(room){
-  const players=room?Object.values(room.players||{}):[{name:myName}];
-  const count=players.length;
-  document.getElementById('rmStatusMsg').textContent=`Esperando jugadores... (${count}/4) — Mínimo 2`;
   document.getElementById('rmHandEl').innerHTML='';
-  document.getElementById('rmOpponents').innerHTML='';
-  document.getElementById('rmDeckBtn').style.opacity='.3';
-  document.getElementById('rmDiscardPile').style.opacity='.3';
-  // Show player list in status
-  const names=players.map(p=>p.name.split(' ')[0]).join(', ');
-  document.getElementById('rmStatusMsg').innerHTML=
-    `<div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;">Sala: <b style="color:#9b59b6">${rmRoomCode}</b> · Comparte el código</div>`+
-    `<div>${names}</div>`+
-    (rmIsHost&&count>=2?`<button onclick="rmHostStart()" style="margin-top:8px;padding:8px 24px;background:linear-gradient(135deg,#8e44ad,#6c3483);border:none;border-radius:12px;color:#fff;font-weight:900;font-size:13px;cursor:pointer;">▶ Iniciar partida</button>`:'');
+  document.getElementById('rmActionLog').textContent='Esperando jugadores...';
   document.getElementById('rmDiscardBtn').disabled=true;
   document.getElementById('rmDeclareBtn').disabled=true;
 }
 
 async function rmHostStart(){
-  const room=rmCurrentRoom;
-  if(!room) return;
+  const room=rmCurrentRoom; if(!room) return;
   const pids=Object.keys(room.players||{});
   if(pids.length<2){ toast('⚠️ Mínimo 2 jugadores'); return; }
-
-  // Collect bets
-  const betAmt=room.bet||rmBet;
-  const updates={};
-  pids.forEach(pid=>{ updates[`${RM_PATH}/${rmRoomCode}/players/${pid}/paid`]=betAmt; });
-
-  // Build & shuffle deck
   const deck=rmShuffle(rmMakeDeck());
-  // Deal 10 cards to each player
   const hands={};
   pids.forEach(pid=>{ hands[pid]=deck.splice(0,10); });
-  // First discard
   const firstDiscard=deck.splice(0,1);
-
+  const updates={};
   updates[`${RM_PATH}/${rmRoomCode}/status`]='playing';
   updates[`${RM_PATH}/${rmRoomCode}/deck`]=deck;
   updates[`${RM_PATH}/${rmRoomCode}/discardPile`]=firstDiscard;
@@ -10257,9 +10386,106 @@ async function rmHostStart(){
   updates[`${RM_PATH}/${rmRoomCode}/currentTurn`]=pids[0];
   updates[`${RM_PATH}/${rmRoomCode}/round`]=1;
   updates[`${RM_PATH}/${rmRoomCode}/hasTaken`]=false;
+  updates[`${RM_PATH}/${rmRoomCode}/lastAction`]=null;
   pids.forEach(pid=>{ updates[`${RM_PATH}/${rmRoomCode}/players/${pid}/hand`]=hands[pid]; });
-
   await db.ref().update(updates);
+}
+
+// ── Render helpers ────────────────────────────────
+function rmMakeCardEl(c, mini=false){
+  const isJk=c.rank==='JK';
+  const isRed=c.suit==='hearts'||c.suit==='diamonds';
+  const sym=isJk?'🃏':(RM_SUIT_SYM[c.suit]||'');
+  const div=document.createElement('div');
+  if(mini){
+    div.className='rm-mini-card '+(isJk?'jk':isRed?'r':'b');
+    div.textContent=isJk?'🃏':c.rank+sym;
+  } else {
+    div.className='rm-card '+(isJk?'jk':isRed?'r':'b');
+    div.innerHTML=`<div class="rm-card-top">${isJk?'🃏':c.rank+'<br>'+sym}</div><div class="rm-card-center">${sym}</div><div class="rm-card-bot">${isJk?'🃏':c.rank+'<br>'+sym}</div>`;
+  }
+  return div;
+}
+
+function rmRenderOpponentFan(room){
+  const opponents=Object.entries(room.players||{}).filter(([pid])=>pid!==myId);
+  const primary=opponents[0];
+  if(!primary) return;
+  const [pid,p]=primary;
+  const isActive=room.currentTurn===pid;
+
+  // Top bar opponent info
+  const av=document.getElementById('rmBarOppAv');
+  const nm=document.getElementById('rmBarOppName');
+  const sc=document.getElementById('rmBarOppScore');
+  if(av){ av.style.background=p.color||'#e74c3c'; av.textContent=(p.name||'?')[0].toUpperCase(); av.className='rm-bar-opp-av'+(isActive?' active':''); }
+  if(nm) nm.textContent=(p.name||'Oponente').split(' ')[0]+(isActive?' 🟡':'');
+  if(sc) sc.textContent=(p.hand||[]).length+' cartas · $'+(room.bet||rmBet).toLocaleString();
+
+  // Fan of face-down cards
+  const fan=document.getElementById('rmOppFan');
+  if(fan){
+    fan.innerHTML='';
+    const count=Math.max((p.hand||[]).length, 1);
+    const show=Math.min(count, 13);
+    const containerW=fan.parentElement?.offsetWidth||320;
+    const maxSpread=Math.min(containerW-40, 300);
+    const spacing=Math.min(30, maxSpread/(show+1));
+    const totalW=(show-1)*spacing+44;
+    fan.style.width=Math.min(totalW+20,containerW-20)+'px';
+    for(let i=0;i<show;i++){
+      const card=document.createElement('div');
+      card.className='rm-opp-fan-card';
+      const pos=(i-(show-1)/2);
+      const angle=pos*3.5;
+      const xOff=pos*spacing;
+      const yOff=Math.abs(pos)*1.5;
+      card.style.cssText=`transform:rotate(${angle}deg) translateX(${xOff}px) translateY(${yOff}px);left:50%;margin-left:-22px;z-index:${i};`;
+      fan.appendChild(card);
+    }
+  }
+
+  // Extra opponents (3-4 players)
+  const extra=opponents.slice(1);
+  const extraEl=document.getElementById('rmExtraOpp');
+  if(extraEl){
+    extraEl.innerHTML='';
+    extra.forEach(([pid2,p2])=>{
+      const isAct=room.currentTurn===pid2;
+      const div=document.createElement('div');
+      div.style.cssText=`display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.3);border-radius:16px;padding:3px 8px 3px 4px;border:1px solid ${isAct?'#f0d060':'rgba(255,255,255,.12)'};`;
+      div.innerHTML=`<div style="width:22px;height:22px;border-radius:50%;background:${p2.color||'#9b59b6'};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;">${(p2.name||'?')[0].toUpperCase()}</div><span style="font-size:9px;font-weight:700;color:#fff;">${escHtml((p2.name||'?').split(' ')[0])}</span><span style="font-size:8px;color:rgba(255,255,255,.4);margin-left:2px;">${(p2.hand||[]).length}</span>`;
+      extraEl.appendChild(div);
+    });
+  }
+}
+
+function rmRenderDiscard(discardTop, canTake){
+  const dp=document.getElementById('rmDiscardPile');
+  if(!dp) return;
+  if(!discardTop){
+    dp.className='rm-discard rm-discard-empty';
+    dp.style.background=''; dp.style.color='';
+    document.getElementById('rmDiscardVal').textContent='—';
+    document.getElementById('rmDiscardSuit').textContent='';
+    document.getElementById('rmDiscardTop2').style.display='none';
+    document.getElementById('rmDiscardBot2').style.display='none';
+    return;
+  }
+  const isJk=discardTop.rank==='JK';
+  const isRed=discardTop.suit==='hearts'||discardTop.suit==='diamonds';
+  dp.className='rm-discard'+(canTake?' can-take':'');
+  dp.style.background=isJk?'linear-gradient(135deg,#f0e8ff,#dcc8ff)':'#fff';
+  dp.style.color=isRed?'#c0392b':'#1a1a2e';
+  const sym=isJk?'🃏':RM_SUIT_SYM[discardTop.suit];
+  document.getElementById('rmDiscardVal').textContent=isJk?'':discardTop.rank;
+  document.getElementById('rmDiscardSuit').textContent=sym;
+  const top2=document.getElementById('rmDiscardTop2');
+  const bot2=document.getElementById('rmDiscardBot2');
+  if(top2){ top2.style.display='block'; top2.textContent=(isJk?'🃏':discardTop.rank+'
+'+sym); }
+  if(bot2){ bot2.style.display='block'; bot2.textContent=(isJk?'🃏':discardTop.rank+'
+'+sym); }
 }
 
 function rmRenderGame(room){
@@ -10267,113 +10493,92 @@ function rmRenderGame(room){
   const myP=room.players?.[myId];
   if(!myP) return;
   rmMyHand=myP.hand||[];
-
   const isMyTurn=room.currentTurn===myId;
   rmHasTakenCard=room.hasTaken||false;
   rmPhase=isMyTurn?(rmHasTakenCard?'myturn_discard':'myturn_take'):'oppturn';
 
-  // Deck & discard
+  // Deck
   const deck=room.deck||[];
   const discard=room.discardPile||[];
   const discardTop=discard[discard.length-1]||null;
+  const deckCountEl=document.getElementById('rmDeckCount');
+  const deckLblEl=document.getElementById('rmDeckCountLabel');
+  if(deckCountEl) deckCountEl.textContent=deck.length;
+  if(deckLblEl) deckLblEl.textContent=deck.length;
+  const deckBtn=document.getElementById('rmDeckBtn');
+  if(deckBtn){ deckBtn.style.opacity=isMyTurn&&!rmHasTakenCard?'1':'.5'; deckBtn.style.cursor=isMyTurn&&!rmHasTakenCard?'pointer':'default'; }
 
-  document.getElementById('rmDeckCount').textContent=deck.length;
-  document.getElementById('rmDeckBtn').style.opacity=isMyTurn&&!rmHasTakenCard?'1':'.4';
-  document.getElementById('rmDeckBtn').style.cursor=isMyTurn&&!rmHasTakenCard?'pointer':'default';
+  // Discard
+  rmRenderDiscard(discardTop, isMyTurn&&!rmHasTakenCard);
 
-  const dp=document.getElementById('rmDiscardPile');
-  const dt=document.getElementById('rmDiscardTop');
-  if(discardTop){
-    dt.textContent=rmCardLabel(discardTop);
-    dp.style.background=discardTop.suit==='joker'?'linear-gradient(135deg,#f8f0ff,#e8d5ff)':(discardTop.suit==='hearts'||discardTop.suit==='diamonds'?'#fff8f8':'#f8f8ff');
-    dp.style.color=discardTop.suit==='hearts'||discardTop.suit==='diamonds'?'#c0392b':'#1a1a2e';
-    dp.className='rm-discard-pile'+(isMyTurn&&!rmHasTakenCard?' can-take':'');
-    dp.style.cursor=isMyTurn&&!rmHasTakenCard?'pointer':'default';
-  } else { dt.textContent='—'; dp.className='rm-discard-pile'; }
-
-  // Status
-  if(isMyTurn){
-    document.getElementById('rmStatusMsg').textContent = rmHasTakenCard?'✅ Tomaste carta — ahora descarta o declara':'👆 Tu turno — toma del mazo o el descarte';
-  } else {
-    const turnName=(room.players?.[room.currentTurn]?.name||'Alguien').split(' ')[0];
-    document.getElementById('rmStatusMsg').textContent=`⏳ Turno de ${turnName}...`;
+  // Action log
+  const logEl=document.getElementById('rmActionLog');
+  if(logEl){
+    const la=room.lastAction;
+    if(la){
+      const sym=la.suit?RM_SUIT_SYM[la.suit]||'':'';
+      if(la.type==='took_deck') logEl.textContent=`${la.name} tomó del mazo`;
+      else if(la.type==='took_discard') logEl.textContent=`${la.name} recogió ${la.rank}${sym} del descarte`;
+      else if(la.type==='discarded') logEl.textContent=`${la.name} descartó ${la.rank}${sym}`;
+    } else {
+      if(isMyTurn) logEl.textContent=rmHasTakenCard?'✅ Tomaste carta — ahora descarta o declara':'👆 Tu turno — toma del mazo o del descarte';
+      else logEl.textContent=`⏳ Turno de ${(room.players?.[room.currentTurn]?.name||'?').split(' ')[0]}...`;
+    }
   }
 
+  // My info
+  const meAv=document.getElementById('rmMeAv');
+  if(meAv){ meAv.style.background=myColor||'#9b59b6'; meAv.className='rm-me-av'+(isMyTurn?' active':''); meAv.textContent=(myName||'Y')[0].toUpperCase(); }
+  const meNm=document.getElementById('rmMeName'); if(meNm) meNm.textContent=(myName||'Tú').split(' ')[0]+(isMyTurn?' — Tu turno 👆':'');
+
   // Wait overlay
-  document.getElementById('rmWaitOverlay').style.display=isMyTurn?'none':'flex';
+  const wo=document.getElementById('rmWaitOverlay');
+  if(wo){
+    wo.style.display=isMyTurn?'none':'flex';
+    const wm=document.getElementById('rmWaitMsg');
+    if(wm) wm.textContent=`Turno de ${(room.players?.[room.currentTurn]?.name||'?').split(' ')[0]}...`;
+  }
 
   // Buttons
   document.getElementById('rmDiscardBtn').disabled=!(isMyTurn&&rmHasTakenCard&&rmSelectedIdx!==null);
   document.getElementById('rmDeclareBtn').disabled=!(isMyTurn&&rmHasTakenCard);
 
-  // Render my hand
-  rmRenderHand();
+  // Opponent fan
+  rmRenderOpponentFan(room);
 
-  // Render opponents
-  const opEl=document.getElementById('rmOpponents');
-  opEl.innerHTML='';
-  Object.entries(room.players||{}).forEach(([pid,p])=>{
-    if(pid===myId) return;
-    const isActive=room.currentTurn===pid;
-    const div=document.createElement('div');
-    div.className='rm-opponent'+(isActive?' active-turn':'');
-    const av=document.createElement('div');
-    av.className='rm-opp-avatar';
-    av.style.background=p.color||'#9b59b6';
-    av.textContent=(p.name||'?')[0].toUpperCase();
-    div.appendChild(av);
-    const nm=document.createElement('div'); nm.className='rm-opp-name'; nm.textContent=p.name||'Jugador'; div.appendChild(nm);
-    const cr=document.createElement('div'); cr.className='rm-opp-cards'; cr.textContent=(p.hand||[]).length+' cartas'; div.appendChild(cr);
-    opEl.appendChild(div);
-  });
+  // My hand
+  rmRenderHand();
 
   // Bot turn
   if(rmSoloMode&&room.currentTurn==='bot'&&!room.botThinking){
-    db.ref(`${RM_PATH}/${rmRoomCode}/botThinking`).set(true);
-    setTimeout(()=>rmBotTurn(room), 1200+Math.random()*800);
+    if(rmSoloMode) rmCurrentRoom.botThinking=true;
+    else db.ref(`${RM_PATH}/${rmRoomCode}/botThinking`).set(true);
+    setTimeout(()=>rmBotTurnSolo(), 1200+Math.random()*700);
   }
 }
 
 function rmRenderHand(){
   const el=document.getElementById('rmHandEl');
-  el.innerHTML=''; document.getElementById('rmHandCount').textContent=rmMyHand.length;
+  if(!el) return;
+  el.innerHTML='';
+  const cnt=document.getElementById('rmHandCount');
+  if(cnt) cnt.textContent=rmMyHand.length;
+
   rmMyHand.forEach((c,i)=>{
-    const card=rmCardEl(c);
-    if(i===rmSelectedIdx) card.classList.add('selected');
+    const isJk=c.rank==='JK';
+    const isRed=c.suit==='hearts'||c.suit==='diamonds';
+    const sym=isJk?'🃏':(RM_SUIT_SYM[c.suit]||'');
+    const card=document.createElement('div');
+    card.className='rm-card '+(isJk?'jk':isRed?'r':'b')+(i===rmSelectedIdx?' selected':'');
+    card.style.zIndex=i===rmSelectedIdx?20:i;
+    if(isJk){
+      card.innerHTML=`<div class="rm-card-top">🃏</div><div class="rm-card-center">🃏</div><div class="rm-card-bot">🃏</div>`;
+    } else {
+      card.innerHTML=`<div class="rm-card-top">${c.rank}<br>${sym}</div><div class="rm-card-center">${sym}</div><div class="rm-card-bot">${c.rank}<br>${sym}</div>`;
+    }
     card.onclick=()=>rmSelectCard(i);
     el.appendChild(card);
   });
-  // Re-render groups (in case cards were moved)
-  rmRenderGroups();
-}
-
-function rmRenderGroups(){
-  const sizes=[4,4,3];
-  const labels=['G1 (4)','G2 (4)','G3 (3)'];
-  [0,1,2].forEach(gi=>{
-    const slot=document.getElementById('rmG'+gi);
-    if(!slot) return;
-    const cards=rmGroups[gi];
-    const valid=rmValidGroup(cards);
-    slot.className='rm-group-slot'+(cards.length>0?(valid?' valid':' invalid'):'');
-    // Clear and re-add label
-    slot.innerHTML=`<div class="rm-group-slot-lbl">${labels[gi]}</div>`;
-    cards.forEach((c,ci)=>{
-      const mc=rmCardEl(c,true);
-      mc.onclick=(e)=>{ e.stopPropagation(); rmMoveGroupToHand(gi,ci); };
-      slot.appendChild(mc);
-    });
-  });
-  // Update declare button label based on groups validity
-  const allValid=rmCanDeclare(rmGroups[0],rmGroups[1],rmGroups[2]);
-  const decBtn=document.getElementById('rmDeclareBtn');
-  if(decBtn&&rmPhase==='myturn_discard'){
-    decBtn.style.background=allValid?'linear-gradient(135deg,#f0d060,#d4a017)':'linear-gradient(135deg,#8e44ad,#6c3483)';
-    decBtn.style.color=allValid?'#1a1000':'#fff';
-    decBtn.textContent=allValid?'🏆 Declarar':'📋 Organizar';
-  }
-  document.getElementById('rmGroupsValid').textContent=
-    rmGroups.some(g=>g.length>0)?(rmCanDeclare(rmGroups[0],rmGroups[1],rmGroups[2])?'✅ ¡Listo para declarar!':'Arrastra cartas seleccionadas'):'Selecciona cartas y toca un grupo';
 }
 
 function rmSelectCard(i){
@@ -10381,22 +10586,6 @@ function rmSelectCard(i){
   rmSelectedIdx=rmSelectedIdx===i?null:i;
   rmRenderHand();
   document.getElementById('rmDiscardBtn').disabled=!(rmSelectedIdx!==null&&rmHasTakenCard);
-}
-
-function rmMoveToGroup(gi){
-  if(rmSelectedIdx===null) return;
-  if(rmGroups[gi].length>=(gi===2?3:4)){ toast('⚠️ Grupo lleno'); return; }
-  const card=rmMyHand.splice(rmSelectedIdx,1)[0];
-  rmGroups[gi].push(card);
-  rmSelectedIdx=null;
-  rmRenderHand();
-  document.getElementById('rmDiscardBtn').disabled=true;
-}
-
-function rmMoveGroupToHand(gi, ci){
-  const card=rmGroups[gi].splice(ci,1)[0];
-  rmMyHand.push(card);
-  rmRenderHand();
 }
 
 function rmSortHand(){
@@ -10408,79 +10597,89 @@ function rmSortHand(){
   rmSelectedIdx=null; rmRenderHand();
 }
 
-// ── Card taking actions ───────────────────────────
-async function rmTakeDeck(){
+// Groups removed from main screen — only in declare modal
+function rmMoveToGroup(){}
+function rmMoveGroupToHand(){}
+function rmRenderGroups(){}
+
+async function rmTakeDeckBase(){
   if(rmPhase!=='myturn_take') return;
   const room=rmCurrentRoom; if(!room) return;
   let deck=[...(room.deck||[])];
   let discard=[...(room.discardPile||[])];
   if(deck.length===0){
     if(discard.length<=1){ toast('⚠️ No hay cartas'); return; }
-    const top=discard.pop();
-    deck=rmShuffle([...discard]);
-    discard=[top];
+    const top=discard.pop(); deck=rmShuffle([...discard]); discard=[top];
     toast('🔀 Mazo barajado',1500);
   }
   const card=deck.pop();
   rmMyHand.push(card);
+  const updHand=[...rmMyHand];
+  const la={type:'took_deck',name:(myName||'').split(' ')[0]};
   playTone(440,.05,'sine',.08);
-  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
-    deck, [`players/${myId}/hand`]:rmMyHand, hasTaken:true
-  });
   rmHasTakenCard=true; rmPhase='myturn_discard';
-  rmRenderHand();
-  document.getElementById('rmDeckBtn').style.opacity='.4';
-  document.getElementById('rmDiscardBtn').disabled=true;
-  document.getElementById('rmDeclareBtn').disabled=false;
+  if(rmSoloMode){
+    Object.assign(rmCurrentRoom,{deck,['players']: {...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:updHand}},hasTaken:true,lastAction:la});
+    rmHandleRoomUpdate(rmCurrentRoom);
+  } else {
+    await db.ref(`${RM_PATH}/${rmRoomCode}`).update({deck,[`players/${myId}/hand`]:updHand,hasTaken:true,lastAction:la,botThinking:false});
+  }
 }
 
-async function rmTakeDiscard(){
+async function rmTakeDiscardBase(){
   if(rmPhase!=='myturn_take') return;
   const room=rmCurrentRoom; if(!room) return;
   const discard=[...(room.discardPile||[])];
   if(!discard.length) return;
   const card=discard.pop();
   rmMyHand.push(card);
+  const isJk=card.rank==='JK'; const sym=isJk?'':RM_SUIT_SYM[card.suit]||'';
+  const la={type:'took_discard',name:(myName||'').split(' ')[0],rank:isJk?'🃏':card.rank,suit:card.suit};
   playTone(520,.05,'sine',.08);
-  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
-    discardPile:discard, [`players/${myId}/hand`]:rmMyHand, hasTaken:true
-  });
   rmHasTakenCard=true; rmPhase='myturn_discard';
-  rmRenderHand();
-  document.getElementById('rmDiscardBtn').disabled=true;
-  document.getElementById('rmDeclareBtn').disabled=false;
+  const updHand=[...rmMyHand];
+  if(rmSoloMode){
+    Object.assign(rmCurrentRoom,{discardPile:discard,[`players`]:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:updHand}},hasTaken:true,lastAction:la});
+    rmHandleRoomUpdate(rmCurrentRoom);
+  } else {
+    await db.ref(`${RM_PATH}/${rmRoomCode}`).update({discardPile:discard,[`players/${myId}/hand`]:updHand,hasTaken:true,lastAction:la,botThinking:false});
+  }
 }
 
-async function rmDiscardSelected(){
+async function rmDiscardSelectedBase(){
   if(rmSelectedIdx===null||!rmHasTakenCard) return;
   const room=rmCurrentRoom; if(!room) return;
   const card=rmMyHand.splice(rmSelectedIdx,1)[0];
   rmSelectedIdx=null;
   const discard=[...(room.discardPile||[]),card];
-  // Advance turn
   const order=room.turnOrder||[];
   const idx=order.indexOf(myId);
   const nextId=order[(idx+1)%order.length];
+  const isJk=card.rank==='JK';
+  const la={type:'discarded',name:(myName||'').split(' ')[0],rank:isJk?'🃏':card.rank,suit:card.suit};
   playTone(330,.07,'sine',.07);
-  // Put all group cards back in hand for Firebase (groups are local only)
-  const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
-  rmGroups=[[],[],[]];
-  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
-    discardPile:discard, [`players/${myId}/hand`]:allCards,
-    currentTurn:nextId, hasTaken:false, botThinking:false
-  });
+  const allCards=[...rmMyHand];
   rmPhase='oppturn';
-  rmRenderHand();
+  if(rmSoloMode){
+    Object.assign(rmCurrentRoom,{discardPile:discard,[`players`]:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:allCards}},currentTurn:nextId,hasTaken:false,botThinking:false,lastAction:la});
+    rmHandleRoomUpdate(rmCurrentRoom);
+  } else {
+    await db.ref(`${RM_PATH}/${rmRoomCode}`).update({discardPile:discard,[`players/${myId}/hand`]:allCards,currentTurn:nextId,hasTaken:false,botThinking:false,lastAction:la});
+  }
 }
+
+// Override take/discard functions
+// eslint-disable-next-line no-func-assign
+rmTakeDeck=rmTakeDeckBase;
+// eslint-disable-next-line no-func-assign
+rmTakeDiscard=rmTakeDiscardBase;
+// eslint-disable-next-line no-func-assign
+rmDiscardSelected=rmDiscardSelectedBase;
 
 // ── Declare ───────────────────────────────────────
 function rmOpenDeclare(){
   if(!rmHasTakenCard){ toast('⚠️ Primero toma una carta'); return; }
-  // Populate declare modal with current hand + groups merged back
-  rmDeclGroups=[...rmGroups[0].map(c=>({...c}))].length>0
-    ?[rmGroups[0].slice(),rmGroups[1].slice(),rmGroups[2].slice()]
-    :[[],[],[]];
-  // Hand = local hand (groups not yet merged)
+  rmDeclGroups=[[],[],[]]; _rmDeclActiveGroup=0;
   document.getElementById('rmDeclareModal').style.display='flex';
   rmRenderDeclareModal();
 }
@@ -10490,110 +10689,108 @@ function rmCloseDeclare(){
 }
 
 function rmRenderDeclareModal(){
-  const hand=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
-  // Show unassigned cards as hand in declare modal
+  const allCards=[...rmMyHand];
   const assigned=new Set([...rmDeclGroups[0],...rmDeclGroups[1],...rmDeclGroups[2]].map(c=>c.id));
-  const unassigned=hand.filter(c=>!assigned.has(c.id));
+  const sizes=[4,4,3];
 
   [0,1,2].forEach(gi=>{
-    const el=document.getElementById('rmDeclG'+gi);
-    el.innerHTML='';
-    rmDeclGroups[gi].forEach((c,ci)=>{
-      const div=rmCardEl(c,true);
-      div.style.cursor='pointer';
-      div.onclick=()=>{ rmDeclGroups[gi].splice(ci,1); rmRenderDeclareModal(); };
-      el.appendChild(div);
+    const grpEl=document.getElementById('rmDeclG'+gi);
+    const statEl=document.getElementById('rmDeclStat'+gi);
+    if(!grpEl) return;
+    grpEl.innerHTML='';
+    const grp=rmDeclGroups[gi];
+    const valid=grp.length===sizes[gi]&&rmValidGroup(grp);
+    grp.forEach((c,ci)=>{
+      const wrap=document.createElement('div');
+      wrap.className='rm-decl-group-card';
+      const card=rmMakeCardEl(c,true);
+      const rm=document.createElement('div');
+      rm.className='rm-decl-remove'; rm.textContent='×';
+      rm.onclick=()=>{ rmDeclGroups[gi].splice(ci,1); rmRenderDeclareModal(); };
+      wrap.appendChild(card); wrap.appendChild(rm);
+      grpEl.appendChild(wrap);
     });
-    // Placeholder click area
-    const ph=document.createElement('div');
-    ph.style.cssText='min-width:30px;min-height:40px;flex:1;cursor:pointer;';
-    ph.onclick=()=>{
-      if(rmDeclSelected===null) return;
-      const {src,idx,id}=rmDeclSelected;
-      const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
-      const card=allCards.find(c=>c.id===id);
-      if(!card) return;
-      // Remove from source group if already placed
-      [0,1,2].forEach(g=>{ rmDeclGroups[g]=rmDeclGroups[g].filter(c=>c.id!==id); });
-      const maxSize=[4,4,3][gi];
-      if(rmDeclGroups[gi].length>=maxSize){ toast('⚠️ Grupo lleno'); rmDeclSelected=null; rmRenderDeclareModal(); return; }
-      rmDeclGroups[gi].push(card);
-      rmDeclSelected=null; rmRenderDeclareModal();
-    };
-    el.appendChild(ph);
+    // Click area to add
+    const isActive=_rmDeclActiveGroup===gi;
+    const groupEl=grpEl.closest('.rm-decl-group');
+    if(groupEl){
+      groupEl.style.borderColor=isActive?'rgba(155,89,182,.5)':valid?'rgba(46,204,113,.3)':'rgba(255,255,255,.08)';
+      groupEl.onclick=()=>{ _rmDeclActiveGroup=gi; rmRenderDeclareModal(); };
+    }
+    if(statEl){
+      statEl.textContent=`${grp.length}/${sizes[gi]}`;
+      statEl.style.color=valid?'#2ecc71':grp.length>0?'#e67e22':'rgba(255,255,255,.25)';
+    }
   });
 
   // Hand
   const handEl=document.getElementById('rmDeclHand');
-  handEl.innerHTML='';
-  const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
-  allCards.forEach((c,i)=>{
-    const inGroup=[...rmDeclGroups[0],...rmDeclGroups[1],...rmDeclGroups[2]].some(x=>x.id===c.id);
-    const div=rmCardEl(c,true);
-    div.style.opacity=inGroup?'.3':'1';
-    div.style.cursor='pointer';
-    if(rmDeclSelected&&rmDeclSelected.id===c.id) div.style.outline='2px solid #9b59b6';
-    div.onclick=()=>{
-      if(inGroup){ // remove from group
-        [0,1,2].forEach(g=>{ rmDeclGroups[g]=rmDeclGroups[g].filter(x=>x.id!==c.id); });
-        rmDeclSelected=null;
-      } else {
-        rmDeclSelected={id:c.id};
-      }
-      rmRenderDeclareModal();
-    };
-    handEl.appendChild(div);
-  });
+  if(handEl){
+    handEl.innerHTML='';
+    allCards.forEach((c)=>{
+      const inGroup=assigned.has(c.id);
+      const card=rmMakeCardEl(c,true);
+      card.className+=' rm-decl-hand-card'+(inGroup?' used':'');
+      card.onclick=()=>{
+        if(inGroup){
+          [0,1,2].forEach(g=>{ rmDeclGroups[g]=rmDeclGroups[g].filter(x=>x.id!==c.id); });
+          rmRenderDeclareModal(); return;
+        }
+        const gi=_rmDeclActiveGroup;
+        const maxSz=[4,4,3][gi];
+        if(rmDeclGroups[gi].length>=maxSz){
+          // Auto-advance group
+          _rmDeclActiveGroup=(_rmDeclActiveGroup+1)%3;
+          const gi2=_rmDeclActiveGroup;
+          if(rmDeclGroups[gi2].length>=[4,4,3][gi2]){ toast('⚠️ Grupos llenos'); return; }
+          rmDeclGroups[gi2].push(c);
+        } else {
+          rmDeclGroups[gi].push(c);
+        }
+        rmRenderDeclareModal();
+      };
+      handEl.appendChild(card);
+    });
+  }
 
   // Validate
+  const totalAssigned=rmDeclGroups[0].length+rmDeclGroups[1].length+rmDeclGroups[2].length;
   const v0=rmDeclGroups[0].length===4&&rmValidGroup(rmDeclGroups[0]);
   const v1=rmDeclGroups[1].length===4&&rmValidGroup(rmDeclGroups[1]);
   const v2=rmDeclGroups[2].length===3&&rmValidGroup(rmDeclGroups[2]);
-  const allValid=v0&&v1&&v2;
-  const totalAssigned=rmDeclGroups[0].length+rmDeclGroups[1].length+rmDeclGroups[2].length;
-  const totalCards=allCards.length;
-
-  const msg=document.getElementById('rmDeclValidMsg');
-  const confirm=document.getElementById('rmDeclConfirmBtn');
-  if(allValid&&totalAssigned===totalCards){
-    msg.style.color='#2ecc71'; msg.textContent='✅ ¡Combinación válida! Listo para declarar';
-    confirm.disabled=false;
-  } else {
-    const issues=[];
-    if(!v0) issues.push(`G1:${rmDeclGroups[0].length}/4${rmDeclGroups[0].length===4?' ❌':''}`);
-    if(!v1) issues.push(`G2:${rmDeclGroups[1].length}/4${rmDeclGroups[1].length===4?' ❌':''}`);
-    if(!v2) issues.push(`G3:${rmDeclGroups[2].length}/3${rmDeclGroups[2].length===3?' ❌':''}`);
-    if(totalAssigned<totalCards) issues.push(`${totalCards-totalAssigned} sin asignar`);
-    msg.style.color='rgba(255,255,255,.4)'; msg.textContent=issues.join(' · ')||'Asigna todas las cartas';
-    confirm.disabled=true;
+  const allValid=v0&&v1&&v2&&totalAssigned===allCards.length;
+  const badge=document.getElementById('rmDeclValidBadge');
+  const msg=document.getElementById('rmDeclMsg');
+  const cfm=document.getElementById('rmDeclConfirmBtn');
+  if(badge) badge.textContent=`${totalAssigned}/${allCards.length}`;
+  if(badge) badge.style.color=allValid?'#2ecc71':totalAssigned>0?'#f0d060':'rgba(255,255,255,.3)';
+  if(msg){
+    if(allValid){ msg.style.color='#2ecc71'; msg.textContent='✅ ¡Combinación válida!'; }
+    else {
+      const issues=[]; if(!v0) issues.push('G1 ❌'); if(!v1) issues.push('G2 ❌'); if(!v2) issues.push('G3 ❌');
+      if(totalAssigned<allCards.length) issues.push(`${allCards.length-totalAssigned} sin asignar`);
+      msg.style.color='rgba(255,255,255,.35)'; msg.textContent=issues.join(' · ')||'Toca una carta para asignarla al grupo activo';
+    }
   }
+  if(cfm) cfm.disabled=!allValid;
 }
 
 async function rmConfirmDeclare(){
   const room=rmCurrentRoom; if(!room) return;
-  // Final validation
   if(!rmCanDeclare(rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2])){ toast('❌ Grupos inválidos'); return; }
   rmCloseDeclare();
-
-  // Collect bet from all players
   const players=room.players||{};
   const pids=Object.keys(players);
   const betAmt=room.bet||rmBet;
   const totalPot=betAmt*pids.length;
-
-  // Deduct from all (already paid on join — no double deduction)
-  // Winner gets pot
-  myBal+=totalPot; saveLocal(); updateRanking(); mgUpdateBal('mnBal');
+  myBal+=totalPot; saveLocal(); updateRanking();
   mlRecordGameStat('rummy',true,totalPot-betAmt);
-
-  // Write win to Firebase
-  await db.ref(`${RM_PATH}/${rmRoomCode}`).update({
-    status:'done', winner:myId, winnerName:myName,
-    winGroups:[rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2]],
-    pot:totalPot
-  });
-
-  // Deduct bet from other players locally (they handle their own)
+  if(rmSoloMode){
+    Object.assign(rmCurrentRoom,{status:'done',winner:myId,winnerName:myName,winGroups:[rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2]],pot:totalPot});
+    rmHandleRoomUpdate(rmCurrentRoom);
+  } else {
+    await db.ref(`${RM_PATH}/${rmRoomCode}`).update({status:'done',winner:myId,winnerName:myName,winGroups:[rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2]],pot:totalPot});
+  }
   coinBurst(totalPot-betAmt, window.innerWidth/2, 200);
   bigBurst(); sfxWin();
 }
@@ -10603,33 +10800,30 @@ function rmRenderDone(room){
   const isWinner=room.winner===myId;
   const pot=room.pot||0;
   const betAmt=room.bet||rmBet;
-
-  if(!isWinner){
-    // Deduct bet
+  if(!isWinner&&!room._lossRecorded){
+    room._lossRecorded=true;
     myBal=Math.max(0,myBal-betAmt); saveLocal(); updateRanking();
     mlRecordGameStat('rummy',false,-betAmt);
-    toast(`🏆 ${room.winnerName||'Alguien'} declaró victoria. Perdiste $${betAmt}`, 4000);
+    toast(`🏆 ${escHtml(room.winnerName||'Alguien')} declaró. Perdiste $${betAmt}`,4000);
   }
-
-  // Show win overlay
-  const table=document.getElementById('rmTable');
   let overlay=document.getElementById('rmWinOverlay');
   if(!overlay){
     overlay=document.createElement('div'); overlay.id='rmWinOverlay';
-    overlay.className='rm-win-overlay'; table.appendChild(overlay);
+    overlay.className='rm-win-overlay';
+    document.getElementById('scRummy').appendChild(overlay);
   }
   const groups=room.winGroups||[];
   overlay.innerHTML=`
-    <div class="rm-win-title">${isWinner?'🏆 ¡GANASTE!':'😔 '+escHtml(room.winnerName||'Jugador')+' ganó'}</div>
-    <div class="rm-win-sub">${isWinner?'+$'+(pot-betAmt)+' ganados':'−$'+betAmt+' perdidos'}</div>
+    <div class="rm-win-title">${isWinner?'🏆 ¡GANASTE!':'😔 '+escHtml(room.winnerName||'?')+' ganó'}</div>
+    <div class="rm-win-sub">${isWinner?'+'+'$'+(pot-betAmt)+' ganados':'−$'+betAmt+' perdidos'}</div>
     <div class="rm-win-groups">${groups.map((g,i)=>`
       <div class="rm-win-group">
-        <div class="rm-win-group-lbl">GRUPO ${i+1} ${rmValidGroup(g)?'✅':''}</div>
-        ${g.map(c=>`<div class="rm-mini-card ${c.rank==='JK'?'joker':c.suit}">${rmCardLabel(c)}</div>`).join('')}
+        <div class="rm-win-group-lbl">GRUPO ${i+1} ${rmValidGroup(g)?'✅':'❌'}</div>
+        <div class="rm-win-group-cards">${(g||[]).map(c=>{const isJk=c.rank==='JK';const isR=c.suit==='hearts'||c.suit==='diamonds';return `<div class="rm-mini-card ${isJk?'jk':isR?'r':'b'}">${isJk?'🃏':c.rank+(RM_SUIT_SYM[c.suit]||'')}</div>`;}).join('')}</div>
       </div>`).join('')}
     </div>
-    <button onclick="rmPlayAgain()" style="padding:14px 32px;background:linear-gradient(135deg,#8e44ad,#6c3483);border:none;border-radius:16px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;margin-top:6px;">🔄 Jugar otra vez</button>
-    <button onclick="rmLeave()" style="padding:10px 24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;">Salir</button>`;
+    <button onclick="rmPlayAgain()" style="padding:14px 32px;background:linear-gradient(135deg,#8e44ad,#6c3483);border:none;border-radius:16px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;">🔄 Otra partida</button>
+    <button onclick="rmLeave()" style="padding:10px 24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;margin-top:4px;">Salir</button>`;
   overlay.style.display='flex';
 }
 
@@ -10691,62 +10885,8 @@ function rmStartSolo(){
   toast('🃏 Partida vs Bot — ¡Empieza tú!',2000);
 }
 
-// Solo mode: local state patch instead of Firebase
-function rmLocalUpdate(patch){
-  Object.assign(rmCurrentRoom, patch);
-  rmHandleRoomUpdate(rmCurrentRoom);
-}
+// Solo mode handled by rmTakeDeckBase/rmTakeDiscardBase/rmDiscardSelectedBase
 
-async function rmTakeDeckSolo(){
-  if(!rmSoloMode){ return rmTakeDeck(); }
-  if(rmPhase!=='myturn_take') return;
-  let deck=[...rmCurrentRoom.deck];
-  let discard=[...rmCurrentRoom.discardPile];
-  if(!deck.length){
-    if(discard.length<=1){ toast('⚠️ No hay cartas'); return; }
-    const top=discard.pop(); deck=rmShuffle([...discard]); discard=[top];
-    toast('🔀 Mazo barajado',1500);
-  }
-  const card=deck.pop();
-  rmMyHand.push(card);
-  playTone(440,.05,'sine',.08);
-  rmLocalUpdate({deck, [`players`]:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:rmMyHand}}, hasTaken:true});
-}
-
-async function rmTakeDiscardSolo(){
-  if(!rmSoloMode){ return rmTakeDiscard(); }
-  if(rmPhase!=='myturn_take') return;
-  const discard=[...rmCurrentRoom.discardPile];
-  if(!discard.length) return;
-  const card=discard.pop();
-  rmMyHand.push(card);
-  playTone(520,.05,'sine',.08);
-  rmLocalUpdate({discardPile:discard, players:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:rmMyHand}}, hasTaken:true});
-}
-
-// Override take functions to route through solo
-const _rmTakeDeckOrig=rmTakeDeck, _rmTakeDiscardOrig=rmTakeDiscard;
-// eslint-disable-next-line no-func-assign
-rmTakeDeck=function(){ if(rmSoloMode) rmTakeDeckSolo(); else _rmTakeDeckOrig(); };
-// eslint-disable-next-line no-func-assign
-rmTakeDiscard=function(){ if(rmSoloMode) rmTakeDiscardSolo(); else _rmTakeDiscardOrig(); };
-
-async function rmDiscardSelectedSolo(){
-  if(!rmSoloMode) return;
-  if(rmSelectedIdx===null||!rmHasTakenCard) return;
-  const card=rmMyHand.splice(rmSelectedIdx,1)[0];
-  rmSelectedIdx=null;
-  const discard=[...rmCurrentRoom.discardPile, card];
-  const allCards=[...rmMyHand,...rmGroups[0],...rmGroups[1],...rmGroups[2]];
-  rmGroups=[[],[],[]];
-  rmLocalUpdate({
-    discardPile:discard,
-    players:{...rmCurrentRoom.players,[myId]:{...rmCurrentRoom.players[myId],hand:allCards}},
-    currentTurn:'bot', hasTaken:false, botThinking:false
-  });
-  // Trigger bot
-  setTimeout(()=>rmBotTurnSolo(), 1000+Math.random()*700);
-}
 
 function rmBotTurnSolo(){
   const room=rmCurrentRoom;
@@ -10758,51 +10898,42 @@ function rmBotTurnSolo(){
   const {discardIdx, takeDiscard}=rmBotThink(botHand, discardTop);
 
   // Take card
+  let la;
   if(takeDiscard&&discard.length>0){
-    botHand.push(discard.pop());
+    const taken=discard[discard.length-1];
+    discard.pop(); botHand.push(taken);
+    la={type:'took_discard',name:'Bot',rank:taken.rank==='JK'?'🃏':taken.rank,suit:taken.suit};
   } else {
-    if(!deck.length){
-      if(discard.length>1){ const top=discard.pop(); deck=rmShuffle([...discard]); discard.length=0; discard.push(top); }
-    }
-    if(deck.length) botHand.push(deck.pop());
+    if(!deck.length&&discard.length>1){ const top=discard.pop(); deck=rmShuffle([...discard]); discard.length=0; discard.push(top); }
+    if(deck.length){ const taken=deck.pop(); botHand.push(taken); la={type:'took_deck',name:'🤖 Bot'}; }
   }
 
   // Check if bot can win
   const botArr=rmBotBestArrangement(botHand);
   if(botArr&&botArr.length===3&&rmCanDeclare(botArr[0],botArr[1],botArr[2])){
-    // Bot wins!
     const pot=(room.bet||rmBet)*2;
-    myBal=Math.max(0,myBal-(room.bet||rmBet)); saveLocal(); updateRanking();
-    mlRecordGameStat('rummy',false,-(room.bet||rmBet));
-    rmLocalUpdate({
-      status:'done', winner:'bot', winnerName:'🤖 Bot',
-      winGroups:botArr, pot, players:{...room.players,bot:{...room.players.bot,hand:botHand}}, deck
-    });
+    Object.assign(rmCurrentRoom,{status:'done',winner:'bot',winnerName:'🤖 Bot',
+      winGroups:botArr,pot,
+      players:{...room.players,bot:{...room.players.bot,hand:botHand}},deck});
+    rmHandleRoomUpdate(rmCurrentRoom);
     return;
   }
 
   // Discard
-  let dIdx=discardIdx;
-  if(dIdx>=botHand.length) dIdx=botHand.length-1;
+  let dIdx=Math.min(discardIdx,botHand.length-1);
   const discarded=botHand.splice(dIdx,1)[0];
   discard.push(discarded);
+  const dLa={type:'discarded',name:'🤖 Bot',rank:discarded.rank==='JK'?'🃏':discarded.rank,suit:discarded.suit};
   playTone(330,.06,'sine',.06);
-  rmLocalUpdate({
+  Object.assign(rmCurrentRoom,{
     discardPile:discard, deck,
     players:{...room.players,bot:{...room.players.bot,hand:botHand}},
-    currentTurn:myId, hasTaken:false, botThinking:false
+    currentTurn:myId, hasTaken:false, botThinking:false, lastAction:dLa
   });
+  rmHandleRoomUpdate(rmCurrentRoom);
 }
 
-// Patch discard to use solo version
-const _rmDiscardOrig=rmDiscardSelected;
-// eslint-disable-next-line no-func-assign
-rmDiscardSelected=function(){ if(rmSoloMode) rmDiscardSelectedSolo(); else _rmDiscardOrig(); };
 
-// Bot turn for Firebase multiplayer (host runs it)
-async function rmBotTurn(room){
-  // Not used in current impl (no bot in multiplayer), placeholder for future
-}
 
 // ── Firebase cleanup on room player removal ──────
 function rmCheckRoomEmpty(room){
