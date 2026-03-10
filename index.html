@@ -1082,8 +1082,8 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-bar-opp-score{font-size:9px;color:rgba(255,255,255,.5);}
 .rm-bar-pot{font-size:11px;font-weight:900;color:#f0d060;background:rgba(0,0,0,.3);border-radius:10px;padding:4px 10px;flex-shrink:0;}
 /* Opponent fan area — flex:1 to fill middle space */
-.rm-opp-area{flex:1;display:flex;align-items:center;justify-content:center;padding:4px 16px 0;}
-.rm-opp-fan{display:flex;align-items:flex-end;justify-content:center;height:80px;position:relative;width:100%;max-width:320px;}
+.rm-opp-area{flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:6px 16px 4px;}
+.rm-opp-fan{display:flex;align-items:flex-end;justify-content:center;height:76px;position:relative;width:100%;max-width:320px;}
 .rm-opp-fan-card{width:46px;height:66px;border-radius:7px;position:absolute;box-shadow:1px 2px 6px rgba(0,0,0,.55);transform-origin:bottom center;
   background:#e8e8e8;
   border:1px solid #ccc;}
@@ -1092,7 +1092,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
   background:repeating-linear-gradient(45deg,#c0392b 0px,#c0392b 3px,#922b21 3px,#922b21 6px);
   opacity:.9;}
 /* CENTER area */
-.rm-center-area{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0 4px;flex-shrink:0;}
+.rm-center-area{flex:1;display:flex;align-items:center;justify-content:center;gap:14px;padding:0;}
 .rm-deck-count-label{font-size:28px;font-weight:900;color:rgba(255,255,255,.65);min-width:36px;text-align:right;text-shadow:0 2px 6px rgba(0,0,0,.6);}
 .rm-deck{width:62px;height:88px;border-radius:8px;
   background:#e8e8e8;border:1px solid #bbb;
@@ -1113,7 +1113,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 /* Action log */
 .rm-action-log{text-align:center;font-size:11px;color:rgba(255,255,255,.8);padding:3px 16px;min-height:18px;flex-shrink:0;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.5);}
 /* My area — pinned to bottom */
-.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;}
+.rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;padding-bottom:env(safe-area-inset-bottom);}
 .rm-me-top{display:flex;align-items:center;gap:8px;padding:0 12px 5px;}
 .rm-me-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;border:2px solid transparent;}
 .rm-me-av.active{border-color:#f0d060;box-shadow:0 0 10px rgba(240,208,96,.4);}
@@ -1128,7 +1128,7 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
 .rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
 /* MY HAND */
-.rm-hand-row{display:flex;align-items:flex-end;padding:0 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none;min-height:92px;}
+.rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px 6px;overflow-x:auto;scrollbar-width:none;min-height:92px;}
 .rm-hand-row::-webkit-scrollbar{display:none;}
 
 /* ═══ REAL PLAYING CARD ═══ */
@@ -1214,9 +1214,9 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-decl-btn-ok:disabled{opacity:.35;cursor:not-allowed;}
 .rm-decl-btn-cancel{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);}
 
-/* WAITING OVERLAY */
-.rm-wait-screen{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:50;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.rm-wait-pill{background:rgba(0,0,0,.7);border-radius:20px;padding:10px 20px;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);}
+/* WAITING OVERLAY — only over the fan area, not blocking deck/cards */
+.rm-wait-screen{position:absolute;top:56px;left:0;right:0;height:100px;background:transparent;z-index:50;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.rm-wait-pill{background:rgba(0,0,0,.65);border-radius:20px;padding:8px 18px;font-size:12px;font-weight:700;color:rgba(255,255,255,.8);backdrop-filter:blur(4px);}
 
 
 /* ════════ SHARED MINI-GAME SHELL ════════ */
@@ -2592,7 +2592,7 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 </div>
 
 <!-- ════════ RUMMY GAME ════════ -->
-<div class="fullscreen hidden" id="scRummy" style="overflow:hidden;display:flex;flex-direction:column;">
+<div class="fullscreen hidden" id="scRummy" style="overflow:hidden;display:flex;flex-direction:column;padding:0!important;align-items:stretch!important;justify-content:flex-start!important;">
   <!-- Timer -->
   <div class="rm-timer-wrap"><div class="rm-timer-bar" id="rmTimerBar" style="width:100%;"></div></div>
 
