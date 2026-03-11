@@ -1011,7 +1011,6 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .gs-card-crash:hover{box-shadow:0 0 30px rgba(46,204,113,.15);}
 .gs-card-mines{background:linear-gradient(135deg,rgba(231,76,60,.18),rgba(231,76,60,.04));border:1px solid rgba(231,76,60,.35);}
 .gs-card-mines:hover{box-shadow:0 0 30px rgba(231,76,60,.18);}
-.gs-card-plinko{background:linear-gradient(135deg,rgba(192,132,252,.15),rgba(124,58,237,.04));border:1px solid rgba(192,132,252,.35);}
 .gs-card-dice{background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(155,89,182,.04));border:1px solid rgba(52,152,219,.3);}
 .gs-card-dice:hover{box-shadow:0 0 30px rgba(52,152,219,.15);}
 .gs-card-football{background:linear-gradient(135deg,rgba(192,57,43,.18),rgba(41,128,185,.15));border:1px solid rgba(160,80,100,.4);}
@@ -1445,12 +1444,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .mn-mine-opt.active{background:rgba(231,76,60,.3);border-color:#e74c3c;color:#fff;box-shadow:0 0 8px rgba(231,76,60,.3);}
 
 /* ════════ PLINKO ════════ */
-#scPlinko{background:radial-gradient(ellipse at 50% 0%,#100018,#05000a);}
-#scPlinko .mg-topbar{border-bottom:1px solid rgba(180,80,255,.2);}
-#scPlinko .mg-body{padding:6px 10px 4px;gap:4px;}
-#scPlinko .mg-bottom{background:rgba(8,0,15,.9);border-top:1px solid rgba(150,60,255,.15);}
 .pl-canvas-wrap{width:100%;flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 .pl-risk-row{display:flex;gap:6px;align-items:center;width:100%;}
 .pl-risk-lbl{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;}
 .pl-risk-btn{flex:1;border:1.5px solid;border-radius:8px;font-size:10px;font-weight:800;padding:5px;cursor:pointer;transition:all .12s;text-align:center;}
@@ -1547,6 +1541,33 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 .dc-dot{width:8px;height:8px;border-radius:50%;}
 .dc-dot.win{background:#2ecc71;}
 .dc-dot.lose{background:#e74c3c;}
+
+
+/* ═══════ KENO ═══════ */
+#scKeno{background:radial-gradient(ellipse at 50% 0%,#001a35,#000c1a);}
+#scKeno .mg-topbar{border-bottom:1px solid rgba(0,180,255,.2);}
+#scKeno .mg-bottom{background:rgba(0,8,20,.95);border-top:1px solid rgba(0,150,255,.15);}
+.kn-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;padding:8px 10px;width:100%;box-sizing:border-box;}
+.kn-ball{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;cursor:pointer;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.kn-ball:active{transform:scale(.88);}
+.kn-ball.picked{background:linear-gradient(135deg,#0080ff,#0040cc);border-color:#40a0ff;color:#fff;box-shadow:0 0 10px rgba(0,128,255,.5);}
+.kn-ball.drawn{border-color:rgba(255,220,0,.5);background:rgba(255,200,0,.08);color:rgba(255,220,0,.7);}
+.kn-ball.hit{background:linear-gradient(135deg,#f0d060,#c8900a);border-color:#f0d060;color:#1a0800;box-shadow:0 0 14px rgba(240,200,0,.6);animation:knHitPop .35s ease;}
+@keyframes knHitPop{0%{transform:scale(1.3);}60%{transform:scale(.9);}100%{transform:scale(1);}}
+.kn-info-row{display:flex;justify-content:space-between;align-items:center;padding:4px 14px;flex-shrink:0;}
+.kn-picked-lbl{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:1px;}
+.kn-picked-val{font-size:13px;font-weight:800;color:#40a0ff;}
+.kn-pay-table{display:flex;gap:6px;overflow-x:auto;padding:4px 10px;scrollbar-width:none;flex-shrink:0;}
+.kn-pay-row{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;text-align:center;flex-shrink:0;}
+.kn-pay-row.active{border-color:rgba(240,200,0,.4);background:rgba(240,200,0,.08);}
+.kn-pay-match{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.5px;}
+.kn-pay-mult{font-size:12px;font-weight:900;color:#f0d060;}
+.kn-draw-area{display:flex;flex-wrap:wrap;gap:4px;padding:4px 10px;min-height:36px;justify-content:center;align-items:center;}
+.kn-drawn-ball{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.3);color:rgba(255,200,0,.8);}
+.kn-drawn-ball.hit{background:linear-gradient(135deg,#f0d060,#c8900a);color:#1a0800;border-color:#f0d060;}
+.kn-result-banner{text-align:center;padding:6px 14px;font-size:13px;font-weight:900;letter-spacing:1px;flex-shrink:0;min-height:28px;}
+.gs-card-keno{background:linear-gradient(135deg,rgba(0,180,255,.15),rgba(0,80,200,.04));border:1px solid rgba(0,180,255,.3);}
+.gs-card-keno:hover{box-shadow:0 0 30px rgba(0,180,255,.15);}
 
 </style>
 </head>
@@ -1713,10 +1734,13 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
       <div class="gs-card-name">Dados</div>
       <div class="gs-card-desc">Hi-Lo · Elige tu riesgo</div>
     </div>
-    <div class="gs-card gs-card-plinko" onclick="selectGame('plinko')">
-      <div class="gs-card-icon">🎯</div>
-      <div class="gs-card-name">Plinko</div>
+    <div class="gs-card-name">Plinko</div>
       <div class="gs-card-desc">Bola · 8 filas de pines</div>
+    </div>
+    <div class="gs-card gs-card-keno" onclick="selectGame('keno')">
+      <div class="gs-card-icon">🎱</div>
+      <div class="gs-card-name">KENO</div>
+      <div class="gs-card-desc">ELIGE TUS NÚMEROS<br>LOTERÍA DE CASINO</div>
     </div>
     <div class="gs-card gs-card-football" onclick="selectGame('football')">
       <div class="gs-card-icon">⚽</div>
@@ -2107,37 +2131,42 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 
 
 <!-- ════════ PLINKO ════════ -->
-<div class="fullscreen hidden mg-screen" id="scPlinko">
+
+
+<!-- ════════ KENO ════════ -->
+<div class="fullscreen hidden mg-screen" id="scKeno">
   <div class="mg-topbar">
     <button class="mg-back" onclick="goGameSelect()">← Salir</button>
-    <div class="mg-title" style="color:#c084fc;">🎯 PLINKO</div>
-    <div class="mg-bal" id="plBal">$0</div>
+    <div class="mg-title" style="color:#40a0ff;">🎱 KENO</div>
+    <div class="mg-bal" id="knBal">$0</div>
   </div>
-  <div class="mg-body">
-    <div class="pl-canvas-wrap">
-      <canvas id="plCanvas" width="320" height="420"></canvas>
-    </div>
-    <div class="pl-risk-row">
-      <span class="pl-risk-lbl">RIESGO:</span>
-      <button class="pl-risk-btn low active" id="plRiskLow" onclick="plSetRisk('low')">🟢 BAJO</button>
-      <button class="pl-risk-btn mid" id="plRiskMid" onclick="plSetRisk('mid')">🟡 MEDIO</button>
-      <button class="pl-risk-btn high" id="plRiskHigh" onclick="plSetRisk('high')">🔴 ALTO</button>
-    </div>
-    <div class="pl-hist-row" id="plHist"></div>
+  <!-- Pay table -->
+  <div class="kn-pay-table" id="knPayTable"></div>
+  <!-- Info row -->
+  <div class="kn-info-row">
+    <span class="kn-picked-lbl">ELEGIDOS: <span class="kn-picked-val" id="knPickedCount">0</span> / 10</span>
+    <span class="kn-picked-lbl">SORTEADOS: <span style="color:#f0d060;" id="knDrawnCount">0</span> / 20</span>
   </div>
+  <!-- Number grid 1-80 -->
+  <div class="kn-grid" id="knGrid"></div>
+  <!-- Drawn numbers display -->
+  <div class="kn-draw-area" id="knDrawArea"></div>
+  <!-- Result -->
+  <div class="kn-result-banner" id="knResultBanner"></div>
+  <!-- Bottom -->
   <div class="mg-bottom">
     <div class="mg-bet-panel">
       <div class="mg-bet-group">
         <div class="mg-bet-lbl">APUESTA</div>
-        <input class="mg-bet-input" id="plBetInput" type="number" value="10" min="1">
+        <input class="mg-bet-input" id="knBetInput" type="number" value="50" min="10" step="10">
       </div>
       <div class="mg-bet-chips">
-        <button class="mg-chip mg-chip-half" onclick="plAdjBet(-10)">−10</button>
-        <button class="mg-chip mg-chip-x2" onclick="plAdjBet(10)">+10</button>
-        <button class="mg-chip mg-chip-max" onclick="plAdjBet('max')">MAX</button>
+        <button class="mg-chip" onclick="knAdjBet(10)">+10</button>
+        <button class="mg-chip" onclick="knAdjBet(50)">+50</button>
+        <button class="mg-chip mg-chip-max" onclick="knAdjBet('max')">MAX</button>
       </div>
     </div>
-    <button class="mg-action-btn" id="plDropBtn" onclick="plDrop()" style="background:linear-gradient(135deg,#c084fc,#7c3aed);color:#fff;box-shadow:0 4px 20px rgba(192,132,252,.35);">🎯 SOLTAR BOLA</button>
+    <button class="mg-action-btn" id="knPlayBtn" onclick="knPlay()" style="background:linear-gradient(135deg,#0080ff,#0040bb);color:#fff;box-shadow:0 4px 20px rgba(0,128,255,.35);">🎱 SORTEAR</button>
   </div>
 </div>
 
@@ -5948,7 +5977,7 @@ function applyGoogleUser(user) {
         saveLocal();
         updateRanking();
         // Refresh all balance displays
-        ['myBalance','lobbyBal','mlBal','fsBal','slBal','crBal','mnBal','dcBal','plBal','gsBal','pfBal','rlBal'].forEach(id => {
+        ['myBalance','lobbyBal','mlBal','fsBal','knBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal'].forEach(id => {
           const el = document.getElementById(id);
           if(el) el.textContent = (id==='myBalance'?'$':'')+myBal.toLocaleString();
         });
@@ -6871,8 +6900,7 @@ function showGameSelect() {
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-  if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
-  ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scPlinko','scMainLobby','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -6889,8 +6917,7 @@ function goMainLobby(){
   // Hide all game screens
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-  if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
-  ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scPlinko','scGameSelect','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scGameSelect','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
   currentGame='';
   mlRefresh();
   show('scMainLobby');
@@ -6999,7 +7026,7 @@ function mlSignOut(){
   // Hide everything
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scPlinko','scFootball','scRummyLobby','scRummy'];
+    'scMines','scDice','scKeno','scFootball','scRummyLobby','scRummy'];
   allScreens.forEach(id => hide(id));
   bnHide();
   show('scWelcome');
@@ -7101,7 +7128,7 @@ let _rankTab='general', _rankSort='netProfit';
 const RANK_GAMES={
   bj:{icon:'🃏',name:'BlackJack'},rummy:{icon:'🃏',name:'Rummy'},roulette:{icon:'🎡',name:'Ruleta'},
   slots:{icon:'🎰',name:'Slots'},crash:{icon:'📈',name:'Crash'},mines:{icon:'💣',name:'Minas'},
-  dice:{icon:'🎲',name:'Dados'},plinko:{icon:'🎯',name:'Plinko'},football:{icon:'⚽',name:'Football'}
+  dice:{icon:'🎲',name:'Dados'},football:{icon:'⚽',name:'Football'}
 };
 
 function mlToggleRanking(){
@@ -7195,10 +7222,10 @@ const ML_GAME_STATS_KEYS = [
   {key:'crash',    icon:'📈', name:'Crash'},
   {key:'mines',    icon:'💣', name:'Minas'},
   {key:'dice',     icon:'🎲', name:'Dados'},
-  {key:'plinko',   icon:'🎯', name:'Plinko'},
-  {key:'roulette', icon:'🎡', name:'Ruleta'},
+    {key:'roulette', icon:'🎡', name:'Ruleta'},
   {key:'football', icon:'⚽', name:'Football Studio'},
   {key:'rummy',    icon:'🃏', name:'Rummy'},
+  {key:'keno',     icon:'🎱', name:'Keno'},
 ];
 
 function mlOpenStats(){
@@ -7446,8 +7473,9 @@ function selectGame(game) {
     startMines();
   } else if (game === 'dice') {
     startDice();
-  } else if (game === 'plinko') {
-    startPlinko();
+  } else if (game === 'keno') {
+    show('scKeno'); bnShow(); bnSync('scKeno');
+    knInit();
   } else if (game === 'football') {
     startFootball();
   } else if (game === 'rummy') {
@@ -8616,190 +8644,175 @@ function dcRenderHistory(){
 // ════════════════════════════════════════════
 const PL_W = 320, PL_H = 420;
 const PL_ROWS = 8;
-const PL_MULTS = {
-  low:  [1.5, 1.2, 1.1, 1.0, 0.5, 1.0, 1.1, 1.2, 1.5],
-  mid:  [3.0, 1.5, 1.2, 0.5, 0.3, 0.5, 1.2, 1.5, 3.0],
-  high: [10,  3.0, 1.5, 0.5, 0.2, 0.5, 1.5, 3.0, 10 ],
+
+// ═══════════════════════════════════════════
+//  KENO
+// ═══════════════════════════════════════════
+// Payout tables: [hits_needed] = multiplier
+// Indexed by picks (1-10), then hits needed
+const KN_PAYOUTS = {
+  1:  {1: 3},
+  2:  {2: 7},
+  3:  {2: 2,  3: 27},
+  4:  {2: 1,  3: 5,   4: 75},
+  5:  {3: 2,  4: 15,  5: 200},
+  6:  {3: 1,  4: 6,   5: 50,  6: 600},
+  7:  {3: 1,  4: 3,   5: 20,  6: 150,  7: 1500},
+  8:  {4: 2,  5: 10,  6: 75,  7: 500,  8: 4000},
+  9:  {4: 1,  5: 6,   6: 35,  7: 200,  8: 2000,  9: 8000},
+  10: {5: 2,  6: 15,  7: 75,  8: 500,  9: 3000,  10: 15000},
 };
-let plRisk = 'low', plDropping = false, plAnimId = null;
 
-// Peg layout helpers (always use PL_W/PL_H constants)
-function plPegPos(row, col){
-  const pegs = row + 2;
-  const spacing = PL_W / (pegs + 1);
-  return { x: spacing*(col+1), y: 36 + row * 38 };
-}
-function plSlotX(slot){ return PL_W / 10 * (slot + 1); }
-function plSlotColor(m){
-  if(m >= 5)   return '#e74c3c';
-  if(m >= 1.5) return '#f0d060';
-  if(m >= 1.0) return '#2ecc71';
-  return '#e67e22';
-}
+let knPicked = new Set();
+let knPlaying = false;
+let knDrawnNums = [];
 
-function startPlinko(){
-  hide('scGameSelect');
-  const g = document.getElementById('scPlinko');
-  g.classList.remove('hidden'); g.style.display = 'flex';
-  plRisk = 'low'; plDropping = false;
-  if(plAnimId){ cancelAnimationFrame(plAnimId); plAnimId = null; }
-  document.getElementById('plDropBtn').disabled = false;
-  document.getElementById('plHist').innerHTML = '';
-  mgUpdateBal('plBal');
-  plSetRisk('low');
-  plDraw();
+function knInit(){
+  knPicked.clear(); knPlaying=false; knDrawnNums=[];
+  mgUpdateBal('knBal');
+  knBuildGrid();
+  knRenderPayTable();
+  document.getElementById('knResultBanner').textContent='';
+  document.getElementById('knDrawArea').innerHTML='';
+  document.getElementById('knDrawnCount').textContent='0';
+  document.getElementById('knPickedCount').textContent='0';
+  document.getElementById('knPlayBtn').disabled=false;
 }
 
-function plAdjBet(f){
-  const cur = mgGetBet('plBetInput');
-  if(f==='max')          mgSetBet('plBetInput', myBal);
-  else if(f===10||f===-10) mgSetBet('plBetInput', Math.max(1, cur+f));
-  else                   mgSetBet('plBetInput', Math.max(1, cur*f));
+function knBuildGrid(){
+  const grid=document.getElementById('knGrid'); if(!grid) return;
+  grid.innerHTML='';
+  for(let n=1;n<=80;n++){
+    const b=document.createElement('div');
+    b.className='kn-ball';
+    b.textContent=n;
+    b.dataset.n=n;
+    b.onclick=()=>knToggle(n,b);
+    grid.appendChild(b);
+  }
 }
 
-function plSetRisk(risk){
-  plRisk = risk;
-  ['Low','Mid','High'].forEach(k => {
-    const b = document.getElementById('plRisk'+k);
-    if(b) b.classList.toggle('active', k.toLowerCase() === risk);
+function knToggle(n, el){
+  if(knPlaying) return;
+  if(knPicked.has(n)){
+    knPicked.delete(n);
+    el.classList.remove('picked');
+  } else {
+    if(knPicked.size>=10){ toast('Máximo 10 números',1200); return; }
+    knPicked.add(n);
+    el.classList.add('picked');
+  }
+  document.getElementById('knPickedCount').textContent=knPicked.size;
+  knRenderPayTable();
+}
+
+function knRenderPayTable(){
+  const el=document.getElementById('knPayTable'); if(!el) return;
+  const picks=knPicked.size;
+  if(!picks){ el.innerHTML='<div style="color:rgba(255,255,255,.25);font-size:11px;padding:8px 14px;">Elige entre 1 y 10 números</div>'; return; }
+  const table=KN_PAYOUTS[picks]||{};
+  el.innerHTML=Object.entries(table).map(([hits,mult])=>{
+    const bet=parseInt(document.getElementById('knBetInput')?.value||50);
+    const win=(mult-1)*bet;
+    return `<div class="kn-pay-row">
+      <div class="kn-pay-match">${hits} ACIERTO${hits>1?'S':''}</div>
+      <div class="kn-pay-mult">${mult}×</div>
+      <div style="font-size:9px;color:#2ecc71;">+$${win.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+function knAdjBet(v){
+  const inp=document.getElementById('knBetInput'); if(!inp) return;
+  let val=parseInt(inp.value)||50;
+  if(v==='max') val=myBal;
+  else val=Math.max(10,val+v);
+  val=Math.min(val,myBal);
+  inp.value=val;
+  knRenderPayTable();
+}
+
+async function knPlay(){
+  if(knPlaying) return;
+  const picks=knPicked.size;
+  if(!picks){ toast('Elige al menos 1 número',1500); return; }
+  const bet=parseInt(document.getElementById('knBetInput')?.value||50);
+  if(bet<1||bet>myBal){ toast('Apuesta inválida',1500); return; }
+  knPlaying=true;
+  document.getElementById('knPlayBtn').disabled=true;
+  document.getElementById('knResultBanner').textContent='';
+
+  // Deduct bet
+  myBal-=bet; saveLocal(); mgUpdateBal('knBal'); updateRanking();
+
+  // Draw 20 unique numbers from 1-80
+  const pool=Array.from({length:80},(_,i)=>i+1);
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  const drawn=pool.slice(0,20);
+  knDrawnNums=drawn;
+
+  // Animate drawing numbers one by one
+  const drawArea=document.getElementById('knDrawArea');
+  drawArea.innerHTML='';
+  document.getElementById('knDrawnCount').textContent='0';
+
+  let hits=0;
+  for(let i=0;i<drawn.length;i++){
+    await new Promise(r=>setTimeout(r,110));
+    const num=drawn[i];
+    const isHit=knPicked.has(num);
+    if(isHit) hits++;
+
+    // Show in draw area
+    const db=document.createElement('div');
+    db.className='kn-drawn-ball'+(isHit?' hit':'');
+    db.textContent=num;
+    drawArea.appendChild(db);
+    document.getElementById('knDrawnCount').textContent=i+1;
+
+    // Highlight on grid
+    const gridBall=document.querySelector(`.kn-ball[data-n="${num}"]`);
+    if(gridBall){
+      if(isHit){ gridBall.classList.add('hit'); playTone(880,0.06,'sine',0.15); }
+      else { gridBall.classList.add('drawn'); }
+    }
+  }
+
+  // Calculate payout
+  const table=KN_PAYOUTS[picks]||{};
+  const mult=table[hits]||0;
+  const payout=mult*bet;
+  const profit=payout-bet;
+
+  await new Promise(r=>setTimeout(r,300));
+
+  // Show result
+  const banner=document.getElementById('knResultBanner');
+  if(mult>0){
+    myBal+=payout; saveLocal(); mgUpdateBal('knBal'); updateRanking();
+    banner.innerHTML=`<span style="color:#f0d060;">🎉 ${hits} acierto${hits!==1?'s':''} · ${mult}× · <span style="color:#2ecc71;">+$${profit.toLocaleString()}</span></span>`;
+    sfxWin(); burst(window.innerWidth/2,200,14);
+    mlRecordGameStat('keno',true,profit);
+  } else {
+    banner.innerHTML=`<span style="color:rgba(255,255,255,.4);">😔 ${hits} acierto${hits!==1?'s':''} · Sin premio · <span style="color:#e74c3c;">-$${bet.toLocaleString()}</span></span>`;
+    sfxLose();
+    mlRecordGameStat('keno',false,-bet);
+  }
+  mgCheckBankruptcy('knBal');
+
+  // Re-enable play button after short delay
+  await new Promise(r=>setTimeout(r,800));
+  // Reset grid state but keep picks
+  document.querySelectorAll('.kn-ball').forEach(b=>{
+    b.classList.remove('drawn','hit');
+    const n=parseInt(b.dataset.n);
+    if(knPicked.has(n)) b.classList.add('picked');
   });
-  if(!plDropping) plDraw();
-}
-
-function plDraw(bx, by){
-  const cv = document.getElementById('plCanvas');
-  if(!cv) return;
-  const ctx = cv.getContext('2d');
-  const W = PL_W, H = PL_H;
-
-  // Background
-  ctx.fillStyle = '#08000e'; ctx.fillRect(0,0,W,H);
-  const bg = ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#130022'); bg.addColorStop(1,'#040008');
-  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-
-  // Pegs
-  for(let row=0; row<PL_ROWS; row++){
-    const pegs = row+2;
-    for(let col=0; col<pegs; col++){
-      const p = plPegPos(row, col);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(210,160,255,0.8)'; ctx.fill();
-    }
-  }
-
-  // Slot buckets
-  const mults = PL_MULTS[plRisk];
-  const slotW = (PL_W/10) * 0.78;
-  const slotTop = PL_H * 0.78;
-  mults.forEach((m, i) => {
-    const x = plSlotX(i);
-    const col = plSlotColor(m);
-    ctx.fillStyle = col+'28'; ctx.strokeStyle = col; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.rect(x-slotW/2, slotTop, slotW, PL_H*0.17);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = col;
-    ctx.font = 'bold 9px Inter,sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(m+'×', x, slotTop + PL_H*0.11);
-  });
-
-  // Ball + glow
-  if(bx !== undefined){
-    const R = 7;
-    const grd = ctx.createRadialGradient(bx,by,0,bx,by,R*3.5);
-    grd.addColorStop(0,'rgba(200,130,255,0.5)');
-    grd.addColorStop(1,'transparent');
-    ctx.beginPath(); ctx.arc(bx,by,R*3.5,0,Math.PI*2);
-    ctx.fillStyle=grd; ctx.fill();
-    ctx.beginPath(); ctx.arc(bx, by, R, 0, Math.PI*2);
-    ctx.fillStyle='#c084fc'; ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.75)'; ctx.lineWidth=1.5; ctx.stroke();
-  }
-}
-
-function plDrop(){
-  if(plDropping) return;
-  const bet = mgGetBet('plBetInput');
-  if(bet < 1){ toast('⚠️ Apuesta mínima: $1'); return; }
-  if(bet > myBal){ toast('⚠️ Saldo insuficiente'); return; }
-  if(!document.getElementById('plCanvas')){ toast('⚠️ Error de pantalla'); return; }
-
-  plDropping = true;
-  document.getElementById('plDropBtn').disabled = true;
-  myBal -= bet; saveLocal(); mgUpdateBal('plBal');
-
-  // Build path: binomial walk
-  let pos = 0;
-  const waypoints = [{x: PL_W/2, y: 8}];
-  for(let row=0; row<PL_ROWS; row++){
-    pos += Math.random() < 0.5 ? 0 : 1;
-    const pegCol = Math.min(pos, row+1); // clamp to valid peg columns
-    const p = plPegPos(row, pegCol);
-    waypoints.push({x: p.x, y: p.y});
-  }
-  const finalSlot = Math.max(0, Math.min(8, pos));
-  waypoints.push({x: plSlotX(finalSlot), y: PL_H * 0.86});
-
-  const mult = PL_MULTS[plRisk][finalSlot];
-  const TOTAL_MS = 1600;
-  let t0 = null;
-  let lastSeg = -1;
-
-  function frame(now){
-    if(!t0) t0 = now;
-    const sc = document.getElementById('scPlinko');
-    if(!sc || sc.classList.contains('hidden')){
-      plDropping = false; plAnimId = null; return;
-    }
-    const t = Math.min((now - t0) / TOTAL_MS, 1);
-    const n = waypoints.length - 1;
-    const rawSeg = t * n;
-    const seg = Math.min(Math.floor(rawSeg), n-1);
-    if(seg > lastSeg && seg < n){ sfxPlinkoPin(); lastSeg = seg; }
-    const localT = rawSeg - seg;
-    // ease-in per segment (gravity feel)
-    const e = localT * localT;
-    const a = waypoints[seg], b = waypoints[seg+1];
-    plDraw(a.x+(b.x-a.x)*e, a.y+(b.y-a.y)*e);
-
-    if(t < 1){
-      plAnimId = requestAnimationFrame(frame);
-    } else {
-      plDraw(); // final frame without ball
-      plAnimId = null;
-      const win   = Math.floor(bet * mult);
-      const profit = win - bet;
-      myBal += win; saveLocal(); updateRanking(); mgUpdateBal('plBal');
-      mlRecordGameStat('plinko',profit>0,profit);
-      sfxPlinkoLand(mult);
-      if(profit > 0){
-        toast('🎯 ×'+mult+' +$'+profit, 2500);
-        coinBurst(profit, window.innerWidth/2, 200);
-        if(mult >= 5) burst(PL_W/2, 150, 18);
-      } else if(profit === 0){
-        toast('🎯 ×'+mult+' — Recuperaste la apuesta', 2000);
-      } else {
-        sfxLose(); toast('🎯 ×'+mult+' -$'+Math.abs(profit), 2000);
-      }
-      plAddHist(profit, mult);
-      plDropping = false;
-      document.getElementById('plDropBtn').disabled = false;
-      mgCheckBankrupt();
-    }
-  }
-  plAnimId = requestAnimationFrame(frame);
-}
-
-function plAddHist(profit, mult){
-  const h = document.getElementById('plHist'); if(!h) return;
-  const el = document.createElement('div');
-  el.className = 'pl-hist-chip';
-  el.style.background = profit>0?'rgba(46,204,113,.15)':'rgba(231,76,60,.12)';
-  el.style.color = profit>0?'#2ecc71':'#e74c3c';
-  el.textContent = mult+'×  '+(profit>=0?'+':'')+profit;
-  h.insertBefore(el, h.firstChild);
-  if(h.children.length > 12) h.removeChild(h.lastChild);
+  drawArea.innerHTML='';
+  document.getElementById('knDrawnCount').textContent='0';
+  document.getElementById('knResultBanner').textContent='';
+  knPlaying=false;
+  document.getElementById('knPlayBtn').disabled=false;
 }
 
 
@@ -9980,7 +9993,7 @@ async function adminGiveChipsConfirm() {
     if (uid === myId) {
       myBal += amount;
       saveLocal(); updateRanking();
-      const displays = ['myBalance','lobbyBal','fsBal','slBal','crBal','mnBal','dcBal','plBal','gsBal','pfBal','rlBal','mlBal'];
+      const displays = ['myBalance','lobbyBal','fsBal','knBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal','mlBal'];
       displays.forEach(id => { const el=document.getElementById(id); if(el) el.textContent=(id==='myBalance'?'$':'')+myBal.toLocaleString(); });
       await db.ref('ranking/' + myId + '/pendingGift').set(0);
     }
@@ -10119,10 +10132,9 @@ function bnGo(tab){
       crState='idle'; if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
     }
     rlStopTimer();
-    if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
-    const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
+        const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scPlinko','scFootball','scRummyLobby','scRummy'];
+      'scMines','scDice','scKeno','scFootball','scRummyLobby','scRummy'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -10148,11 +10160,10 @@ function bnGo(tab){
   // Stop animations
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-  if(plAnimId){cancelAnimationFrame(plAnimId);plAnimId=null;plDropping=false;}
-
+  
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scPlinko','scFootball','scRummyLobby','scRummy'];
+    'scMines','scDice','scKeno','scFootball','scRummyLobby','scRummy'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -10209,7 +10220,7 @@ window.addEventListener('popstate', function(e) {
 
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
-    'scSlots','scCrash','scMines','scDice','scPlinko','scFootball',
+    'scSlots','scCrash','scMines','scDice','scKeno','scFootball',
     'scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
@@ -10233,7 +10244,7 @@ window.addEventListener('popstate', function(e) {
     case 'scCrash':
     case 'scMines':
     case 'scDice':
-    case 'scPlinko':
+    case 'scKeno':
     case 'scFootball':
       goGameSelect(); break;
     case 'scGameSelect':
@@ -10428,7 +10439,7 @@ function saveFsStats(){ localStorage.setItem('bjmp_fsstats',JSON.stringify(fsSta
 function startFootball(){
   loadFsStats();
   hide('scGameSelect');
-  const sc = document.getElementById('scFootball');
+  const sc = document.getElementById('scKeno','scFootball');
   sc.classList.remove('hidden'); sc.style.display='flex'; sc.style.flexDirection='column';
   // Only reset if not mid-play (protects against accidental nav away)
   if(!fsPlaying){
@@ -10441,9 +10452,9 @@ function startFootball(){
     document.getElementById('fsBtnDraw').classList.remove('sel');
     document.getElementById('fsBtnAway').classList.remove('sel');
   }
-  mgUpdateBal('fsBal');
+  mgUpdateBal('fsBal','knBal');
   fsRenderHist();
-  bnShow(); bnSync('scFootball');
+  bnShow(); bnSync('scKeno','scFootball');
 }
 
 function fsResetCards(){
@@ -10499,7 +10510,7 @@ async function fsPlay(){
 
   myBal -= bet;
   saveLocal(); updateRanking();
-  mgUpdateBal('fsBal');
+  mgUpdateBal('fsBal','knBal');
 
   await new Promise(r=>setTimeout(r,250));
 
@@ -10539,7 +10550,7 @@ async function fsPlay(){
   saveFsStats();
   mlRecordGameStat('football', won, profit);
   saveLocal(); updateRanking();
-  mgUpdateBal('fsBal');
+  mgUpdateBal('fsBal','knBal');
 
   const banner = document.getElementById('fsResult');
   const title = document.getElementById('fsResultTitle');
