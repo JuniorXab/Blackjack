@@ -1638,41 +1638,36 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 
 
 /* ═══════ LUCKY WHEEL ═══════ */
-#scWheel{background:radial-gradient(ellipse at 50% 20%,#1a0a30,#080010);}
-#scWheel .mg-topbar{border-bottom:1px solid rgba(180,100,255,.2);}
-#scWheel .mg-bottom{background:rgba(6,0,14,.95);border-top:1px solid rgba(150,80,255,.15);}
-.lw-canvas-wrap{display:flex;align-items:center;justify-content:center;flex:1;position:relative;padding:8px 0 0;}
-.lw-pointer{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:0;height:0;
-  border-left:12px solid transparent;border-right:12px solid transparent;
-  border-top:28px solid #f0d060;filter:drop-shadow(0 0 8px rgba(240,208,96,.8));z-index:10;}
-.lw-spin-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:calc(100% - 16px);aspect-ratio:1;border-radius:50%;
-  border:3px solid rgba(180,100,255,.15);pointer-events:none;}
-.lw-result-banner{text-align:center;font-size:15px;font-weight:900;padding:4px 14px;min-height:26px;letter-spacing:.5px;flex-shrink:0;}
+#scWheel{background:radial-gradient(ellipse at 50% -10%,#2d0060,#0a0018);}
+#scWheel .mg-topbar{border-bottom:1px solid rgba(200,120,255,.3);}
+#scWheel .mg-bottom{background:rgba(5,0,14,.97);border-top:1px solid rgba(170,90,255,.25);}
+.lw-scene{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;min-height:0;}
+#lwStarsBg{position:absolute;inset:0;pointer-events:none;z-index:0;}
+.lw-wheel-outer{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;width:100%;padding:0 8px;box-sizing:border-box;}
+.lw-pointer-wrap{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10;width:28px;display:flex;flex-direction:column;align-items:center;}
+.lw-pointer-pin{width:28px;height:36px;clip-path:polygon(50% 100%,0 0,100% 0);background:linear-gradient(180deg,#fff8a0,#f0d020);filter:drop-shadow(0 0 8px rgba(240,208,0,1)) drop-shadow(0 0 18px rgba(255,200,0,.6));border-radius:2px 2px 0 0;}
+.lw-pointer-base{width:18px;height:10px;border-radius:4px;background:linear-gradient(180deg,#fff8c0,#c8a800);box-shadow:0 0 10px rgba(240,208,0,.8);margin-top:-1px;}
+.lw-result-banner{text-align:center;font-size:16px;font-weight:900;padding:4px 14px;min-height:28px;letter-spacing:.5px;flex-shrink:0;z-index:3;position:relative;}
+.lw-legend{display:flex;flex-wrap:wrap;gap:4px 8px;justify-content:center;padding:2px 14px;flex-shrink:0;z-index:3;}
+.lw-legend-item{font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;border:1px solid;letter-spacing:.5px;}
 .lw-double-row{display:flex;align-items:center;justify-content:center;gap:10px;padding:2px 14px;flex-shrink:0;}
-.lw-double-btn{padding:6px 18px;border-radius:20px;border:1.5px solid rgba(255,180,0,.35);
-  background:rgba(255,180,0,.1);color:rgba(255,180,0,.7);font-size:10px;font-weight:800;
-  cursor:pointer;letter-spacing:1px;transition:all .15s;}
-.lw-double-btn.active{background:rgba(255,180,0,.25);border-color:rgba(255,180,0,.7);
-  color:#ffb800;box-shadow:0 0 12px rgba(255,180,0,.3);}
-/* chip row */
-.lw-chip-row{display:flex;gap:10px;justify-content:center;overflow-x:auto;
-  padding:4px 10px 2px;scrollbar-width:none;}
+.lw-double-btn{padding:5px 16px;border-radius:20px;border:1.5px solid rgba(255,180,0,.4);background:rgba(255,180,0,.08);color:rgba(255,180,0,.65);font-size:10px;font-weight:800;cursor:pointer;letter-spacing:1px;transition:all .15s;}
+.lw-double-btn.active{background:rgba(255,180,0,.25);border-color:rgba(255,180,0,.9);color:#ffb800;box-shadow:0 0 16px rgba(255,180,0,.45);}
+.lw-chip-row{display:flex;gap:9px;justify-content:center;overflow-x:auto;padding:4px 10px 2px;scrollbar-width:none;}
 .lw-chip-row::-webkit-scrollbar{display:none;}
-.lw-chip{width:50px;height:50px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:10px;font-weight:900;
-  transition:transform .12s,box-shadow .15s;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.5);}
-.lw-chip::after{content:'';position:absolute;inset:4px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);}
+.lw-chip{width:48px;height:48px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:10px;font-weight:900;transition:transform .12s,box-shadow .15s;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.5);}
+.lw-chip::after{content:'';position:absolute;inset:4px;border-radius:50%;border:2px dashed rgba(255,255,255,.22);}
 .lw-chip:active{transform:scale(.88);}
-.lw-chip.sel{transform:translateY(-5px) scale(1.1);box-shadow:0 8px 22px rgba(0,0,0,.6);}
+.lw-chip.sel{transform:translateY(-5px) scale(1.1);box-shadow:0 8px 22px rgba(0,0,0,.7);}
 .lw-chip[data-v="50"]  {background:radial-gradient(circle at 35% 35%,#2ecc71,#1a6e3c);border-color:#27ae60;color:#fff;}
 .lw-chip[data-v="100"] {background:radial-gradient(circle at 35% 35%,#3498db,#1a5276);border-color:#2980b9;color:#fff;}
 .lw-chip[data-v="200"] {background:radial-gradient(circle at 35% 35%,#9b59b6,#5b2c6f);border-color:#8e44ad;color:#fff;}
 .lw-chip[data-v="500"] {background:radial-gradient(circle at 35% 35%,#e74c3c,#8b1a1a);border-color:#c0392b;color:#fff;}
 .lw-chip[data-v="1000"]{background:radial-gradient(circle at 35% 35%,#f0d060,#9a7820);border-color:#b7950b;color:#1a0800;}
 .lw-chip[data-v="2000"]{background:radial-gradient(circle at 35% 35%,#fd79a8,#a0003a);border-color:#e84393;color:#fff;}
-.gs-card-wheel{background:linear-gradient(135deg,rgba(180,100,255,.15),rgba(80,0,160,.04));border:1px solid rgba(180,100,255,.3);}
-.gs-card-wheel:hover{box-shadow:0 0 30px rgba(180,100,255,.15);}
+.gs-card-wheel{background:linear-gradient(135deg,rgba(180,100,255,.18),rgba(80,0,180,.05));border:1px solid rgba(180,100,255,.35);}
+.gs-card-wheel:hover{box-shadow:0 0 30px rgba(180,100,255,.2);}
+
 
 </style>
 </head>
@@ -2289,23 +2284,28 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <div class="fullscreen hidden mg-screen" id="scWheel">
   <div class="mg-topbar">
     <button class="mg-back" onclick="goGameSelect()">← Salir</button>
-    <div class="mg-title" style="color:#c084fc;">🎡 LUCKY WHEEL</div>
+    <div class="mg-title" style="color:#c084fc;letter-spacing:1px;">🎡 LUCKY WHEEL</div>
     <div class="mg-bal" id="lwBal">$0</div>
   </div>
-  <!-- Canvas wrap with pointer -->
-  <div class="lw-canvas-wrap" id="lwCanvasWrap">
-    <div class="lw-pointer" id="lwPointer"></div>
-    <canvas id="lwCanvas" style="width:100%;max-width:340px;aspect-ratio:1;display:block;"></canvas>
+
+  <div class="lw-scene">
+    <canvas id="lwStarsBg"></canvas>
+    <div class="lw-wheel-outer" id="lwWheelOuter">
+      <div class="lw-pointer-wrap" id="lwPointerWrap">
+        <div class="lw-pointer-base"></div>
+        <div class="lw-pointer-pin"></div>
+      </div>
+      <canvas id="lwCanvas"></canvas>
+    </div>
+    <div class="lw-result-banner" id="lwResultBanner"></div>
   </div>
-  <!-- Result -->
-  <div class="lw-result-banner" id="lwResultBanner"></div>
-  <!-- Double bet toggle -->
+
   <div class="lw-double-row">
-    <span style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1px;">DOBLE APUESTA</span>
+    <span style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;">DOBLE APUESTA</span>
     <button class="lw-double-btn" id="lwDoubleBtn" onclick="lwToggleDouble()">× OFF</button>
-    <span style="font-size:9px;color:rgba(255,255,255,.25);">0x pierde el doble</span>
+    <span style="font-size:9px;color:rgba(255,255,255,.2);">0× pierde el doble</span>
   </div>
-  <!-- Bottom -->
+
   <div class="mg-bottom" style="gap:8px;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px;">
       <div style="font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);">APUESTA</div>
@@ -2313,19 +2313,18 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     </div>
     <div class="lw-chip-row">
       <div class="lw-chip" data-v="50"   onclick="lwSelectChip(50)">$50</div>
-      <div class="lw-chip sel" data-v="100"  onclick="lwSelectChip(100)">$100</div>
+      <div class="lw-chip sel" data-v="100" onclick="lwSelectChip(100)">$100</div>
       <div class="lw-chip" data-v="200"  onclick="lwSelectChip(200)">$200</div>
       <div class="lw-chip" data-v="500"  onclick="lwSelectChip(500)">$500</div>
       <div class="lw-chip" data-v="1000" onclick="lwSelectChip(1000)">$1K</div>
       <div class="lw-chip" data-v="2000" onclick="lwSelectChip(2000)">$2K</div>
     </div>
     <button class="mg-action-btn" id="lwSpinBtn" onclick="lwSpin()"
-      style="background:linear-gradient(135deg,#9b59b6,#6c3483);color:#fff;box-shadow:0 4px 20px rgba(155,89,182,.45);">
+      style="background:linear-gradient(135deg,#9b40d8,#6010a0);color:#fff;box-shadow:0 4px 22px rgba(160,64,216,.5);">
       🎡 GIRAR
     </button>
   </div>
 </div>
-
 
 <!-- ════════ BACCARAT ════════ -->
 <div class="fullscreen hidden mg-screen" id="scBaccarat">
@@ -9231,43 +9230,227 @@ function knClear(){
 //  LUCKY WHEEL
 // ═══════════════════════════════════════════
 // 20 segments: 6x0 · 5x1 · 3x2 · 2x5 · 1x10 · 1x20
+
+// ═══════════════════════════════════════════
+//  LUCKY WHEEL
+// ═══════════════════════════════════════════
+// 20 segments — new distribution:
+//   5x0x · 4x1x · 4x2x · 1x3x · 2x5x · 2x10x · 1x20x · 1x50x JACKPOT
 const LW_SEGMENTS = [
-  {mult:0,  color:'#1a1a2e', text:'0x'},
-  {mult:1,  color:'#1e3a6e', text:'1x'},
-  {mult:0,  color:'#1a1a2e', text:'0x'},
-  {mult:2,  color:'#0d4f8a', text:'2x'},
-  {mult:1,  color:'#1e3a6e', text:'1x'},
-  {mult:0,  color:'#1a1a2e', text:'0x'},
-  {mult:5,  color:'#5c1080', text:'5x'},
-  {mult:1,  color:'#1e3a6e', text:'1x'},
-  {mult:0,  color:'#1a1a2e', text:'0x'},
-  {mult:20, color:'#6b1010', text:'20x'},
-  {mult:1,  color:'#1e3a6e', text:'1x'},
-  {mult:0,  color:'#1a1a2e', text:'0x'},
-  {mult:2,  color:'#0d4f8a', text:'2x'},
-  {mult:5,  color:'#5c1080', text:'5x'},
-  {mult:1,  color:'#1e3a6e', text:'1x'},
-  {mult:0,  color:'#1a1a2e', text:'0x'},
-  {mult:2,  color:'#0d4f8a', text:'2x'},
-  {mult:10, color:'#7a3800', text:'10x'},
-  {mult:1,  color:'#1e3a6e', text:'1x'},
-  {mult:0,  color:'#1a1a2e', text:'0x'},
+// 20 segs: 5×0x · 3×1x · 4×2x · 1×3x · 2×5x · 2×10x · 2×20x · 1×50x JACKPOT
+  {mult:0,  txt:'0×',  icon:'💀', fill:'#1a0c2e', glow:null},
+  {mult:2,  txt:'2×',  icon:'⭐', fill:'#003080', glow:'#2288ff'},
+  {mult:0,  txt:'0×',  icon:'💀', fill:'#1a0c2e', glow:null},
+  {mult:10, txt:'10×', icon:'🔥', fill:'#501800', glow:'#ff6600'},
+  {mult:1,  txt:'1×',  icon:'✨', fill:'#0e1a40', glow:'#4466cc'},
+  {mult:5,  txt:'5×',  icon:'💫', fill:'#300070', glow:'#aa44ff'},
+  {mult:0,  txt:'0×',  icon:'💀', fill:'#1a0c2e', glow:null},
+  {mult:20, txt:'20×', icon:'💎', fill:'#002850', glow:'#00aaff'},
+  {mult:2,  txt:'2×',  icon:'⭐', fill:'#003080', glow:'#2288ff'},
+  {mult:50, txt:'50×', icon:'👑', fill:'#500000', glow:'#ff2020'},
+  {mult:0,  txt:'0×',  icon:'💀', fill:'#1a0c2e', glow:null},
+  {mult:3,  txt:'3×',  icon:'🌙', fill:'#004040', glow:'#00cccc'},
+  {mult:1,  txt:'1×',  icon:'✨', fill:'#0e1a40', glow:'#4466cc'},
+  {mult:10, txt:'10×', icon:'🔥', fill:'#501800', glow:'#ff6600'},
+  {mult:2,  txt:'2×',  icon:'⭐', fill:'#003080', glow:'#2288ff'},
+  {mult:0,  txt:'0×',  icon:'💀', fill:'#1a0c2e', glow:null},
+  {mult:5,  txt:'5×',  icon:'💫', fill:'#300070', glow:'#aa44ff'},
+  {mult:20, txt:'20×', icon:'💎', fill:'#002850', glow:'#00aaff'},
+  {mult:1,  txt:'1×',  icon:'✨', fill:'#0e1a40', glow:'#4466cc'},
+  {mult:2,  txt:'2×',  icon:'⭐', fill:'#003080', glow:'#2288ff'},
 ];
-const LW_N = 20;
-const LW_ARC = (Math.PI*2)/LW_N;
+const LW_N   = 20;
+const LW_TAU = Math.PI * 2;
+const LW_ARC = LW_TAU / LW_N;
 
-let lwBet=100, lwDouble=false, lwSpinning=false, lwAngle=0, lwAnimId=null, _lwLastIdx=-1;
+let lwBet=100, lwDouble=false, lwSpinning=false, lwAngle=0, lwAnimId=null;
+let _lwLastTick=-1, _lwStarRaf=null, _lwStars=[], _lwRimPhase=0;
 
+// ── Starfield ────────────────────────────────────────────────────────────────
+function lwInitStars(){
+  const sc=document.getElementById('lwStarsBg'); if(!sc) return;
+  const scene=document.getElementById('lwWheelOuter')?.parentElement;
+  if(!scene) return;
+  sc.style.position='absolute'; sc.style.inset='0';
+  sc.width=scene.clientWidth*(devicePixelRatio||1);
+  sc.height=scene.clientHeight*(devicePixelRatio||1);
+  sc.style.width='100%'; sc.style.height='100%';
+  const W=sc.width,H=sc.height;
+  _lwStars=Array.from({length:70},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    r:(0.6+Math.random()*1.8)*(devicePixelRatio||1),
+    alpha:Math.random(), da:.004+Math.random()*.015,
+    vy:(.06+Math.random()*.2)*(devicePixelRatio||1),
+  }));
+  if(_lwStarRaf){cancelAnimationFrame(_lwStarRaf);_lwStarRaf=null;}
+  (function tick(){
+    const ctx=sc.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+    _lwStars.forEach(s=>{
+      s.y+=s.vy; if(s.y>H) s.y=0;
+      s.alpha+=s.da; if(s.alpha>1||s.alpha<0) s.da*=-1; s.alpha=Math.max(0,Math.min(1,s.alpha));
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,LW_TAU);
+      ctx.fillStyle=`rgba(210,180,255,${s.alpha*.65})`;ctx.fill();
+    });
+    _lwStarRaf=requestAnimationFrame(tick);
+  })();
+}
+
+// ── Canvas sizing ─────────────────────────────────────────────────────────────
+function lwGetCanvas(){
+  const c=document.getElementById('lwCanvas'); if(!c) return null;
+  const outer=document.getElementById('lwWheelOuter');
+  const avail=outer?outer.clientWidth:300;
+  const size=Math.min(avail-8, 320);
+  const dpr=devicePixelRatio||1;
+  const px=Math.round(size*dpr);
+  if(c.width!==px){c.width=px;c.height=px;c.style.width=size+'px';c.style.height=size+'px';}
+  // Position pointer exactly at top-center of canvas
+  const ptr=document.getElementById('lwPointerWrap');
+  if(ptr&&outer){
+    const canvasLeft=(avail-size)/2;
+    ptr.style.left=(canvasLeft+size/2)+'px';
+    ptr.style.position='absolute'; ptr.style.top='0';
+    ptr.style.transform='translateX(-50%)';
+  }
+  return c;
+}
+
+// ── Draw ──────────────────────────────────────────────────────────────────────
+function lwDrawWheel(angle, winIdx=-1){
+  const c=lwGetCanvas(); if(!c) return;
+  const ctx=c.getContext('2d');
+  const dpr=devicePixelRatio||1;
+  const W=c.width, H=c.height, cx=W/2, cy=H/2;
+  const R=Math.min(W,H)/2 - 6*dpr;
+  ctx.clearRect(0,0,W,H);
+
+  // Animated rim glow
+  _lwRimPhase+=0.04;
+  const rimAlpha=0.45+0.25*Math.sin(_lwRimPhase);
+  const outerG=ctx.createRadialGradient(cx,cy,R*0.86,cx,cy,R*1.12);
+  outerG.addColorStop(0,'rgba(160,80,255,0)');
+  outerG.addColorStop(0.7,`rgba(160,80,255,${rimAlpha*0.4})`);
+  outerG.addColorStop(1,`rgba(220,140,255,${rimAlpha})`);
+  ctx.beginPath();ctx.arc(cx,cy,R*1.12,0,LW_TAU);ctx.fillStyle=outerG;ctx.fill();
+
+  // LED dots around rim
+  for(let i=0;i<LW_N;i++){
+    const da=angle+i*LW_ARC-Math.PI/2+LW_ARC/2;
+    const dx=cx+Math.cos(da)*(R+2*dpr);
+    const dy=cy+Math.sin(da)*(R+2*dpr);
+    const seg=LW_SEGMENTS[i];
+    const dotCol=seg.glow?seg.glow:'rgba(80,50,120,0.6)';
+    ctx.beginPath();ctx.arc(dx,dy,3*dpr,0,LW_TAU);
+    ctx.fillStyle=dotCol;ctx.fill();
+    // glow halo on lit dots
+    if(seg.glow){
+      ctx.beginPath();ctx.arc(dx,dy,5.5*dpr,0,LW_TAU);
+      ctx.fillStyle=seg.glow.replace(')',',0.3)').replace('rgb(','rgba(').replace('#','')||'rgba(255,255,255,0.2)';
+      // simpler:
+      ctx.fillStyle='rgba(255,255,255,0.18)';ctx.fill();
+    }
+  }
+
+  // ── Segments ──────────────────────────────────────────────────────────────
+  for(let i=0;i<LW_N;i++){
+    const seg=LW_SEGMENTS[i];
+    const a0=angle+i*LW_ARC-Math.PI/2;
+    const a1=a0+LW_ARC;
+    const isWin=(i===winIdx);
+
+    // Base fill
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
+    ctx.fillStyle=seg.fill;ctx.fill();
+
+    // Prize glow overlay (gradient toward rim)
+    if(seg.glow){
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
+      const midA=a0+LW_ARC/2;
+      const ex=cx+Math.cos(midA)*R*0.8, ey=cy+Math.sin(midA)*R*0.8;
+      const gl=ctx.createRadialGradient(cx,cy,R*0.15,ex,ey,R*0.6);
+      gl.addColorStop(0,'rgba(0,0,0,0)');
+      gl.addColorStop(1,seg.glow+'44');
+      ctx.fillStyle=gl;ctx.fill();
+    }
+
+    // Winner highlight
+    if(isWin){
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
+      ctx.fillStyle='rgba(255,255,255,0.28)';ctx.fill();
+    }
+
+    // Divider
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
+    ctx.strokeStyle=isWin?'rgba(255,220,0,1)':'rgba(255,255,255,0.14)';
+    ctx.lineWidth=(isWin?3.5:1.2)*dpr;ctx.stroke();
+
+    // ── Label ────────────────────────────────────────────────────────────────
+    const midA=a0+LW_ARC/2;
+    const dist=R*0.67;
+    const tx=cx+Math.cos(midA)*dist, ty=cy+Math.sin(midA)*dist;
+    ctx.save();
+    ctx.translate(tx,ty); ctx.rotate(midA+Math.PI/2);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.shadowColor='rgba(0,0,0,1)'; ctx.shadowBlur=6*dpr;
+
+    // Icon
+    const iconFs=(seg.mult>=20?13:11)*dpr;
+    ctx.font=iconFs+'px serif';
+    ctx.fillStyle='rgba(255,255,255,0.95)';
+    ctx.fillText(seg.icon,0,-8*dpr);
+
+    // Multiplier text
+    const txtFs=(seg.mult>=20?14:seg.mult>=5?13:12)*dpr;
+    ctx.font='900 '+txtFs+'px sans-serif';
+    const txtCol=seg.mult===0?'rgba(255,255,255,0.18)':
+                 seg.mult>=50?'#ff4040':seg.mult>=20?'#40b0ff':
+                 seg.mult>=10?'#ff9900':seg.mult>=5?'#cc66ff':
+                 seg.mult>=3?'#00cccc':'#88aaff';
+    ctx.fillStyle=txtCol;
+    // Bold stroke for big prizes
+    if(seg.mult>=10){ctx.strokeStyle='rgba(0,0,0,0.7)';ctx.lineWidth=3*dpr;ctx.strokeText(seg.txt,0,6*dpr);}
+    ctx.fillText(seg.txt,0,6*dpr);
+    ctx.shadowBlur=0;ctx.restore();
+  }
+
+  // Outer hard rim
+  ctx.beginPath();ctx.arc(cx,cy,R,0,LW_TAU);
+  ctx.strokeStyle=`rgba(200,140,255,${0.7+0.2*Math.sin(_lwRimPhase)})`;
+  ctx.lineWidth=4*dpr;ctx.stroke();
+
+  // Inner hub
+  const hubR=R*0.14;
+  const hubG=ctx.createRadialGradient(cx,cy,0,cx,cy,hubR);
+  hubG.addColorStop(0,'#5020a0');hubG.addColorStop(1,'#1a0840');
+  ctx.beginPath();ctx.arc(cx,cy,hubR,0,LW_TAU);
+  ctx.fillStyle=hubG;ctx.fill();
+  ctx.strokeStyle='rgba(220,170,255,0.7)';ctx.lineWidth=2.5*dpr;ctx.stroke();
+  ctx.font=(hubR*1.2)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fillText('★',cx,cy);
+}
+
+// ── Which segment is under the pointer (top = -PI/2) ─────────────────────────
+// Seg i starts at: angle + i*LW_ARC - PI/2
+// Under pointer when that start <= -PI/2 < start+LW_ARC
+// => angle + i*LW_ARC <= 0 mod TAU  => i = floor((-angle mod TAU)/LW_ARC)
+function lwCurrentIdx(angle){
+  const norm=((-angle)%LW_TAU+LW_TAU)%LW_TAU;
+  return Math.floor(norm/LW_ARC)%LW_N;
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
 function lwInit(){
   lwBet=100; lwDouble=false; lwSpinning=false;
   if(lwAnimId){cancelAnimationFrame(lwAnimId);lwAnimId=null;}
+  if(_lwStarRaf){cancelAnimationFrame(_lwStarRaf);_lwStarRaf=null;}
   mgUpdateBal('lwBal');
   lwSelectChip(100);
   const db=document.getElementById('lwDoubleBtn');
   if(db){db.classList.remove('active');db.textContent='× OFF';}
   document.getElementById('lwResultBanner').innerHTML='';
   document.getElementById('lwSpinBtn').disabled=false;
-  setTimeout(()=>lwDrawWheel(lwAngle),60);
+  setTimeout(()=>{lwInitStars();lwDrawWheel(lwAngle);},100);
 }
 
 function lwSelectChip(v){
@@ -9284,75 +9467,7 @@ function lwToggleDouble(){
   document.getElementById('lwBetDisplay').textContent='$'+(lwDouble?lwBet*2:lwBet).toLocaleString();
 }
 
-function lwGetCanvas(){
-  const c=document.getElementById('lwCanvas'); if(!c) return null;
-  const wrap=document.getElementById('lwCanvasWrap');
-  const size=Math.min(wrap?wrap.clientWidth-16:300, 320);
-  const dpr=window.devicePixelRatio||1;
-  if(c.width!==Math.round(size*dpr)){
-    c.width=Math.round(size*dpr); c.height=Math.round(size*dpr);
-    c.style.width=size+'px'; c.style.height=size+'px';
-  }
-  return c;
-}
-
-function lwDrawWheel(angle){
-  const c=lwGetCanvas(); if(!c) return;
-  const ctx=c.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
-  const W=c.width, H=c.height, cx=W/2, cy=H/2;
-  const R=Math.min(W,H)/2 - 5*dpr;
-  ctx.clearRect(0,0,W,H);
-
-  for(let i=0;i<LW_N;i++){
-    const seg=LW_SEGMENTS[i];
-    const a0=angle+i*LW_ARC-Math.PI/2;
-    const a1=a0+LW_ARC;
-    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R,a0,a1); ctx.closePath();
-    ctx.fillStyle=seg.color; ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=1.5*dpr; ctx.stroke();
-
-    // Extra glow layer for big prizes
-    if(seg.mult>=10){
-      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R,a0,a1); ctx.closePath();
-      const gl=ctx.createRadialGradient(cx,cy,R*0.3,cx,cy,R);
-      gl.addColorStop(0,'rgba(255,255,255,0)');
-      gl.addColorStop(1,seg.mult===20?'rgba(255,60,60,0.4)':'rgba(255,140,0,0.3)');
-      ctx.fillStyle=gl; ctx.fill();
-    }
-
-    // Label
-    const midA=a0+LW_ARC/2;
-    const tx=cx+Math.cos(midA)*R*0.68;
-    const ty=cy+Math.sin(midA)*R*0.68;
-    ctx.save();
-    ctx.translate(tx,ty); ctx.rotate(midA+Math.PI/2);
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    const fs=(seg.mult>=10?14:12)*dpr;
-    ctx.font='900 '+fs+'px sans-serif';
-    ctx.shadowColor='rgba(0,0,0,0.9)'; ctx.shadowBlur=4*dpr;
-    ctx.fillStyle=seg.mult===0?'rgba(255,255,255,0.2)':
-                  seg.mult===20?'#ff7070':seg.mult===10?'#ffb840':
-                  seg.mult===5?'#d070f0':'#80b8ff';
-    ctx.fillText(seg.text,0,0);
-    ctx.shadowBlur=0; ctx.restore();
-  }
-
-  // Outer rim
-  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
-  ctx.strokeStyle='rgba(180,100,255,0.5)'; ctx.lineWidth=3*dpr; ctx.stroke();
-
-  // Inner hub
-  ctx.beginPath(); ctx.arc(cx,cy,R*0.13,0,Math.PI*2);
-  ctx.fillStyle='#1a0830'; ctx.fill();
-  ctx.strokeStyle='rgba(200,150,255,0.4)'; ctx.lineWidth=2*dpr; ctx.stroke();
-}
-
-function lwCurrentIdx(angle){
-  const norm=((-(angle) % (Math.PI*2))+(Math.PI*2))%(Math.PI*2);
-  return Math.floor(norm/LW_ARC)%LW_N;
-}
-
+// ── Spin ──────────────────────────────────────────────────────────────────────
 function lwSpin(){
   if(lwSpinning) return;
   const eff=lwDouble?lwBet*2:lwBet;
@@ -9362,85 +9477,97 @@ function lwSpin(){
   document.getElementById('lwResultBanner').innerHTML='';
   myBal-=eff; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
 
-  // Pick random target
+  // Random target
   const tIdx=Math.floor(Math.random()*LW_N);
   const seg=LW_SEGMENTS[tIdx];
 
-  // How far to spin: land tIdx under pointer (top)
-  const curNorm=((-(lwAngle)%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
-  const tAngle=tIdx*LW_ARC+LW_ARC/2;
-  let diff=(tAngle-curNorm+(Math.PI*2))%(Math.PI*2);
-  const extraTurns=(2.5+Math.random()*1.8)*Math.PI*2;
+  // ── Alignment math ────────────────────────────────────────────────────────
+  // curNorm = current "position" of segment 0 in [0,TAU)
+  const curNorm=((-lwAngle)%LW_TAU+LW_TAU)%LW_TAU;
+  // targetNorm = where segment tIdx center should be after spin
+  const targetNorm=tIdx*LW_ARC+LW_ARC/2;
+  // diff = how much to add to curNorm to reach targetNorm (always positive, <TAU)
+  const diff=(targetNorm-curNorm+LW_TAU)%LW_TAU;
+  // Extra FULL turns (integer, so they don't disturb alignment)
+  const extraTurns=(3+Math.floor(Math.random()*3))*LW_TAU;
   const totalSpin=extraTurns+diff;
-  const startAngle=lwAngle;
-  const finalAngle=lwAngle-totalSpin;
-  const duration=3600+Math.random()*700;
-  const startTime=performance.now();
-  _lwLastIdx=lwCurrentIdx(lwAngle);
 
-  function ease(t){return 1-Math.pow(1-t,3.5);}
+  const startAngle=lwAngle;
+  const dur=3800+Math.random()*900;
+  const t0=performance.now();
+  _lwLastTick=lwCurrentIdx(lwAngle);
+
+  function ease(t){
+    // slow start, fast middle, long slow end
+    if(t<0.12) return 4*t*t;
+    return 1-Math.pow(1-t,3.8);
+  }
 
   function frame(now){
-    const t=Math.min((now-startTime)/duration,1);
+    const t=Math.min((now-t0)/dur,1);
     lwAngle=startAngle-totalSpin*ease(t);
     lwDrawWheel(lwAngle);
-    // Click per segment
+
     const ci=lwCurrentIdx(lwAngle);
-    if(ci!==_lwLastIdx){
-      _lwLastIdx=ci;
-      const speed=1-ease(t);
-      playTone(850+Math.random()*200,0.022,'triangle',0.04+speed*0.09);
+    if(ci!==_lwLastTick){
+      _lwLastTick=ci;
+      const spd=1-ease(t);
+      playTone(760+Math.random()*200,0.018,'triangle',0.03+spd*0.11);
     }
+
     if(t<1){lwAnimId=requestAnimationFrame(frame);}
-    else{lwAngle=finalAngle;lwDrawWheel(lwAngle);lwFinish(seg,eff);}
+    else{
+      // Snap precisely
+      lwAngle=startAngle-totalSpin;
+      const wi=lwCurrentIdx(lwAngle);
+      lwDrawWheel(lwAngle,wi);
+      lwFinish(LW_SEGMENTS[wi],eff);   // Use wi (visual) not tIdx, they must match
+    }
   }
   lwAnimId=requestAnimationFrame(frame);
 }
 
-function lwFinish(seg,eff){
+// ── Result ────────────────────────────────────────────────────────────────────
+function lwFinish(seg, eff){
   lwSpinning=false;
   const mult=seg.mult;
   const payout=mult*eff;
   const profit=payout-eff;
   const banner=document.getElementById('lwResultBanner');
 
-  // Flash winning segment
-  const c=lwGetCanvas();
-  if(c){
-    const ctx=c.getContext('2d');
-    const dpr=window.devicePixelRatio||1;
-    const W=c.width,H=c.height,cx=W/2,cy=H/2,R=Math.min(W,H)/2-5*dpr;
-    const wi=lwCurrentIdx(lwAngle);
-    const a0=lwAngle+wi*LW_ARC-Math.PI/2;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a0+LW_ARC);ctx.closePath();
-    ctx.fillStyle='rgba(255,255,255,0.25)';ctx.fill();
-  }
-
   if(mult===0){
-    banner.innerHTML='<span style="color:rgba(255,255,255,.35);">😔 0× · <span style="color:#e74c3c;">−$'+eff.toLocaleString()+'</span></span>';
+    banner.innerHTML='<span style="color:rgba(255,255,255,.3);">💀 0× · <span style="color:#e74c3c;">−$'+eff.toLocaleString()+'</span></span>';
     sfxLose();
+    if(navigator.vibrate)navigator.vibrate([80,30,50]);
     mlRecordGameStat('wheel',false,-eff);
   } else {
     myBal+=payout; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
-    const col=mult>=20?'#ff7070':mult>=10?'#ffb840':mult>=5?'#d070f0':'#80b8ff';
-    const prefix=mult>=20?'🏆 ':mult>=10?'🔥 ':'';
-    banner.innerHTML='<span style="color:'+col+';">'+prefix+mult+'× · <span style="color:#2ecc71;">+$'+profit.toLocaleString()+'</span></span>';
-    if(mult>=10){
-      sfxWin(); setTimeout(sfxWin,200);
-      burst(window.innerWidth/2,200,22);
-      setTimeout(()=>burst(window.innerWidth*0.25,300,14),280);
-      setTimeout(()=>burst(window.innerWidth*0.75,280,14),480);
-      const ptr=document.getElementById('lwPointer');
-      if(ptr){ptr.style.filter='drop-shadow(0 0 20px #ffb840)';setTimeout(()=>{ptr.style.filter='drop-shadow(0 0 8px rgba(240,208,96,.8))';},1400);}
-      if(navigator.vibrate)navigator.vibrate([80,40,80,40,200]);
-    } else {
-      sfxWin();
-    }
+    const col=seg.glow||'#88aaff';
+    const prefix=mult>=50?'👑 JACKPOT ':mult>=20?'💎 ':mult>=10?'🔥 ':mult>=5?'💫 ':mult>=3?'🌙 ':'';
+    const big=mult>=50;
+    banner.innerHTML=`<span style="color:${col};font-size:${big?18:16}px;">${prefix}${mult}× · <span style="color:#2ecc71;">+$${profit.toLocaleString()}</span></span>`;
+    if(mult>=20){
+      sfxWin();setTimeout(sfxWin,160);setTimeout(sfxWin,320);
+      burst(innerWidth/2,innerHeight*.32,30);
+      setTimeout(()=>burst(innerWidth*.18,innerHeight*.45,18),220);
+      setTimeout(()=>burst(innerWidth*.82,innerHeight*.45,18),380);
+      setTimeout(()=>burst(innerWidth/2,innerHeight*.55,22),580);
+      if(navigator.vibrate)navigator.vibrate([100,50,100,50,250,60,250]);
+    } else if(mult>=10){
+      sfxWin();setTimeout(sfxWin,180);
+      burst(innerWidth/2,innerHeight*.35,20);
+      setTimeout(()=>burst(innerWidth*.25,innerHeight*.42,14),300);
+      setTimeout(()=>burst(innerWidth*.75,innerHeight*.42,14),480);
+      if(navigator.vibrate)navigator.vibrate([80,40,80,40,180]);
+    } else if(mult>=5){
+      sfxWin(); burst(innerWidth/2,innerHeight*.35,14);
+    } else {sfxWin();}
     mlRecordGameStat('wheel',true,profit);
   }
   if(myBal<=0)mgCheckBankruptcy('lwBal');
   document.getElementById('lwSpinBtn').disabled=false;
 }
+
 
 // ═══════════════════════════════════════════
 //  BACCARAT
