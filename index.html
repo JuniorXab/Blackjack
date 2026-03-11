@@ -1131,7 +1131,9 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-discard-card-top{position:absolute;top:4px;left:5px;font-size:10px;font-weight:900;line-height:1.15;}
 .rm-discard-card-bot{position:absolute;bottom:4px;right:5px;font-size:10px;font-weight:900;line-height:1.15;transform:rotate(180deg);}
 /* Action log */
-.rm-action-log{text-align:center;font-size:11px;color:rgba(255,255,255,.8);padding:3px 16px;min-height:18px;flex-shrink:0;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+.rm-action-log{text-align:center;font-size:13px;color:#fff;padding:5px 16px;min-height:24px;flex-shrink:0;font-weight:800;text-shadow:0 0 12px rgba(240,208,96,.5),0 1px 4px rgba(0,0,0,.8);letter-spacing:.3px;background:rgba(0,0,0,.25);}
+.rm-action-log.my-turn{color:#f0d060;text-shadow:0 0 16px rgba(240,208,96,.7),0 1px 4px rgba(0,0,0,.8);animation:rmTurnPulse 1.4s ease-in-out infinite;}
+@keyframes rmTurnPulse{0%,100%{opacity:1;}50%{opacity:.7;}}
 /* My area — pinned to bottom */
 .rm-me-area{flex-shrink:0;background:rgba(0,0,0,.25);padding-top:6px;padding-bottom:calc(62px + env(safe-area-inset-bottom));}
 .rm-me-top{display:flex;align-items:center;gap:8px;padding:0 12px 5px;}
@@ -2561,22 +2563,29 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 
 <!-- FRIENDS MODAL -->
 <!-- ════════ CHAT SCREEN ════════ -->
-<div class="fullscreen hidden" id="scChat" style="padding-bottom:62px;">
-  <div class="chat-screen-topbar">
-    <div>
-      <div class="chat-screen-title">💬 CHAT GLOBAL</div>
-      <div class="chat-screen-online" id="chatScreenOnline">● conectado</div>
+<div class="fullscreen hidden" id="scChat" style="padding-bottom:62px;display:flex;flex-direction:column;">
+  <div class="chat-screen-topbar" style="flex-shrink:0;">
+    <div style="display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);flex:1;max-width:260px;">
+      <button id="scChatTabGlobal" onclick="scChatSetTab('global')"
+        style="flex:1;padding:7px 0;border:none;background:rgba(240,208,96,.2);color:#f0d060;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:.5px;">🌐 GLOBAL</button>
+      <button id="scChatTabFriends" onclick="scChatSetTab('friends')"
+        style="flex:1;padding:7px 0;border:none;background:transparent;color:rgba(255,255,255,.4);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:.5px;">👥 AMIGOS</button>
     </div>
     <div style="font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px;">CASINO ROYALE</div>
   </div>
-  <div class="chat-screen-msgs" id="chatScreenMsgs">
-    <div style="text-align:center;color:rgba(255,255,255,.2);font-size:11px;padding:30px 0;">Cargando mensajes...</div>
+  <!-- Global tab -->
+  <div id="scChatGlobalPanel" style="flex:1;display:flex;flex-direction:column;min-height:0;">
+    <div class="chat-screen-msgs" id="chatScreenMsgs">
+      <div style="text-align:center;color:rgba(255,255,255,.2);font-size:11px;padding:30px 0;">Cargando mensajes...</div>
+    </div>
+    <div class="chat-screen-input">
+      <input id="chatScreenInp" type="text" maxlength="120" placeholder="Escribe un mensaje..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')chatScreenSend()">
+      <button onclick="chatScreenSend()">↑</button>
+    </div>
   </div>
-  <div class="chat-screen-input">
-    <input id="chatScreenInp" type="text" maxlength="120" placeholder="Escribe un mensaje..." autocomplete="off"
-      onkeydown="if(event.key==='Enter')chatScreenSend()">
-    <button onclick="chatScreenSend()">↑</button>
-  </div>
+  <!-- Friends tab -->
+  <div id="scChatFriendsPanel" style="flex:1;display:none;overflow-y:auto;padding:12px 14px;"></div>
 </div>
 
 <!-- ════════ RUMMY LOBBY ════════ -->
@@ -6274,6 +6283,7 @@ function checkPendingRecharge() {
 let chatRef = null;
 let chatOpen = false;
 let chatUnreadCount = 0;
+let _chatFabVisible = false;
 
 function showChatPanel() {
   const fab = document.getElementById('chatFab');
@@ -6291,6 +6301,7 @@ function hideChatPanel() {
   chatOpen = false;
 }
 let _chatTab = 'global';
+
 function chatSetTab(tab){
   _chatTab = tab;
   document.getElementById('chatPanelGlobal').style.display = tab==='global'?'flex':'none';
@@ -6298,85 +6309,124 @@ function chatSetTab(tab){
   const tg=document.getElementById('chatTabGlobal'), tf=document.getElementById('chatTabFriends');
   if(tg) tg.classList.toggle('chat-tab-active', tab==='global');
   if(tf) tf.classList.toggle('chat-tab-active', tab==='friends');
-  if(tab==='friends') chatRenderFriendsList();
+  if(tab==='friends') chatLoadFabFriends();
+  if(tab==='global'){
+    setTimeout(()=>{ const m=document.getElementById('chatMsgs'); if(m) m.scrollTop=m.scrollHeight; },50);
+  }
 }
 
-function chatRenderFriendsList(){
+async function chatLoadFabFriends(){
   const el=document.getElementById('chatFriendsList'); if(!el) return;
-  if(!myFriends||!myFriends.length){
-    el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:11px;padding:20px;">Sin amigos aún.<br>Añade amigos desde tu perfil.</div>';
+  if(!db||!myId||!myId.startsWith('g_')){
+    el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:11px;padding:20px;">Inicia sesión con Google para ver amigos.</div>';
     return;
   }
+  el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);font-size:11px;padding:16px;">Cargando...</div>';
+  const snap = await db.ref('friends/'+myId+'/list').once('value');
+  const data = snap.val()||{};
+  const entries = Object.entries(data);
+  if(!entries.length){
+    el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:11px;padding:20px;">Sin amigos aún.<br><span style="color:rgba(255,255,255,.2);">Añádelos desde tu Perfil.</span></div>';
+    return;
+  }
+  const rkSnap = await db.ref('ranking').once('value');
+  const rk = rkSnap.val()||{};
   el.innerHTML='';
-  myFriends.forEach(f=>{
+  entries.forEach(([uid,f])=>{
+    const rp=rk[uid]||{};
+    const online=rp.updatedAt&&(Date.now()-rp.updatedAt<10*60*1000);
     const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);cursor:pointer;border:1px solid rgba(255,255,255,.07);';
-    row.innerHTML=`<div style="width:34px;height:34px;border-radius:50%;background:${f.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;">${(f.name||'?')[0].toUpperCase()}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:700;color:#fff;">${escHtml(f.name||'?')}</div>
-        <div style="font-size:9px;color:rgba(255,255,255,.35);">Toca para chat privado</div>
-      </div>`;
-    row.onclick=()=>{ toggleChat(); openPrivateChat(f.uid, f.name); };
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);cursor:pointer;border:1px solid rgba(255,255,255,.07);margin-bottom:5px;';
+    row.innerHTML=`<div style="position:relative;width:34px;height:34px;flex-shrink:0;">
+      <div style="width:34px;height:34px;border-radius:50%;background:${rp.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;">${(f.name||'?')[0].toUpperCase()}</div>
+      <div style="position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;background:${online?'#2ecc71':'#555'};border:1.5px solid #0a1420;"></div>
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(f.name||'?')}</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.35);">${online?'🟢 En línea':'⚫ Offline'}</div>
+    </div>
+    <button style="background:rgba(240,208,96,.15);border:1px solid rgba(240,208,96,.3);border-radius:8px;color:#f0d060;font-size:11px;padding:4px 8px;cursor:pointer;" onclick="event.stopPropagation();toggleChat();openPrivateChat('${uid}','${escHtml(f.name||'?')}','${rp.color||'#3498db'}')">💬</button>`;
     el.appendChild(row);
   });
 }
 
 function toggleChat() {
+  if(!_chatFabVisible) return; // not allowed if FAB hidden
   const drawer = document.getElementById('chatPanel');
-  chatOpen = !chatOpen;
-  if (chatOpen) {
-    drawer.classList.add('open');
-    chatUnreadCount = 0;
-    const u = document.getElementById('chatUnread');
-    if (u) { u.textContent = '0'; u.style.display = 'none'; }
-    // Init global chat listener if needed
-    if(_chatTab==='global' && !_chatFabListening) chatStartFabGlobal();
-    chatSetTab(_chatTab);
-    setTimeout(() => {
-      const msgs = document.getElementById('chatMsgs');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    }, 50);
-  } else {
+  if(chatOpen){
+    // Close
     drawer.classList.remove('open');
+    chatOpen = false;
+    return;
   }
+  // Open
+  chatOpen = true;
+  drawer.classList.add('open');
+  // Clear badge
+  chatUnreadCount = 0;
+  const u = document.getElementById('chatUnread');
+  if(u){ u.textContent='0'; u.style.display='none'; }
+  _chatFabLastSeen = Date.now();
+  if(!_chatFabListening && db) chatStartFabGlobal();
+  chatSetTab(_chatTab);
 }
 
-let _chatFabListening=false, _chatFabRef=null;
+let _chatFabListening=false, _chatFabRef=null, _chatFabLastSeen=Date.now();
 function chatStartFabGlobal(){
   if(_chatFabListening||!db) return;
   _chatFabListening=true;
-  _chatFabRef=db.ref('globalChat').limitToLast(50);
-  _chatFabRef.on('value', snap=>{
+  _chatFabLastSeen = Date.now();
+  // Use child_added so we only get notified of truly NEW messages
+  _chatFabRef=db.ref('globalChat').limitToLast(60);
+  // First load: populate messages
+  _chatFabRef.once('value', snap=>{
     const msgs=document.getElementById('chatMsgs'); if(!msgs) return;
     msgs.innerHTML='';
-    snap.forEach(c=>{
-      const v=c.val(); if(!v||!v.text) return;
-      const div=document.createElement('div');
-      const isMe=v.uid===myId;
-      div.className='chat-msg'+(isMe?' mine':'');
-      if(!isMe){const n=document.createElement('div');n.className='chat-msg-name';n.textContent=v.name||'?';div.appendChild(n);}
-      const t=document.createElement('div');t.className='chat-msg-text';t.textContent=v.text;div.appendChild(t);
-      msgs.appendChild(div);
-    });
+    snap.forEach(c=>{ const v=c.val(); if(v&&v.text) _fabAppendMsg(v,true); });
     msgs.scrollTop=msgs.scrollHeight;
+  });
+  // Then listen for new messages
+  db.ref('globalChat').orderByChild('t').startAt(Date.now()).on('child_added', snap=>{
+    const v=snap.val(); if(!v||!v.text) return;
+    _fabAppendMsg(v,false);
+    const msgs=document.getElementById('chatMsgs'); if(msgs) msgs.scrollTop=msgs.scrollHeight;
     if(!chatOpen){
       chatUnreadCount++;
       const u=document.getElementById('chatUnread');
-      if(u){u.textContent=chatUnreadCount>9?'9+':chatUnreadCount;u.style.display='flex';u.style.alignItems='center';u.style.justifyContent='center';}
+      if(u){ u.textContent=chatUnreadCount>9?'9+':String(chatUnreadCount); u.style.display='flex'; u.style.alignItems='center'; u.style.justifyContent='center'; }
     }
   });
 }
 
+function _fabAppendMsg(v, silent){
+  const msgs=document.getElementById('chatMsgs'); if(!msgs) return;
+  const div=document.createElement('div');
+  const isMe=v.uid===myId;
+  div.className='chat-msg'+(isMe?' mine':'');
+  if(!isMe){ const n=document.createElement('div'); n.className='chat-msg-name'; n.textContent=v.name||'?'; div.appendChild(n); }
+  const t=document.createElement('div'); t.className='chat-msg-text'; t.textContent=v.text; div.appendChild(t);
+  msgs.appendChild(div);
+}
+
 function chatShowFab(){
+  _chatFabVisible=true;
   const fab=document.getElementById('chatFab');
   if(fab) fab.style.display='flex';
   if(db && !_chatFabListening) chatStartFabGlobal();
 }
 function chatHideFab(){
+  _chatFabVisible=false;
   const fab=document.getElementById('chatFab');
-  if(fab){ fab.style.display='none'; }
+  if(fab) fab.style.display='none';
   const drawer=document.getElementById('chatPanel');
-  if(drawer){ drawer.classList.remove('open'); chatOpen=false; }
+  if(drawer){ drawer.classList.remove('open'); }
+  chatOpen=false;
+}
+function chatClosePanelOnly(){
+  // Close drawer without hiding FAB (used for back button)
+  const drawer=document.getElementById('chatPanel');
+  if(drawer){ drawer.classList.remove('open'); }
+  chatOpen=false;
 }
 function listenChat(code) {
   if (!db || !code) return;
@@ -9990,9 +10040,18 @@ function navPush(screenId) {
 }
 
 window.addEventListener('popstate', function(e) {
-  // Always push a new state so we never actually go "back" in browser history
-  // Instead we handle navigation ourselves
-  const state = e.state;
+  history.pushState({ screen: 'current', depth: 0 }, '', '');
+
+  // If chat FAB drawer is open → close it first, don't navigate
+  if(chatOpen){ chatClosePanelOnly(); return; }
+
+  // If stats panel is open → close it first
+  const statsPanel = document.getElementById('mlStatsContent');
+  const statsWrap = statsPanel && statsPanel.closest && statsPanel.closest('[id]');
+  const statsPanelEl = document.getElementById('mlStatsPanel');
+  if(statsPanelEl && statsPanelEl.style.display !== 'none'){
+    statsPanelEl.style.display='none'; return;
+  }
 
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
@@ -10007,19 +10066,15 @@ window.addEventListener('popstate', function(e) {
     }
   }
 
-  // Decide what "back" means for each screen
   switch(current) {
-    // In-game screens → go to game select (or rummy lobby)
     case 'scRummy':
       rmLeave(); break;
     case 'scRummyLobby':
       goGameSelect(); break;
-    case 'scLobby':       // BJ multiplayer lobby
+    case 'scLobby':
       leaveRoom(); goGameSelect(); break;
     case 'scRoulette':
-      goGameSelect(); break;
     case 'scRouletteLobby':
-      goGameSelect(); break;
     case 'scSlots':
     case 'scCrash':
     case 'scMines':
@@ -10027,14 +10082,11 @@ window.addEventListener('popstate', function(e) {
     case 'scPlinko':
     case 'scFootball':
       goGameSelect(); break;
-    // Game select → main lobby
     case 'scGameSelect':
       bnGo('lobby'); break;
-    // Profile / chat → main lobby
     case 'scProfile':
     case 'scChat':
       bnGo('lobby'); break;
-    // Main lobby → do nothing (would exit app — just re-push)
     case 'scMainLobby':
     default:
       history.pushState({ screen: 'scMainLobby', depth: 0 }, '', '');
@@ -10049,6 +10101,58 @@ window.addEventListener('popstate', function(e) {
 
 // ── Chat Screen ──────────────────────────────────
 let _chatScreenRef = null, _chatScreenListener = null;
+
+let _scChatTab = 'global';
+function scChatSetTab(tab){
+  _scChatTab = tab;
+  const gp=document.getElementById('scChatGlobalPanel');
+  const fp=document.getElementById('scChatFriendsPanel');
+  const tg=document.getElementById('scChatTabGlobal');
+  const tf=document.getElementById('scChatTabFriends');
+  if(gp) gp.style.display=tab==='global'?'flex':'none';
+  if(fp) fp.style.display=tab==='friends'?'block':'none';
+  if(tg){ tg.style.background=tab==='global'?'rgba(240,208,96,.2)':'transparent'; tg.style.color=tab==='global'?'#f0d060':'rgba(255,255,255,.4)'; }
+  if(tf){ tf.style.background=tab==='friends'?'rgba(240,208,96,.2)':'transparent'; tf.style.color=tab==='friends'?'#f0d060':'rgba(255,255,255,.4)'; }
+  if(tab==='friends') scChatLoadFriends();
+}
+
+async function scChatLoadFriends(){
+  const el=document.getElementById('scChatFriendsPanel'); if(!el) return;
+  if(!db||!myId||!myId.startsWith('g_')){
+    el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:12px;padding:40px 20px;">Inicia sesión con Google<br>para ver tus amigos.</div>';
+    return;
+  }
+  el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);font-size:12px;padding:30px;">Cargando...</div>';
+  const snap=await db.ref('friends/'+myId+'/list').once('value');
+  const data=snap.val()||{};
+  const entries=Object.entries(data);
+  if(!entries.length){
+    el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:12px;padding:40px 20px;">Sin amigos aún.<br><span style="color:rgba(255,255,255,.2);">Búscalos en la pestaña 🔍 del Perfil.</span></div>';
+    return;
+  }
+  const rkSnap=await db.ref('ranking').once('value');
+  const rk=rkSnap.val()||{};
+  el.innerHTML='';
+  entries.forEach(([uid,f])=>{
+    const rp=rk[uid]||{};
+    const online=rp.updatedAt&&(Date.now()-rp.updatedAt<10*60*1000);
+    const div=document.createElement('div');
+    div.className='fm-friend-row';
+    div.innerHTML=`<div class="fm-avatar" style="background:${rp.color||'#3498db'}">
+      ${(f.name||'?')[0].toUpperCase()}
+      <div class="fm-online-dot ${online?'on':'off'}"></div>
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div class="fm-name">${escHtml(f.name||'Jugador')}</div>
+      <div class="fm-sub">${online?'🟢 En línea':'⚫ Offline'} · $${(rp.bal||0).toLocaleString()}</div>
+    </div>
+    <div class="fm-actions">
+      <button class="fm-btn fm-btn-chat" onclick="openPrivateChat('${uid}','${escHtml(f.name||'?')}','${rp.color||'#3498db'}')">💬</button>
+      <button class="fm-btn fm-btn-del" onclick="removeFriend('${uid}','${escHtml(f.name||'?')}')" style="font-size:11px;">✕</button>
+    </div>`;
+    el.appendChild(div);
+  });
+}
 
 function chatScreenOpen(){
   clearChatDot();
@@ -11012,12 +11116,18 @@ function rmRenderGame(room){
     const la=room.lastAction;
     if(la){
       const sym=la.suit?RM_SUIT_SYM[la.suit]||'':'';
+      logEl.className='rm-action-log';
       if(la.type==='took_deck') logEl.textContent=`${la.name} tomó del mazo`;
       else if(la.type==='took_discard') logEl.textContent=`${la.name} recogió ${la.rank}${sym} del descarte`;
       else if(la.type==='discarded') logEl.textContent=`${la.name} descartó ${la.rank}${sym}`;
     } else {
-      if(isMyTurn) logEl.textContent=rmHasTakenCard?'✅ Tomaste carta — ahora descarta o declara':'👆 Tu turno — toma del mazo o del descarte';
-      else logEl.textContent=`⏳ Turno de ${(room.players?.[room.currentTurn]?.name||'?').split(' ')[0]}...`;
+      if(isMyTurn){
+        logEl.textContent=rmHasTakenCard?'✅ Tomaste — descarta o declara':'👆 TU TURNO — Toma del mazo o descarte';
+        logEl.className='rm-action-log my-turn';
+      } else {
+        logEl.textContent=`⏳ Turno de ${(room.players?.[room.currentTurn]?.name||'?').split(' ')[0]}...`;
+        logEl.className='rm-action-log';
+      }
     }
   }
 
@@ -11047,7 +11157,7 @@ function rmRenderGame(room){
   if(rmSoloMode&&room.currentTurn==='bot'&&!room.botThinking){
     if(rmSoloMode) rmCurrentRoom.botThinking=true;
     else db.ref(`${RM_PATH}/${rmRoomCode}/botThinking`).set(true);
-    setTimeout(()=>rmBotTurnSolo(), 1200+Math.random()*700);
+    setTimeout(()=>rmBotTurnSolo(), 2700+Math.random()*800);
   }
 }
 
@@ -11084,22 +11194,14 @@ function rmRenderHand(){
 let rmSelectedIdx2=null;
 
 function rmSelectCard(i){
-  if(rmPhase!=='myturn_discard' && rmPhase!=='oppturn') return;
-  if(rmPhase==='oppturn'){
-    // During opponent turn: allow selecting 2 for swap only (no discard)
-    if(rmSelectedIdx===i){ rmSelectedIdx=null; rmSelectedIdx2=null; }
-    else if(rmSelectedIdx2===i){ rmSelectedIdx2=null; }
-    else if(rmSelectedIdx===null){ rmSelectedIdx=i; }
-    else if(rmSelectedIdx2===null){ rmSelectedIdx2=i; }
-    else { rmSelectedIdx=i; rmSelectedIdx2=null; }
-  } else {
-    // My turn: first card = discard candidate, second = swap pair
-    if(rmSelectedIdx===i){ rmSelectedIdx=null; rmSelectedIdx2=null; }
-    else if(rmSelectedIdx2===i){ rmSelectedIdx2=null; }
-    else if(rmSelectedIdx===null){ rmSelectedIdx=i; }
-    else if(rmSelectedIdx2===null){ rmSelectedIdx2=i; }
-    else { rmSelectedIdx=i; rmSelectedIdx2=null; }
-  }
+  // Allow selecting cards in all phases for reordering/swap
+  // Only tap-to-discard works in myturn_discard phase
+  if(rmPhase==='idle') return;
+  if(rmSelectedIdx===i){ rmSelectedIdx=null; rmSelectedIdx2=null; }
+  else if(rmSelectedIdx2===i){ rmSelectedIdx2=null; }
+  else if(rmSelectedIdx===null){ rmSelectedIdx=i; }
+  else if(rmSelectedIdx2===null){ rmSelectedIdx2=i; }
+  else { rmSelectedIdx=i; rmSelectedIdx2=null; }
   rmRenderHand();
   rmUpdateButtons();
 }
@@ -11118,8 +11220,8 @@ function rmUpdateButtons(){
   const canDeclare = rmPhase==='myturn_discard' && rmHasTakenCard && rmHandIsValid443();
   const db2=document.getElementById('rmDeclareBtn');
   if(db2) db2.disabled=!canDeclare;
-  // Swap: available any time we have 2 cards selected
-  const canSwap = rmSelectedIdx!==null && rmSelectedIdx2!==null;
+  // Swap: available whenever 2 cards selected, regardless of phase
+  const canSwap = rmPhase!=='idle' && rmSelectedIdx!==null && rmSelectedIdx2!==null;
   const swapBtn=document.getElementById('rmSwapBtn');
   if(swapBtn) swapBtn.disabled=!canSwap;
   // Update hint
@@ -11128,9 +11230,9 @@ function rmUpdateButtons(){
     const g0=rmMyHand.slice(0,4), g1=rmMyHand.slice(4,8), g2=rmMyHand.slice(8,11);
     const v0=rmValidGroup(g0), v1=rmValidGroup(g1), v2=rmValidGroup(g2);
     const sym=g=>`<span style="color:${g?'#2ecc71':'rgba(255,255,255,.3)'}">${g?'✓':'○'}</span>`;
-    hint.innerHTML=`G1(4): ${sym(v0)} &nbsp; G2(4): ${sym(v1)} &nbsp; G3(3): ${sym(v2)}`;
     if(canDeclare) hint.innerHTML='<span style="color:#f0d060;font-weight:700;">✅ ¡Listo para declarar!</span>';
     else if(canSwap) hint.innerHTML='<span style="color:#e67e22;">⇄ Toca Cambiar para intercambiar</span>';
+    else hint.innerHTML=`G1(4): ${sym(v0)} &nbsp; G2(4): ${sym(v1)} &nbsp; G3(3): ${sym(v2)}`;
   }
 }
 
