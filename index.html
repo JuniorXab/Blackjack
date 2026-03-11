@@ -1669,10 +1669,25 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .gs-card-wheel:hover{box-shadow:0 0 30px rgba(180,100,255,.2);}
 
 
+
+/* BGM float button */
+#bgmFloatBtn{
+  position:fixed;bottom:72px;left:12px;z-index:8000;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(30,10,50,.85);border:1.5px solid rgba(200,140,255,.3);
+  color:rgba(255,255,255,.55);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);transition:all .2s;
+  box-shadow:0 2px 10px rgba(0,0,0,.4);
+}
+#bgmFloatBtn:active{transform:scale(.88);}
+#bgmFloatBtn.on{border-color:rgba(200,140,255,.7);color:rgba(220,180,255,.9);box-shadow:0 0 12px rgba(180,100,255,.35);}
+
 </style>
 </head>
 <body>
 <div id="pt"></div>
+<button id="bgmFloatBtn" class="on" onclick="bgmToggle()" title="Música de fondo">🎵</button>
 
 <!-- ════════ WELCOME ════════ -->
 
@@ -3403,8 +3418,118 @@ let mpStats   = { wins:0, losses:0, pushes:0, blackjacks:0, streak:0, bestStreak
 
 // ── Web Audio for sound effects ──
 let audioCtx = null;
-let soundPrefs = JSON.parse(localStorage.getItem('bjmp_sound') || '{"cards":true,"chips":true,"wins":true,"music":false}');
+let soundPrefs = JSON.parse(localStorage.getItem('bjmp_sound') || '{"cards":true,"chips":true,"wins":true,"music":true}');
 function saveSoundPrefs() { localStorage.setItem('bjmp_sound', JSON.stringify(soundPrefs)); }
+
+// ── BACKGROUND MUSIC (Web Audio generative) ───────────────────────────────────
+let _bgmCtx=null, _bgmNodes=[], _bgmRunning=false, _bgmVol=0.12;
+
+const BGM_CHORD = [130.81,164.81,196.00,246.94]; // C3 E3 G3 B3 — jazz voicing
+const BGM_BASS  = [65.41, 73.42, 82.41, 98.00];  // C2 D2 E2 G2
+
+function bgmStart(){
+  if(_bgmRunning||!soundPrefs.music) return;
+  try{
+    if(!_bgmCtx) _bgmCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(_bgmCtx.state==='suspended') _bgmCtx.resume();
+    _bgmRunning=true;
+    _bgmNodes=[];
+
+    const master=_bgmCtx.createGain(); master.gain.value=_bgmVol; master.connect(_bgmCtx.destination);
+
+    // Warm pad — detuned sines layered softly
+    BGM_CHORD.forEach((freq,i)=>{
+      const osc=_bgmCtx.createOscillator();
+      const g=_bgmCtx.createGain();
+      const filt=_bgmCtx.createBiquadFilter();
+      osc.type='sine'; osc.frequency.value=freq*(1+i*0.0004);
+      filt.type='lowpass'; filt.frequency.value=900;
+      g.gain.value=0.22-i*0.03;
+      osc.connect(filt); filt.connect(g); g.connect(master);
+      osc.start(); _bgmNodes.push(osc,g);
+    });
+
+    // Sub bass — slow pulse
+    const bass=_bgmCtx.createOscillator();
+    const bassG=_bgmCtx.createGain();
+    const bassFilt=_bgmCtx.createBiquadFilter();
+    bass.type='triangle'; bass.frequency.value=BGM_BASS[0];
+    bassFilt.type='lowpass'; bassFilt.frequency.value=200;
+    bassG.gain.value=0.28;
+    bass.connect(bassFilt); bassFilt.connect(bassG); bassG.connect(master);
+    bass.start(); _bgmNodes.push(bass,bassG);
+
+    // Soft shimmer — high triangle at very low vol
+    const shimmer=_bgmCtx.createOscillator();
+    const shimG=_bgmCtx.createGain();
+    shimmer.type='triangle'; shimmer.frequency.value=523.25; // C5
+    shimG.gain.value=0.04;
+    shimmer.connect(shimG); shimG.connect(master);
+    shimmer.start(); _bgmNodes.push(shimmer,shimG);
+
+    // LFO on master gain — gentle breathing effect (0.08–0.16 vol, 4s cycle)
+    const lfo=_bgmCtx.createOscillator();
+    const lfoG=_bgmCtx.createGain();
+    lfo.frequency.value=0.25; // 4s cycle
+    lfoG.gain.value=0.04;
+    lfo.connect(lfoG); lfoG.connect(master.gain);
+    lfo.start(); _bgmNodes.push(lfo,lfoG);
+
+    _bgmNodes.push(master);
+
+    // Schedule subtle chord changes every 8s
+    bgmScheduleChanges(master);
+  }catch(e){console.log('BGM error',e);}
+}
+
+let _bgmChangeTimer=null;
+function bgmScheduleChanges(master){
+  if(!_bgmRunning) return;
+  _bgmChangeTimer=setTimeout(()=>{
+    if(!_bgmRunning||!_bgmCtx) return;
+    // Fade master slightly during transition
+    try{
+      master.gain.linearRampToValueAtTime(_bgmVol*0.7, _bgmCtx.currentTime+0.8);
+      master.gain.linearRampToValueAtTime(_bgmVol, _bgmCtx.currentTime+1.6);
+    }catch(e){}
+    bgmScheduleChanges(master);
+  }, 8000);
+}
+
+function bgmStop(){
+  if(!_bgmRunning) return;
+  _bgmRunning=false;
+  if(_bgmChangeTimer){clearTimeout(_bgmChangeTimer);_bgmChangeTimer=null;}
+  _bgmNodes.forEach(n=>{try{n.stop&&n.stop();n.disconnect&&n.disconnect();}catch(e){}});
+  _bgmNodes=[];
+}
+
+function bgmToggle(){
+  soundPrefs.music=!soundPrefs.music;
+  saveSoundPrefs();
+  if(soundPrefs.music) bgmStart(); else bgmStop();
+  renderSoundToggles();
+  // Update floating toggle button
+  bgmSyncBtn();
+}
+
+// Start BGM on first user interaction (browser autoplay policy)
+function bgmAutoStart(){
+  if(soundPrefs.music&&!_bgmRunning) bgmStart();
+  document.removeEventListener('touchstart',bgmAutoStart);
+  document.removeEventListener('click',bgmAutoStart);
+}
+document.addEventListener('touchstart',bgmAutoStart,{once:true});
+document.addEventListener('click',bgmAutoStart,{once:true});
+
+function bgmSyncBtn(){
+  const btn=document.getElementById('bgmFloatBtn');
+  if(!btn) return;
+  btn.textContent=soundPrefs.music?'🎵':'🔇';
+  btn.classList.toggle('on',!!soundPrefs.music);
+}
+// Sync button state on load
+document.addEventListener('DOMContentLoaded',bgmSyncBtn);
 function getAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
@@ -9477,8 +9602,34 @@ function lwSpin(){
   document.getElementById('lwResultBanner').innerHTML='';
   myBal-=eff; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
 
-  // Random target
-  const tIdx=Math.floor(Math.random()*LW_N);
+  // Weighted RNG — visual segments stay same, internal probability adjusted
+  // Weights: 0x=40% 1x=25% 2x=15% 3x=8% 5x=6% 10x=3.5% 20x=2% 50x=0.5%
+  // Weighted RTP ~84% (casa retiene ~16%) — 50x cada ~1900 giros
+  const LW_WEIGHTS = [
+    55,  // 0x  seg 0
+    7,   // 2x  seg 1
+    55,  // 0x  seg 2
+    3.5, // 10x seg 3
+    16,  // 1x  seg 4
+    5.5, // 5x  seg 5
+    55,  // 0x  seg 6
+    1.5, // 20x seg 7
+    7,   // 2x  seg 8
+    0.2, // 50x seg 9
+    55,  // 0x  seg 10
+    6,   // 3x  seg 11
+    16,  // 1x  seg 12
+    3.5, // 10x seg 13
+    7,   // 2x  seg 14
+    55,  // 0x  seg 15
+    5.5, // 5x  seg 16
+    1.5, // 20x seg 17
+    16,  // 1x  seg 18
+    7,   // 2x  seg 19
+  ];
+  const lwTotalW = LW_WEIGHTS.reduce((s,w)=>s+w,0);
+  let lwRand = Math.random() * lwTotalW, tIdx = 0;
+  for(let i=0;i<LW_N;i++){ lwRand -= LW_WEIGHTS[i]; if(lwRand<=0){tIdx=i;break;} }
   const seg=LW_SEGMENTS[tIdx];
 
   // ── Alignment math ────────────────────────────────────────────────────────
@@ -9875,6 +10026,7 @@ function renderSoundToggles() {
     { key:'cards', label:'🃏 Sonido de cartas' },
     { key:'chips', label:'🪙 Sonido de fichas' },
     { key:'wins',  label:'🎉 Sonidos de victoria/derrota' },
+    { key:'music', label:'🎵 Música de fondo', special:true },
   ];
   const el = document.getElementById('soundToggles');
   el.innerHTML = items.map(item => `
@@ -9887,6 +10039,7 @@ function renderSoundToggles() {
   `).join('');
 }
 function toggleSound(key) {
+  if(key==='music'){ bgmToggle(); return; }
   soundPrefs[key] = !soundPrefs[key];
   saveSoundPrefs();
   renderSoundToggles();
