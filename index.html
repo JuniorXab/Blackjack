@@ -806,12 +806,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* Chat */
 /* Chat flotante */
-.chat-fab{position:fixed;bottom:18px;right:18px;z-index:710;width:44px;height:44px;border-radius:50%;background:rgba(10,20,30,.92);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,.5);transition:transform .15s;}
+.chat-fab{position:fixed;bottom:72px;right:14px;z-index:9010;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#1a3a5c,#0d2240);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;box-shadow:0 4px 20px rgba(0,0,0,.6);transition:transform .15s;}
 .chat-fab:active{transform:scale(.92);}
 .chat-fab-badge{position:absolute;top:-3px;right:-3px;background:#e74c3c;color:#fff;font-size:9px;font-weight:bold;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;display:none;}
-.chat-drawer{position:fixed;bottom:72px;right:12px;width:min(290px,calc(100vw - 24px));z-index:709;display:none;flex-direction:column;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.08);}
+.chat-drawer{position:fixed;bottom:126px;right:12px;width:min(310px,calc(100vw - 24px));height:min(420px,60vh);z-index:9009;display:none;flex-direction:column;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.1);background:rgba(6,12,22,.97);}
 .chat-drawer.open{display:flex;}
-.chat-drawer-header{background:rgba(8,16,24,.98);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);}
+.chat-drawer-header{background:rgba(8,16,28,.99);padding:7px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.07);gap:8px;flex-shrink:0;}
+.chat-tab-active{background:rgba(240,208,96,.2)!important;color:#f0d060!important;}
 .chat-msgs{height:min(240px,40vh);overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px;background:rgba(6,12,20,.97);}
 .chat-msg{max-width:90%;word-break:break-word;}
 .chat-msg-name{font-size:9px;color:rgba(255,255,255,.4);margin-bottom:1px;}
@@ -1146,6 +1147,8 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-act-sort{background:rgba(255,255,255,.15);color:#fff;}
 .rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
 .rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
+.rm-act-swap{background:linear-gradient(135deg,#1a6b8a,#0d4d6a);color:#fff;}
+.rm-card.sel2{outline:2px solid #e67e22;outline-offset:-1px;transform:translateY(-14px);z-index:15;}
 /* MY HAND */
 .rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px 8px;overflow-x:auto;scrollbar-width:none;min-height:92px;}
 .rm-hand-row::-webkit-scrollbar{display:none;}
@@ -2679,6 +2682,7 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
       </div>
       <div class="rm-me-actions">
         <button class="rm-act-btn rm-act-sort" onclick="rmSortHand()" title="Ordenar">⇅</button>
+        <button class="rm-act-btn rm-act-swap" id="rmSwapBtn" onclick="rmSwapSelected()" disabled title="Intercambiar las 2 cartas seleccionadas">⇄ Cambiar</button>
         <button class="rm-act-btn rm-act-declare" id="rmDeclareBtn" onclick="rmOpenDeclare()" disabled>🏆 Declarar</button>
       </div>
     </div>
@@ -2817,13 +2821,25 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 </div>
 <div class="chat-drawer" id="chatPanel">
   <div class="chat-drawer-header">
-    <span style="font-size:12px;font-weight:bold;color:rgba(255,255,255,.7);letter-spacing:1px;">💬 Chat</span>
-    <button onclick="toggleChat()" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:18px;cursor:pointer;line-height:1;">✕</button>
+    <div style="display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1);">
+      <button id="chatTabGlobal" onclick="chatSetTab('global')"
+        style="flex:1;padding:5px 10px;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;">🌐 GLOBAL</button>
+      <button id="chatTabFriends" onclick="chatSetTab('friends')"
+        style="flex:1;padding:5px 10px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px;">👥 AMIGOS</button>
+    </div>
+    <button onclick="toggleChat()" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
   </div>
-  <div class="chat-msgs" id="chatMsgs"></div>
-  <div class="chat-input-row">
-    <input id="chatInput" type="text" placeholder="Mensaje..." maxlength="80" autocomplete="off" onkeydown="if(event.key==='Enter')sendChat()">
-    <button onclick="sendChat()">➤</button>
+  <!-- Global chat -->
+  <div id="chatPanelGlobal" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" placeholder="Mensaje global..." maxlength="80" autocomplete="off" onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <!-- Friends chat list -->
+  <div id="chatPanelFriends" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;">
+    <div id="chatFriendsList" style="padding:8px;display:flex;flex-direction:column;gap:6px;"></div>
   </div>
 </div>
 
@@ -4701,6 +4717,8 @@ function renderResults(room) {
       sfxLose();
     }
     saveMpStats();
+    // Record in unified stats system (for leaderboard & missions)
+    mlRecordGameStat('bj', myResult==='win'||myResult==='blackjack', myPayout - myBet2);
     setTimeout(updateRanking, 300);
     updateLobbyLevel();
   }
@@ -5483,6 +5501,8 @@ function soloShowResults() {
     soloStats.streak = Math.min(0, soloStats.streak) - 1;
     sfxLose();
   }
+  // Record in unified stats system (for leaderboard & missions)
+  mlRecordGameStat('bj', result==='win'||result==='blackjack', payout - soloBet);
   saveStats();
   renderStatsBar();
   // Update ranking balance even in solo (balance changes affect ranking)
@@ -5561,6 +5581,9 @@ function soloShowResults() {
     soloStats.streak = totalProfit > 0 ? Math.max(0,soloStats.streak)+1 : totalProfit < 0 ? Math.min(0,soloStats.streak)-1 : 0;
     soloStats.bestStreak = Math.max(soloStats.bestStreak, soloStats.streak);
     if (totalProfit > 0) { sfxWin(); burst(window.innerWidth/2, 200, 16); } else { sfxLose(); }
+    // Record both hands in unified stats
+    mlRecordGameStat('bj', r1.profit>0, r1.profit);
+    mlRecordGameStat('bj', r2.profit>0, r2.profit);
     saveStats(); renderStatsBar(); updateRanking(); updateLobbyLevel(); saveLocal();
     document.getElementById('myBalance').textContent = '$' + myBal.toLocaleString();
     document.getElementById('soloNextBtn').style.display = myBal > 0 ? 'block' : 'none';
@@ -6267,6 +6290,37 @@ function hideChatPanel() {
   chatUnreadCount = 0;
   chatOpen = false;
 }
+let _chatTab = 'global';
+function chatSetTab(tab){
+  _chatTab = tab;
+  document.getElementById('chatPanelGlobal').style.display = tab==='global'?'flex':'none';
+  document.getElementById('chatPanelFriends').style.display = tab==='friends'?'flex':'none';
+  const tg=document.getElementById('chatTabGlobal'), tf=document.getElementById('chatTabFriends');
+  if(tg) tg.classList.toggle('chat-tab-active', tab==='global');
+  if(tf) tf.classList.toggle('chat-tab-active', tab==='friends');
+  if(tab==='friends') chatRenderFriendsList();
+}
+
+function chatRenderFriendsList(){
+  const el=document.getElementById('chatFriendsList'); if(!el) return;
+  if(!myFriends||!myFriends.length){
+    el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.3);font-size:11px;padding:20px;">Sin amigos aún.<br>Añade amigos desde tu perfil.</div>';
+    return;
+  }
+  el.innerHTML='';
+  myFriends.forEach(f=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);cursor:pointer;border:1px solid rgba(255,255,255,.07);';
+    row.innerHTML=`<div style="width:34px;height:34px;border-radius:50%;background:${f.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;">${(f.name||'?')[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:700;color:#fff;">${escHtml(f.name||'?')}</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.35);">Toca para chat privado</div>
+      </div>`;
+    row.onclick=()=>{ toggleChat(); openPrivateChat(f.uid, f.name); };
+    el.appendChild(row);
+  });
+}
+
 function toggleChat() {
   const drawer = document.getElementById('chatPanel');
   chatOpen = !chatOpen;
@@ -6275,6 +6329,9 @@ function toggleChat() {
     chatUnreadCount = 0;
     const u = document.getElementById('chatUnread');
     if (u) { u.textContent = '0'; u.style.display = 'none'; }
+    // Init global chat listener if needed
+    if(_chatTab==='global' && !_chatFabListening) chatStartFabGlobal();
+    chatSetTab(_chatTab);
     setTimeout(() => {
       const msgs = document.getElementById('chatMsgs');
       if (msgs) msgs.scrollTop = msgs.scrollHeight;
@@ -6282,6 +6339,44 @@ function toggleChat() {
   } else {
     drawer.classList.remove('open');
   }
+}
+
+let _chatFabListening=false, _chatFabRef=null;
+function chatStartFabGlobal(){
+  if(_chatFabListening||!db) return;
+  _chatFabListening=true;
+  _chatFabRef=db.ref('globalChat').limitToLast(50);
+  _chatFabRef.on('value', snap=>{
+    const msgs=document.getElementById('chatMsgs'); if(!msgs) return;
+    msgs.innerHTML='';
+    snap.forEach(c=>{
+      const v=c.val(); if(!v||!v.text) return;
+      const div=document.createElement('div');
+      const isMe=v.uid===myId;
+      div.className='chat-msg'+(isMe?' mine':'');
+      if(!isMe){const n=document.createElement('div');n.className='chat-msg-name';n.textContent=v.name||'?';div.appendChild(n);}
+      const t=document.createElement('div');t.className='chat-msg-text';t.textContent=v.text;div.appendChild(t);
+      msgs.appendChild(div);
+    });
+    msgs.scrollTop=msgs.scrollHeight;
+    if(!chatOpen){
+      chatUnreadCount++;
+      const u=document.getElementById('chatUnread');
+      if(u){u.textContent=chatUnreadCount>9?'9+':chatUnreadCount;u.style.display='flex';u.style.alignItems='center';u.style.justifyContent='center';}
+    }
+  });
+}
+
+function chatShowFab(){
+  const fab=document.getElementById('chatFab');
+  if(fab) fab.style.display='flex';
+  if(db && !_chatFabListening) chatStartFabGlobal();
+}
+function chatHideFab(){
+  const fab=document.getElementById('chatFab');
+  if(fab){ fab.style.display='none'; }
+  const drawer=document.getElementById('chatPanel');
+  if(drawer){ drawer.classList.remove('open'); chatOpen=false; }
 }
 function listenChat(code) {
   if (!db || !code) return;
@@ -6319,12 +6414,14 @@ function appendChatMsg(msg) {
 function sendChat() {
   const inp = document.getElementById('chatInput');
   const text = (inp?.value || '').trim();
-  if (!text || !db || !roomCode) return;
+  if (!text || !db) return;
   inp.value = '';
-  db.ref(`${GAME_PATH}/${roomCode}/chat`).push({
-    uid: myId, name: myName, text,
-    ts: Date.now()
-  });
+  // If in a BJ room, send to room chat; otherwise send to global
+  if(roomCode){
+    db.ref(`${GAME_PATH}/${roomCode}/chat`).push({ uid: myId, name: myName, text, ts: Date.now() });
+  } else {
+    db.ref('globalChat').push({ uid: myId, name: myName, text, t: Date.now() });
+  }
 }
 function sendSystemChat(text) {
   if (!db || !roomCode) return;
@@ -9786,10 +9883,11 @@ let _bnActive = '';
 function bnShow(){
   const nav = document.getElementById('bottomNav');
   if(nav) nav.style.display='flex';
-  // Show profile icon as avatar emoji if set
   const emoji = myId ? localStorage.getItem('bjmp_avatar_'+myId) : null;
   const icon = document.getElementById('bnProfileIcon');
   if(icon) icon.textContent = emoji || '👤';
+  // Show chat FAB on all screens
+  chatShowFab();
 }
 
 function bnHide(){
@@ -9808,6 +9906,10 @@ function bnSetActive(tab){
 function bnGo(tab){
   if(tab==='chat'){
     // Warn if in risky game state first
+    if(rmPhase==='myturn_take'||rmPhase==='myturn_discard'||rmPhase==='oppturn'){
+      if(!confirm('⚠️ Estás en una partida de Rummy. ¿Salir de la partida?')) return;
+      rmLeave(); return;
+    }
     if(crState==='running' && crBetAmt>0 && !crCashedOut){
       if(!confirm('⚠️ Estás en una partida de Crash activa. Si sales, perderás tu apuesta de $'+crBetAmt+'. ¿Continuar?')) return;
       crState='idle'; if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
@@ -9822,10 +9924,15 @@ function bnGo(tab){
     chatScreenOpen();
     show('scChat');
     navPush('scChat');
+    chatHideFab(); // hide floating FAB while on full chat screen
     bnSetActive('chat');
     return;
   }
   // Warn if in a risky game state
+  if(rmPhase==='myturn_take'||rmPhase==='myturn_discard'||rmPhase==='oppturn'){
+    if(!confirm('⚠️ Estás en una partida de Rummy. ¿Salir de la partida?')) return;
+    rmLeave(); return;
+  }
   if(crState==='running' && crBetAmt>0 && !crCashedOut){
     if(!confirm('⚠️ Estás en una partida de Crash activa. Si sales, perderás tu apuesta de $'+crBetAmt+'. ¿Continuar?')) return;
     crState='idle'; if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
@@ -10862,7 +10969,15 @@ function rmRenderGame(room){
   if(!room) return;
   const myP=room.players?.[myId];
   if(!myP) return;
-  rmMyHand=myP.hand||[];
+  // Only overwrite local hand if the card SET changed (not just reordered by us locally)
+  const serverHand=myP.hand||[];
+  const serverIds=serverHand.map(c=>c.id||c.rank+c.suit).sort().join(',');
+  const localIds=rmMyHand.map(c=>c.id||c.rank+c.suit).sort().join(',');
+  if(serverIds!==localIds){
+    // Card set actually changed (took/discarded) — accept server order
+    rmMyHand=serverHand;
+  }
+  // else: same cards, keep local arrangement
   const isMyTurn=room.currentTurn===myId;
   rmHasTakenCard=room.hasTaken||false;
   rmPhase=isMyTurn?(rmHasTakenCard?'myturn_discard':'myturn_take'):'oppturn';
@@ -10875,9 +10990,7 @@ function rmRenderGame(room){
     rmStopTurnTimer();
   }
 
-  // Timer: start on my turn, stop otherwise
-  if(isMyTurn){ if(!rmTurnTimerInterval) rmStartTimer(); }
-  else rmStopTimer();
+
 
   // Deck
   const deck=room.deck||[];
@@ -10967,26 +11080,57 @@ function rmRenderHand(){
   rmRenderHandDraggable();
 }
 
+// Two-card selection for swap
+let rmSelectedIdx2=null;
+
 function rmSelectCard(i){
-  if(rmPhase!=='myturn_discard') return;
-  rmSelectedIdx=rmSelectedIdx===i?null:i;
+  if(rmPhase!=='myturn_discard' && rmPhase!=='oppturn') return;
+  if(rmPhase==='oppturn'){
+    // During opponent turn: allow selecting 2 for swap only (no discard)
+    if(rmSelectedIdx===i){ rmSelectedIdx=null; rmSelectedIdx2=null; }
+    else if(rmSelectedIdx2===i){ rmSelectedIdx2=null; }
+    else if(rmSelectedIdx===null){ rmSelectedIdx=i; }
+    else if(rmSelectedIdx2===null){ rmSelectedIdx2=i; }
+    else { rmSelectedIdx=i; rmSelectedIdx2=null; }
+  } else {
+    // My turn: first card = discard candidate, second = swap pair
+    if(rmSelectedIdx===i){ rmSelectedIdx=null; rmSelectedIdx2=null; }
+    else if(rmSelectedIdx2===i){ rmSelectedIdx2=null; }
+    else if(rmSelectedIdx===null){ rmSelectedIdx=i; }
+    else if(rmSelectedIdx2===null){ rmSelectedIdx2=i; }
+    else { rmSelectedIdx=i; rmSelectedIdx2=null; }
+  }
+  rmRenderHand();
+  rmUpdateButtons();
+}
+
+function rmSwapSelected(){
+  if(rmSelectedIdx===null||rmSelectedIdx2===null) return;
+  const a=rmSelectedIdx, b=rmSelectedIdx2;
+  [rmMyHand[a],rmMyHand[b]]=[rmMyHand[b],rmMyHand[a]];
+  rmSelectedIdx=null; rmSelectedIdx2=null;
+  sfxRmCardSlide();
   rmRenderHand();
   rmUpdateButtons();
 }
 
 function rmUpdateButtons(){
-  // Auto-check declare: scan current hand arrangement for valid 4-4-3
   const canDeclare = rmPhase==='myturn_discard' && rmHasTakenCard && rmHandIsValid443();
   const db2=document.getElementById('rmDeclareBtn');
   if(db2) db2.disabled=!canDeclare;
+  // Swap: available any time we have 2 cards selected
+  const canSwap = rmSelectedIdx!==null && rmSelectedIdx2!==null;
+  const swapBtn=document.getElementById('rmSwapBtn');
+  if(swapBtn) swapBtn.disabled=!canSwap;
   // Update hint
   const hint=document.getElementById('rmGroupHint');
   if(hint && rmMyHand.length===11){
     const g0=rmMyHand.slice(0,4), g1=rmMyHand.slice(4,8), g2=rmMyHand.slice(8,11);
     const v0=rmValidGroup(g0), v1=rmValidGroup(g1), v2=rmValidGroup(g2);
     const sym=g=>`<span style="color:${g?'#2ecc71':'rgba(255,255,255,.3)'}">${g?'✓':'○'}</span>`;
-    hint.innerHTML=`Grupo 1 (4): ${sym(v0)} &nbsp; Grupo 2 (4): ${sym(v1)} &nbsp; Grupo 3 (3): ${sym(v2)}`;
+    hint.innerHTML=`G1(4): ${sym(v0)} &nbsp; G2(4): ${sym(v1)} &nbsp; G3(3): ${sym(v2)}`;
     if(canDeclare) hint.innerHTML='<span style="color:#f0d060;font-weight:700;">✅ ¡Listo para declarar!</span>';
+    else if(canSwap) hint.innerHTML='<span style="color:#e67e22;">⇄ Toca Cambiar para intercambiar</span>';
   }
 }
 
@@ -11005,7 +11149,7 @@ function rmSortHand(){
     if(a.suit!==b.suit) return RM_SUITS.indexOf(a.suit)-RM_SUITS.indexOf(b.suit);
     return RM_RANK_VAL[a.rank]-RM_RANK_VAL[b.rank];
   });
-  rmSelectedIdx=null; rmRenderHand(); rmUpdateButtons();
+  rmSelectedIdx=null; rmSelectedIdx2=null; rmRenderHand(); rmUpdateButtons();
 }
 
 // ── DRAG TO REORDER HAND ──────────────────────────
@@ -11033,7 +11177,8 @@ function rmRenderHandDraggable(){
     }
 
     const card=rmMakeRealCard(c, i===rmSelectedIdx);
-    card.style.zIndex=i===rmSelectedIdx?20:i;
+    if(i===rmSelectedIdx2) card.classList.add('sel2');
+    card.style.zIndex=i===rmSelectedIdx?20:i===rmSelectedIdx2?15:i;
 
     // Click to select
     card.onclick=(e)=>{
@@ -11334,21 +11479,18 @@ async function rmPlayAgain(){
   const overlay=document.getElementById('rmWinOverlay');
   if(overlay) overlay.style.display='none';
   if(rmSoloMode){ rmStartSolo(); return; }
-  if(!rmIsHost) return;
-  // Reset room to lobby
-  const room=rmCurrentRoom; if(!room) return;
-  const pids=Object.keys(room.players||{});
-  const updates={};
-  updates[`${RM_PATH}/${rmRoomCode}/status`]='lobby';
-  updates[`${RM_PATH}/${rmRoomCode}/winner`]=null;
-  updates[`${RM_PATH}/${rmRoomCode}/winGroups`]=null;
-  updates[`${RM_PATH}/${rmRoomCode}/deck`]=null;
-  updates[`${RM_PATH}/${rmRoomCode}/discardPile`]=null;
-  updates[`${RM_PATH}/${rmRoomCode}/hasTaken`]=false;
-  updates[`${RM_PATH}/${rmRoomCode}/botThinking`]=false;
-  pids.forEach(pid=>{ updates[`${RM_PATH}/${rmRoomCode}/players/${pid}/hand`]=null; });
-  await db.ref().update(updates);
-  rmGroups=[[],[],[]]; rmSelectedIdx=null;
+  // Everyone (host and guest) goes back to lobby screen to start fresh
+  // Clean up old room from Firebase to avoid stale winner state
+  if(db && rmRoomCode && rmRoomCode!=='SOLO'){
+    try{ await db.ref(`${RM_PATH}/${rmRoomCode}`).remove(); }catch(e){}
+  }
+  if(rmRoomRef){ rmRoomRef.off(); rmRoomRef=null; }
+  rmClearSession();
+  rmRoomCode=''; rmIsHost=false; rmCurrentRoom=null;
+  rmMyHand=[]; rmGroups=[[],[],[]]; rmSelectedIdx=null; rmPhase='idle';
+  rmStopTurnTimer();
+  hide('scRummy');
+  rmShowLobby();
 }
 
 function rmLeave(){
