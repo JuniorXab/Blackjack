@@ -1150,6 +1150,13 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
 .rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
 .rm-act-swap{background:linear-gradient(135deg,#1a6b8a,#0d4d6a);color:#fff;}
+.rank-tab{padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.45);font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;}
+.rank-tab-active{background:rgba(240,208,96,.2);border-color:rgba(240,208,96,.4);color:#f0d060;}
+.rank-sort-btn{padding:4px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.35);font-size:9px;font-weight:700;cursor:pointer;}
+.rank-sort-active{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2);}
+.rank-game-hero{text-align:center;padding:10px 0 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px;}
+.rank-game-icon{font-size:36px;line-height:1;}
+.rank-game-name{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:2px;margin-top:4px;}
 .rm-card.sel2{outline:2px solid #e67e22;outline-offset:-1px;transform:translateY(-14px);z-index:15;}
 /* MY HAND */
 .rm-hand-row{display:flex;align-items:flex-end;padding:4px 10px 8px;overflow-x:auto;scrollbar-width:none;min-height:92px;}
@@ -1586,6 +1593,9 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
       <div id="mlSpinBadge" class="ml-spin-badge">¡HOY!</div>
     </div>
 
+    <!-- DAILY STREAK -->
+    <div id="streakWidget" style="background:linear-gradient(135deg,rgba(231,76,60,.12),rgba(243,156,18,.08));border:1px solid rgba(231,76,60,.2);border-radius:16px;padding:14px 16px;margin-bottom:12px;cursor:default;"></div>
+
     <!-- GRID: Ranking · Stats · Misiones · Compartir -->
     <div class="ml-grid2">
       <div class="ml-card" onclick="mlToggleRanking()">
@@ -1629,7 +1639,26 @@ canvas#plCanvas{width:100%;max-height:100%;display:block;object-fit:contain;}
 <div id="mlRankModal" class="ml-stats-modal">
   <div class="ml-stats-wrap">
     <button class="ml-stats-back" onclick="mlCloseRanking()">← Volver</button>
-    <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:16px;">🏆 Ranking Global</div>
+    <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:12px;">🏆 Ranking</div>
+    <!-- Category tabs -->
+    <div id="rankTabsWrap" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;scrollbar-width:none;">
+      <button class="rank-tab rank-tab-active" data-key="general" onclick="rankSetTab('general')">🌐 General</button>
+      <button class="rank-tab" data-key="bj" onclick="rankSetTab('bj')">🃏 BJ</button>
+      <button class="rank-tab" data-key="rummy" onclick="rankSetTab('rummy')">🃏 Rummy</button>
+      <button class="rank-tab" data-key="roulette" onclick="rankSetTab('roulette')">🎡 Ruleta</button>
+      <button class="rank-tab" data-key="slots" onclick="rankSetTab('slots')">🎰 Slots</button>
+      <button class="rank-tab" data-key="crash" onclick="rankSetTab('crash')">📈 Crash</button>
+      <button class="rank-tab" data-key="mines" onclick="rankSetTab('mines')">💣 Minas</button>
+      <button class="rank-tab" data-key="dice" onclick="rankSetTab('dice')">🎲 Dados</button>
+      <button class="rank-tab" data-key="plinko" onclick="rankSetTab('plinko')">🎯 Plinko</button>
+      <button class="rank-tab" data-key="football" onclick="rankSetTab('football')">⚽ Football</button>
+    </div>
+    <!-- Sort selector (for game tabs) -->
+    <div id="rankSortWrap" style="display:none;justify-content:flex-end;margin-bottom:10px;gap:6px;">
+      <button class="rank-sort-btn rank-sort-active" data-sort="netProfit" onclick="rankSetSort('netProfit')">💰 Ganancia</button>
+      <button class="rank-sort-btn" data-sort="won" onclick="rankSetSort('won')">🏆 Victorias</button>
+      <button class="rank-sort-btn" data-sort="bestWin" onclick="rankSetSort('bestWin')">⚡ Mejor mano</button>
+    </div>
     <div id="mlRankList2" style="display:flex;flex-direction:column;gap:6px;"></div>
   </div>
 </div>
@@ -7015,6 +7044,9 @@ function mlRefresh(){
   mlRenderMissions();
   // Ranking
   mlLoadRanking();
+  // Daily streak
+  streakCheckLogin();
+  streakRender();
   // Chat
   mlInitChat();
 }
@@ -7064,45 +7096,97 @@ function mlOpenDailySpin(){
 let _spinSource='';
 
 // --- Ranking ---
+let _rankTab='general', _rankSort='netProfit';
+
+const RANK_GAMES={
+  bj:{icon:'🃏',name:'BlackJack'},rummy:{icon:'🃏',name:'Rummy'},roulette:{icon:'🎡',name:'Ruleta'},
+  slots:{icon:'🎰',name:'Slots'},crash:{icon:'📈',name:'Crash'},mines:{icon:'💣',name:'Minas'},
+  dice:{icon:'🎲',name:'Dados'},plinko:{icon:'🎯',name:'Plinko'},football:{icon:'⚽',name:'Football'}
+};
+
 function mlToggleRanking(){
   document.getElementById('mlRankModal').style.display='block';
-  mlLoadRanking();
+  rankSetTab(_rankTab);
 }
 function mlCloseRanking(){
   document.getElementById('mlRankModal').style.display='none';
 }
 
-function mlLoadRanking(){
-  const el=document.getElementById('mlRankList');
-  const el2=document.getElementById('mlRankList2');
-  if(!db) return;
-  db.ref('ranking').orderByChild('bal').limitToLast(5).once('value').then(snap=>{
+function rankSetTab(key){
+  _rankTab=key;
+  document.querySelectorAll('.rank-tab').forEach(b=>b.classList.toggle('rank-tab-active',b.dataset.key===key));
+  const sw=document.getElementById('rankSortWrap');
+  if(sw) sw.style.display=key==='general'?'none':'flex';
+  if(key==='general') rankLoadGeneral();
+  else rankLoadGame(key);
+}
+
+function rankSetSort(sort){
+  _rankSort=sort;
+  document.querySelectorAll('.rank-sort-btn').forEach(b=>b.classList.toggle('rank-sort-active',b.dataset.sort===sort));
+  rankLoadGame(_rankTab);
+}
+
+function _rankRow(p,i,valueHtml){
+  const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+  const isMe=p.id===myId;
+  const av=p.photo?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:(p.name||'?')[0].toUpperCase();
+  return `<div style="display:flex;align-items:center;gap:10px;background:${isMe?'rgba(240,208,96,.07)':'rgba(255,255,255,.03)'};border:1px solid ${isMe?'rgba(240,208,96,.25)':'rgba(255,255,255,.07)'};border-radius:14px;padding:11px 13px;margin-bottom:5px;">
+    <div style="font-size:${medal?'20':'12'}px;width:26px;text-align:center;flex-shrink:0;color:rgba(255,255,255,.35);">${medal||('#'+(i+1))}</div>
+    <div style="width:36px;height:36px;border-radius:50%;background:${p.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;overflow:hidden;flex-shrink:0;">${av}</div>
+    <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:${isMe?'#f0d060':'#fff'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(p.name||'?')}${isMe?' <span style="font-size:9px;opacity:.5;">(tú)</span>':''}</div></div>
+    <div style="font-size:13px;font-weight:900;text-align:right;flex-shrink:0;">${valueHtml}</div>
+  </div>`;
+}
+
+function rankLoadGeneral(){
+  const el=document.getElementById('mlRankList2');
+  const elLobby=document.getElementById('mlRankList');
+  if(!el||!db) return;
+  el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);font-size:11px;padding:20px;">Cargando...</div>';
+  db.ref('ranking').orderByChild('bal').limitToLast(20).once('value').then(snap=>{
     const rows=[];
-    snap.forEach(c=>{ const d=c.val(); if(d&&d.name&&d.bal>0) rows.push({id:c.key,name:d.name,bal:d.bal,photo:d.photo||''}); });
-    rows.sort((a,b)=>b.bal-a.bal);
-    const html=rows.map((p,i)=>{
+    snap.forEach(c=>{ const d=c.val(); if(d&&d.name) rows.push({id:c.key,...d}); });
+    rows.sort((a,b)=>(b.bal||0)-(a.bal||0));
+    el.innerHTML='<div style="text-align:center;padding:6px 0 14px;"><span style="font-size:28px;">💰</span><div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;margin-top:3px;">SALDO TOTAL</div></div>'
+      +rows.slice(0,10).map((p,i)=>_rankRow(p,i,`<span style="color:#2ecc71;font-size:14px;">$${(p.bal||0).toLocaleString()}</span>`)).join('');
+    if(elLobby) elLobby.innerHTML=rows.slice(0,5).map((p,i)=>{
       const posClass=i===0?'gold':i===1?'silver':i===2?'bronze':'';
       const isMe=p.id===myId;
-      const av=p.photo?'<img src="'+p.photo+'" onerror="this.parentElement.textContent=\''+p.name[0]+'\'">':p.name[0].toUpperCase();
-      return '<div class="ml-rank-row"><span class="ml-rank-pos '+posClass+'">'+(i+1)+'</span>'
-        +'<div class="ml-rank-av">'+av+'</div>'
-        +'<div class="ml-rank-name'+(isMe?' me':'')+'">'+p.name+(isMe?' (tú)':'')+'</div>'
-        +'<div class="ml-rank-bal">$'+p.bal.toLocaleString()+'</div></div>';
+      const av=p.photo?`<img src="${p.photo}" onerror="this.parentElement.textContent='${(p.name||'?')[0]}'">`:(p.name||'?')[0].toUpperCase();
+      return `<div class="ml-rank-row"><span class="ml-rank-pos ${posClass}">${i+1}</span><div class="ml-rank-av">${av}</div><div class="ml-rank-name${isMe?' me':''}">${escHtml(p.name||'?')}${isMe?' (tú)':''}</div><div class="ml-rank-bal">$${(p.bal||0).toLocaleString()}</div></div>`;
     }).join('');
-    if(el) el.innerHTML=html;
-    if(el2) el2.innerHTML=rows.map((p,i)=>{
-      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
-      const isMe=p.id===myId;
-      const av=p.photo?'<img src="'+p.photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.textContent=\''+p.name[0]+'\'">':p.name[0].toUpperCase();
-      return '<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,'+(isMe?'.2':'.06')+');border-radius:14px;padding:12px 14px;">'
-        +'<div style="font-size:'+(i<3?'22':'14')+'px;width:28px;text-align:center;flex-shrink:0;">'+medal+'</div>'
-        +'<div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;flex-shrink:0;">'+av+'</div>'
-        +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:'+(isMe?'#f0d060':'#fff')+';">'+p.name+(isMe?' (tú)':'')+'</div></div>'
-        +'<div style="font-size:14px;font-weight:900;color:#2ecc71;">$'+p.bal.toLocaleString()+'</div>'
-        +'</div>';
-    }).join('');
-  }).catch(()=>{ if(el) el.innerHTML='<div style="font-size:10px;color:rgba(255,255,255,.2);text-align:center;padding:6px;">Sin datos</div>'; });
+  }).catch(()=>{ el.innerHTML='<div style="color:rgba(255,255,255,.2);text-align:center;padding:20px;">Error</div>'; });
 }
+
+function rankLoadGame(gameKey){
+  const el=document.getElementById('mlRankList2');
+  if(!el||!db) return;
+  const g=RANK_GAMES[gameKey]||{icon:'🎮',name:gameKey};
+  el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.25);font-size:11px;padding:20px;">Cargando...</div>';
+  db.ref('ranking').once('value').then(snap=>{
+    const rows=[];
+    snap.forEach(c=>{
+      const d=c.val(); if(!d||!d.name) return;
+      const gs=d.games?.[gameKey]; if(!gs||!gs.played) return;
+      rows.push({id:c.key,name:d.name,color:d.color||'#3498db',photo:d.photo||'',...gs});
+    });
+    const sort=_rankSort;
+    const sortLabels={netProfit:'Ganancia Neta',won:'Victorias',bestWin:'Mejor Mano'};
+    el.innerHTML=`<div style="text-align:center;padding:6px 0 14px;"><div style="font-size:30px;">${g.icon}</div><div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;margin-top:3px;">${g.name.toUpperCase()} · ${(sortLabels[sort]||sort).toUpperCase()}</div></div>`;
+    if(!rows.length){ el.innerHTML+=`<div style="text-align:center;color:rgba(255,255,255,.2);font-size:12px;padding:20px 0;">Nadie ha jugado ${g.name} aún.<br><span style="font-size:10px;opacity:.6;">¡Sé el primero!</span></div>`; return; }
+    rows.sort((a,b)=>(b[sort]||0)-(a[sort]||0));
+    el.innerHTML+=rows.slice(0,10).map((p,i)=>{
+      let vh='';
+      if(sort==='netProfit') vh=`<span style="color:${(p.netProfit||0)>=0?'#2ecc71':'#e74c3c'};">${(p.netProfit||0)>=0?'+':''}$${Math.abs(p.netProfit||0).toLocaleString()}</span>`;
+      else if(sort==='won') vh=`<span style="color:#f0d060;">${p.won||0}<span style="font-size:10px;color:rgba(255,255,255,.4);"> / ${p.played>0?Math.round((p.won||0)/p.played*100):0}%</span></span>`;
+      else if(sort==='bestWin') vh=`<span style="color:#2ecc71;">+$${(p.bestWin||0).toLocaleString()}</span>`;
+      return _rankRow(p,i,vh);
+    }).join('');
+  }).catch(()=>{ el.innerHTML='<div style="color:rgba(255,255,255,.2);text-align:center;padding:20px;">Error</div>'; });
+}
+
+function mlLoadRanking(){ rankLoadGeneral(); }
 
 // --- Stats modal ---
 const ML_GAME_STATS_KEYS = [
@@ -7202,6 +7286,17 @@ function mlRecordGameStat(gameKey, won, profitAmount){
   if(profitAmount<0) s.worstLoss=Math.min(s.worstLoss||0,profitAmount);
   all[gameKey]=s;
   localStorage.setItem('bjmp_game_stats',JSON.stringify(all));
+  // Sync this game's stats to Firebase for global ranking
+  if(db && myId && myId.startsWith('g_')){
+    db.ref(`ranking/${myId}/games/${gameKey}`).update({
+      played: s.played,
+      won: s.won,
+      netProfit: s.netProfit,
+      bestWin: s.bestWin,
+      name: myName,
+      updatedAt: Date.now()
+    }).catch(()=>{});
+  }
   mlUpdateMissionProgress(gameKey, won, profitAmount);
 }
 
@@ -9265,6 +9360,65 @@ let spinDone = false;
 
 function getLastSpinDate() { return localStorage.getItem('bjmp_spin') || ''; }
 function setLastSpinDate() { localStorage.setItem('bjmp_spin', new Date().toDateString()); }
+
+
+// ─── DAILY STREAK ─────────────────────────────────────────
+const STREAK_BONUSES = {3:100, 7:300, 14:700, 30:2000}; // days → bonus
+
+function streakGetData(){
+  try{ return JSON.parse(localStorage.getItem('bjmp_streak')||'{}'); }catch(e){ return {}; }
+}
+function streakSave(d){ localStorage.setItem('bjmp_streak',JSON.stringify(d)); }
+
+function streakCheckLogin(){
+  const d = streakGetData();
+  const today = new Date().toDateString();
+  if(d.lastDay===today) return; // already counted today
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  if(d.lastDay===yesterday){
+    d.count=(d.count||0)+1;
+  } else {
+    // Streak broken (or first time)
+    d.count=1;
+  }
+  d.lastDay=today;
+  d.best=Math.max(d.best||0, d.count);
+  streakSave(d);
+  // Give bonus on milestone days
+  const bonus=STREAK_BONUSES[d.count];
+  if(bonus){
+    myBal+=bonus; saveLocal(); updateRanking();
+    setTimeout(()=>toast(`🔥 ¡Racha de ${d.count} días! +$${bonus} de bonus`,3500),1200);
+  }
+  streakRender();
+}
+
+function streakRender(){
+  const d=streakGetData();
+  const count=d.count||0;
+  const el=document.getElementById('streakWidget');
+  if(!el) return;
+  // Find next milestone
+  const milestones=[3,7,14,30];
+  const next=milestones.find(m=>m>count)||30;
+  const left=next-count;
+  const pct=Math.min(100,Math.round(count/next*100));
+  const fire=count>=7?'🔥🔥':count>=3?'🔥':'';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="font-size:28px;line-height:1;">${count>=1?'🔥':'⭕'}</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:800;color:#fff;">Racha diaria ${fire}</div>
+          <div style="font-size:11px;font-weight:900;color:#f0d060;">${count} día${count!==1?'s':''}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:8px;height:6px;overflow:hidden;">
+          <div style="width:${pct}%;background:linear-gradient(90deg,#f39c12,#e74c3c);height:100%;border-radius:8px;transition:width .5s;"></div>
+        </div>
+        <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:3px;">${left===0?'¡Bonus hoy!':'Faltan '+left+' día'+(left!==1?'s':'')+' para bonus de $'+STREAK_BONUSES[next].toLocaleString()}</div>
+      </div>
+    </div>`;
+}
 
 function checkDailySpin() {
   const last = getLastSpinDate();
