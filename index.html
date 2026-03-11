@@ -1151,8 +1151,10 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-act-discard{background:linear-gradient(135deg,#c0392b,#922b21);color:#fff;}
 .rm-act-declare{background:linear-gradient(135deg,#f0d060,#c8a800);color:#1a1000;}
 .rm-act-swap{background:linear-gradient(135deg,#1a6b8a,#0d4d6a);color:#fff;}
-.rank-tab{padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.45);font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;}
-.rank-tab-active{background:rgba(240,208,96,.2);border-color:rgba(240,208,96,.4);color:#f0d060;}
+.rank-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 10px 6px;border-radius:14px;border:1.5px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:rgba(255,255,255,.38);font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .18s;letter-spacing:.5px;min-width:52px;}
+.rank-tab .rt-icon{font-size:18px;line-height:1;}
+.rank-tab:active{transform:scale(.93);}
+.rank-tab-active{background:rgba(240,208,96,.14);border-color:rgba(240,208,96,.5);color:#f0d060;box-shadow:0 0 10px rgba(240,208,96,.18);}
 .rank-sort-btn{padding:4px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.35);font-size:9px;font-weight:700;cursor:pointer;}
 .rank-sort-active{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2);}
 .rank-game-hero{text-align:center;padding:10px 0 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px;}
@@ -1670,24 +1672,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 
 
 
-/* BGM float button */
-#bgmFloatBtn{
-  position:fixed;bottom:72px;left:12px;z-index:8000;
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(30,10,50,.85);border:1.5px solid rgba(200,140,255,.3);
-  color:rgba(255,255,255,.55);font-size:16px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(8px);transition:all .2s;
-  box-shadow:0 2px 10px rgba(0,0,0,.4);
-}
-#bgmFloatBtn:active{transform:scale(.88);}
-#bgmFloatBtn.on{border-color:rgba(200,140,255,.7);color:rgba(220,180,255,.9);box-shadow:0 0 12px rgba(180,100,255,.35);}
 
 </style>
 </head>
 <body>
 <div id="pt"></div>
-<button id="bgmFloatBtn" class="on" onclick="bgmToggle()" title="Música de fondo">🎵</button>
 
 <!-- ════════ WELCOME ════════ -->
 
@@ -1778,18 +1767,18 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:12px;">🏆 Ranking</div>
     <!-- Category tabs -->
     <div id="rankTabsWrap" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;scrollbar-width:none;">
-      <button class="rank-tab rank-tab-active" data-key="general" onclick="rankSetTab('general')">🌐 General</button>
-      <button class="rank-tab" data-key="bj" onclick="rankSetTab('bj')">🃏 BJ</button>
-      <button class="rank-tab" data-key="rummy" onclick="rankSetTab('rummy')">🃏 Rummy</button>
-      <button class="rank-tab" data-key="roulette" onclick="rankSetTab('roulette')">🎡 Ruleta</button>
-      <button class="rank-tab" data-key="slots" onclick="rankSetTab('slots')">🎰 Slots</button>
-      <button class="rank-tab" data-key="crash" onclick="rankSetTab('crash')">📈 Crash</button>
-      <button class="rank-tab" data-key="mines" onclick="rankSetTab('mines')">💣 Minas</button>
-      <button class="rank-tab" data-key="dice" onclick="rankSetTab('dice')">🎲 Dados</button>
-      <button class="rank-tab" data-key="football" onclick="rankSetTab('football')">⚽ Football</button>
-      <button class="rank-tab" data-key="keno" onclick="rankSetTab('keno')">🎱 Keno</button>
-      <button class="rank-tab" data-key="baccarat" onclick="rankSetTab('baccarat')">🎴 Baccarat</button>
-      <button class="rank-tab" data-key="wheel" onclick="rankSetTab('wheel')">🎡 Wheel</button>
+      <button class="rank-tab rank-tab-active" data-key="general" onclick="rankSetTab('general')"><span class="rt-icon">🌐</span>General</button>
+      <button class="rank-tab" data-key="bj" onclick="rankSetTab('bj')"><span class="rt-icon">🃏</span>BJ</button>
+      <button class="rank-tab" data-key="rummy" onclick="rankSetTab('rummy')"><span class="rt-icon">🎴</span>Rummy</button>
+      <button class="rank-tab" data-key="roulette" onclick="rankSetTab('roulette')"><span class="rt-icon">🎡</span>Ruleta</button>
+      <button class="rank-tab" data-key="slots" onclick="rankSetTab('slots')"><span class="rt-icon">🎰</span>Slots</button>
+      <button class="rank-tab" data-key="crash" onclick="rankSetTab('crash')"><span class="rt-icon">📈</span>Crash</button>
+      <button class="rank-tab" data-key="mines" onclick="rankSetTab('mines')"><span class="rt-icon">💣</span>Minas</button>
+      <button class="rank-tab" data-key="dice" onclick="rankSetTab('dice')"><span class="rt-icon">🎲</span>Dados</button>
+      <button class="rank-tab" data-key="football" onclick="rankSetTab('football')"><span class="rt-icon">⚽</span>Football</button>
+      <button class="rank-tab" data-key="keno" onclick="rankSetTab('keno')"><span class="rt-icon">🎱</span>Keno</button>
+      <button class="rank-tab" data-key="baccarat" onclick="rankSetTab('baccarat')"><span class="rt-icon">🎴</span>Baccarat</button>
+      <button class="rank-tab" data-key="wheel" onclick="rankSetTab('wheel')"><span class="rt-icon">🎡</span>Wheel</button>
     </div>
     <!-- Sort selector (for game tabs) -->
     <div id="rankSortWrap" style="display:none;justify-content:flex-end;margin-bottom:10px;gap:6px;">
@@ -3191,37 +3180,99 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 
 <!-- ADMIN PANEL MODAL -->
 <div id="adminModal" style="display:none;position:fixed;inset:0;z-index:9995;background:rgba(0,0,0,.97);animation:jpIn .3s ease;overflow-y:auto;">
-  <div style="max-width:420px;margin:0 auto;padding:20px 16px 60px;">
+  <div style="max-width:440px;margin:0 auto;padding:20px 16px 60px;">
+
+    <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
       <div>
         <div style="font-size:18px;font-weight:900;color:#f0d060;letter-spacing:2px;">⚙️ PANEL ADMIN</div>
         <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Casino Royale · Solo tú puedes ver esto</div>
       </div>
-      <button onclick="closeAdmin()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:22px;cursor:pointer;">✕</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="loadAdminData()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.5);font-size:11px;padding:5px 10px;cursor:pointer;">🔄 Refresh</button>
+        <button onclick="closeAdmin()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:22px;cursor:pointer;">✕</button>
+      </div>
     </div>
 
-    <!-- Stats cards -->
-    <div class="adm-stat-grid" id="adminStatCards">
+    <!-- Stats cards — 2 rows of 4 -->
+    <div class="adm-stat-grid" id="adminStatCards" style="grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
       <div class="adm-stat-card"><div class="adm-stat-val" id="admStatPlayers">—</div><div class="adm-stat-lbl">JUGADORES</div></div>
       <div class="adm-stat-card"><div class="adm-stat-val" id="admStatOnline">—</div><div class="adm-stat-lbl">ACTIVOS HOY</div></div>
       <div class="adm-stat-card"><div class="adm-stat-val" id="admStatBanned">—</div><div class="adm-stat-lbl">BANEADOS</div></div>
-      <div class="adm-stat-card"><div class="adm-stat-val" id="admStatTop">—</div><div class="adm-stat-lbl">MAYOR SALDO</div></div>
+      <div class="adm-stat-card"><div class="adm-stat-val" id="admStatTop">—</div><div class="adm-stat-lbl">TOP SALDO</div></div>
+      <div class="adm-stat-card"><div class="adm-stat-val" id="admStatTotal">—</div><div class="adm-stat-lbl">FICHAS TOTAL</div></div>
+      <div class="adm-stat-card"><div class="adm-stat-val" id="admStatAvg">—</div><div class="adm-stat-lbl">SALDO PROM</div></div>
+      <div class="adm-stat-card"><div class="adm-stat-val" id="admStatGames">—</div><div class="adm-stat-lbl">PARTIDAS HOY</div></div>
+      <div class="adm-stat-card"><div class="adm-stat-val" id="admStatWk">—</div><div class="adm-stat-lbl">ESTA SEMANA</div></div>
+    </div>
+
+    <!-- Quick actions row -->
+    <div style="font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);margin-bottom:8px;">⚡ ACCIONES RÁPIDAS</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <button onclick="adminGiveAll()" style="background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);border-radius:12px;color:#2ecc71;font-size:11px;font-weight:700;padding:10px;cursor:pointer;">💰 Dar fichas a todos</button>
+      <button onclick="adminBroadcastMsg()" style="background:rgba(240,208,96,.08);border:1px solid rgba(240,208,96,.25);border-radius:12px;color:#f0d060;font-size:11px;font-weight:700;padding:10px;cursor:pointer;">📢 Broadcast</button>
+      <button onclick="adminAnnounceTournament()" style="background:rgba(155,89,182,.1);border:1px solid rgba(155,89,182,.3);border-radius:12px;color:#9b59b6;font-size:11px;font-weight:700;padding:10px;cursor:pointer;">🏆 Anunciar torneo</button>
+      <button onclick="adminResetMissions()" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);border-radius:12px;color:#3498db;font-size:11px;font-weight:700;padding:10px;cursor:pointer;">🎯 Reset misiones</button>
+    </div>
+
+    <!-- Expandable action areas -->
+    <div id="adminGiveAllArea" style="display:none;background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.2);border-radius:14px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:10px;letter-spacing:1px;color:#2ecc71;margin-bottom:8px;">💰 DAR FICHAS A TODOS LOS JUGADORES</div>
+      <div style="display:flex;gap:8px;">
+        <input id="adminGiveAllAmt" type="tel" inputmode="numeric" placeholder="Cantidad..." style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:13px;padding:8px 12px;outline:none;">
+        <button onclick="adminGiveAllConfirm()" style="background:rgba(46,204,113,.3);border:1px solid rgba(46,204,113,.5);border-radius:10px;color:#2ecc71;font-size:12px;font-weight:800;padding:8px 14px;cursor:pointer;">Enviar</button>
+      </div>
+      <div style="font-size:9px;color:rgba(255,255,255,.25);margin-top:6px;">Se sumará al saldo de todos los jugadores registrados</div>
+    </div>
+
+    <div id="adminBroadcastArea" style="display:none;background:rgba(240,208,96,.04);border:1px solid rgba(240,208,96,.15);border-radius:14px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:10px;letter-spacing:1px;color:#f0d060;margin-bottom:8px;">📢 MENSAJE DE SISTEMA</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+        <button onclick="admInsertEmoji('🎉')" style="background:rgba(255,255,255,.06);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;">🎉</button>
+        <button onclick="admInsertEmoji('🏆')" style="background:rgba(255,255,255,.06);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;">🏆</button>
+        <button onclick="admInsertEmoji('💰')" style="background:rgba(255,255,255,.06);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;">💰</button>
+        <button onclick="admInsertEmoji('⚽')" style="background:rgba(255,255,255,.06);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;">⚽</button>
+        <button onclick="admInsertEmoji('🎡')" style="background:rgba(255,255,255,.06);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;">🎡</button>
+        <button onclick="admInsertEmoji('🔥')" style="background:rgba(255,255,255,.06);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;">🔥</button>
+      </div>
+      <textarea id="adminMsgInput" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:#fff;font-size:13px;resize:none;height:80px;font-family:inherit;box-sizing:border-box;" placeholder="Escribe tu mensaje..."></textarea>
+      <button class="btn btn-gold btn-pill btn-sm btn-full" onclick="adminSendBroadcast()" style="margin-top:8px;">Enviar a todos</button>
+    </div>
+
+    <div id="adminTournamentArea" style="display:none;background:rgba(155,89,182,.05);border:1px solid rgba(155,89,182,.2);border-radius:14px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:10px;letter-spacing:1px;color:#9b59b6;margin-bottom:8px;">🏆 ANUNCIAR TORNEO</div>
+      <input id="adminTournTitle" type="text" placeholder="Nombre del torneo..." maxlength="40"
+        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:12px;padding:8px 12px;outline:none;box-sizing:border-box;margin-bottom:8px;">
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <select id="adminTournGame" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.7);font-size:11px;padding:7px 8px;outline:none;">
+          <option value="all">🎮 Todos los juegos</option>
+          <option value="bj">🃏 BlackJack</option>
+          <option value="wheel">🎡 Lucky Wheel</option>
+          <option value="crash">📈 Crash</option>
+          <option value="roulette">🎡 Ruleta</option>
+          <option value="slots">🎰 Slots</option>
+        </select>
+        <input id="adminTournPrize" type="tel" inputmode="numeric" placeholder="Premio $" style="width:90px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:12px;padding:7px 10px;outline:none;">
+      </div>
+      <button onclick="adminSendTournament()" style="width:100%;background:rgba(155,89,182,.3);border:1px solid rgba(155,89,182,.5);border-radius:10px;color:#fff;font-size:12px;font-weight:800;padding:9px;cursor:pointer;">📣 Anunciar ahora</button>
     </div>
 
     <!-- Search + filter -->
+    <div style="font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);margin-bottom:8px;">👥 JUGADORES</div>
     <div style="display:flex;gap:8px;margin-bottom:10px;">
       <input id="adminSearch" type="text" placeholder="🔍 Buscar jugador..." maxlength="20" oninput="filterAdminPlayers()"
         style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:12px;padding:8px 12px;outline:none;">
       <select id="adminSortBy" onchange="filterAdminPlayers()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.6);font-size:11px;padding:6px 8px;outline:none;">
-        <option value="bal">💰 Por saldo</option>
-        <option value="name">🔤 Por nombre</option>
+        <option value="bal">💰 Saldo</option>
+        <option value="name">🔤 Nombre</option>
         <option value="recent">🕐 Recientes</option>
+        <option value="wins">🏆 Victorias</option>
       </select>
     </div>
 
     <!-- Players list -->
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px;margin-bottom:12px;">
-      <div id="adminPlayerList" style="max-height:380px;overflow-y:auto;">Cargando...</div>
+      <div id="adminPlayerList" style="max-height:400px;overflow-y:auto;">Cargando...</div>
     </div>
 
     <!-- Log -->
@@ -3231,18 +3282,14 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     </div>
 
     <!-- Danger zone -->
-    <div style="background:rgba(231,76,60,.04);border:1px solid rgba(231,76,60,.18);border-radius:14px;padding:14px;margin-bottom:12px;">
-      <div style="font-size:10px;letter-spacing:2px;color:#e74c3c;text-transform:uppercase;margin-bottom:10px;">⚠️ Zona de Peligro</div>
-      <button class="btn btn-ghost btn-pill btn-sm btn-full" onclick="adminResetRanking()" style="border-color:rgba(231,76,60,.3);color:#e74c3c;margin-bottom:6px;">🗑️ Borrar todo el ranking</button>
-      <button class="btn btn-ghost btn-pill btn-sm btn-full" onclick="adminBroadcastMsg()" style="border-color:rgba(201,168,76,.3);color:#f0d060;">📢 Enviar mensaje a todos</button>
+    <div style="background:rgba(231,76,60,.04);border:1px solid rgba(231,76,60,.18);border-radius:14px;padding:14px;">
+      <div style="font-size:10px;letter-spacing:2px;color:#e74c3c;margin-bottom:10px;">⚠️ ZONA DE PELIGRO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button onclick="adminResetRanking()" style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.3);border-radius:10px;color:#e74c3c;font-size:10px;font-weight:700;padding:9px 6px;cursor:pointer;">🗑️ Borrar ranking</button>
+        <button onclick="adminResetAllBal()" style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.3);border-radius:10px;color:#e74c3c;font-size:10px;font-weight:700;padding:9px 6px;cursor:pointer;">💸 Reset saldos</button>
+      </div>
     </div>
 
-    <!-- Broadcast -->
-    <div id="adminBroadcastArea" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;">
-      <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:8px;">📢 Mensaje de Sistema</div>
-      <textarea id="adminMsgInput" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:#fff;font-size:13px;resize:none;height:80px;font-family:inherit;box-sizing:border-box;" placeholder="Escribe tu mensaje..."></textarea>
-      <button class="btn btn-gold btn-pill btn-sm btn-full" onclick="adminSendBroadcast()" style="margin-top:8px;">Enviar a todos</button>
-    </div>
   </div>
 </div>
 
@@ -3422,86 +3469,152 @@ let soundPrefs = JSON.parse(localStorage.getItem('bjmp_sound') || '{"cards":true
 function saveSoundPrefs() { localStorage.setItem('bjmp_sound', JSON.stringify(soundPrefs)); }
 
 // ── BACKGROUND MUSIC (Web Audio generative) ───────────────────────────────────
-let _bgmCtx=null, _bgmNodes=[], _bgmRunning=false, _bgmVol=0.12;
+let _bgmCtx=null, _bgmRunning=false, _bgmVol=0.10;
+let _bgmMaster=null, _bgmTimer=null, _bgmBeat=0, _bgmSection=0;
 
-const BGM_CHORD = [130.81,164.81,196.00,246.94]; // C3 E3 G3 B3 — jazz voicing
-const BGM_BASS  = [65.41, 73.42, 82.41, 98.00];  // C2 D2 E2 G2
+// ── Casino Lounge BGM — generative jazz with chord progressions ───────────────
+// Progressions: Cmaj7→Am7→Dm7→G7 (I-vi-ii-V), then Fmaj7→Em7→Am7→D7 (IV-iii-vi-II)
+const BGM_PROGRESSIONS = [
+  // [root_hz, chord_type]  — two bars each
+  [ [261.63,'maj7'], [220.00,'min7'], [146.83,'min7'], [196.00,'dom7'] ],  // C-Am-Dm-G
+  [ [349.23,'maj7'], [329.63,'min7'], [220.00,'min7'], [293.66,'dom7'] ],  // F-Em-Am-D
+  [ [233.08,'min7'], [311.13,'dom7'], [261.63,'maj7'], [196.00,'dom7'] ],  // Bm-Eb-C-G
+];
+const BGM_CHORD_INTERVALS = {
+  'maj7': [1, 5/4, 3/2, 15/8],
+  'min7': [1, 6/5, 3/2, 9/5],
+  'dom7': [1, 5/4, 3/2, 16/9],
+};
+// Pentatonic melody notes over C (relative ratios)
+const BGM_MELODY = [1, 9/8, 5/4, 3/2, 5/3, 2, 9/4, 5/2];
 
 function bgmStart(){
   if(_bgmRunning||!soundPrefs.music) return;
   try{
     if(!_bgmCtx) _bgmCtx=new(window.AudioContext||window.webkitAudioContext)();
     if(_bgmCtx.state==='suspended') _bgmCtx.resume();
-    _bgmRunning=true;
-    _bgmNodes=[];
+    _bgmRunning=true; _bgmBeat=0; _bgmSection=0;
 
-    const master=_bgmCtx.createGain(); master.gain.value=_bgmVol; master.connect(_bgmCtx.destination);
+    _bgmMaster=_bgmCtx.createGain();
+    _bgmMaster.gain.value=_bgmVol;
 
-    // Warm pad — detuned sines layered softly
-    BGM_CHORD.forEach((freq,i)=>{
-      const osc=_bgmCtx.createOscillator();
-      const g=_bgmCtx.createGain();
-      const filt=_bgmCtx.createBiquadFilter();
-      osc.type='sine'; osc.frequency.value=freq*(1+i*0.0004);
-      filt.type='lowpass'; filt.frequency.value=900;
-      g.gain.value=0.22-i*0.03;
-      osc.connect(filt); filt.connect(g); g.connect(master);
-      osc.start(); _bgmNodes.push(osc,g);
-    });
+    // Reverb convolver for space
+    const rev=_bgmCtx.createConvolver();
+    const revBuf=_bgmCtx.createBuffer(2,_bgmCtx.sampleRate*1.5,_bgmCtx.sampleRate);
+    for(let c=0;c<2;c++){
+      const d=revBuf.getChannelData(c);
+      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.5);
+    }
+    rev.buffer=revBuf;
+    const revG=_bgmCtx.createGain(); revG.gain.value=0.22;
+    _bgmMaster.connect(rev); rev.connect(revG); revG.connect(_bgmCtx.destination);
+    _bgmMaster.connect(_bgmCtx.destination);
 
-    // Sub bass — slow pulse
-    const bass=_bgmCtx.createOscillator();
-    const bassG=_bgmCtx.createGain();
-    const bassFilt=_bgmCtx.createBiquadFilter();
-    bass.type='triangle'; bass.frequency.value=BGM_BASS[0];
-    bassFilt.type='lowpass'; bassFilt.frequency.value=200;
-    bassG.gain.value=0.28;
-    bass.connect(bassFilt); bassFilt.connect(bassG); bassG.connect(master);
-    bass.start(); _bgmNodes.push(bass,bassG);
-
-    // Soft shimmer — high triangle at very low vol
-    const shimmer=_bgmCtx.createOscillator();
-    const shimG=_bgmCtx.createGain();
-    shimmer.type='triangle'; shimmer.frequency.value=523.25; // C5
-    shimG.gain.value=0.04;
-    shimmer.connect(shimG); shimG.connect(master);
-    shimmer.start(); _bgmNodes.push(shimmer,shimG);
-
-    // LFO on master gain — gentle breathing effect (0.08–0.16 vol, 4s cycle)
-    const lfo=_bgmCtx.createOscillator();
-    const lfoG=_bgmCtx.createGain();
-    lfo.frequency.value=0.25; // 4s cycle
-    lfoG.gain.value=0.04;
-    lfo.connect(lfoG); lfoG.connect(master.gain);
-    lfo.start(); _bgmNodes.push(lfo,lfoG);
-
-    _bgmNodes.push(master);
-
-    // Schedule subtle chord changes every 8s
-    bgmScheduleChanges(master);
-  }catch(e){console.log('BGM error',e);}
+    bgmTick(_bgmMaster, rev);
+  }catch(e){console.log('BGM',e);}
 }
 
-let _bgmChangeTimer=null;
-function bgmScheduleChanges(master){
-  if(!_bgmRunning) return;
-  _bgmChangeTimer=setTimeout(()=>{
-    if(!_bgmRunning||!_bgmCtx) return;
-    // Fade master slightly during transition
-    try{
-      master.gain.linearRampToValueAtTime(_bgmVol*0.7, _bgmCtx.currentTime+0.8);
-      master.gain.linearRampToValueAtTime(_bgmVol, _bgmCtx.currentTime+1.6);
-    }catch(e){}
-    bgmScheduleChanges(master);
-  }, 8000);
+function bgmNote(dest, freq, type, vol, start, dur, attack=0.04, rel=0.15){
+  if(!_bgmCtx||!_bgmRunning) return;
+  try{
+    const o=_bgmCtx.createOscillator();
+    const g=_bgmCtx.createGain();
+    const f=_bgmCtx.createBiquadFilter();
+    f.type='lowpass'; f.frequency.value=freq*6;
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(0,start);
+    g.gain.linearRampToValueAtTime(vol, start+attack);
+    g.gain.setValueAtTime(vol, start+dur-rel);
+    g.gain.linearRampToValueAtTime(0, start+dur+rel*0.5);
+    o.connect(f); f.connect(g); g.connect(dest);
+    o.start(start); o.stop(start+dur+rel+0.05);
+  }catch(e){}
+}
+
+function bgmTick(master, rev){
+  if(!_bgmRunning||!_bgmCtx) return;
+  const BPM=88, beat=60/BPM, bar=beat*4;
+  const now=_bgmCtx.currentTime;
+  const prog=BGM_PROGRESSIONS[_bgmSection % BGM_PROGRESSIONS.length];
+  const chordDef=prog[_bgmBeat % prog.length];
+  const root=chordDef[0], ctype=chordDef[1];
+  const intervals=BGM_CHORD_INTERVALS[ctype];
+
+  // ── PAD (held chord, all 4 notes) ───────────────────────────────────────
+  intervals.forEach((ratio,i)=>{
+    const hz=root*ratio;
+    // Slight detune per voice for warmth
+    bgmNote(master, hz*(1+i*0.0003), 'sine', 0.13-i*0.02, now, bar*2-0.1, 0.18);
+    // Octave up shimmer on maj chords
+    if(ctype==='maj7'&&i<2)
+      bgmNote(master, hz*2*(1-i*0.0002), 'sine', 0.025, now+bar*0.5, bar*1.4, 0.3);
+  });
+
+  // ── BASS (root + 5th, walking quarter notes) ────────────────────────────
+  const bassRoot=root/2;
+  const walkPattern=[bassRoot, bassRoot*intervals[2]*0.5, bassRoot*intervals[1]*0.5, bassRoot*intervals[2]*0.5];
+  walkPattern.forEach((hz,i)=>{
+    bgmNote(master, hz, 'triangle', 0.30, now+beat*i, beat*0.75, 0.02, 0.08);
+  });
+
+  // ── HI-HAT pulse (8th notes, alternating) ───────────────────────────────
+  for(let i=0;i<8;i++){
+    if(!_bgmRunning) break;
+    const t=now+beat*i*0.5;
+    const vol=i%2===0?0.018:0.010;
+    bgmNote(master, 8000+Math.random()*2000, 'sawtooth', vol, t, 0.04, 0.005, 0.03);
+  }
+
+  // ── MELODY — sparse, every 2-3 beats, pentatonic ────────────────────────
+  const melodySeeds=[0,2,3,5,7]; // pentatonic scale degrees
+  const melodyActive=Math.random()>0.3; // 70% chance of melody this bar
+  if(melodyActive){
+    const numNotes=1+Math.floor(Math.random()*3);
+    const offsets=[beat*0.5, beat*1.5, beat*2.5, beat*3.0];
+    for(let n=0;n<numNotes;n++){
+      const deg=melodySeeds[Math.floor(Math.random()*melodySeeds.length)];
+      const hz=root*BGM_MELODY[deg%BGM_MELODY.length]*(Math.random()>0.7?2:1);
+      const t=now+offsets[n%offsets.length]+(Math.random()*beat*0.1);
+      bgmNote(master, hz, 'triangle', 0.045+Math.random()*0.02, t, beat*0.35, 0.03, 0.12);
+    }
+  }
+
+  // ── CHORD CHANGE TRANSITION (between bars) ───────────────────────────────
+  // Schedule a subtle filter sweep at the join
+  try{
+    const sweep=_bgmCtx.createBiquadFilter();
+    sweep.type='bandpass'; sweep.frequency.value=root*4;
+    sweep.Q.value=0.7;
+    const sweepG=_bgmCtx.createGain();
+    sweepG.gain.setValueAtTime(0.06,now+bar*2-0.3);
+    sweepG.gain.linearRampToValueAtTime(0,now+bar*2+0.3);
+    master.connect(sweep); sweep.connect(sweepG); sweepG.connect(_bgmCtx.destination);
+    setTimeout(()=>{try{sweep.disconnect();sweepG.disconnect();}catch(e){}}, (bar*2+1)*1000);
+  }catch(e){}
+
+  // Advance beat/section counters
+  _bgmBeat++;
+  if(_bgmBeat % (prog.length) === 0){
+    _bgmSection++;
+    // Slight master volume variation per section (95-110% of base)
+    try{ _bgmMaster.gain.linearRampToValueAtTime(_bgmVol*(0.95+Math.random()*0.15), now+0.5); }catch(e){}
+  }
+
+  // Schedule next tick 2 bars from now
+  _bgmTimer=setTimeout(()=>bgmTick(master,rev), bar*2*1000 - 80);
 }
 
 function bgmStop(){
   if(!_bgmRunning) return;
   _bgmRunning=false;
-  if(_bgmChangeTimer){clearTimeout(_bgmChangeTimer);_bgmChangeTimer=null;}
-  _bgmNodes.forEach(n=>{try{n.stop&&n.stop();n.disconnect&&n.disconnect();}catch(e){}});
-  _bgmNodes=[];
+  if(_bgmTimer){clearTimeout(_bgmTimer);_bgmTimer=null;}
+  // Fade out gracefully
+  if(_bgmMaster&&_bgmCtx){
+    try{
+      _bgmMaster.gain.linearRampToValueAtTime(0,_bgmCtx.currentTime+0.6);
+      setTimeout(()=>{try{_bgmMaster.disconnect();}catch(e){} _bgmMaster=null;},700);
+    }catch(e){}
+  }
 }
 
 function bgmToggle(){
@@ -3509,27 +3622,15 @@ function bgmToggle(){
   saveSoundPrefs();
   if(soundPrefs.music) bgmStart(); else bgmStop();
   renderSoundToggles();
-  // Update floating toggle button
-  bgmSyncBtn();
 }
 
-// Start BGM on first user interaction (browser autoplay policy)
 function bgmAutoStart(){
   if(soundPrefs.music&&!_bgmRunning) bgmStart();
-  document.removeEventListener('touchstart',bgmAutoStart);
-  document.removeEventListener('click',bgmAutoStart);
 }
 document.addEventListener('touchstart',bgmAutoStart,{once:true});
 document.addEventListener('click',bgmAutoStart,{once:true});
 
-function bgmSyncBtn(){
-  const btn=document.getElementById('bgmFloatBtn');
-  if(!btn) return;
-  btn.textContent=soundPrefs.music?'🎵':'🔇';
-  btn.classList.toggle('on',!!soundPrefs.music);
-}
-// Sync button state on load
-document.addEventListener('DOMContentLoaded',bgmSyncBtn);
+function bgmSyncBtn(){}
 function getAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
@@ -11050,10 +11151,19 @@ async function loadAdminData() {
     const top = [...players].sort((a,b)=>(b.bal||0)-(a.bal||0))[0];
     // Update stat cards
     const s = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+    const totalChips = players.reduce((sum,p)=>sum+(p.bal||0),0);
+    const avgBal = players.length ? Math.round(totalChips/players.length) : 0;
+    const weekAgo = now - 7*24*60*60*1000;
+    const activeWeek = players.filter(p=>p.updatedAt&&p.updatedAt>weekAgo).length;
+    const totalWins = players.reduce((sum,p)=>sum+(p.totalWins||0),0);
     s('admStatPlayers', players.length);
     s('admStatOnline', activeToday);
     s('admStatBanned', banned);
     s('admStatTop', top ? '$'+(top.bal||0).toLocaleString() : '—');
+    s('admStatTotal', '$'+(totalChips/1000).toFixed(1)+'K');
+    s('admStatAvg', '$'+avgBal.toLocaleString());
+    s('admStatGames', totalWins);
+    s('admStatWk', activeWeek);
     renderAdminPlayerList(_adminPlayers);
   } catch(e) { toast('Admin error: '+e.message); }
 }
@@ -11065,6 +11175,7 @@ function renderAdminPlayerList(list) {
   const sorted = [...list].sort((a,b)=>{
     if(sortBy==='name') return (a.name||'').localeCompare(b.name||'');
     if(sortBy==='recent') return (b.updatedAt||0)-(a.updatedAt||0);
+    if(sortBy==='wins') return (b.totalWins||0)-(a.totalWins||0);
     return (b.bal||0)-(a.bal||0);
   });
   el.innerHTML = sorted.map(p => {
@@ -11161,6 +11272,85 @@ async function adminToggleBan(uid, name, isBanned) {
   } catch(e) { toast('Error: ' + e.message); }
 }
 
+function adminGiveAll(){
+  const a=document.getElementById('adminGiveAllArea');
+  const b=document.getElementById('adminBroadcastArea');
+  const t=document.getElementById('adminTournamentArea');
+  b.style.display='none'; t.style.display='none';
+  a.style.display=a.style.display==='none'?'block':'none';
+}
+async function adminGiveAllConfirm(){
+  const amt=parseInt(document.getElementById('adminGiveAllAmt').value)||0;
+  if(amt<=0){toast('⚠️ Ingresa una cantidad');return;}
+  if(!confirm('¿Dar $'+amt.toLocaleString()+' a TODOS los '+_adminPlayers.length+' jugadores?'))return;
+  if(!db)return;
+  try{
+    const updates={};
+    _adminPlayers.forEach(p=>{ updates['ranking/'+p.uid+'/pendingGift']=(p.pendingGift||0)+amt; });
+    await db.ref().update(updates);
+    admAddLog('💰 +$'+amt.toLocaleString()+' → TODOS ('+_adminPlayers.length+')');
+    toast('✅ $'+amt.toLocaleString()+' enviadas a '+_adminPlayers.length+' jugadores',3000);
+    document.getElementById('adminGiveAllAmt').value='';
+    document.getElementById('adminGiveAllArea').style.display='none';
+    loadAdminData();
+  }catch(e){toast('Error: '+e.message);}
+}
+function adminAnnounceTournament(){
+  const a=document.getElementById('adminGiveAllArea');
+  const b=document.getElementById('adminBroadcastArea');
+  const t=document.getElementById('adminTournamentArea');
+  a.style.display='none'; b.style.display='none';
+  t.style.display=t.style.display==='none'?'block':'none';
+}
+async function adminSendTournament(){
+  const title=document.getElementById('adminTournTitle').value.trim();
+  const game=document.getElementById('adminTournGame').value;
+  const prize=parseInt(document.getElementById('adminTournPrize').value)||0;
+  if(!title){toast('⚠️ Escribe el nombre del torneo');return;}
+  if(!db)return;
+  const gameLabel={'all':'Todos los juegos','bj':'BlackJack','wheel':'Lucky Wheel','crash':'Crash','roulette':'Ruleta','slots':'Slots'}[game]||game;
+  const msg='🏆 TORNEO: '+title+' · '+gameLabel+(prize?'  Premio: $'+prize.toLocaleString():'');
+  await db.ref('broadcast').set({msg,ts:Date.now(),from:'Junior Zabala'});
+  admAddLog('🏆 Torneo: '+title);
+  toast('📣 Torneo anunciado',2500);
+  document.getElementById('adminTournamentArea').style.display='none';
+}
+async function adminResetMissions(){
+  if(!confirm('¿Resetear las misiones diarias de TODOS los jugadores? (Solo las de localStorage — no afecta Firebase)'))return;
+  // Broadcast a mission reset flag
+  if(db) await db.ref('system/missionReset').set(Date.now());
+  admAddLog('🎯 Misiones reseteadas');
+  toast('✅ Señal de reset enviada',2000);
+}
+async function adminResetAllBal(){
+  if(!confirm('¿Resetear el saldo de TODOS a $1,000? Esta acción no se puede deshacer.'))return;
+  if(!db)return;
+  try{
+    const updates={};
+    _adminPlayers.forEach(p=>{ updates['ranking/'+p.uid+'/bal']=1000; updates['ranking/'+p.uid+'/updatedAt']=Date.now(); });
+    await db.ref().update(updates);
+    admAddLog('💸 Reset saldos → $1,000 ('+_adminPlayers.length+' jugadores)');
+    toast('✅ Saldos reseteados a $1,000',2500);
+    loadAdminData();
+  }catch(e){toast('Error: '+e.message);}
+}
+function admInsertEmoji(emoji){
+  const ta=document.getElementById('adminMsgInput');
+  if(!ta)return;
+  const pos=ta.selectionStart;
+  ta.value=ta.value.slice(0,pos)+emoji+ta.value.slice(ta.selectionEnd);
+  ta.selectionStart=ta.selectionEnd=pos+emoji.length;
+  ta.focus();
+}
+
+function adminBroadcastMsg(){
+  const a=document.getElementById('adminGiveAllArea');
+  const b=document.getElementById('adminBroadcastArea');
+  const t=document.getElementById('adminTournamentArea');
+  a.style.display='none'; t.style.display='none';
+  b.style.display=b.style.display==='none'?'block':'none';
+}
+
 function adminResetRanking() {
   if (!confirm('¿Borrar TODO el ranking? Esta acción no se puede deshacer.')) return;
   if (!db) return;
@@ -11170,10 +11360,7 @@ function adminResetRanking() {
   }).catch(e => toast('Error: ' + e.message));
 }
 
-function adminBroadcastMsg() {
-  const area = document.getElementById('adminBroadcastArea');
-  area.style.display = area.style.display === 'none' ? 'block' : 'none';
-}
+
 
 function adminSendBroadcast() {
   const msg = document.getElementById('adminMsgInput').value.trim();
