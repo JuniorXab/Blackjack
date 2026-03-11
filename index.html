@@ -1572,10 +1572,69 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .gs-card-keno:hover{box-shadow:0 0 30px rgba(0,180,255,.15);}
 
 
-/* Football Studio chips */
-.fs-chip{flex-shrink:0;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:11px;font-weight:900;cursor:pointer;transition:all .12s;letter-spacing:.5px;}
-.fs-chip:active{transform:scale(.9);}
-.fs-chip.sel{background:rgba(39,174,96,.25);border-color:#27ae60;color:#2ecc71;box-shadow:0 0 10px rgba(39,174,96,.3);}
+/* Football Studio chips — round like BJ */
+.fs-chip-row{display:flex;gap:10px;justify-content:center;overflow-x:auto;padding:4px 10px 2px;scrollbar-width:none;}
+.fs-chip-row::-webkit-scrollbar{display:none;}
+.fs-chip{width:52px;height:52px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:10px;font-weight:900;transition:transform .12s,box-shadow .15s;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.5);}
+.fs-chip::after{content:'';position:absolute;inset:4px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);}
+.fs-chip:active{transform:scale(.88);}
+.fs-chip.sel{transform:translateY(-5px) scale(1.1);box-shadow:0 8px 22px rgba(0,0,0,.6);}
+.fs-chip[data-v="50"]  {background:radial-gradient(circle at 35% 35%,#2ecc71,#1a6e3c);border-color:#27ae60;color:#fff;}
+.fs-chip[data-v="100"] {background:radial-gradient(circle at 35% 35%,#3498db,#1a5276);border-color:#2980b9;color:#fff;}
+.fs-chip[data-v="200"] {background:radial-gradient(circle at 35% 35%,#9b59b6,#5b2c6f);border-color:#8e44ad;color:#fff;}
+.fs-chip[data-v="500"] {background:radial-gradient(circle at 35% 35%,#e74c3c,#8b1a1a);border-color:#c0392b;color:#fff;}
+.fs-chip[data-v="1000"]{background:radial-gradient(circle at 35% 35%,#f0d060,#9a7820);border-color:#b7950b;color:#1a0800;}
+.fs-chip[data-v="2000"]{background:radial-gradient(circle at 35% 35%,#fd79a8,#a0003a);border-color:#e84393;color:#fff;}
+.fs-chip[data-v="5000"]{background:radial-gradient(circle at 35% 35%,#1abc9c,#0e6655);border-color:#17a589;color:#fff;}
+/* Chip stack overlay on bet zones */
+.fs-bet-btn{position:relative;}
+.fs-placed-chip{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%) scale(0);width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;pointer-events:none;z-index:5;transition:transform .22s cubic-bezier(.175,.885,.32,1.275),opacity .2s;border:3px solid rgba(255,255,255,.35);box-shadow:0 4px 14px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.25);text-shadow:0 1px 2px rgba(0,0,0,.6);opacity:0;}
+.fs-placed-chip.show{transform:translate(-50%,-60%) scale(1);opacity:1;}
+.fs-placed-chip.chip-home{background:radial-gradient(circle at 35% 35%,#e74c3c,#922b21);}
+.fs-placed-chip.chip-draw{background:radial-gradient(circle at 35% 35%,#f0c030,#9a7d0a);color:#1a0800;}
+.fs-placed-chip.chip-away{background:radial-gradient(circle at 35% 35%,#3498db,#1a5276);}
+@keyframes fsChipLand{0%{transform:translate(-50%,-80%) scale(1.3);opacity:.6;}60%{transform:translate(-50%,-55%) scale(.9);}100%{transform:translate(-50%,-60%) scale(1);opacity:1;}}
+.fs-placed-chip.landing{animation:fsChipLand .28s cubic-bezier(.175,.885,.32,1.275) forwards;}
+
+
+/* ═══════ BACCARAT ═══════ */
+#scBaccarat{background:radial-gradient(ellipse at 50% 0%,#001a10,#000c08);}
+#scBaccarat .mg-topbar{border-bottom:1px solid rgba(0,200,100,.2);}
+#scBaccarat .mg-bottom{background:rgba(0,8,4,.95);border-top:1px solid rgba(0,180,80,.15);}
+.bc-table{width:100%;max-width:380px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;padding:10px 12px 6px;box-sizing:border-box;align-items:start;}
+.bc-zone{border-radius:16px;padding:10px 8px;text-align:center;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;transition:all .15s;position:relative;-webkit-tap-highlight-color:transparent;}
+.bc-zone:active{transform:scale(.96);}
+.bc-zone.sel{border-color:rgba(240,208,96,.5);background:rgba(240,208,96,.1);box-shadow:0 0 18px rgba(240,208,96,.2);}
+.bc-zone-lbl{font-size:9px;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,.4);margin-bottom:6px;}
+.bc-zone-odd{font-size:11px;font-weight:800;color:rgba(255,255,255,.3);margin-top:4px;}
+.bc-cards{display:flex;gap:5px;justify-content:center;min-height:64px;align-items:center;}
+.bc-card{width:40px;height:58px;border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.6);border:1px solid rgba(0,0,0,.15);flex-shrink:0;transition:transform .3s;}
+.bc-card.red{color:#e74c3c;}
+.bc-card.blk{color:#111;}
+.bc-card.hidden{background:linear-gradient(135deg,#1a4030,#0a2018);color:rgba(255,255,255,.15);font-size:22px;}
+.bc-score{font-size:22px;font-weight:900;color:#f0d060;min-height:28px;margin:4px 0;}
+.bc-vs{display:flex;align-items:center;justify-content:center;}
+.bc-vs-circle{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:rgba(255,255,255,.4);}
+.bc-tie-zone{border-radius:14px;padding:8px 12px;text-align:center;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;transition:all .15s;margin:0 12px 4px;}
+.bc-tie-zone:active{transform:scale(.97);}
+.bc-tie-zone.sel{border-color:rgba(46,204,113,.5);background:rgba(46,204,113,.1);box-shadow:0 0 14px rgba(46,204,113,.2);}
+.bc-result-banner{text-align:center;font-size:14px;font-weight:900;padding:6px 12px;min-height:30px;letter-spacing:.5px;}
+/* chip row shared style — reuse rm-chip look */
+.bc-chip-row{display:flex;gap:10px;justify-content:center;overflow-x:auto;padding:4px 10px 2px;scrollbar-width:none;}
+.bc-chip-row::-webkit-scrollbar{display:none;}
+.bc-chip{width:52px;height:52px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:10px;font-weight:900;transition:transform .12s,box-shadow .15s;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.5);}
+.bc-chip::after{content:'';position:absolute;inset:4px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);}
+.bc-chip:active{transform:scale(.88);}
+.bc-chip.sel{transform:translateY(-5px) scale(1.1);box-shadow:0 8px 22px rgba(0,0,0,.6);}
+.bc-chip[data-v="50"]  {background:radial-gradient(circle at 35% 35%,#2ecc71,#1a6e3c);border-color:#27ae60;color:#fff;}
+.bc-chip[data-v="100"] {background:radial-gradient(circle at 35% 35%,#3498db,#1a5276);border-color:#2980b9;color:#fff;}
+.bc-chip[data-v="200"] {background:radial-gradient(circle at 35% 35%,#9b59b6,#5b2c6f);border-color:#8e44ad;color:#fff;}
+.bc-chip[data-v="500"] {background:radial-gradient(circle at 35% 35%,#e74c3c,#8b1a1a);border-color:#c0392b;color:#fff;}
+.bc-chip[data-v="1000"]{background:radial-gradient(circle at 35% 35%,#f0d060,#9a7820);border-color:#b7950b;color:#1a0800;}
+.bc-chip[data-v="2000"]{background:radial-gradient(circle at 35% 35%,#fd79a8,#a0003a);border-color:#e84393;color:#fff;}
+.bc-chip[data-v="5000"]{background:radial-gradient(circle at 35% 35%,#1abc9c,#0e6655);border-color:#17a589;color:#fff;}
+.gs-card-baccarat{background:linear-gradient(135deg,rgba(0,200,100,.15),rgba(0,80,40,.04));border:1px solid rgba(0,200,100,.3);}
+.gs-card-baccarat:hover{box-shadow:0 0 30px rgba(0,200,100,.15);}
 
 </style>
 </head>
@@ -1681,6 +1740,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <button class="rank-tab" data-key="dice" onclick="rankSetTab('dice')">🎲 Dados</button>
       <button class="rank-tab" data-key="football" onclick="rankSetTab('football')">⚽ Football</button>
       <button class="rank-tab" data-key="keno" onclick="rankSetTab('keno')">🎱 Keno</button>
+      <button class="rank-tab" data-key="baccarat" onclick="rankSetTab('baccarat')">🎴 Baccarat</button>
     </div>
     <!-- Sort selector (for game tabs) -->
     <div id="rankSortWrap" style="display:none;justify-content:flex-end;margin-bottom:10px;gap:6px;">
@@ -1747,12 +1807,17 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-name">Keno</div>
       <div class="gs-card-desc">Elige números · Lotería casino</div>
     </div>
+    <div class="gs-card gs-card-baccarat" onclick="selectGame('baccarat')">
+      <div class="gs-card-icon">🎴</div>
+      <div class="gs-card-name">Baccarat</div>
+      <div class="gs-card-desc">Jugador · Banca · Empate</div>
+    </div>
     <div class="gs-card gs-card-football" onclick="selectGame('football')">
       <div class="gs-card-icon">⚽</div>
       <div class="gs-card-name">Football Studio</div>
       <div class="gs-card-desc">Local · Empate · Visitante</div>
     </div>
-    <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')" style="grid-column:span 2;">
+    <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')">
       <div class="gs-card-icon">🃏</div>
       <div class="gs-card-name">Rummy</div>
       <div class="gs-card-desc">2-4 jugadores · 4+4+3 cartas</div>
@@ -2176,6 +2241,70 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 </div>
 
 
+<!-- ════════ BACCARAT ════════ -->
+<div class="fullscreen hidden mg-screen" id="scBaccarat">
+  <div class="mg-topbar">
+    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <div class="mg-title" style="color:#00c864;">🎴 BACCARAT</div>
+    <div class="mg-bal" id="bcBal">$0</div>
+  </div>
+  <div class="mg-body" style="gap:4px;padding:6px 0 4px;">
+
+    <!-- Tabla de juego -->
+    <div class="bc-table">
+      <!-- JUGADOR -->
+      <div class="bc-zone" id="bcZonePlayer" onclick="bcSelectBet('player')">
+        <div class="bc-zone-lbl">JUGADOR</div>
+        <div class="bc-cards" id="bcCardsPlayer"></div>
+        <div class="bc-score" id="bcScorePlayer"></div>
+        <div class="bc-zone-odd">× 2.00</div>
+      </div>
+      <!-- VS -->
+      <div class="bc-vs"><div class="bc-vs-circle">VS</div></div>
+      <!-- BANCA -->
+      <div class="bc-zone" id="bcZoneBanker" onclick="bcSelectBet('banker')">
+        <div class="bc-zone-lbl">BANCA</div>
+        <div class="bc-cards" id="bcCardsBanker"></div>
+        <div class="bc-score" id="bcScoreBanker"></div>
+        <div class="bc-zone-odd">× 1.95</div>
+      </div>
+    </div>
+
+    <!-- EMPATE -->
+    <div class="bc-tie-zone" id="bcZoneTie" onclick="bcSelectBet('tie')">
+      <span style="font-size:9px;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,.4);">EMPATE</span>
+      <span style="font-size:12px;font-weight:900;color:#2ecc71;margin-left:10px;">× 9.00</span>
+    </div>
+
+    <!-- Historial -->
+    <div id="bcHistStrip" style="display:flex;gap:5px;overflow-x:auto;padding:2px 12px;scrollbar-width:none;flex-shrink:0;min-height:22px;"></div>
+
+    <!-- Resultado -->
+    <div class="bc-result-banner" id="bcResultBanner"></div>
+
+  </div>
+  <div class="mg-bottom" style="gap:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px;">
+      <div style="font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);">APUESTA</div>
+      <div style="font-size:15px;font-weight:900;color:#f0d060;" id="bcBetDisplay">$100</div>
+    </div>
+    <div class="bc-chip-row">
+      <div class="bc-chip" data-v="50"   onclick="bcSelectChip(50)">$50</div>
+      <div class="bc-chip" data-v="100"  onclick="bcSelectChip(100)">$100</div>
+      <div class="bc-chip sel" data-v="200" onclick="bcSelectChip(200)">$200</div>
+      <div class="bc-chip" data-v="500"  onclick="bcSelectChip(500)">$500</div>
+      <div class="bc-chip" data-v="1000" onclick="bcSelectChip(1000)">$1K</div>
+      <div class="bc-chip" data-v="2000" onclick="bcSelectChip(2000)">$2K</div>
+      <div class="bc-chip" data-v="5000" onclick="bcSelectChip(5000)">$5K</div>
+    </div>
+    <button class="mg-action-btn" id="bcDealBtn" onclick="bcDeal()"
+      style="background:linear-gradient(135deg,#00c864,#006e34);color:#fff;box-shadow:0 4px 20px rgba(0,200,100,.35);">
+      🎴 REPARTIR
+    </button>
+  </div>
+</div>
+
+
 <!-- ════════ FOOTBALL STUDIO ════════ -->
 <div class="fullscreen hidden mg-screen" id="scFootball">
   <div class="mg-topbar" style="border-bottom:1px solid rgba(46,180,50,.3);">
@@ -2225,19 +2354,19 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <!-- BET BUTTONS -->
     <div class="fs-bet-row">
       <div class="fs-bet-btn fs-btn-home" id="fsBtnHome" onclick="fsSelectBet('home')">
-        <div class="fs-check">✓</div>
+        <div class="fs-placed-chip chip-home" id="fsChipHome"></div>
         <div class="fs-bb-icon">🔴</div>
         <div class="fs-bb-name">LOCAL</div>
         <div class="fs-bb-odd">Paga 1:1</div>
       </div>
       <div class="fs-bet-btn fs-btn-draw" id="fsBtnDraw" onclick="fsSelectBet('draw')">
-        <div class="fs-check">✓</div>
+        <div class="fs-placed-chip chip-draw" id="fsChipDraw"></div>
         <div class="fs-bb-icon">🟡</div>
         <div class="fs-bb-name">EMPATE</div>
         <div class="fs-bb-odd">Paga 11:1</div>
       </div>
       <div class="fs-bet-btn fs-btn-away" id="fsBtnAway" onclick="fsSelectBet('away')">
-        <div class="fs-check">✓</div>
+        <div class="fs-placed-chip chip-away" id="fsChipAway"></div>
         <div class="fs-bb-icon">🔵</div>
         <div class="fs-bb-name">VISITANTE</div>
         <div class="fs-bb-odd">Paga 1:1</div>
@@ -2256,7 +2385,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div style="font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);">APUESTA</div>
       <div style="font-size:14px;font-weight:900;color:#f0d060;" id="fsBetDisplay">$100</div>
     </div>
-    <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;">
+    <div class="fs-chip-row">
       <div class="fs-chip" data-v="50"   onclick="fsSelectChip(50)">$50</div>
       <div class="fs-chip" data-v="100"  onclick="fsSelectChip(100)">$100</div>
       <div class="fs-chip sel" data-v="200"  onclick="fsSelectChip(200)">$200</div>
@@ -5991,7 +6120,7 @@ function applyGoogleUser(user) {
         saveLocal();
         updateRanking();
         // Refresh all balance displays
-        ['myBalance','lobbyBal','mlBal','fsBal','knBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal'].forEach(id => {
+        ['myBalance','lobbyBal','mlBal','fsBal','knBal','bcBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal'].forEach(id => {
           const el = document.getElementById(id);
           if(el) el.textContent = (id==='myBalance'?'$':'')+myBal.toLocaleString();
         });
@@ -6968,7 +7097,7 @@ function showGameSelect() {
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -6985,7 +7114,7 @@ function goMainLobby(){
   // Hide all game screens
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scGameSelect','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scGameSelect','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
   currentGame='';
   mlRefresh();
   show('scMainLobby');
@@ -7094,7 +7223,7 @@ function mlSignOut(){
   // Hide everything
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scKeno','scFootball','scRummyLobby','scRummy'];
+    'scMines','scDice','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'];
   allScreens.forEach(id => hide(id));
   bnHide();
   show('scWelcome');
@@ -7196,7 +7325,7 @@ let _rankTab='general', _rankSort='netProfit';
 const RANK_GAMES={
   bj:{icon:'🃏',name:'BlackJack'},rummy:{icon:'🃏',name:'Rummy'},roulette:{icon:'🎡',name:'Ruleta'},
   slots:{icon:'🎰',name:'Slots'},crash:{icon:'📈',name:'Crash'},mines:{icon:'💣',name:'Minas'},
-  dice:{icon:'🎲',name:'Dados'},football:{icon:'⚽',name:'Football'},keno:{icon:'🎱',name:'Keno'}
+  dice:{icon:'🎲',name:'Dados'},football:{icon:'⚽',name:'Football'},keno:{icon:'🎱',name:'Keno'},baccarat:{icon:'🎴',name:'Baccarat'}
 };
 
 function mlToggleRanking(){
@@ -7294,6 +7423,7 @@ const ML_GAME_STATS_KEYS = [
   {key:'football', icon:'⚽', name:'Football Studio'},
   {key:'rummy',    icon:'🃏', name:'Rummy'},
   {key:'keno',     icon:'🎱', name:'Keno'},
+  {key:'baccarat',  icon:'🎴', name:'Baccarat'},
 ];
 
 function mlOpenStats(){
@@ -7372,7 +7502,7 @@ function mlResetStats(){
 }
 
 // Hook to record game stats
-function mlRecordGameStat(gameKey, won, profitAmount){
+function mlRecordGameStat(gameKey, won, profitAmount, extra){
   const all=JSON.parse(localStorage.getItem('bjmp_game_stats')||'{}');
   const s=all[gameKey]||{played:0,won:0,netProfit:0,bestWin:0,worstLoss:0};
   s.played++; if(won) s.won++;
@@ -7392,26 +7522,76 @@ function mlRecordGameStat(gameKey, won, profitAmount){
       updatedAt: Date.now()
     }).catch(()=>{});
   }
-  mlUpdateMissionProgress(gameKey, won, profitAmount);
+  mlUpdateMissionProgress(gameKey, won, profitAmount, extra||{});
 }
 
 // --- Missions ---
-const ML_MISSIONS = [
-  {id:'play5',     icon:'🎮', name:'Juega 5 partidas',       target:5,    reward:50,   track:'anyGame'},
-  {id:'win3',      icon:'🏆', name:'Gana 3 veces',           target:3,    reward:75,   track:'anyWin'},
-  {id:'profit100', icon:'💰', name:'Acumula $100 ganancias',  target:100,  reward:100,  track:'profit'},
-  {id:'play10',    icon:'🕹️', name:'Juega 10 partidas',       target:10,   reward:150,  track:'anyGame'},
-  {id:'win7',      icon:'🥇', name:'Gana 7 veces',           target:7,    reward:200,  track:'anyWin'},
-  {id:'profit500', icon:'💵', name:'Acumula $500 ganancias',  target:500,  reward:300,  track:'profit'},
-  {id:'bigwin',    icon:'💎', name:'Gana $200 en una mano',   target:200,  reward:250,  track:'singleWin'},
-  {id:'keno1',     icon:'🎱', name:'Juega Keno 3 veces',      target:3,    reward:120,  track:'kenoGame'},
+// ── Pool completo de misiones (35 total) ──────────────
+const ML_MISSIONS_POOL = [
+  // Básicas
+  {id:'play5',       icon:'🎮', name:'Juega 5 partidas',             target:5,    reward:50,   track:'anyGame'},
+  {id:'win3',        icon:'🏆', name:'Gana 3 veces',                 target:3,    reward:75,   track:'anyWin'},
+  {id:'profit100',   icon:'💰', name:'Acumula $100 ganancias',       target:100,  reward:100,  track:'profit'},
+  {id:'play10',      icon:'🕹️', name:'Juega 10 partidas',            target:10,   reward:150,  track:'anyGame'},
+  {id:'win7',        icon:'🥇', name:'Gana 7 veces',                 target:7,    reward:200,  track:'anyWin'},
+  {id:'profit500',   icon:'💵', name:'Acumula $500 ganancias',       target:500,  reward:300,  track:'profit'},
+  {id:'play25',      icon:'🎯', name:'Juega 25 partidas',            target:25,   reward:400,  track:'anyGame'},
+  {id:'win15',       icon:'🔥', name:'Gana 15 veces',                target:15,   reward:500,  track:'anyWin'},
+  // Por monto
+  {id:'bigwin200',   icon:'💎', name:'Gana $200 en una jugada',      target:200,  reward:250,  track:'singleWin'},
+  {id:'bigwin1k',    icon:'💰', name:'Gana $1,000 en una jugada',    target:1000, reward:800,  track:'singleWin'},
+  {id:'profit2k',    icon:'🤑', name:'Acumula $2,000 ganancias',     target:2000, reward:1000, track:'profit'},
+  // Por juego
+  {id:'bj5',         icon:'🃏', name:'Juega 5 manos de BlackJack',   target:5,    reward:150,  track:'bjGame'},
+  {id:'bj_win5',     icon:'♠️', name:'Gana 5 manos de BlackJack',    target:5,    reward:300,  track:'bjWin'},
+  {id:'slots5',      icon:'🎰', name:'Gira los Slots 5 veces',       target:5,    reward:100,  track:'slotsGame'},
+  {id:'slots_win3',  icon:'🍒', name:'Gana en Slots 3 veces',        target:3,    reward:250,  track:'slotsWin'},
+  {id:'crash5',      icon:'📈', name:'Juega Crash 5 veces',          target:5,    reward:120,  track:'crashGame'},
+  {id:'crash_2x',    icon:'🚀', name:'Cobra en Crash × 3 veces',     target:3,    reward:300,  track:'crashCash'},
+  {id:'mines5',      icon:'💣', name:'Juega Minas 5 veces',          target:5,    reward:120,  track:'minesGame'},
+  {id:'mines_safe',  icon:'💪', name:'Sobrevive Minas 3 veces',      target:3,    reward:200,  track:'minesWin'},
+  {id:'roulette5',   icon:'🎡', name:'Apuesta en Ruleta 5 veces',    target:5,    reward:120,  track:'rouletteGame'},
+  {id:'dice5',       icon:'🎲', name:'Lanza los Dados 5 veces',      target:5,    reward:100,  track:'diceGame'},
+  {id:'football5',   icon:'⚽', name:'Juega Football Studio 5×',     target:5,    reward:150,  track:'footballGame'},
+  {id:'football_win',icon:'🏟️', name:'Gana en Football Studio 3×',  target:3,    reward:250,  track:'footballWin'},
+  {id:'rummy3',      icon:'🃏', name:'Juega Rummy 3 partidas',       target:3,    reward:200,  track:'rummyGame'},
+  {id:'rummy_win',   icon:'👑', name:'Gana en Rummy 2 veces',        target:2,    reward:350,  track:'rummyWin'},
+  {id:'keno3',       icon:'🎱', name:'Juega Keno 3 veces',           target:3,    reward:120,  track:'kenoGame'},
+  {id:'keno_hit5',   icon:'🌟', name:'Acierta 5+ en Keno de una vez',target:1,    reward:300,  track:'kenoHit5'},
+  {id:'baccarat5',   icon:'🎴', name:'Juega Baccarat 5 veces',       target:5,    reward:130,  track:'baccaratGame'},
+  {id:'baccarat_win',icon:'👔', name:'Gana en Baccarat 3 veces',     target:3,    reward:280,  track:'baccaratWin'},
+  // Variedad
+  {id:'explorer',    icon:'🗺️', name:'Juega 5 juegos distintos',     target:5,    reward:500,  track:'uniqueGames'},
+  {id:'highroller',  icon:'💸', name:'Apuesta $1,000+ en total',     target:1000, reward:400,  track:'totalWagered'},
+  {id:'veteran',     icon:'🎖️', name:'Completa 30 partidas hoy',     target:30,   reward:700,  track:'anyGame'},
+  {id:'streaker',    icon:'⚡', name:'Gana 5 veces seguidas',         target:5,    reward:600,  track:'winStreak'},
+  {id:'bigbet',      icon:'🦈', name:'Apuesta $500 en una jugada',   target:1,    reward:200,  track:'singleBet500'},
 ];
+const ML_DAILY_COUNT = 8;
+
+// Seeded shuffle — misma selección para todos los jugadores ese día
+function mlDailySeed(){
+  const d=new Date(); return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+}
+function mlSeededRng(seed){
+  let s=seed; return ()=>{ s=(s*1664525+1013904223)&0xffffffff; return (s>>>0)/0xffffffff; };
+}
+function mlGetDailyMissions(){
+  const rng=mlSeededRng(mlDailySeed());
+  const pool=[...ML_MISSIONS_POOL];
+  for(let i=pool.length-1;i>0;i--){
+    const j=Math.floor(rng()*(i+1));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+  return pool.slice(0,ML_DAILY_COUNT);
+}
+// ML_MISSIONS is the active daily set (computed once)
+let ML_MISSIONS = mlGetDailyMissions();
 
 function mlGetMissionData(){
   const today=new Date().toDateString();
   const raw=JSON.parse(localStorage.getItem('bjmp_missions')||'{}');
   if(raw.date!==today){
-    // Reset for new day
     const fresh={date:today,progress:{},claimed:{}};
     localStorage.setItem('bjmp_missions',JSON.stringify(fresh));
     return fresh;
@@ -7424,7 +7604,7 @@ function mlRenderMissions(){
   const d=mlGetMissionData();
   const sub=document.getElementById('mlMissionSub');
   const done=ML_MISSIONS.filter(m=>d.claimed[m.id]).length;
-  if(sub) sub.textContent=done+'/'+ML_MISSIONS.length+' completadas';
+  if(sub) sub.textContent=done+'/'+ML_DAILY_COUNT+' completadas · Se renuevan mañana';
 }
 
 function mlToggleMissions(){
@@ -7475,21 +7655,49 @@ function mlClaimMission(id){
   sfxWin(); toast('🎁 +$'+m.reward+' — ¡Misión completada!', 2500);
   mlRenderMissionsPanel(); mlRenderMissions();
 }
-function mlUpdateMissionProgress(gameKey, won, profit){
+function mlUpdateMissionProgress(gameKey, won, profit, extra){
+  extra = extra||{};
   const d=mlGetMissionData();
+  // Track unique games played today
+  if(!d.uniqueGamesSet) d.uniqueGamesSet={};
+  d.uniqueGamesSet[gameKey]=true;
+  const uniqueCount=Object.keys(d.uniqueGamesSet).length;
+
   ML_MISSIONS.forEach(m=>{
     if(d.claimed[m.id]) return;
+    const inc=()=>{ d.progress[m.id]=(d.progress[m.id]||0)+1; };
     switch(m.track){
-      case 'anyGame':
-        d.progress[m.id]=(d.progress[m.id]||0)+1; break;
-      case 'anyWin':
-        if(won) d.progress[m.id]=(d.progress[m.id]||0)+1; break;
-      case 'profit':
-        if(profit>0) d.progress[m.id]=(d.progress[m.id]||0)+profit; break;
-      case 'singleWin':
-        if(won && profit>=m.target) d.progress[m.id]=m.target; break;
-      case 'kenoGame':
-        if(gameKey==='keno') d.progress[m.id]=(d.progress[m.id]||0)+1; break;
+      case 'anyGame':     inc(); break;
+      case 'anyWin':      if(won) inc(); break;
+      case 'profit':      if(profit>0) d.progress[m.id]=(d.progress[m.id]||0)+profit; break;
+      case 'singleWin':   if(won && profit>=m.target) d.progress[m.id]=m.target; break;
+      case 'totalWagered':
+        if(extra.bet) d.progress[m.id]=(d.progress[m.id]||0)+extra.bet; break;
+      case 'uniqueGames': d.progress[m.id]=uniqueCount; break;
+      // Per-game plays
+      case 'bjGame':       if(gameKey==='bj') inc(); break;
+      case 'bjWin':        if(gameKey==='bj'&&won) inc(); break;
+      case 'slotsGame':    if(gameKey==='slots') inc(); break;
+      case 'slotsWin':     if(gameKey==='slots'&&won) inc(); break;
+      case 'crashGame':    if(gameKey==='crash') inc(); break;
+      case 'crashCash':    if(gameKey==='crash'&&won) inc(); break;
+      case 'minesGame':    if(gameKey==='mines') inc(); break;
+      case 'minesWin':     if(gameKey==='mines'&&won) inc(); break;
+      case 'rouletteGame': if(gameKey==='roulette') inc(); break;
+      case 'diceGame':     if(gameKey==='dice') inc(); break;
+      case 'footballGame': if(gameKey==='football') inc(); break;
+      case 'footballWin':  if(gameKey==='football'&&won) inc(); break;
+      case 'rummyGame':    if(gameKey==='rummy') inc(); break;
+      case 'rummyWin':     if(gameKey==='rummy'&&won) inc(); break;
+      case 'kenoGame':     if(gameKey==='keno') inc(); break;
+      case 'kenoHit5':     if(gameKey==='keno'&&extra.hits>=5) d.progress[m.id]=1; break;
+      case 'baccaratGame': if(gameKey==='baccarat') inc(); break;
+      case 'baccaratWin':  if(gameKey==='baccarat'&&won) inc(); break;
+      case 'winStreak':
+        if(won){ d._streak=(d._streak||0)+1; d.progress[m.id]=Math.max(d.progress[m.id]||0,d._streak); }
+        else { d._streak=0; }
+        break;
+      case 'singleBet500': if(extra.bet&&extra.bet>=500) d.progress[m.id]=1; break;
     }
   });
   mlSaveMissionData(d);
@@ -7555,6 +7763,9 @@ function selectGame(game) {
     startMines();
   } else if (game === 'dice') {
     startDice();
+  } else if (game === 'baccarat') {
+    show('scBaccarat'); bnShow(); bnSync('scBaccarat');
+    bcInit();
   } else if (game === 'keno') {
     show('scKeno'); bnShow(); bnSync('scKeno');
     knInit();
@@ -8865,11 +9076,11 @@ async function knPlay(){
     myBal+=payout; saveLocal(); mgUpdateBal('knBal'); updateRanking();
     bannerEl.innerHTML='<div style="color:#f0d060;font-weight:900;">🎉 '+hits+' acierto'+(hits!==1?'s':'')+' · '+mult+'× · <span style="color:#2ecc71;">+$'+profit.toLocaleString()+'</span></div>';
     sfxWin(); burst(window.innerWidth/2,200,14);
-    mlRecordGameStat('keno',true,profit);
+    mlRecordGameStat('keno',true,profit,{bet:bet,hits:hits});
   } else {
     bannerEl.innerHTML='<div style="color:rgba(255,255,255,.45);">😔 '+hits+' acierto'+(hits!==1?'s':'')+' · Sin premio · <span style="color:#e74c3c;">−$'+bet.toLocaleString()+'</span></div>';
     sfxLose();
-    mlRecordGameStat('keno',false,-bet);
+    mlRecordGameStat('keno',false,-bet,{bet:bet,hits:hits});
   }
   if(myBal<=0){ knPlaying=false; mgCheckBankruptcy('knBal'); return; }
 
@@ -8920,6 +9131,237 @@ function knClear(){
   knInit();
 }
 
+
+
+
+// ═══════════════════════════════════════════
+//  BACCARAT
+// ═══════════════════════════════════════════
+// Baccarat rules: Ace=1, 2-9=face, 10/J/Q/K=0. Score = total mod 10.
+// Player: draw 3rd card if total <= 5
+// Banker: complex rule, simplified here as draw if <= 5 (mini-baccarat style)
+
+const BC_SUITS = ['♠','♥','♦','♣'];
+const BC_RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+let bcBet = 200;
+let bcSide = null; // 'player'|'banker'|'tie'
+let bcPlaying = false;
+let bcDeck = [];
+let bcHist = [];
+
+function bcCardVal(rank){
+  if(rank==='A') return 1;
+  if(['10','J','Q','K'].includes(rank)) return 0;
+  return parseInt(rank);
+}
+function bcHandScore(hand){ return hand.reduce((s,c)=>s+bcCardVal(c.rank),0)%10; }
+
+function bcBuildDeck(){
+  const d=[];
+  for(const s of BC_SUITS) for(const r of BC_RANKS) d.push({rank:r,suit:s});
+  for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}
+  return d;
+}
+
+function bcInit(){
+  bcBet=200; bcSide=null; bcPlaying=false; bcDeck=[];
+  mgUpdateBal('bcBal');
+  bcClearTable();
+  document.getElementById('bcDealBtn').disabled=false;
+  document.getElementById('bcResultBanner').innerHTML='';
+  bcSelectChip(200);
+}
+
+function bcClearTable(){
+  ['bcCardsPlayer','bcCardsBanker'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='';});
+  ['bcScorePlayer','bcScoreBanker'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
+  ['bcZonePlayer','bcZoneBanker','bcZoneTie'].forEach(id=>{
+    const e=document.getElementById(id);
+    if(e){ e.classList.remove('sel'); e.style.outline=''; }
+  });
+}
+
+function bcSelectChip(v){
+  bcBet=v;
+  document.querySelectorAll('.bc-chip').forEach(c=>{
+    c.classList.toggle('sel',parseInt(c.dataset.v)===v);
+  });
+  document.getElementById('bcBetDisplay').textContent='$'+v.toLocaleString();
+}
+
+function bcSelectBet(side){
+  if(bcPlaying) return;
+  bcSide=side;
+  document.getElementById('bcZonePlayer').classList.toggle('sel',side==='player');
+  document.getElementById('bcZoneBanker').classList.toggle('sel',side==='banker');
+  document.getElementById('bcZoneTie').classList.toggle('sel',side==='tie');
+}
+
+function bcMakeCardEl(card, hidden){
+  const el=document.createElement('div');
+  const isRed=card.suit==='♥'||card.suit==='♦';
+  if(hidden){
+    el.className='bc-card hidden'; el.textContent='🂠'; return el;
+  }
+  el.className='bc-card '+(isRed?'red':'blk');
+  el.innerHTML='<div style="text-align:center;line-height:1.1;">'
+    +'<div style="font-size:13px;">'+card.rank+'</div>'
+    +'<div style="font-size:11px;">'+card.suit+'</div>'
+    +'</div>';
+  return el;
+}
+
+async function bcDeal(){
+  if(bcPlaying) return;
+  if(!bcSide){ toast('Elige Jugador, Banca o Empate',1500); return; }
+  if(bcBet>myBal){ toast('Fichas insuficientes',1500); return; }
+
+  bcPlaying=true;
+  document.getElementById('bcDealBtn').disabled=true;
+  document.getElementById('bcResultBanner').innerHTML='';
+  bcClearTable();
+
+  myBal-=bcBet; saveLocal(); mgUpdateBal('bcBal'); updateRanking();
+
+  bcDeck=bcBuildDeck();
+  const deal=()=>bcDeck.pop();
+
+  // Deal: P1, B1, P2, B2
+  const ph=[deal(),deal()];
+  const bh=[deal(),deal()];
+
+  const pEl=document.getElementById('bcCardsPlayer');
+  const bEl=document.getElementById('bcCardsBanker');
+
+  // Animate cards appearing
+  for(let i=0;i<2;i++){
+    await new Promise(r=>setTimeout(r,220));
+    const pe=bcMakeCardEl(ph[i],false); pe.style.transform='scale(0)'; pEl.appendChild(pe);
+    setTimeout(()=>pe.style.transform='scale(1)',20);
+    playTone(600+i*80,0.05,'triangle',0.12);
+    await new Promise(r=>setTimeout(r,220));
+    const be=bcMakeCardEl(bh[i],false); be.style.transform='scale(0)'; bEl.appendChild(be);
+    setTimeout(()=>be.style.transform='scale(1)',20);
+    playTone(500+i*80,0.05,'triangle',0.12);
+  }
+
+  // Score display
+  let ps=bcHandScore(ph), bs=bcHandScore(bh);
+  document.getElementById('bcScorePlayer').textContent=ps;
+  document.getElementById('bcScoreBanker').textContent=bs;
+
+  await new Promise(r=>setTimeout(r,300));
+
+  // Natural check (8 or 9 = no more cards)
+  const natural=ps>=8||bs>=8;
+  if(!natural){
+    // Player draws 3rd card if <= 5
+    if(ps<=5){
+      const p3=deal();
+      ph.push(p3);
+      const pe3=bcMakeCardEl(p3,false); pe3.style.transform='scale(0)'; pEl.appendChild(pe3);
+      setTimeout(()=>pe3.style.transform='scale(1)',20);
+      playTone(720,0.06,'sine',0.13);
+      await new Promise(r=>setTimeout(r,300));
+      ps=bcHandScore(ph);
+      document.getElementById('bcScorePlayer').textContent=ps;
+    }
+    // Banker draws if <= 5 (simplified mini-baccarat rule)
+    if(bs<=5){
+      const b3=deal();
+      bh.push(b3);
+      const be3=bcMakeCardEl(b3,false); be3.style.transform='scale(0)'; bEl.appendChild(be3);
+      setTimeout(()=>be3.style.transform='scale(1)',20);
+      playTone(620,0.06,'sine',0.13);
+      await new Promise(r=>setTimeout(r,300));
+      bs=bcHandScore(bh);
+      document.getElementById('bcScoreBanker').textContent=bs;
+    }
+  }
+
+  await new Promise(r=>setTimeout(r,350));
+
+  // Determine winner
+  let outcome; // 'player'|'banker'|'tie'
+  if(ps===bs) outcome='tie';
+  else if(ps>bs) outcome='player';
+  else outcome='banker';
+
+  // Payouts
+  const payouts={player:2.0, banker:1.95, tie:9.0};
+  const won = outcome===bcSide || (bcSide==='tie' && outcome==='tie');
+  let payout=0, profit=0;
+  if(won){
+    payout=Math.floor(bcBet*payouts[bcSide]);
+    profit=payout-bcBet;
+    myBal+=payout; saveLocal(); mgUpdateBal('bcBal'); updateRanking();
+  } else {
+    profit=-bcBet;
+  }
+
+  // Highlight winner zone
+  const winZoneId=outcome==='player'?'bcZonePlayer':outcome==='banker'?'bcZoneBanker':'bcZoneTie';
+  const wz=document.getElementById(winZoneId);
+  if(wz) wz.style.outline='3px solid #f0d060';
+
+  // Banner
+  const banner=document.getElementById('bcResultBanner');
+  let outLabel=outcome==='player'?'Gana JUGADOR':outcome==='banker'?'Gana BANCA':'EMPATE';
+  if(won){
+    banner.innerHTML='<span style="color:#f0d060;">🎉 '+outLabel+' · '+payouts[bcSide]+'× · <span style="color:#2ecc71;">+$'+profit.toLocaleString()+'</span></span>';
+    sfxWin(); burst(window.innerWidth/2,220,12);
+  } else {
+    banner.innerHTML='<span style="color:rgba(255,255,255,.45);">'+outLabel+' · <span style="color:#e74c3c;">−$'+bcBet.toLocaleString()+'</span></span>';
+    sfxLose();
+  }
+
+  // History dot
+  bcHist.unshift(outcome);
+  if(bcHist.length>15) bcHist.pop();
+  const hs=document.getElementById('bcHistStrip'); if(hs){
+    hs.innerHTML=bcHist.map(o=>{
+      const col=o==='player'?'#3498db':o==='banker'?'#e74c3c':'#2ecc71';
+      return '<div style="width:14px;height:14px;border-radius:50%;background:'+col+';flex-shrink:0;"></div>';
+    }).join('');
+  }
+
+  mlRecordGameStat('baccarat',won,profit);
+  if(myBal<=0) mgCheckBankruptcy('bcBal');
+
+  await new Promise(r=>setTimeout(r,500));
+  banner.innerHTML+=('<div style="margin-top:6px;display:flex;gap:8px;justify-content:center;">'
+    +'<button onclick="bcReplay()" style="padding:7px 18px;border-radius:12px;background:rgba(0,200,100,.2);border:1px solid rgba(0,200,100,.4);color:#00c864;font-size:12px;font-weight:800;cursor:pointer;">🔄 Repetir</button>'
+    +'<button onclick="bcChangeBet()" style="padding:7px 14px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:12px;cursor:pointer;">💰 Cambiar</button>'
+    +'</div>');
+
+  bcPlaying=false;
+}
+
+function bcReplay(){
+  // Same bet, same side
+  const savedSide=bcSide, savedBet=bcBet;
+  bcClearTable();
+  document.getElementById('bcResultBanner').innerHTML='';
+  bcPlaying=false; bcDeck=[];
+  document.getElementById('bcDealBtn').disabled=false;
+  bcSide=savedSide; bcBet=savedBet;
+  // Re-highlight side
+  document.getElementById('bcZonePlayer').classList.toggle('sel',savedSide==='player');
+  document.getElementById('bcZoneBanker').classList.toggle('sel',savedSide==='banker');
+  document.getElementById('bcZoneTie').classList.toggle('sel',savedSide==='tie');
+}
+
+function bcChangeBet(){
+  bcClearTable();
+  document.getElementById('bcResultBanner').innerHTML='';
+  bcPlaying=false; bcDeck=[];
+  document.getElementById('bcDealBtn').disabled=false;
+  bcSide=null;
+  ['bcZonePlayer','bcZoneBanker','bcZoneTie'].forEach(id=>{
+    const e=document.getElementById(id);if(e)e.classList.remove('sel');
+  });
+}
 
 
 // ═══════════════════════════════════════════
@@ -10099,7 +10541,7 @@ async function adminGiveChipsConfirm() {
     if (uid === myId) {
       myBal += amount;
       saveLocal(); updateRanking();
-      const displays = ['myBalance','lobbyBal','fsBal','knBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal','mlBal'];
+      const displays = ['myBalance','lobbyBal','fsBal','knBal','bcBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal','mlBal'];
       displays.forEach(id => { const el=document.getElementById(id); if(el) el.textContent=(id==='myBalance'?'$':'')+myBal.toLocaleString(); });
       await db.ref('ranking/' + myId + '/pendingGift').set(0);
     }
@@ -10240,7 +10682,7 @@ function bnGo(tab){
     rlStopTimer();
         const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scKeno','scFootball','scRummyLobby','scRummy'];
+      'scMines','scDice','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -10269,7 +10711,7 @@ function bnGo(tab){
   
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scKeno','scFootball','scRummyLobby','scRummy'];
+    'scMines','scDice','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -10333,7 +10775,7 @@ window.addEventListener('popstate', function(e) {
 
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
-    'scSlots','scCrash','scMines','scDice','scKeno','scFootball',
+    'scSlots','scCrash','scMines','scDice','scBaccarat','scKeno','scFootball',
     'scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
@@ -10357,6 +10799,7 @@ window.addEventListener('popstate', function(e) {
     case 'scCrash':
     case 'scMines':
     case 'scDice':
+    case 'scBaccarat':
     case 'scKeno':
     case 'scFootball':
       goGameSelect(); break;
@@ -10563,6 +11006,7 @@ function startFootball(){
     document.getElementById('fsBtnHome').classList.remove('sel');
     document.getElementById('fsBtnDraw').classList.remove('sel');
     document.getElementById('fsBtnAway').classList.remove('sel');
+    ['Home','Draw','Away'].forEach(z=>{ const c=document.getElementById('fsChip'+z); if(c) c.classList.remove('show','landing'); });
     fsRenderChips();
   }
   mgUpdateBal('fsBal');
@@ -10577,16 +11021,40 @@ function fsResetCards(){
   if(away){ away.className='fs-team-card-slot'; away.innerHTML='🂠'; }
   const hw=document.getElementById('fsHomeWin'); if(hw){ hw.textContent=''; hw.className='fs-winner-tag'; hw.style.cssText=''; }
   const aw=document.getElementById('fsAwayWin'); if(aw){ aw.textContent=''; aw.className='fs-winner-tag'; aw.style.cssText=''; }
+  // Clear chip overlays
+  ['Home','Draw','Away'].forEach(z=>{ const c=document.getElementById('fsChip'+z); if(c) c.classList.remove('show','landing'); });
 }
 
 function fsSelectBet(type){
   if(fsPlaying) return;
+  // If same zone tapped again, toggle off
+  if(fsBetSel === type){ fsBetSel=null; fsRenderChipOverlays(); document.getElementById('fsPlayBtn').disabled=true; return; }
   fsBetSel = type;
   document.getElementById('fsBtnHome').classList.toggle('sel', type==='home');
   document.getElementById('fsBtnDraw').classList.toggle('sel', type==='draw');
   document.getElementById('fsBtnAway').classList.toggle('sel', type==='away');
   document.getElementById('fsPlayBtn').disabled = false;
   document.getElementById('fsResult').className = 'fs-result';
+  fsRenderChipOverlays();
+  // Small haptic-like sound
+  playTone(420,0.04,'sine',0.12);
+}
+
+function fsRenderChipOverlays(){
+  const amt=fsBetAmt;
+  const label=amt>=1000?(amt/1000)+'K':'$'+amt;
+  ['home','draw','away'].forEach(zone=>{
+    const chip=document.getElementById('fsChip'+zone.charAt(0).toUpperCase()+zone.slice(1));
+    if(!chip) return;
+    if(fsBetSel===zone){
+      chip.textContent=label;
+      chip.classList.remove('show','landing');
+      void chip.offsetWidth; // reflow to restart animation
+      chip.classList.add('show','landing');
+    } else {
+      chip.classList.remove('show','landing');
+    }
+  });
 }
 
 let fsBetAmt = 100;
@@ -10595,6 +11063,8 @@ function fsSelectChip(v){
   document.querySelectorAll('.fs-chip').forEach(c=>c.classList.toggle('sel',parseInt(c.dataset.v)===v));
   const disp=document.getElementById('fsBetDisplay');
   if(disp) disp.textContent='$'+(fsBetAmt>=1000?(fsBetAmt/1000)+'K':fsBetAmt);
+  // If a zone is already selected, update the chip overlay amount
+  if(fsBetSel) fsRenderChipOverlays();
 }
 function fsRenderChips(){
   document.querySelectorAll('.fs-chip').forEach(c=>c.classList.toggle('sel',parseInt(c.dataset.v)===fsBetAmt));
@@ -10666,7 +11136,7 @@ async function fsPlay(){
   fsStats.profit = (fsStats.profit||0) + profit;
   if(won){ fsStats.won=(fsStats.won||0)+1; fsStats.bestWin=Math.max(fsStats.bestWin||0,payout); }
   saveFsStats();
-  mlRecordGameStat('football', won, profit);
+  mlRecordGameStat('football', won, profit, {bet:bet});
   saveLocal(); updateRanking();
   mgUpdateBal('fsBal');
 
@@ -10696,8 +11166,14 @@ async function fsPlay(){
   if(myBal<1) setTimeout(()=>showBankruptModal(),800);
 
   await new Promise(r=>setTimeout(r,1200));
+  // Remove chip overlay so user re-selects for next round
+  fsBetSel = null;
+  ['Home','Draw','Away'].forEach(z=>{ const c=document.getElementById('fsChip'+z); if(c) c.classList.remove('show','landing'); });
+  document.getElementById('fsBtnHome').classList.remove('sel');
+  document.getElementById('fsBtnDraw').classList.remove('sel');
+  document.getElementById('fsBtnAway').classList.remove('sel');
   fsPlaying = false;
-  document.getElementById('fsPlayBtn').disabled = !fsBetSel;
+  document.getElementById('fsPlayBtn').disabled = true;
 }
 
 function fsRenderHist(){
