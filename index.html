@@ -1041,6 +1041,8 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .rm-chip[data-v="500"]{border-color:#8e44ad;color:#9b59b6;}
 .rm-chip[data-v="1000"]{border-color:#c0392b;color:#e74c3c;}
 .rm-chip[data-v="2000"]{border-color:#b7950b;color:#f0d060;}
+.rm-chip[data-v="3000"]{border-color:#1abc9c;color:#1dd1a1;}
+.rm-chip[data-v="5000"]{border-color:#e84393;color:#fd79a8;}
 /* Cards preview in lobby */
 .rm-lobby-cards{display:flex;justify-content:center;margin-bottom:20px;height:60px;position:relative;}
 .rm-lobby-card-prev{position:absolute;width:38px;height:54px;border-radius:6px;border:2px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#1a0535,#2d1060);box-shadow:0 2px 8px rgba(0,0,0,.5);}
@@ -1569,6 +1571,12 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .gs-card-keno{background:linear-gradient(135deg,rgba(0,180,255,.15),rgba(0,80,200,.04));border:1px solid rgba(0,180,255,.3);}
 .gs-card-keno:hover{box-shadow:0 0 30px rgba(0,180,255,.15);}
 
+
+/* Football Studio chips */
+.fs-chip{flex-shrink:0;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:11px;font-weight:900;cursor:pointer;transition:all .12s;letter-spacing:.5px;}
+.fs-chip:active{transform:scale(.9);}
+.fs-chip.sel{background:rgba(39,174,96,.25);border-color:#27ae60;color:#2ecc71;box-shadow:0 0 10px rgba(39,174,96,.3);}
+
 </style>
 </head>
 <body>
@@ -1670,7 +1678,9 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <button class="rank-tab" data-key="slots" onclick="rankSetTab('slots')">🎰 Slots</button>
       <button class="rank-tab" data-key="crash" onclick="rankSetTab('crash')">📈 Crash</button>
       <button class="rank-tab" data-key="mines" onclick="rankSetTab('mines')">💣 Minas</button>
-      <button class="rank-tab" data-key="dice" onclick="rankSetTab('dice')">🎲 Dados</button>      <button class="rank-tab" data-key="football" onclick="rankSetTab('football')">⚽ Football</button>
+      <button class="rank-tab" data-key="dice" onclick="rankSetTab('dice')">🎲 Dados</button>
+      <button class="rank-tab" data-key="football" onclick="rankSetTab('football')">⚽ Football</button>
+      <button class="rank-tab" data-key="keno" onclick="rankSetTab('keno')">🎱 Keno</button>
     </div>
     <!-- Sort selector (for game tabs) -->
     <div id="rankSortWrap" style="display:none;justify-content:flex-end;margin-bottom:10px;gap:6px;">
@@ -2241,17 +2251,19 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     </div>
 
   </div>
-  <div class="mg-bottom">
-    <div class="mg-bet-panel">
-      <div class="mg-bet-group">
-        <div class="mg-bet-lbl">APUESTA</div>
-        <input class="mg-bet-input" id="fsBetInput" type="tel" inputmode="numeric" pattern="[0-9]*" value="10" autocomplete="off">
-      </div>
-      <div class="mg-bet-chips">
-        <button class="mg-chip mg-chip-half" onclick="fsAdjBet(-10)">−10</button>
-        <button class="mg-chip mg-chip-x2" onclick="fsAdjBet(10)">+10</button>
-        <button class="mg-chip mg-chip-max" onclick="fsAdjBet('max')">MAX</button>
-      </div>
+  <div class="mg-bottom" style="gap:6px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px;">
+      <div style="font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.3);">APUESTA</div>
+      <div style="font-size:14px;font-weight:900;color:#f0d060;" id="fsBetDisplay">$100</div>
+    </div>
+    <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;">
+      <div class="fs-chip" data-v="50"   onclick="fsSelectChip(50)">$50</div>
+      <div class="fs-chip" data-v="100"  onclick="fsSelectChip(100)">$100</div>
+      <div class="fs-chip sel" data-v="200"  onclick="fsSelectChip(200)">$200</div>
+      <div class="fs-chip" data-v="500"  onclick="fsSelectChip(500)">$500</div>
+      <div class="fs-chip" data-v="1000" onclick="fsSelectChip(1000)">$1K</div>
+      <div class="fs-chip" data-v="2000" onclick="fsSelectChip(2000)">$2K</div>
+      <div class="fs-chip" data-v="5000" onclick="fsSelectChip(5000)">$5K</div>
     </div>
     <button class="mg-action-btn" id="fsPlayBtn" onclick="fsPlay()" disabled
       style="background:linear-gradient(135deg,#27ae60,#1e8449);color:#fff;box-shadow:0 4px 20px rgba(39,174,96,.35);">
@@ -2662,6 +2674,8 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="rm-chip" data-v="500" onclick="rmSelectBet(500)"><span>$</span><span>500</span></div>
       <div class="rm-chip" data-v="1000" onclick="rmSelectBet(1000)"><span>$</span><span>1K</span></div>
       <div class="rm-chip" data-v="2000" onclick="rmSelectBet(2000)"><span>$</span><span>2K</span></div>
+      <div class="rm-chip" data-v="3000" onclick="rmSelectBet(3000)"><span>$</span><span>3K</span></div>
+      <div class="rm-chip" data-v="5000" onclick="rmSelectBet(5000)"><span>$</span><span>5K</span></div>
     </div>
     <div class="rm-action-cards">
       <div class="rm-action-card create" onclick="rmCreateRoom()">
@@ -2899,9 +2913,26 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <button onclick="sendChat()">➤</button>
     </div>
   </div>
-  <!-- Friends chat list -->
-  <div id="chatPanelFriends" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;">
-    <div id="chatFriendsList" style="padding:8px;display:flex;flex-direction:column;gap:6px;"></div>
+  <!-- Friends tab: list + mini private chat -->
+  <div id="chatPanelFriends" style="display:none;flex-direction:column;flex:1;min-height:0;">
+    <!-- Friends list view -->
+    <div id="chatFriendsListView" style="flex:1;overflow-y:auto;">
+      <div id="chatFriendsList" style="padding:8px;display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+    <!-- Mini private chat (hidden until friend selected) -->
+    <div id="chatMiniPrivate" style="display:none;flex-direction:column;flex:1;min-height:0;">
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;">
+        <button onclick="chatCloseMiniPrivate()" style="background:none;border:none;color:rgba(255,255,255,.45);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">‹</button>
+        <div id="chatMiniPrivateName" style="font-size:12px;font-weight:800;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        <div id="chatMiniPrivateOnline" style="font-size:9px;color:rgba(255,255,255,.3);"></div>
+      </div>
+      <div id="chatMiniMsgs" style="flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px;"></div>
+      <div class="chat-input-row" style="flex-shrink:0;">
+        <input id="chatMiniInput" type="text" maxlength="200" placeholder="Mensaje privado..." autocomplete="off"
+          onkeydown="if(event.key==='Enter')chatMiniSend()">
+        <button onclick="chatMiniSend()">➤</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -6386,16 +6417,70 @@ async function chatLoadFabFriends(){
       <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(f.name||'?')}</div>
       <div style="font-size:9px;color:rgba(255,255,255,.35);">${online?'🟢 En línea':'⚫ Offline'}</div>
     </div>
-    <button style="background:rgba(240,208,96,.15);border:1px solid rgba(240,208,96,.3);border-radius:8px;color:#f0d060;font-size:11px;padding:4px 8px;cursor:pointer;" onclick="event.stopPropagation();toggleChat();openPrivateChat('${uid}','${escHtml(f.name||'?')}','${rp.color||'#3498db'}')">💬</button>`;
+    <span style="font-size:16px;color:rgba(255,255,255,.3);">›</span>`;
+    row.onclick = ()=>chatOpenMiniPrivate(uid, f.name||'?', rp.color||'#3498db');
     el.appendChild(row);
   });
+}
+
+let _chatMiniUid=null, _chatMiniRef=null, _chatMiniListener=null;
+
+function chatOpenMiniPrivate(uid, name, color){
+  _chatMiniUid=uid;
+  // Show mini panel, hide friends list
+  document.getElementById('chatFriendsListView').style.display='none';
+  const mp=document.getElementById('chatMiniPrivate');
+  mp.style.display='flex';
+  document.getElementById('chatMiniPrivateName').textContent=name;
+  document.getElementById('chatMiniPrivateName').style.color=color||'#fff';
+  document.getElementById('chatMiniPrivateOnline').textContent='';
+  document.getElementById('chatMiniMsgs').innerHTML='';
+  // Load messages
+  if(_chatMiniRef&&_chatMiniListener){ _chatMiniRef.off('value',_chatMiniListener); }
+  if(!db){ return; }
+  const key=[myId,uid].sort().join('__');
+  _chatMiniRef=db.ref('privateChats/'+key);
+  _chatMiniListener=_chatMiniRef.limitToLast(40).on('value',snap=>{
+    const msgs=[]; snap.forEach(c=>{const v=c.val();if(v&&v.text&&v.uid)msgs.push(v);});
+    const el=document.getElementById('chatMiniMsgs'); if(!el) return;
+    if(!msgs.length){ el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.2);font-size:10px;padding:20px 0;">Di hola 👋</div>'; return; }
+    el.innerHTML=msgs.map(m=>{
+      const isMe=m.uid===myId;
+      const t=m.t?new Date(m.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+      return '<div style="display:flex;justify-content:'+(isMe?'flex-end':'flex-start')+';">'
+        +'<div style="max-width:80%;background:'+(isMe?'rgba(0,100,255,.35)':'rgba(255,255,255,.08)')+';border-radius:10px;padding:5px 9px;margin-bottom:2px;">'
+        +'<div style="font-size:11px;color:#fff;">'+escHtml(m.text)+'</div>'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.3);text-align:right;margin-top:1px;">'+t+'</div>'
+        +'</div></div>';
+    }).join('');
+    el.scrollTop=el.scrollHeight;
+  });
+  setTimeout(()=>{ const inp=document.getElementById('chatMiniInput'); if(inp)inp.focus(); },200);
+}
+
+function chatCloseMiniPrivate(){
+  if(_chatMiniRef&&_chatMiniListener){ _chatMiniRef.off('value',_chatMiniListener); }
+  _chatMiniRef=null; _chatMiniListener=null; _chatMiniUid=null;
+  document.getElementById('chatMiniPrivate').style.display='none';
+  document.getElementById('chatFriendsListView').style.display='';
+}
+
+function chatMiniSend(){
+  const inp=document.getElementById('chatMiniInput'); if(!inp) return;
+  const text=inp.value.trim(); if(!text||!_chatMiniUid) return;
+  if(!db){ toast('Sin conexión'); return; }
+  inp.value='';
+  const key=[myId,_chatMiniUid].sort().join('__');
+  db.ref('privateChats/'+key).push({uid:myId,name:myName||'Jugador',text,t:Date.now()}).catch(()=>{});
+  db.ref('ranking/'+_chatMiniUid+'/pendingMsg').set({from:myName||'Jugador',fromUid:myId,fromColor:myColor||'#9b59b6',preview:text.slice(0,30),t:Date.now()}).catch(()=>{});
 }
 
 function toggleChat() {
   if(!_chatFabVisible) return; // not allowed if FAB hidden
   const drawer = document.getElementById('chatPanel');
   if(chatOpen){
-    // Close
+    // Close — also reset mini chat if open
+    if(_chatMiniUid) chatCloseMiniPrivate();
     drawer.classList.remove('open');
     chatOpen = false;
     return;
@@ -7111,7 +7196,7 @@ let _rankTab='general', _rankSort='netProfit';
 const RANK_GAMES={
   bj:{icon:'🃏',name:'BlackJack'},rummy:{icon:'🃏',name:'Rummy'},roulette:{icon:'🎡',name:'Ruleta'},
   slots:{icon:'🎰',name:'Slots'},crash:{icon:'📈',name:'Crash'},mines:{icon:'💣',name:'Minas'},
-  dice:{icon:'🎲',name:'Dados'},football:{icon:'⚽',name:'Football'}
+  dice:{icon:'🎲',name:'Dados'},football:{icon:'⚽',name:'Football'},keno:{icon:'🎱',name:'Keno'}
 };
 
 function mlToggleRanking(){
@@ -7312,9 +7397,14 @@ function mlRecordGameStat(gameKey, won, profitAmount){
 
 // --- Missions ---
 const ML_MISSIONS = [
-  {id:'play5',   icon:'🎮', name:'Juega 5 partidas', target:5,  reward:50,  track:'anyGame'},
-  {id:'win3',    icon:'🏆', name:'Gana 3 veces',     target:3,  reward:75,  track:'anyWin'},
-  {id:'profit',  icon:'💰', name:'Gana $100 o más',  target:100,reward:100, track:'profit'},
+  {id:'play5',     icon:'🎮', name:'Juega 5 partidas',       target:5,    reward:50,   track:'anyGame'},
+  {id:'win3',      icon:'🏆', name:'Gana 3 veces',           target:3,    reward:75,   track:'anyWin'},
+  {id:'profit100', icon:'💰', name:'Acumula $100 ganancias',  target:100,  reward:100,  track:'profit'},
+  {id:'play10',    icon:'🕹️', name:'Juega 10 partidas',       target:10,   reward:150,  track:'anyGame'},
+  {id:'win7',      icon:'🥇', name:'Gana 7 veces',           target:7,    reward:200,  track:'anyWin'},
+  {id:'profit500', icon:'💵', name:'Acumula $500 ganancias',  target:500,  reward:300,  track:'profit'},
+  {id:'bigwin',    icon:'💎', name:'Gana $200 en una mano',   target:200,  reward:250,  track:'singleWin'},
+  {id:'keno1',     icon:'🎱', name:'Juega Keno 3 veces',      target:3,    reward:120,  track:'kenoGame'},
 ];
 
 function mlGetMissionData(){
@@ -7387,12 +7477,21 @@ function mlClaimMission(id){
 }
 function mlUpdateMissionProgress(gameKey, won, profit){
   const d=mlGetMissionData();
-  // anyGame: count every play
-  if(!d.claimed['play5']){ d.progress['play5']=(d.progress['play5']||0)+1; }
-  // anyWin
-  if(won && !d.claimed['win3']){ d.progress['win3']=(d.progress['win3']||0)+1; }
-  // profit: cumulative
-  if(profit>0 && !d.claimed['profit']){ d.progress['profit']=(d.progress['profit']||0)+profit; }
+  ML_MISSIONS.forEach(m=>{
+    if(d.claimed[m.id]) return;
+    switch(m.track){
+      case 'anyGame':
+        d.progress[m.id]=(d.progress[m.id]||0)+1; break;
+      case 'anyWin':
+        if(won) d.progress[m.id]=(d.progress[m.id]||0)+1; break;
+      case 'profit':
+        if(profit>0) d.progress[m.id]=(d.progress[m.id]||0)+profit; break;
+      case 'singleWin':
+        if(won && profit>=m.target) d.progress[m.id]=m.target; break;
+      case 'kenoGame':
+        if(gameKey==='keno') d.progress[m.id]=(d.progress[m.id]||0)+1; break;
+    }
+  });
   mlSaveMissionData(d);
   mlRenderMissions();
 }
@@ -8719,94 +8818,108 @@ async function knPlay(){
   if(knPlaying) return;
   const picks=knPicked.size;
   if(!picks){ toast('Elige al menos 1 número',1500); return; }
-  const bet=parseInt(document.getElementById('knBetInput')?.value||50);
-  if(bet<1||bet>myBal){ toast('Apuesta inválida',1500); return; }
+  const bet=parseInt(document.getElementById('knBetInput').value||50);
+  if(!bet||bet<1||bet>myBal){ toast('Apuesta inválida',1500); return; }
+
   knPlaying=true;
   document.getElementById('knPlayBtn').disabled=true;
-  document.getElementById('knResultBanner').textContent='';
+  document.getElementById('knPlayBtn').textContent='⏳ Sorteando...';
+  document.getElementById('knResultBanner').innerHTML='';
 
-  // Deduct bet
   myBal-=bet; saveLocal(); mgUpdateBal('knBal'); updateRanking();
 
-  // Draw 20 unique numbers from 1-80
-  const pool=Array.from({length:80},(_,i)=>i+1);
-  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  // Shuffle 1-80 and take 20
+  const pool=[];for(let i=1;i<=80;i++)pool.push(i);
+  for(let i=79;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
   const drawn=pool.slice(0,20);
-  knDrawnNums=drawn;
+  knDrawnNums=drawn.slice();
 
-  // Animate drawing numbers one by one
   const drawArea=document.getElementById('knDrawArea');
-  drawArea.innerHTML='';
-  document.getElementById('knDrawnCount').textContent='0';
+  const cntEl=document.getElementById('knDrawnCount');
+  drawArea.innerHTML=''; cntEl.textContent='0';
 
   let hits=0;
-  for(let i=0;i<drawn.length;i++){
-    await new Promise(r=>setTimeout(r,110));
+  for(let i=0;i<20;i++){
+    await new Promise(r=>setTimeout(r,95));
     const num=drawn[i];
     const isHit=knPicked.has(num);
     if(isHit) hits++;
-
-    // Show in draw area
-    const db=document.createElement('div');
-    db.className='kn-drawn-ball'+(isHit?' hit':'');
-    db.textContent=num;
-    drawArea.appendChild(db);
-    document.getElementById('knDrawnCount').textContent=i+1;
-
-    // Highlight on grid
-    const gridBall=document.querySelector(`.kn-ball[data-n="${num}"]`);
-    if(gridBall){
-      if(isHit){ gridBall.classList.add('hit'); playTone(880,0.06,'sine',0.15); }
-      else { gridBall.classList.add('drawn'); }
-    }
+    const db2=document.createElement('div');
+    db2.className='kn-drawn-ball'+(isHit?' hit':'');
+    db2.textContent=num;
+    drawArea.appendChild(db2);
+    cntEl.textContent=String(i+1);
+    const gb=document.querySelector('.kn-ball[data-n="'+num+'"]');
+    if(gb){ gb.classList.add(isHit?'hit':'drawn'); if(isHit)playTone(880,0.06,'sine',0.15); }
   }
 
-  // Calculate payout
+  await new Promise(r=>setTimeout(r,300));
+
   const table=KN_PAYOUTS[picks]||{};
   const mult=table[hits]||0;
   const payout=mult*bet;
   const profit=payout-bet;
+  const bannerEl=document.getElementById('knResultBanner');
 
-  await new Promise(r=>setTimeout(r,300));
-
-  // Show result
-  const banner=document.getElementById('knResultBanner');
   if(mult>0){
     myBal+=payout; saveLocal(); mgUpdateBal('knBal'); updateRanking();
-    banner.innerHTML=`<span style="color:#f0d060;">🎉 ${hits} acierto${hits!==1?'s':''} · ${mult}× · <span style="color:#2ecc71;">+$${profit.toLocaleString()}</span></span>`;
+    bannerEl.innerHTML='<div style="color:#f0d060;font-weight:900;">🎉 '+hits+' acierto'+(hits!==1?'s':'')+' · '+mult+'× · <span style="color:#2ecc71;">+$'+profit.toLocaleString()+'</span></div>';
     sfxWin(); burst(window.innerWidth/2,200,14);
     mlRecordGameStat('keno',true,profit);
   } else {
-    banner.innerHTML=`<span style="color:rgba(255,255,255,.4);">😔 ${hits} acierto${hits!==1?'s':''} · Sin premio · <span style="color:#e74c3c;">-$${bet.toLocaleString()}</span></span>`;
+    bannerEl.innerHTML='<div style="color:rgba(255,255,255,.45);">😔 '+hits+' acierto'+(hits!==1?'s':'')+' · Sin premio · <span style="color:#e74c3c;">−$'+bet.toLocaleString()+'</span></div>';
     sfxLose();
     mlRecordGameStat('keno',false,-bet);
   }
-  mgCheckBankruptcy('knBal');
+  if(myBal<=0){ knPlaying=false; mgCheckBankruptcy('knBal'); return; }
 
-  // Show result with action buttons
-  await new Promise(r=>setTimeout(r,600));
-  banner.innerHTML+=' &nbsp;<button onclick="knReplay()" style="padding:6px 16px;border-radius:12px;background:rgba(0,128,255,.25);border:1px solid rgba(0,128,255,.4);color:#40a0ff;font-size:11px;font-weight:800;cursor:pointer;">🔄 Repetir</button>'
-    +' <button onclick="knClear()" style="padding:6px 14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);font-size:11px;cursor:pointer;">🔀 Nueva</button>';
+  // Action buttons
+  const btnDiv=document.createElement('div');
+  btnDiv.style.cssText='margin-top:8px;display:flex;gap:8px;justify-content:center;';
+  const btnRepeat=document.createElement('button');
+  btnRepeat.textContent='🔄 Repetir';
+  btnRepeat.style.cssText='padding:8px 20px;border-radius:12px;background:rgba(0,128,255,.25);border:1.5px solid rgba(0,128,255,.5);color:#40a0ff;font-size:12px;font-weight:800;cursor:pointer;';
+  btnRepeat.onclick=knReplay;
+  const btnNew=document.createElement('button');
+  btnNew.textContent='🔀 Nueva';
+  btnNew.style.cssText='padding:8px 16px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:12px;cursor:pointer;';
+  btnNew.onclick=knClear;
+  btnDiv.appendChild(btnRepeat); btnDiv.appendChild(btnNew);
+  bannerEl.appendChild(btnDiv);
+
   knPlaying=false;
 }
 
 function knReplay(){
-  // Keep same numbers, play again
+  // Save current picks & bet, then re-init display only
   const savedPicks=new Set(knPicked);
-  knInit();
+  const savedBet=document.getElementById('knBetInput').value;
+  // Full reset
+  knPlaying=false; knDrawnNums=[]; knPicked.clear();
+  // Rebuild grid fresh
+  knBuildGrid();
+  // Restore state
   savedPicks.forEach(n=>{
     knPicked.add(n);
-    const b=document.querySelector(`.kn-ball[data-n="${n}"]`);
+    const b=document.querySelector('.kn-ball[data-n="'+n+'"]');
     if(b) b.classList.add('picked');
   });
-  document.getElementById('knPickedCount').textContent=knPicked.size;
+  // Reset ui
+  document.getElementById('knDrawArea').innerHTML='';
+  document.getElementById('knDrawnCount').textContent='0';
+  document.getElementById('knResultBanner').innerHTML='';
+  document.getElementById('knPickedCount').textContent=String(knPicked.size);
+  document.getElementById('knBetInput').value=savedBet;
+  document.getElementById('knPlayBtn').disabled=false;
+  document.getElementById('knPlayBtn').textContent='🎱 SORTEAR';
+  mgUpdateBal('knBal');
   knRenderPayTable();
 }
 
 function knClear(){
-  // Clear picks, start fresh
   knInit();
 }
+
 
 
 // ═══════════════════════════════════════════
@@ -10200,7 +10313,14 @@ function navPush(screenId) {
 window.addEventListener('popstate', function(e) {
   history.pushState({ screen: 'current', depth: 0 }, '', '');
 
-  // If chat FAB drawer is open → close it first, don't navigate
+  // If private chat modal (fullscreen) is open → close it first
+  const pcModal=document.getElementById('privateChatModal');
+  if(pcModal&&pcModal.style.display==='flex'){ closePrivateChat(); return; }
+
+  // If mini private chat inside FAB is open → go back to friends list
+  if(chatOpen && _chatMiniUid){ chatCloseMiniPrivate(); return; }
+
+  // If chat FAB drawer is open → close it
   if(chatOpen){ chatClosePanelOnly(); return; }
 
   // If stats panel is open → close it first
@@ -10432,22 +10552,22 @@ function saveFsStats(){ localStorage.setItem('bjmp_fsstats',JSON.stringify(fsSta
 function startFootball(){
   loadFsStats();
   hide('scGameSelect');
-  const sc = document.getElementById('scKeno','scFootball');
+  const sc = document.getElementById('scFootball');
   sc.classList.remove('hidden'); sc.style.display='flex'; sc.style.flexDirection='column';
-  // Only reset if not mid-play (protects against accidental nav away)
   if(!fsPlaying){
     fsBetSel = null;
     fsResetCards();
-    document.getElementById('fsBetInput').value = 10;
+    fsBetAmt = 100;
     document.getElementById('fsResult').className = 'fs-result';
     document.getElementById('fsPlayBtn').disabled = true;
     document.getElementById('fsBtnHome').classList.remove('sel');
     document.getElementById('fsBtnDraw').classList.remove('sel');
     document.getElementById('fsBtnAway').classList.remove('sel');
+    fsRenderChips();
   }
-  mgUpdateBal('fsBal','knBal');
+  mgUpdateBal('fsBal');
   fsRenderHist();
-  bnShow(); bnSync('scKeno','scFootball');
+  bnShow(); bnSync('scFootball');
 }
 
 function fsResetCards(){
@@ -10469,14 +10589,19 @@ function fsSelectBet(type){
   document.getElementById('fsResult').className = 'fs-result';
 }
 
-function fsAdjBet(v){
-  const inp = document.getElementById('fsBetInput');
-  let b = parseInt(inp.value)||10;
-  if(v==='max') b = myBal||10;
-  else b = Math.max(1, b + v);
-  b = Math.min(b, myBal||b);
-  inp.value = b;
+let fsBetAmt = 100;
+function fsSelectChip(v){
+  fsBetAmt = Math.min(v, myBal||v);
+  document.querySelectorAll('.fs-chip').forEach(c=>c.classList.toggle('sel',parseInt(c.dataset.v)===v));
+  const disp=document.getElementById('fsBetDisplay');
+  if(disp) disp.textContent='$'+(fsBetAmt>=1000?(fsBetAmt/1000)+'K':fsBetAmt);
 }
+function fsRenderChips(){
+  document.querySelectorAll('.fs-chip').forEach(c=>c.classList.toggle('sel',parseInt(c.dataset.v)===fsBetAmt));
+  const disp=document.getElementById('fsBetDisplay');
+  if(disp) disp.textContent='$'+(fsBetAmt>=1000?(fsBetAmt/1000)+'K':fsBetAmt);
+}
+function fsAdjBet(v){ fsSelectChip(v); }
 
 function fsDeal(){ return { rank: FS_RANKS[Math.floor(Math.random()*13)], suit: FS_SUITS[Math.floor(Math.random()*4)] }; }
 function fsVal(c){ return FS_RANK_VAL[c.rank]||0; }
@@ -10492,7 +10617,7 @@ function fsMakeCardEl(card){
 
 async function fsPlay(){
   if(fsPlaying || !fsBetSel) return;
-  const bet = parseInt(document.getElementById('fsBetInput').value)||10;
+  const bet = fsBetAmt || 100;
   if(bet > myBal){ toast('❌ Saldo insuficiente'); return; }
   if(bet < 1){ toast('❌ Apuesta mínima: $1'); return; }
 
@@ -10503,7 +10628,7 @@ async function fsPlay(){
 
   myBal -= bet;
   saveLocal(); updateRanking();
-  mgUpdateBal('fsBal','knBal');
+  mgUpdateBal('fsBal');
 
   await new Promise(r=>setTimeout(r,250));
 
@@ -10543,7 +10668,7 @@ async function fsPlay(){
   saveFsStats();
   mlRecordGameStat('football', won, profit);
   saveLocal(); updateRanking();
-  mgUpdateBal('fsBal','knBal');
+  mgUpdateBal('fsBal');
 
   const banner = document.getElementById('fsResult');
   const title = document.getElementById('fsResultTitle');
