@@ -11473,7 +11473,8 @@ function renderAdminPlayerList(list) {
         <button class="adm-action-btn adm-btn-give" onclick="admQuickGive('${p.uid}','${sn}')" title="Dar fichas">💰</button>
         <button class="adm-action-btn" style="background:rgba(231,76,60,.2);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:8px;padding:4px 7px;font-size:12px;cursor:pointer;" onclick="admQuickDeduct('${p.uid}','${sn}')" title="Quitar fichas">➖</button>
         <button class="adm-action-btn adm-btn-ban" onclick="adminToggleBan('${p.uid}','${sn}',${banned})" title="${banned?'Desbanear':'Banear'}">${banned?'🔓':'🚫'}</button>
-        <button class="adm-action-btn adm-btn-del" onclick="adminDeletePlayer('${p.uid}','${sn}')" title="Eliminar">🗑️</button>
+        <button class="adm-action-btn" style="background:rgba(52,152,219,.15);color:#5dade2;border:1px solid rgba(52,152,219,.3);border-radius:8px;padding:4px 7px;font-size:12px;cursor:pointer;" onclick="adminResetOneBal('${p.uid}','${sn}')" title="Reset a $1,000">↺</button>
+        <button class="adm-action-btn adm-btn-del" onclick="adminDeletePlayer('${p.uid}','${sn}')" title="Eliminar del ranking">🗑️</button>
       </div>
     </div>`;
   }).join('');
@@ -11553,10 +11554,11 @@ async function adminGiveChipsConfirm() {
 }
 
 async function adminDeletePlayer(uid, name) {
-  if (!confirm('¿Eliminar a ' + name + ' del ranking? No se puede deshacer.')) return;
+  if (!confirm('¿Eliminar a ' + name + ' del ranking?\n\nOJO: Solo lo quita de la lista. Si vuelve a jugar, reaparecerá con su saldo guardado en su dispositivo. Para dejarlo en $0 usa ➖, para $1,000 usa ↺.')) return;
   if (!db) return;
   try {
     await db.ref('ranking/' + uid).remove();
+    admAddLog('🗑️ '+name+' eliminado del ranking');
     toast('🗑️ ' + name + ' eliminado del ranking', 2000);
     loadAdminData();
   } catch(e) { toast('Error: ' + e.message); }
@@ -11622,6 +11624,20 @@ async function adminResetMissions(){
   if(db) await db.ref('system/missionReset').set(Date.now());
   admAddLog('🎯 Misiones reseteadas');
   toast('✅ Señal de reset enviada',2000);
+}
+async function adminResetOneBal(uid, name){
+  if(!confirm('¿Resetear el saldo de '+name+' a $1,000?')) return;
+  if(!db) return;
+  try{
+    await db.ref('ranking/'+uid).update({bal:1000, updatedAt:Date.now()});
+    if(uid===myId){
+      myBal=1000; saveLocal();
+      ['myBalance','lobbyBal','mlBal','gsBal'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=(id==='myBalance'?'$':'')+myBal.toLocaleString();});
+    }
+    admAddLog('↺ Reset $1,000 → '+name);
+    toast('✅ '+name+' reseteado a $1,000', 2000);
+    loadAdminData();
+  }catch(e){toast('Error: '+e.message);}
 }
 async function adminResetAllBal(){
   if(!confirm('¿Resetear el saldo de TODOS a $1,000? Esta acción no se puede deshacer.'))return;
