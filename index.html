@@ -1757,6 +1757,26 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .dm-pass-btn:disabled{opacity:.3;cursor:not-allowed;}
 .dm-turn-badge{position:absolute;top:6px;left:50%;transform:translateX(-50%);background:rgba(240,208,96,.9);color:#000;font-size:9px;font-weight:900;padding:2px 8px;border-radius:8px;white-space:nowrap;}
 
+
+/* ════════ GEM SLOTS ════════ */
+#scGemSlots{background:radial-gradient(ellipse at 50% 10%,#0d0828,#030010);}
+#scGemSlots .mg-topbar{border-bottom:1px solid rgba(138,43,226,.4);}
+#scGemSlots .mg-action-btn{background:linear-gradient(135deg,#9b59b6,#6c3483);color:#fff;}
+.gs-cabinet{background:linear-gradient(180deg,#0a0520,#06021a);border:2px solid rgba(138,43,226,.4);border-radius:20px;padding:14px 10px;margin-bottom:10px;position:relative;box-shadow:0 0 30px rgba(138,43,226,.2);}
+.gs-hdr{text-align:center;font-size:10px;font-weight:900;letter-spacing:4px;color:#b39ddb;margin-bottom:10px;}
+.gs-reels-wrap{position:relative;display:flex;gap:6px;justify-content:center;margin-bottom:10px;}
+.gs-reel{width:72px;height:80px;overflow:hidden;border-radius:10px;border:2px solid rgba(138,43,226,.3);background:#050115;position:relative;}
+.gs-reel.winning{border-color:#f0d060;box-shadow:0 0 14px rgba(240,208,96,.6);}
+.gs-strip{position:absolute;width:100%;transition:transform .04s linear;}
+.gs-sym{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;line-height:1;}
+.gs-centerline{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:2px;background:rgba(138,43,226,.5);pointer-events:none;}
+.gs-result-lbl{text-align:center;min-height:22px;font-size:12px;font-weight:800;}
+.gs-mult-bar{display:flex;justify-content:center;gap:6px;margin:6px 0;}
+.gs-mult-pill{background:rgba(138,43,226,.2);border:1px solid rgba(138,43,226,.35);border-radius:20px;padding:3px 10px;font-size:9px;font-weight:900;color:#b39ddb;}
+.gs-mult-pill.active{background:rgba(240,208,96,.2);border-color:rgba(240,208,96,.5);color:#f0d060;}
+.gs-hist{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.gs-hist-chip{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:800;}
+
 </style>
 </head>
 <body>
@@ -1909,7 +1929,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:36px;line-height:1;">🎰</div>
         <div style="flex:1;">
           <div class="gs-card-name" style="font-size:16px;">Slots</div>
-          <div class="gs-card-desc">Classic · Fruit · Mega — ¡Más próximamente!</div>
+          <div class="gs-card-desc">Classic · Gems · Mega — ¡Más próximamente!</div>
         </div>
         <div style="font-size:11px;color:rgba(255,255,255,.35);background:rgba(255,180,0,.1);border:1px solid rgba(255,180,0,.2);border-radius:8px;padding:3px 8px;">VER →</div>
       </div>
@@ -1948,6 +1968,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-icon">🎡</div>
       <div class="gs-card-name">Lucky Wheel</div>
       <div class="gs-card-desc">Gira y multiplica · Hasta 20×</div>
+    </div>
+    <div class="gs-card" style="background:linear-gradient(135deg,rgba(52,152,219,.15),rgba(41,128,185,.05));border:1px solid rgba(52,152,219,.3);" onclick="openHiLoSection()">
+      <div class="gs-card-icon">🃏</div>
+      <div class="gs-card-name">Hi-Lo</div>
+      <div class="gs-card-desc">Cartas · Dados · ¿Mayor o menor?</div>
     </div>
     <div class="gs-card gs-card-domino" onclick="selectGame('domino')">
       <div class="gs-card-icon">🁣</div>
@@ -1990,12 +2015,12 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:18px;color:rgba(255,180,0,.6);">→</div>
       </div>
 
-      <!-- Fruit Slots — coming soon -->
-      <div style="background:rgba(255,255,255,.03);border:1.5px dashed rgba(255,255,255,.1);border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.55;">
-        <div style="font-size:32px;">🍒</div>
-        <div style="font-size:12px;font-weight:900;color:#fff;">Fruit Slots</div>
-        <div style="font-size:9px;color:rgba(255,255,255,.35);text-align:center;">3 carretes · Clásico</div>
-        <div style="background:rgba(255,255,255,.06);border-radius:6px;padding:2px 8px;font-size:8px;color:rgba(255,255,255,.4);font-weight:700;">PRÓXIMAMENTE</div>
+      <!-- Gem Slots — available -->
+      <div onclick="selectGame('gemslots')" style="background:linear-gradient(135deg,rgba(138,43,226,.18),rgba(80,0,150,.08));border:1.5px solid rgba(138,43,226,.45);border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">💎</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Gem Slots</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">3 carretes · Gemas</div>
+        <div style="background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 8px;font-size:8px;color:#2ecc71;font-weight:700;">● NUEVO</div>
       </div>
 
       <!-- Mega Slots — coming soon -->
@@ -2111,6 +2136,221 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <div id="dmResultTitle" style="font-size:24px;font-weight:900;color:#f0d060;">¡GANASTE!</div>
     <div id="dmResultSub" style="font-size:13px;color:rgba(255,255,255,.6);text-align:center;"></div>
     <button onclick="dmLeave()" style="margin-top:12px;padding:12px 32px;background:linear-gradient(135deg,#f0d060,#c9840a);border:none;border-radius:14px;color:#000;font-size:14px;font-weight:900;cursor:pointer;">Salir</button>
+  </div>
+</div>
+
+
+<!-- ════════ GEM SLOTS ════════ -->
+<div class="fullscreen hidden mg-screen" id="scGemSlots">
+  <div class="mg-topbar" style="border-bottom:1px solid rgba(138,43,226,.35);">
+    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <div class="mg-title" style="color:#b39ddb;">💎 GEM SLOTS</div>
+    <div class="mg-bal" id="gsBal2">$0</div>
+  </div>
+  <div class="mg-body">
+    <div class="gs-cabinet">
+      <div class="gs-hdr">✦ GEM ROYALE ✦</div>
+      <div class="gs-reels-wrap">
+        <div class="gs-centerline"></div>
+        <div class="gs-reel" id="gsReel0"><div class="gs-strip" id="gsStrip0"></div></div>
+        <div class="gs-reel" id="gsReel1"><div class="gs-strip" id="gsStrip1"></div></div>
+        <div class="gs-reel" id="gsReel2"><div class="gs-strip" id="gsStrip2"></div></div>
+      </div>
+      <div class="gs-mult-bar" id="gsMBar">
+        <div class="gs-mult-pill" id="gsM3">3× match: 5</div>
+        <div class="gs-mult-pill" id="gsM2">2× match: 1.5</div>
+        <div class="gs-mult-pill" id="gsMW">WILD: ★</div>
+      </div>
+      <div class="gs-result-lbl" id="gsResult" style="color:rgba(255,255,255,.4);">Toca GIRAR</div>
+      <div class="gs-hist" id="gsHist"></div>
+    </div>
+  </div>
+  <div class="mg-bottom">
+    <div class="mg-bet-panel">
+      <div class="mg-bet-group">
+        <div class="mg-bet-lbl">APUESTA</div>
+        <input class="mg-bet-input" id="gsBetInput" type="number" value="20" min="1">
+      </div>
+      <div class="mg-bet-chips">
+        <button class="mg-chip mg-chip-half" onclick="gsAdjBet(.5)">½</button>
+        <button class="mg-chip mg-chip-x2" onclick="gsAdjBet(2)">×2</button>
+        <button class="mg-chip mg-chip-max" onclick="gsAdjBet('max')">MAX</button>
+      </div>
+    </div>
+    <button class="mg-action-btn" id="gsSpinBtn" onclick="gsSpin()" style="background:linear-gradient(135deg,#9b59b6,#6c3483);">💎 GIRAR</button>
+  </div>
+</div>
+
+
+<!-- ════════ HI-LO SECTION ════════ -->
+<div class="fullscreen hidden" id="scHiLoSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#001a2e,#020609);">
+  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="goBack()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#3498db;letter-spacing:2px;">🃏 HI-LO</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">¿Mayor o menor?</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Hi-Lo Cards -->
+      <div onclick="selectGame('hilocards')" style="background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(41,128,185,.06));border:1.5px solid rgba(52,152,219,.45);border-radius:18px;padding:20px 18px;cursor:pointer;display:flex;align-items:center;gap:16px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+        <div style="font-size:44px;line-height:1;">🃏</div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:900;color:#fff;">Hi-Lo Cartas</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;">Baraja francesa · Adivina si la siguiente carta es mayor o menor</div>
+          <div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 7px;font-size:9px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
+        </div>
+      </div>
+
+      <!-- Hi-Lo Dice -->
+      <div onclick="selectGame('hilodice')" style="background:linear-gradient(135deg,rgba(231,76,60,.18),rgba(192,57,43,.06));border:1.5px solid rgba(231,76,60,.45);border-radius:18px;padding:20px 18px;cursor:pointer;display:flex;align-items:center;gap:16px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+        <div style="font-size:44px;line-height:1;">🎲</div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:900;color:#fff;">Hi-Lo Dados</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;">Dos dados · Predice si el total será mayor, menor o igual</div>
+          <div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 7px;font-size:9px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;">
+        <div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;margin-bottom:8px;">📖 CÓMO SE JUEGA</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.45);line-height:1.7;">Se revela una carta/dado inicial. Apostás si el siguiente resultado será <b style="color:#2ecc71;">mayor ↑</b> o <b style="color:#e74c3c;">menor ↓</b>. Acertás → el multiplicador <b style="color:#fff;">sube</b>. Podés cobrar en cualquier momento o seguir arriesgando.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════ HI-LO CARTAS ════════ -->
+<div class="fullscreen hidden mg-screen" id="scHiLoCards" style="background:radial-gradient(ellipse at 50% 10%,#001428,#020609);">
+  <div class="mg-topbar" style="border-bottom:1px solid rgba(52,152,219,.35);">
+    <button class="mg-back" onclick="hlcLeave()">← Salir</button>
+    <div class="mg-title" style="color:#5dade2;">🃏 HI-LO CARTAS</div>
+    <div class="mg-bal" id="hlcBal">$0</div>
+  </div>
+  <div class="mg-body" style="display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:20px;">
+
+    <!-- Streak & multiplier -->
+    <div style="display:flex;gap:10px;width:100%;max-width:320px;justify-content:center;">
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;">RACHA</div>
+        <div style="font-size:22px;font-weight:900;color:#f0d060;" id="hlcStreak">0</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;">MULTIPLIER</div>
+        <div style="font-size:22px;font-weight:900;color:#2ecc71;" id="hlcMult">1.00×</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;">GANANCIA</div>
+        <div style="font-size:18px;font-weight:900;color:#2ecc71;" id="hlcPotential">$0</div>
+      </div>
+    </div>
+
+    <!-- Cards display -->
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div id="hlcCardPrev" style="width:72px;height:104px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;box-shadow:0 4px 16px rgba(0,0,0,.5);color:#222;flex-shrink:0;opacity:.5;"></div>
+      <div style="font-size:28px;color:rgba(255,255,255,.2);">→</div>
+      <div id="hlcCardCur" style="width:90px;height:128px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;box-shadow:0 6px 24px rgba(52,152,219,.4);border:3px solid rgba(52,152,219,.6);color:#222;flex-shrink:0;"></div>
+      <div style="font-size:28px;color:rgba(255,255,255,.2);">?</div>
+      <div style="width:72px;height:104px;background:linear-gradient(135deg,#0a2040,#051020);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;border:2px solid rgba(52,152,219,.2);flex-shrink:0;">🂠</div>
+    </div>
+
+    <!-- Probability hint -->
+    <div id="hlcHint" style="font-size:10px;color:rgba(255,255,255,.35);text-align:center;"></div>
+
+    <!-- Buttons -->
+    <div id="hlcBtns" style="display:flex;gap:10px;width:100%;max-width:320px;">
+      <button onclick="hlcGuess('hi')" style="flex:1;padding:16px;background:linear-gradient(135deg,rgba(46,204,113,.3),rgba(39,174,96,.15));border:2px solid rgba(46,204,113,.5);border-radius:16px;color:#2ecc71;font-size:18px;font-weight:900;cursor:pointer;">↑ MAYOR</button>
+      <button onclick="hlcGuess('lo')" style="flex:1;padding:16px;background:linear-gradient(135deg,rgba(231,76,60,.3),rgba(192,57,43,.15));border:2px solid rgba(231,76,60,.5);border-radius:16px;color:#e74c3c;font-size:18px;font-weight:900;cursor:pointer;">↓ MENOR</button>
+    </div>
+
+    <!-- Cash out -->
+    <button id="hlcCashBtn" onclick="hlcCashOut()" style="width:100%;max-width:320px;padding:12px;background:linear-gradient(135deg,#f0d060,#c9840a);border:none;border-radius:14px;color:#000;font-size:14px;font-weight:900;cursor:pointer;display:none;">💰 Cobrar $<span id="hlcCashAmt">0</span></button>
+
+    <!-- Result -->
+    <div id="hlcResult" style="font-size:14px;font-weight:800;text-align:center;min-height:20px;"></div>
+  </div>
+  <div class="mg-bottom">
+    <div class="mg-bet-panel">
+      <div class="mg-bet-group">
+        <div class="mg-bet-lbl">APUESTA</div>
+        <input class="mg-bet-input" id="hlcBetInput" type="number" value="50" min="1">
+      </div>
+      <div class="mg-bet-chips">
+        <button class="mg-chip mg-chip-half" onclick="hlcAdjBet(.5)">½</button>
+        <button class="mg-chip mg-chip-x2" onclick="hlcAdjBet(2)">×2</button>
+        <button class="mg-chip mg-chip-max" onclick="hlcAdjBet('max')">MAX</button>
+      </div>
+    </div>
+    <button class="mg-action-btn" id="hlcStartBtn" onclick="hlcStart()" style="background:linear-gradient(135deg,#2980b9,#1a5276);">🃏 NUEVA RONDA</button>
+  </div>
+</div>
+
+
+<!-- ════════ HI-LO DADOS ════════ -->
+<div class="fullscreen hidden mg-screen" id="scHiLoDice" style="background:radial-gradient(ellipse at 50% 10%,#1a0a00,#080200);">
+  <div class="mg-topbar" style="border-bottom:1px solid rgba(231,76,60,.35);">
+    <button class="mg-back" onclick="hldLeave()">← Salir</button>
+    <div class="mg-title" style="color:#e74c3c;">🎲 HI-LO DADOS</div>
+    <div class="mg-bal" id="hldBal">$0</div>
+  </div>
+  <div class="mg-body" style="display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:20px;">
+
+    <!-- Stats row -->
+    <div style="display:flex;gap:10px;width:100%;max-width:320px;justify-content:center;">
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;">RACHA</div>
+        <div style="font-size:22px;font-weight:900;color:#f0d060;" id="hldStreak">0</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;">MULTIPLIER</div>
+        <div style="font-size:22px;font-weight:900;color:#2ecc71;" id="hldMult">1.00×</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;">GANANCIA</div>
+        <div style="font-size:18px;font-weight:900;color:#2ecc71;" id="hldPotential">$0</div>
+      </div>
+    </div>
+
+    <!-- Dice display -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:2px;">RESULTADO ACTUAL</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div id="hldDie1" style="width:64px;height:64px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 4px 16px rgba(231,76,60,.4);border:3px solid rgba(231,76,60,.5);">🎲</div>
+        <div id="hldDie2" style="width:64px;height:64px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 4px 16px rgba(231,76,60,.4);border:3px solid rgba(231,76,60,.5);">🎲</div>
+        <div style="font-size:28px;font-weight:900;color:#f0d060;">=</div>
+        <div id="hldTotal" style="font-size:36px;font-weight:900;color:#f0d060;">?</div>
+      </div>
+      <div id="hldHint" style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;"></div>
+    </div>
+
+    <!-- Bet target selector -->
+    <div id="hldBtns" style="display:flex;gap:8px;width:100%;max-width:320px;">
+      <button onclick="hldGuess('hi')" style="flex:1;padding:14px 6px;background:linear-gradient(135deg,rgba(46,204,113,.3),rgba(39,174,96,.15));border:2px solid rgba(46,204,113,.5);border-radius:14px;color:#2ecc71;font-size:14px;font-weight:900;cursor:pointer;">↑ MAYOR</button>
+      <button onclick="hldGuess('eq')" style="flex:1;padding:14px 6px;background:linear-gradient(135deg,rgba(240,208,96,.2),rgba(200,160,10,.08));border:2px solid rgba(240,208,96,.4);border-radius:14px;color:#f0d060;font-size:12px;font-weight:900;cursor:pointer;">= IGUAL<br><span style="font-size:9px;opacity:.6;">×5</span></button>
+      <button onclick="hldGuess('lo')" style="flex:1;padding:14px 6px;background:linear-gradient(135deg,rgba(231,76,60,.3),rgba(192,57,43,.15));border:2px solid rgba(231,76,60,.5);border-radius:14px;color:#e74c3c;font-size:14px;font-weight:900;cursor:pointer;">↓ MENOR</button>
+    </div>
+
+    <!-- Cash out -->
+    <button id="hldCashBtn" onclick="hldCashOut()" style="width:100%;max-width:320px;padding:12px;background:linear-gradient(135deg,#f0d060,#c9840a);border:none;border-radius:14px;color:#000;font-size:14px;font-weight:900;cursor:pointer;display:none;">💰 Cobrar $<span id="hldCashAmt">0</span></button>
+
+    <div id="hldResult" style="font-size:14px;font-weight:800;text-align:center;min-height:20px;"></div>
+  </div>
+  <div class="mg-bottom">
+    <div class="mg-bet-panel">
+      <div class="mg-bet-group">
+        <div class="mg-bet-lbl">APUESTA</div>
+        <input class="mg-bet-input" id="hldBetInput" type="number" value="50" min="1">
+      </div>
+      <div class="mg-bet-chips">
+        <button class="mg-chip mg-chip-half" onclick="hldAdjBet(.5)">½</button>
+        <button class="mg-chip mg-chip-x2" onclick="hldAdjBet(2)">×2</button>
+        <button class="mg-chip mg-chip-max" onclick="hldAdjBet('max')">MAX</button>
+      </div>
+    </div>
+    <button class="mg-action-btn" id="hldStartBtn" onclick="hldStart()" style="background:linear-gradient(135deg,#c0392b,#922b21);">🎲 NUEVA RONDA</button>
   </div>
 </div>
 
@@ -7659,7 +7899,7 @@ function openSlotsSection() {
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -8351,6 +8591,12 @@ function selectGame(game) {
     rmShowLobby();
   } else if (game === 'domino') {
     dmShowLobby();
+  } else if (game === 'gemslots') {
+    gsStartGemSlots();
+  } else if (game === 'hilocards') {
+    hlcInit();
+  } else if (game === 'hilodice') {
+    hldInit();
   }
 }
 
@@ -10070,6 +10316,11 @@ function lwFinish(seg, eff){
     const prefix=mult>=50?'👑 JACKPOT ':mult>=20?'💎 ':mult>=10?'🔥 ':mult>=5?'💫 ':mult>=3?'🌙 ':'';
     const big=mult>=50;
     banner.innerHTML=`<span style="color:${col};font-size:${big?18:16}px;">${prefix}${mult}× · <span style="color:#2ecc71;">+$${profit.toLocaleString()}</span></span>`;
+    if(mult>=50 && db){
+      // Jackpot global — notify ALL players
+      const jpMsg = '👑 ¡JACKPOT GLOBAL! '+escHtml(myName)+' ganó ×50 en Lucky Wheel y se llevó $'+profit.toLocaleString()+'! 🎉';
+      db.ref('broadcast').set({msg:jpMsg, ts:Date.now(), from:'Casino', type:'jackpot'}).catch(()=>{});
+    }
     if(mult>=20){
       sfxWin();setTimeout(sfxWin,160);setTimeout(sfxWin,320);
       burst(innerWidth/2,innerHeight*.32,30);
@@ -11703,7 +11954,19 @@ function listenBroadcast() {
     if (!d || !d.msg) return;
     // Only show messages from last 10 seconds (fresh ones)
     if (Date.now() - (d.ts || 0) < 10000) {
-      toast('📢 Admin: ' + d.msg, 6000);
+      if(d.type==='jackpot'){
+        // Full-screen jackpot banner
+        const jb=document.createElement('div');
+        jb.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;animation:fadeIn .3s;';
+        jb.innerHTML=`<div style="font-size:52px;">👑</div><div style="font-size:20px;font-weight:900;color:#f0d060;text-align:center;padding:0 24px;">${d.msg.replace('👑 ¡JACKPOT GLOBAL! ','')}</div><div style="font-size:11px;color:rgba(255,255,255,.4);">Toca para cerrar</div>`;
+        jb.onclick=()=>document.body.removeChild(jb);
+        document.body.appendChild(jb);
+        burst(innerWidth/2,innerHeight*.3,40);
+        setTimeout(()=>{ if(jb.parentNode) document.body.removeChild(jb); },8000);
+        playTone(523,.12,0,'sine');setTimeout(()=>playTone(659,.12,0,'sine'),150);setTimeout(()=>playTone(784,.25,0,'sine'),300);
+      } else {
+        toast('📢 ' + d.msg, 6000);
+      }
     }
   });
 }
@@ -11780,7 +12043,7 @@ function bnGo(tab){
     rlStopTimer();
         const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino'];
+      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -11836,7 +12099,7 @@ function bnSync(screenId){
     scSlots:'games', scCrash:'games', scMines:'games',
     scDice:'games', scRoulette:'games',
     scRouletteLobby:'games', scLobby:'games', scFootball:'games',
-    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games'
+    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoSection:'games', scHiLoCards:'games', scHiLoDice:'games'
   };
   bnSetActive(map[screenId]||'');
   // Push a history state so the phone's back button is intercepted
@@ -11874,7 +12137,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scDominoLobby','scDomino','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -11899,6 +12162,14 @@ window.addEventListener('popstate', function(e) {
       goGameSelect(); break;
     case 'scDomino':
       dmLeave(); break;
+    case 'scGemSlots':
+      goGameSelect(); break;
+    case 'scHiLoSection':
+      goGameSelect(); break;
+    case 'scHiLoCards':
+      hlcLeave(); break;
+    case 'scHiLoDice':
+      hldLeave(); break;
     case 'scSlots':
     case 'scCrash':
     case 'scMines':
@@ -13549,6 +13820,408 @@ function rmBotTurnSolo(){
 
 
 
+
+
+// ════════════════════════════════════════════
+//  GEM SLOTS — 3 carretes × 1 fila, tema gemas
+// ════════════════════════════════════════════
+// Símbolos: 💎🔮👑⚡🌙💍🏆🃏(wild)
+// Pago: 3 iguales → mult alto | 2 iguales → 1.5× | wild sustituye todo
+const GS_SYMS = ['💎','🔮','👑','⚡','🌙','💍','🏆','🃏'];
+// Weights: 💎=22 🔮=20 👑=15 ⚡=18 🌙=16 💍=13 🏆=8 🃏(wild)=6
+const GS_W    = [22,20,15,18,16,13,8,6];
+// 3× payouts per symbol
+const GS_PAY3 = {0:15,1:12,2:25,3:10,4:10,5:18,6:40,7:50}; // wild3=50
+// 2× payouts
+const GS_PAY2 = 1.5;
+let gsBet2=20, gsSpinning=false, gsReelResults=[0,0,0];
+
+function openHiLoSection(){
+  hide('scGameSelect');
+  show('scHiLoSection'); bnShow(); bnSync('scHiLoSection');
+  navPush('scHiLoSection');
+}
+
+function gsStartGemSlots(){
+  show('scGemSlots'); bnShow(); bnSync('scGemSlots');
+  gsInitReels();
+  document.getElementById('gsBal2').textContent = '$'+myBal.toLocaleString();
+}
+
+function gsAdjBet(v){
+  const inp=document.getElementById('gsBetInput');
+  if(v==='max') gsBet2=Math.min(myBal,10000);
+  else gsBet2=Math.max(1,Math.floor((parseInt(inp.value)||20)*v));
+  inp.value=gsBet2;
+}
+
+function gsPickSym(){
+  const total=GS_W.reduce((a,b)=>a+b,0);
+  let r=Math.random()*total;
+  for(let i=0;i<GS_W.length;i++){r-=GS_W[i];if(r<=0)return i;}
+  return GS_W.length-1;
+}
+
+function gsInitReels(){
+  for(let r=0;r<3;r++){
+    const strip=document.getElementById('gsStrip'+r);
+    let html='';
+    for(let i=0;i<20;i++) html+=`<div class="gs-sym">${GS_SYMS[Math.floor(Math.random()*GS_SYMS.length)]}</div>`;
+    strip.innerHTML=html;
+    strip.style.transform='translateY(0)';
+  }
+}
+
+async function gsSpin(){
+  if(gsSpinning) return;
+  gsBet2=parseInt(document.getElementById('gsBetInput').value)||20;
+  if(gsBet2<1){toast('⚠️ Apuesta mínima $1');return;}
+  if(myBal<gsBet2){toast('⚠️ Saldo insuficiente');return;}
+  gsSpinning=true;
+  document.getElementById('gsSpinBtn').disabled=true;
+  myBal-=gsBet2; saveLocal(); mgUpdateBal('gsBal2'); updateRanking();
+  document.getElementById('gsResult').textContent='…';
+  document.getElementById('gsResult').style.color='rgba(255,255,255,.4)';
+
+  // Pick results
+  const results=[gsPickSym(),gsPickSym(),gsPickSym()];
+  gsReelResults=results;
+
+  // Animate each reel then land
+  const delays=[0,220,440];
+  for(let r=0;r<3;r++){
+    const strip=document.getElementById('gsStrip'+r);
+    // Fill strip with random + result at bottom
+    let html='';
+    for(let i=0;i<16;i++) html+=`<div class="gs-sym">${GS_SYMS[Math.floor(Math.random()*GS_SYMS.length)]}</div>`;
+    html+=`<div class="gs-sym">${GS_SYMS[results[r]]}</div>`;
+    strip.innerHTML=html;
+    strip.style.transition='none';
+    strip.style.transform='translateY(0)';
+    void strip.offsetWidth;
+    strip.style.transition=`transform ${0.5+r*.15}s cubic-bezier(.25,.1,.25,1)`;
+    setTimeout(()=>{
+      strip.style.transform='translateY(-'+((html.split('</div>').length-2)*80)+'px)';
+    }, delays[r]);
+  }
+
+  await new Promise(res=>setTimeout(res, 1100));
+  gsSpinning=false;
+  document.getElementById('gsSpinBtn').disabled=false;
+  gsEvaluate(results);
+}
+
+function gsEvaluate(res){
+  const WILD=7;
+  // Resolve wilds
+  const eff=res.map(s=>s===WILD?-1:s); // -1 = wild
+  let sym=-1;
+  for(const s of eff) if(s!==-1){sym=s;break;}
+  // all wild
+  if(sym===-1) sym=WILD;
+  // count matches (non-wild treated as sym)
+  let matches=eff.filter(s=>s===sym||s===-1).length;
+  let hasWild=res.includes(WILD);
+
+  let mult=0, label='';
+  if(matches===3){
+    mult=GS_PAY3[sym]=== undefined?5:GS_PAY3[sym];
+    label=`✨ ${GS_SYMS[sym]}×3 — ×${mult}`;
+  } else if(matches===2){
+    mult=GS_PAY2;
+    label=`${GS_SYMS[sym]}×2 — ×1.5`;
+  } else {
+    mult=0;
+    label='Sin combinación';
+  }
+
+  const resultEl=document.getElementById('gsResult');
+  if(mult>0){
+    const payout=Math.floor(gsBet2*mult);
+    const profit=payout-gsBet2;
+    myBal+=payout; saveLocal(); mgUpdateBal('gsBal2'); updateRanking();
+    resultEl.textContent=label+' → +$'+profit.toLocaleString();
+    resultEl.style.color=mult>=10?'#f0d060':'#2ecc71';
+    sfxWin();
+    if(mult>=10){burst(innerWidth/2,innerHeight*.4,20);}
+    if(mult>=25){setTimeout(()=>burst(innerWidth*.3,innerHeight*.5,15),200);}
+    mlRecordGameStat('gemslots',true,profit);
+    mlUpdateMissionProgress('gemslots',true,profit,{});
+    // Winning reel glow
+    for(let r=0;r<3;r++){
+      const reel=document.getElementById('gsReel'+r);
+      if(reel) reel.classList.toggle('winning',true);
+    }
+    setTimeout(()=>{for(let r=0;r<3;r++){const reel=document.getElementById('gsReel'+r);if(reel)reel.classList.remove('winning');}},1200);
+  } else {
+    resultEl.textContent='Sin combinación 💀';
+    resultEl.style.color='rgba(231,76,60,.7)';
+    sfxLose();
+    mlRecordGameStat('gemslots',false,-gsBet2);
+    mlUpdateMissionProgress('gemslots',false,-gsBet2,{});
+  }
+
+  // History
+  const hist=document.getElementById('gsHist');
+  if(hist){
+    const chip=document.createElement('div');
+    chip.className='gs-hist-chip';
+    chip.style.background=mult>0?'rgba(46,204,113,.15)':'rgba(231,76,60,.15)';
+    chip.style.color=mult>0?'#2ecc71':'#e74c3c';
+    chip.textContent=(mult>0?'+':'-')+'$'+(mult>0?Math.floor(gsBet2*(mult-1)):gsBet2).toLocaleString();
+    hist.prepend(chip);
+    while(hist.children.length>8)hist.removeChild(hist.lastChild);
+  }
+  if(myBal<=0) mgCheckBankruptcy('gsBal2');
+}
+
+// ════════════════════════════════════════════
+//  HI-LO CARTAS
+// ════════════════════════════════════════════
+const HLC_RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const HLC_SUITS=['♠','♥','♦','♣'];
+const HLC_VALS =[1,2,3,4,5,6,7,8,9,10,11,12,13];
+const HLC_RED  =['♥','♦'];
+let hlcDeck=[], hlcCurVal=0, hlcCurDisp='', hlcBet=50, hlcMult=1, hlcStreak=0, hlcActive=false;
+
+function hlcInit(){
+  show('scHiLoCards'); bnShow(); bnSync('scHiLoCards');
+  document.getElementById('hlcBal').textContent='$'+myBal.toLocaleString();
+  document.getElementById('hlcCardCur').textContent='?';
+  document.getElementById('hlcCardCur').style.color='#222';
+  document.getElementById('hlcResult').textContent='';
+  document.getElementById('hlcCashBtn').style.display='none';
+  document.getElementById('hlcBtns').style.display='flex';
+  document.getElementById('hlcStreak').textContent='0';
+  document.getElementById('hlcMult').textContent='1.00×';
+  document.getElementById('hlcPotential').textContent='$0';
+  document.getElementById('hlcHint').textContent='';
+  hlcActive=false;
+  hlcMult=1; hlcStreak=0;
+  hlcBuildDeck();
+}
+
+function hlcLeave(){ hide('scHiLoCards'); show('scGameSelect'); bnSync('scHiLoSection'); }
+
+function hlcBuildDeck(){
+  hlcDeck=[];
+  for(const s of HLC_SUITS) for(let i=0;i<HLC_RANKS.length;i++) hlcDeck.push({rank:HLC_RANKS[i],suit:s,val:HLC_VALS[i]});
+  // Shuffle
+  for(let i=hlcDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[hlcDeck[i],hlcDeck[j]]=[hlcDeck[j],hlcDeck[i]];}
+}
+
+function hlcAdjBet(v){
+  const inp=document.getElementById('hlcBetInput');
+  if(v==='max') hlcBet=Math.min(myBal,10000);
+  else hlcBet=Math.max(1,Math.floor((parseInt(inp.value)||50)*v));
+  inp.value=hlcBet;
+}
+
+function hlcDraw(){
+  if(hlcDeck.length<2) hlcBuildDeck();
+  return hlcDeck.pop();
+}
+
+function hlcCardHtml(card){
+  const red=HLC_RED.includes(card.suit);
+  return `<span style="color:${red?'#e74c3c':'#222'}">${card.rank}${card.suit}</span>`;
+}
+
+function hlcStart(){
+  hlcBet=parseInt(document.getElementById('hlcBetInput').value)||50;
+  if(hlcBet<1){toast('⚠️ Apuesta mínima $1');return;}
+  if(myBal<hlcBet){toast('⚠️ Saldo insuficiente');return;}
+  myBal-=hlcBet; saveLocal(); mgUpdateBal('hlcBal'); updateRanking();
+  hlcBuildDeck();
+  const card=hlcDraw();
+  hlcCurVal=card.val; hlcCurDisp=hlcCardHtml(card);
+  hlcMult=1; hlcStreak=0; hlcActive=true;
+  document.getElementById('hlcCardPrev').innerHTML='';
+  document.getElementById('hlcCardCur').innerHTML=hlcCurDisp;
+  document.getElementById('hlcCardCur').style.color='#222';
+  document.getElementById('hlcCashBtn').style.display='none';
+  document.getElementById('hlcBtns').style.display='flex';
+  document.getElementById('hlcResult').textContent='';
+  document.getElementById('hlcStreak').textContent='0';
+  document.getElementById('hlcMult').textContent='1.00×';
+  document.getElementById('hlcPotential').textContent='$0';
+  hlcUpdateHint();
+}
+
+function hlcUpdateHint(){
+  // How many cards are higher/lower?
+  const higher=HLC_VALS.filter(v=>v>hlcCurVal).length * 4;
+  const lower=HLC_VALS.filter(v=>v<hlcCurVal).length * 4;
+  document.getElementById('hlcHint').textContent=`↑ ${higher}/52 cartas mayores · ↓ ${lower}/52 menores`;
+}
+
+function hlcMultForStreak(streak){
+  // Each correct guess multiplies by ~1.4–1.8 depending on card position odds
+  return Math.pow(1.5, streak);
+}
+
+function hlcGuess(dir){
+  if(!hlcActive){toast('⚠️ Inicia una ronda primero');return;}
+  const prevCard=document.getElementById('hlcCardCur').innerHTML;
+  document.getElementById('hlcCardPrev').innerHTML=prevCard;
+  const next=hlcDraw();
+  document.getElementById('hlcCardCur').innerHTML=hlcCardHtml(next);
+
+  const won=(dir==='hi' && next.val>hlcCurVal)||(dir==='lo' && next.val<hlcCurVal);
+  const tie=next.val===hlcCurVal;
+
+  if(tie){
+    document.getElementById('hlcResult').textContent='🤝 Empate — se repite';
+    document.getElementById('hlcResult').style.color='#f0d060';
+    hlcCurVal=next.val;
+    return;
+  }
+
+  if(won){
+    hlcStreak++;
+    hlcMult=hlcMultForStreak(hlcStreak);
+    const potential=Math.floor(hlcBet*hlcMult);
+    document.getElementById('hlcStreak').textContent=hlcStreak;
+    document.getElementById('hlcMult').textContent=hlcMult.toFixed(2)+'×';
+    document.getElementById('hlcPotential').textContent='$'+potential.toLocaleString();
+    document.getElementById('hlcResult').textContent='✅ '+(dir==='hi'?'↑ Mayor':'↓ Menor')+' — Seguís en racha';
+    document.getElementById('hlcResult').style.color='#2ecc71';
+    document.getElementById('hlcCashBtn').style.display='block';
+    document.getElementById('hlcCashAmt').textContent=potential.toLocaleString();
+    sfxWin();
+    hlcCurVal=next.val;
+    hlcUpdateHint();
+  } else {
+    // Lost
+    hlcActive=false;
+    document.getElementById('hlcResult').textContent='❌ '+(dir==='hi'?'↑ Mayor':'↓ Menor')+' — Era '+(dir==='hi'?'menor':'mayor')+'!';
+    document.getElementById('hlcResult').style.color='#e74c3c';
+    document.getElementById('hlcCashBtn').style.display='none';
+    document.getElementById('hlcBtns').style.display='none';
+    sfxLose();
+    mlRecordGameStat('hilocards',false,-hlcBet);
+    mlUpdateMissionProgress('hilocards',false,-hlcBet,{});
+    if(myBal<=0) mgCheckBankruptcy('hlcBal');
+    setTimeout(()=>{document.getElementById('hlcBtns').style.display='flex';},1200);
+  }
+}
+
+function hlcCashOut(){
+  if(!hlcActive) return;
+  hlcActive=false;
+  const payout=Math.floor(hlcBet*hlcMult);
+  const profit=payout-hlcBet;
+  myBal+=payout; saveLocal(); mgUpdateBal('hlcBal'); updateRanking();
+  document.getElementById('hlcResult').textContent='💰 Cobrado! +$'+profit.toLocaleString()+' (×'+hlcMult.toFixed(2)+')';
+  document.getElementById('hlcResult').style.color='#f0d060';
+  document.getElementById('hlcCashBtn').style.display='none';
+  if(profit>0){sfxWin(); if(profit>1000) burst(innerWidth/2,innerHeight*.4,20);}
+  mlRecordGameStat('hilocards',true,profit);
+  mlUpdateMissionProgress('hilocards',true,profit,{});
+}
+
+// ════════════════════════════════════════════
+//  HI-LO DADOS
+// ════════════════════════════════════════════
+const HLD_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+let hldCurTotal=0, hldBet=50, hldMult=1, hldStreak=0, hldActive=false;
+
+function hldInit(){
+  show('scHiLoDice'); bnShow(); bnSync('scHiLoDice');
+  document.getElementById('hldBal').textContent='$'+myBal.toLocaleString();
+  document.getElementById('hldTotal').textContent='?';
+  document.getElementById('hldResult').textContent='';
+  document.getElementById('hldCashBtn').style.display='none';
+  document.getElementById('hldStreak').textContent='0';
+  document.getElementById('hldMult').textContent='1.00×';
+  document.getElementById('hldPotential').textContent='$0';
+  document.getElementById('hldDie1').textContent='🎲';
+  document.getElementById('hldDie2').textContent='🎲';
+  hldActive=false; hldMult=1; hldStreak=0;
+}
+
+function hldLeave(){ hide('scHiLoDice'); show('scGameSelect'); bnSync('scHiLoSection'); }
+
+function hldAdjBet(v){
+  const inp=document.getElementById('hldBetInput');
+  if(v==='max') hldBet=Math.min(myBal,10000);
+  else hldBet=Math.max(1,Math.floor((parseInt(inp.value)||50)*v));
+  inp.value=hldBet;
+}
+
+function hldRoll(){ return Math.floor(Math.random()*6)+1; }
+
+function hldStart(){
+  hldBet=parseInt(document.getElementById('hldBetInput').value)||50;
+  if(hldBet<1){toast('⚠️ Apuesta mínima $1');return;}
+  if(myBal<hldBet){toast('⚠️ Saldo insuficiente');return;}
+  myBal-=hldBet; saveLocal(); mgUpdateBal('hldBal'); updateRanking();
+  const d1=hldRoll(), d2=hldRoll();
+  hldCurTotal=d1+d2;
+  hldMult=1; hldStreak=0; hldActive=true;
+  document.getElementById('hldDie1').textContent=HLD_FACES[d1-1];
+  document.getElementById('hldDie2').textContent=HLD_FACES[d2-1];
+  document.getElementById('hldTotal').textContent=hldCurTotal;
+  document.getElementById('hldCashBtn').style.display='none';
+  document.getElementById('hldResult').textContent='';
+  document.getElementById('hldStreak').textContent='0';
+  document.getElementById('hldMult').textContent='1.00×';
+  document.getElementById('hldPotential').textContent='$0';
+  document.getElementById('hldHint').textContent=`Total actual: ${hldCurTotal} — rango posible 2–12`;
+}
+
+function hldGuess(dir){
+  if(!hldActive){toast('⚠️ Inicia una ronda primero');return;}
+  const d1=hldRoll(), d2=hldRoll();
+  const next=d1+d2;
+  document.getElementById('hldDie1').textContent=HLD_FACES[d1-1];
+  document.getElementById('hldDie2').textContent=HLD_FACES[d2-1];
+  document.getElementById('hldTotal').textContent=next;
+
+  const won=(dir==='hi'&&next>hldCurTotal)||(dir==='lo'&&next<hldCurTotal)||(dir==='eq'&&next===hldCurTotal);
+  const eqBonus=dir==='eq';
+
+  if(won){
+    hldStreak++;
+    const baseInc=eqBonus?5:1.5;
+    hldMult=eqBonus?hldMult*baseInc:Math.pow(1.5,hldStreak);
+    const potential=Math.floor(hldBet*hldMult);
+    document.getElementById('hldStreak').textContent=hldStreak;
+    document.getElementById('hldMult').textContent=hldMult.toFixed(2)+'×';
+    document.getElementById('hldPotential').textContent='$'+potential.toLocaleString();
+    document.getElementById('hldResult').textContent='✅ '+(dir==='hi'?'↑ Mayor':dir==='lo'?'↓ Menor':'= Igual')+' — Racha '+hldStreak+'!';
+    document.getElementById('hldResult').style.color=eqBonus?'#f0d060':'#2ecc71';
+    document.getElementById('hldCashBtn').style.display='block';
+    document.getElementById('hldCashAmt').textContent=potential.toLocaleString();
+    sfxWin();
+    if(eqBonus){burst(innerWidth/2,innerHeight*.4,25);}
+    hldCurTotal=next;
+    document.getElementById('hldHint').textContent=`Total actual: ${next} — rango posible 2–12`;
+  } else {
+    hldActive=false;
+    document.getElementById('hldResult').textContent='❌ Falló — Era '+next+' vs '+hldCurTotal;
+    document.getElementById('hldResult').style.color='#e74c3c';
+    document.getElementById('hldCashBtn').style.display='none';
+    sfxLose();
+    mlRecordGameStat('hilodice',false,-hldBet);
+    mlUpdateMissionProgress('hilodice',false,-hldBet,{});
+    if(myBal<=0) mgCheckBankruptcy('hldBal');
+  }
+}
+
+function hldCashOut(){
+  if(!hldActive) return;
+  hldActive=false;
+  const payout=Math.floor(hldBet*hldMult);
+  const profit=payout-hldBet;
+  myBal+=payout; saveLocal(); mgUpdateBal('hldBal'); updateRanking();
+  document.getElementById('hldResult').textContent='💰 Cobrado! +$'+profit.toLocaleString()+' (×'+hldMult.toFixed(2)+')';
+  document.getElementById('hldResult').style.color='#f0d060';
+  document.getElementById('hldCashBtn').style.display='none';
+  if(profit>0){sfxWin(); if(profit>1000) burst(innerWidth/2,innerHeight*.4,20);}
+  mlRecordGameStat('hilodice',true,profit);
+  mlUpdateMissionProgress('hilodice',true,profit,{});
+}
 
 // ════════════════════════════════════════════
 //  DOMINÓ — Motor completo
