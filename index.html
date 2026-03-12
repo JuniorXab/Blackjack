@@ -292,12 +292,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .adm-stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center;}
 .adm-stat-val{font-size:20px;font-weight:900;color:#f0d060;}
 .adm-stat-lbl{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1px;margin-top:2px;}
-.adm-player-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:6px;}
-.adm-player-name{font-size:11px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.adm-player-bal{font-size:10px;color:#f0d060;font-weight:700;margin-right:4px;}
-.adm-quick-give{display:flex;gap:4px;align-items:center;}
-.adm-give-inp{width:70px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#fff;font-size:11px;padding:4px 6px;outline:none;}
-.adm-action-btn{padding:4px 8px;border-radius:7px;border:1px solid;font-size:10px;font-weight:700;cursor:pointer;background:none;}
+.adm-player-row{display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);margin-bottom:8px;}
+.adm-player-top{display:flex;align-items:center;gap:8px;}
+.adm-player-name{font-size:13px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.adm-player-bal{font-size:12px;color:#f0d060;font-weight:900;}
+.adm-player-meta{font-size:9px;color:rgba(255,255,255,.3);}
+.adm-quick-give{display:flex;gap:5px;align-items:center;}
+.adm-give-inp{flex:1;min-width:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;padding:6px 8px;outline:none;}
+.adm-action-btn{padding:6px 10px;border-radius:8px;border:1px solid;font-size:12px;font-weight:700;cursor:pointer;background:none;flex-shrink:0;}
 .adm-btn-give{color:#2ecc71;border-color:rgba(46,204,113,.4);}
 .adm-btn-ban{color:#e74c3c;border-color:rgba(231,76,60,.3);}
 .adm-btn-del{color:rgba(255,255,255,.25);border-color:rgba(255,255,255,.12);}
@@ -11462,19 +11464,23 @@ function renderAdminPlayerList(list) {
     const ago = p.updatedAt ? Math.floor((Date.now()-p.updatedAt)/60000) : null;
     const agoStr = ago===null?'nunca':ago<2?'hace un momento':ago<60?`hace ${ago}m`:ago<1440?`hace ${Math.floor(ago/60)}h`:`hace ${Math.floor(ago/1440)}d`;
     return `<div class="adm-player-row">
-      <div style="width:30px;height:30px;border-radius:50%;background:${p.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;">${(p.name||'?')[0].toUpperCase()}</div>
-      <div style="flex:1;min-width:0;">
-        <div class="adm-player-name" style="color:${banned?'#e74c3c':'#fff'}">${banned?'🚫 ':''}${escHtml(p.name||'Jugador')}</div>
-        <div style="font-size:8px;color:rgba(255,255,255,.3);">${agoStr}</div>
+      <!-- Fila 1: avatar + nombre + saldo -->
+      <div class="adm-player-top">
+        <div style="width:34px;height:34px;border-radius:50%;background:${p.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;color:#fff;">${(p.name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="adm-player-name" style="color:${banned?'#e74c3c':'#fff'}">${banned?'🚫 ':''}${escHtml(p.name||'Jugador')}</div>
+          <div class="adm-player-meta">${agoStr}</div>
+        </div>
+        <div class="adm-player-bal">$${(p.bal||0).toLocaleString()}</div>
       </div>
-      <div class="adm-player-bal">$${(p.bal||0).toLocaleString()}</div>
+      <!-- Fila 2: input + botones de acción -->
       <div class="adm-quick-give">
-        <input class="adm-give-inp" type="tel" inputmode="numeric" placeholder="$" id="admGive_${p.uid}">
-        <button class="adm-action-btn adm-btn-give" onclick="admQuickGive('${p.uid}','${sn}')" title="Dar fichas">💰</button>
-        <button class="adm-action-btn" style="background:rgba(231,76,60,.2);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:8px;padding:4px 7px;font-size:12px;cursor:pointer;" onclick="admQuickDeduct('${p.uid}','${sn}')" title="Quitar fichas">➖</button>
-        <button class="adm-action-btn adm-btn-ban" onclick="adminToggleBan('${p.uid}','${sn}',${banned})" title="${banned?'Desbanear':'Banear'}">${banned?'🔓':'🚫'}</button>
-        <button class="adm-action-btn" style="background:rgba(52,152,219,.15);color:#5dade2;border:1px solid rgba(52,152,219,.3);border-radius:8px;padding:4px 7px;font-size:12px;cursor:pointer;" onclick="adminResetOneBal('${p.uid}','${sn}')" title="Reset a $1,000">↺</button>
-        <button class="adm-action-btn adm-btn-del" onclick="adminDeletePlayer('${p.uid}','${sn}')" title="Eliminar del ranking">🗑️</button>
+        <input class="adm-give-inp" type="tel" inputmode="numeric" placeholder="Cantidad $" id="admGive_${p.uid}">
+        <button class="adm-action-btn adm-btn-give" onclick="admQuickGive('${p.uid}','${sn}')" title="Dar fichas" style="background:rgba(46,204,113,.15);color:#2ecc71;border-color:rgba(46,204,113,.35);">+💰</button>
+        <button class="adm-action-btn" onclick="admQuickDeduct('${p.uid}','${sn}')" title="Quitar fichas" style="background:rgba(231,76,60,.15);color:#e74c3c;border-color:rgba(231,76,60,.35);">−💰</button>
+        <button class="adm-action-btn adm-btn-ban" onclick="adminToggleBan('${p.uid}','${sn}',${banned})" title="${banned?'Desbanear':'Banear'}" style="color:${banned?'#2ecc71':'#e67e22'};border-color:${banned?'rgba(46,204,113,.3)':'rgba(230,126,34,.3)'};">${banned?'🔓':'🚫'}</button>
+        <button class="adm-action-btn" onclick="adminResetOneBal('${p.uid}','${sn}')" title="Reset a \$1,000" style="background:rgba(52,152,219,.15);color:#5dade2;border-color:rgba(52,152,219,.35);">↺1K</button>
+        <button class="adm-action-btn adm-btn-del" onclick="adminDeletePlayer('${p.uid}','${sn}')" title="Eliminar del ranking" style="color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.1);">🗑️</button>
       </div>
     </div>`;
   }).join('');
