@@ -372,11 +372,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .lb-player-name{font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;flex-wrap:wrap;color:rgba(255,255,255,.85);}
 .admin-badge{background:rgba(201,168,76,.15);color:var(--gold);font-size:8px;padding:2px 5px;border-radius:6px;font-weight:700;letter-spacing:.5px;}
 .level-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;display:inline-flex;align-items:center;gap:3px;letter-spacing:.3px;}
-.lvl-bronze{background:rgba(139,90,43,.2);color:#cd7f32;}
-.lvl-silver{background:rgba(160,160,160,.15);color:#c0c0c0;}
-.lvl-gold{background:rgba(201,168,76,.2);color:#f0d060;}
-.lvl-platinum{background:rgba(110,180,220,.15);color:#a8d8f0;}
-.lvl-diamond{background:rgba(91,156,246,.15);color:#90c8ff;}
+.lvl-novato{background:rgba(160,160,160,.12);color:#aaa;}
+.lvl-aprendiz{background:rgba(46,204,113,.12);color:#2ecc71;}
+.lvl-jugador{background:rgba(52,152,219,.14);color:#5dade2;}
+.lvl-experto{background:rgba(155,89,182,.15);color:#a569bd;}
+.lvl-elite{background:rgba(230,126,34,.15);color:#e67e22;}
+.lvl-leyenda{background:rgba(201,168,76,.2);color:#f0d060;}
+.lvl-royale{background:rgba(180,30,30,.2);color:#e74c3c;border-color:rgba(231,76,60,.4);}
+/* Royale animated badge */
+@keyframes royalePulse{0%,100%{box-shadow:0 0 4px rgba(231,76,60,.4);}50%{box-shadow:0 0 14px rgba(231,76,60,.8),0 0 28px rgba(231,76,60,.3);}}
+.lvl-royale{animation:royalePulse 2s ease-in-out infinite;}
+/* Royale golden name in chat/ranking */
+.royale-name{color:#e74c3c !important;text-shadow:0 0 8px rgba(231,76,60,.5);}
 /* Stats — clean, no borders */
 .lb-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-bottom:8px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.03);}
 .lstat-pill{padding:8px 4px;text-align:center;border-right:1px solid rgba(255,255,255,.05);}
@@ -1820,10 +1827,15 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-name">Ruleta</div>
       <div class="gs-card-desc">Europea · 37 números</div>
     </div>
-    <div class="gs-card gs-card-slot" onclick="selectGame('slots')">
-      <div class="gs-card-icon">🎰</div>
-      <div class="gs-card-name">Slots</div>
-      <div class="gs-card-desc">5 carretes · 5 líneas</div>
+    <div class="gs-card gs-card-slot gs-card-slots-section" onclick="openSlotsSection()" style="grid-column:span 2;">
+      <div style="display:flex;align-items:center;gap:14px;width:100%;">
+        <div style="font-size:36px;line-height:1;">🎰</div>
+        <div style="flex:1;">
+          <div class="gs-card-name" style="font-size:16px;">Slots</div>
+          <div class="gs-card-desc">Classic · Fruit · Mega — ¡Más próximamente!</div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.35);background:rgba(255,180,0,.1);border:1px solid rgba(255,180,0,.2);border-radius:8px;padding:3px 8px;">VER →</div>
+      </div>
     </div>
     <div class="gs-card gs-card-crash" onclick="selectGame('crash')">
       <div class="gs-card-icon">📈</div>
@@ -1860,7 +1872,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-name">Lucky Wheel</div>
       <div class="gs-card-desc">Gira y multiplica · Hasta 20×</div>
     </div>
-    <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')" style="grid-column:span 2;">
+    <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')">
       <div class="gs-card-icon">🃏</div>
       <div class="gs-card-name">Rummy</div>
       <div class="gs-card-desc">2-4 jugadores · 4+4+3 cartas</div>
@@ -1868,6 +1880,52 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
   </div>
   <div class="gs-bal">Tus fichas: <span id="gsBal">0</span></div>
 </div>
+</div>
+
+<!-- ════════ SLOTS SECTION ════════ -->
+<div class="fullscreen hidden" id="scSlotsSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;">
+  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="goBack()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#ffb400;letter-spacing:2px;">🎰 SLOTS</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">Elige tu máquina</div>
+      </div>
+    </div>
+
+    <!-- Slots grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <!-- Classic Slots — available -->
+      <div onclick="selectGame('slots')" style="grid-column:span 2;background:linear-gradient(135deg,rgba(255,180,0,.18),rgba(255,140,0,.06));border:1.5px solid rgba(255,180,0,.4);border-radius:18px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+        <div style="font-size:40px;line-height:1;">🎰</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:900;color:#fff;">Classic Slots</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px;">5 carretes · 5 líneas · Bonus spins</div>
+          <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 7px;font-size:9px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
+        </div>
+        <div style="font-size:18px;color:rgba(255,180,0,.6);">→</div>
+      </div>
+
+      <!-- Fruit Slots — coming soon -->
+      <div style="background:rgba(255,255,255,.03);border:1.5px dashed rgba(255,255,255,.1);border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.55;">
+        <div style="font-size:32px;">🍒</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Fruit Slots</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.35);text-align:center;">3 carretes · Clásico</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:6px;padding:2px 8px;font-size:8px;color:rgba(255,255,255,.4);font-weight:700;">PRÓXIMAMENTE</div>
+      </div>
+
+      <!-- Mega Slots — coming soon -->
+      <div style="background:rgba(255,255,255,.03);border:1.5px dashed rgba(255,255,255,.1);border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.55;">
+        <div style="font-size:32px;">💎</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Mega Slots</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.35);text-align:center;">6 carretes · Mega ways</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:6px;padding:2px 8px;font-size:8px;color:rgba(255,255,255,.4);font-weight:700;">PRÓXIMAMENTE</div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- ════════ ROULETTE LOBBY ════════ -->
@@ -7405,10 +7463,17 @@ function showGameSelect() {
   show('scGameSelect');
   bnShow(); bnSync('scGameSelect');
 }
+function openSlotsSection() {
+  goGameSelect(); // hide other screens
+  hide('scGameSelect');
+  show('scSlotsSection');
+  bnSync('scSlotsSection');
+  navPush('scSlotsSection');
+}
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -7666,10 +7731,18 @@ function _rankRow(p,i,valueHtml){
   const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
   const isMe=p.id===myId;
   const av=p.photo?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:(p.name||'?')[0].toUpperCase();
-  return `<div style="display:flex;align-items:center;gap:10px;background:${isMe?'rgba(240,208,96,.07)':'rgba(255,255,255,.03)'};border:1px solid ${isMe?'rgba(240,208,96,.25)':'rgba(255,255,255,.07)'};border-radius:14px;padding:11px 13px;margin-bottom:5px;">
+  const hands=(p.hands||0);
+  const lv=getLevel(hands);
+  const isRoyale=lv.name==='Royale';
+  const nameColor=isMe?'#f0d060':isRoyale?'#e74c3c':'#fff';
+  const nameStyle=isRoyale?'text-shadow:0 0 8px rgba(231,76,60,.5);':'';
+  return `<div style="display:flex;align-items:center;gap:10px;background:${isMe?'rgba(240,208,96,.07)':'rgba(255,255,255,.03)'};border:1px solid ${isMe?'rgba(240,208,96,.25)':isRoyale?'rgba(231,76,60,.2)':'rgba(255,255,255,.07)'};border-radius:14px;padding:11px 13px;margin-bottom:5px;">
     <div style="font-size:${medal?'20':'12'}px;width:26px;text-align:center;flex-shrink:0;color:rgba(255,255,255,.35);">${medal||('#'+(i+1))}</div>
     <div style="width:36px;height:36px;border-radius:50%;background:${p.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;overflow:hidden;flex-shrink:0;">${av}</div>
-    <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:${isMe?'#f0d060':'#fff'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(p.name||'?')}${isMe?' <span style="font-size:9px;opacity:.5;">(tú)</span>':''}</div></div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:800;color:${nameColor};${nameStyle}white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(p.name||'?')}${isMe?' <span style="font-size:9px;opacity:.5;">(tú)</span>':''}</div>
+      <span class="level-badge ${lv.cls}" style="font-size:8px;padding:1px 5px;margin-top:2px;">${lv.icon} ${lv.name}</span>
+    </div>
     <div style="font-size:13px;font-weight:900;text-align:right;flex-shrink:0;">${valueHtml}</div>
   </div>`;
 }
@@ -8576,7 +8649,7 @@ const SL_PAYLINES=[
   [0,1,2,1,0], // V shape
   [2,1,0,1,2], // ^shape
 ];
-let slSpinning=false, slFreeSpins=0, slFsMult=1;
+let slSpinning=false, slFreeSpins=0, slFsMult=1, slFsBet=0;
 let slGrid=Array(5).fill(null).map(()=>[0,0,0]); // [reel][row]
 let slAutoRunning=false, slAutoRemain=0, slAutoTimer=null;
 
@@ -8584,7 +8657,7 @@ function startSlots(){
   hide('scGameSelect');
   const g=document.getElementById('scSlots');
   g.classList.remove('hidden'); g.style.display='flex';
-  slFreeSpins=0; slFsMult=1; slAutoRunning=false;
+  slFreeSpins=0; slFsMult=1; slFsBet=0; slAutoRunning=false;
   if(slAutoTimer){clearTimeout(slAutoTimer);slAutoTimer=null;}
   document.getElementById('slAutoToggle').checked=false;
   mgUpdateBal('slBal');
@@ -8675,7 +8748,7 @@ function slDrawWinLine(plIdx){
 async function spinSlots(){
   if(slSpinning)return;
   const isFree=slFreeSpins>0;
-  const bet=mgGetBet('slBetInput');
+  const bet=isFree ? slFsBet : mgGetBet('slBetInput');
   if(!isFree&&bet>myBal){toast('⚠️ Saldo insuficiente');slAutoRunning=false;document.getElementById('slAutoToggle').checked=false;return;}
   slSpinning=true;
   document.getElementById('slSpinBtn').disabled=true;
@@ -8739,7 +8812,12 @@ async function spinSlots(){
   });
   // Scatter free spins
   let fsTrigger=false;
-  if(scatters>=3&&!isFree){fsTrigger=true;slFreeSpins=5;slFsMult=2;}
+  if(scatters>=3&&!isFree){
+    fsTrigger=true; slFreeSpins=5; slFsMult=2;
+    slFsBet=bet; // lock bet at trigger moment
+    const bi=document.getElementById('slBetInput'); if(bi){bi.disabled=true; bi.style.opacity='0.4';}
+    document.querySelectorAll('.mg-action-btn').forEach(b=>{b.disabled=true; b.style.opacity='0.4';});
+  }
   // ── RENDER ──
   if(winLines.length){
     // Glow reels and draw lines
@@ -8775,6 +8853,12 @@ async function spinSlots(){
     slUpdateFsBar();
     setTimeout(()=>{const res=document.getElementById('slResult');res.className='mg-result win';res.style.color='#2ecc71';res.textContent='⭐⭐⭐ ¡5 GIROS GRATIS ×2!';playTone(440,.2,'sine',.15);setTimeout(()=>playTone(660,.2,'sine',.15),180);setTimeout(()=>playTone(880,.25,'sine',.15),360);},500);
   } else if(slFreeSpins>0){ slUpdateFsBar(); }
+  // Unlock bet input when free spins exhausted
+  if(slFreeSpins===0 && isFree){
+    slFsBet=0;
+    const bi=document.getElementById('slBetInput'); if(bi){bi.disabled=false; bi.style.opacity='';}
+    document.querySelectorAll('.mg-action-btn').forEach(b=>{b.disabled=false; b.style.opacity='';});
+  }
   mgCheckBankrupt();
   slSpinning=false;
   document.getElementById('slSpinBtn').disabled=false;
@@ -10337,22 +10421,26 @@ function showTournamentPodium(room) {
 //  LEVELS
 // ═══════════════════════════════════════════
 const LEVELS = [
-  { name:'Bronce',   min:0,   max:49,  icon:'🥉', cls:'lvl-bronze'   },
-  { name:'Plata',    min:50,  max:149, icon:'🥈', cls:'lvl-silver'   },
-  { name:'Oro',      min:150, max:349, icon:'🥇', cls:'lvl-gold'     },
-  { name:'Platino',  min:350, max:699, icon:'💎', cls:'lvl-platinum' },
-  { name:'Diamante', min:700, max:Infinity, icon:'💠', cls:'lvl-diamond' },
+  { name:'Novato',   min:0,    max:49,   icon:'●', cls:'lvl-novato'   },
+  { name:'Aprendiz', min:50,   max:199,  icon:'▲', cls:'lvl-aprendiz' },
+  { name:'Jugador',  min:200,  max:499,  icon:'◆', cls:'lvl-jugador'  },
+  { name:'Experto',  min:500,  max:999,  icon:'✶', cls:'lvl-experto'  },
+  { name:'Élite',    min:1000, max:2499, icon:'❖', cls:'lvl-elite'    },
+  { name:'Leyenda',  min:2500, max:4999, icon:'★', cls:'lvl-leyenda'  },
+  { name:'Royale',   min:5000, max:Infinity, icon:'✦', cls:'lvl-royale' },
 ];
 
 // ═══════════════════════════════════════════
 //  RANK UP CINEMATIC
 // ═══════════════════════════════════════════
 const RANK_DATA = {
-  'Bronce':   { color:'#cd7f32', shield:'🛡️',  desc:'Estás empezando. Cada mano cuenta.' },
-  'Plata':    { color:'#c0c0c0', shield:'⚔️',  desc:'Ya dominas lo básico. El casino te respeta.' },
-  'Oro':      { color:'#f0d060', shield:'🏅',  desc:'Jugador veterano. La mesa es tuya.' },
-  'Platino':  { color:'#a8d8f0', shield:'💎',  desc:'Élite. Pocos llegan aquí.' },
-  'Diamante': { color:'#90c8ff', shield:'👑',  desc:'Leyenda del casino. Nadie te supera.' },
+  'Novato':   { color:'#aaaaaa', shield:'●', desc:'Bienvenido al casino. Tus primeros pasos.' },
+  'Aprendiz': { color:'#2ecc71', shield:'▲', desc:'Ya conoces las reglas. Sigue aprendiendo.' },
+  'Jugador':  { color:'#5dade2', shield:'◆', desc:'Un jugador de verdad. La mesa te respeta.' },
+  'Experto':  { color:'#a569bd', shield:'✶', desc:'Dominás las estrategias. Pocos llegan aquí.' },
+  'Élite':    { color:'#e67e22', shield:'❖', desc:'La élite del casino. Tu nombre resuena.' },
+  'Leyenda':  { color:'#f0d060', shield:'★', desc:'Una leyenda viva. El casino es tuyo.' },
+  'Royale':   { color:'#e74c3c', shield:'✦', desc:'El nivel más exclusivo. Solo los mejores.' },
 };
 
 let _lastLevel = null;
@@ -10371,6 +10459,10 @@ function checkRankUp() {
     const names = LEVELS.map(l => l.name);
     if (names.indexOf(lv.name) > names.indexOf(prev)) {
       showRankUpCinematic(lv);
+      // Special Royale global announcement
+      if(lv.name==='Royale' && db && myName){
+        db.ref('broadcast').set({msg:'✦ ¡'+myName+' ha alcanzado el rango ROYALE! El nivel más exclusivo del casino.',ts:Date.now(),from:'Sistema'});
+      }
     }
   }
 }
@@ -11551,7 +11643,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -11570,6 +11662,8 @@ window.addEventListener('popstate', function(e) {
       leaveRoom(); goGameSelect(); break;
     case 'scRoulette':
     case 'scRouletteLobby':
+    case 'scSlotsSection':
+      goGameSelect(); break;
     case 'scSlots':
     case 'scCrash':
     case 'scMines':
