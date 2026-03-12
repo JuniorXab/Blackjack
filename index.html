@@ -1729,20 +1729,20 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 /* Game screen */
 .dm-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
 .dm-pot{font-size:13px;font-weight:900;color:#f0d060;}
-.dm-board-wrap{flex:1;overflow:auto;position:relative;background:rgba(0,60,0,.3);border:1px solid rgba(255,255,255,.06);margin:8px;border-radius:14px;}
+.dm-board-wrap{flex:1;overflow:auto;position:relative;background:rgba(0,60,0,.3);border:1px solid rgba(255,255,255,.06);margin:8px;border-radius:14px;min-height:0;}
 .dm-board{display:flex;flex-wrap:wrap;gap:4px;padding:12px;align-content:flex-start;min-height:160px;}
 /* Domino tile */
-.dm-tile{display:inline-flex;flex-direction:column;background:#f5f0e0;border-radius:5px;border:2px solid #c8c0a0;cursor:pointer;flex-shrink:0;transition:transform .12s,box-shadow .15s;position:relative;}
+.dm-tile{display:inline-flex;flex-direction:column;background:#f5f0e0;border-radius:6px;border:2px solid #c8c0a0;cursor:pointer;flex-shrink:0;transition:transform .12s,box-shadow .15s;position:relative;padding:2px;gap:1px;}
 .dm-tile.horizontal{flex-direction:row;}
 .dm-tile.playable{border-color:#2ecc71;box-shadow:0 0 8px rgba(46,204,113,.5);cursor:pointer;}
 .dm-tile.playable:active{transform:scale(.92);}
 .dm-tile.selected{border-color:#f0d060;box-shadow:0 0 12px rgba(240,208,96,.7);transform:translateY(-4px);}
 .dm-tile.other{cursor:default;opacity:.85;}
-.dm-half{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#222;}
+.dm-half{width:36px;height:36px;display:flex;align-items:center;justify-content:center;}
 .dm-divider{width:100%;height:2px;background:#c8c0a0;}
 .dm-divider.v{width:2px;height:100%;}
 /* Hand row */
-.dm-hand-wrap{background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.08);padding:10px 6px 8px;flex-shrink:0;}
+.dm-hand-wrap{background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.08);padding:10px 6px 72px;flex-shrink:0;}
 .dm-hand-label{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:2px;text-align:center;margin-bottom:6px;}
 .dm-hand-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;justify-content:center;scrollbar-width:none;}
 .dm-hand-row::-webkit-scrollbar{display:none;}
@@ -2315,45 +2315,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 </div>
 
 
-<!-- ════════ HI-LO SECTION ════════ -->
-<div class="fullscreen hidden" id="scHiLoSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#001a2e,#020609);">
-  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
-      <div>
-        <div style="font-size:20px;font-weight:900;color:#3498db;letter-spacing:2px;">🃏 HI-LO</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">¿Mayor o menor?</div>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
 
-      <!-- Hi-Lo Cards -->
-      <div onclick="selectGame('hilocards')" style="background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(41,128,185,.06));border:1.5px solid rgba(52,152,219,.45);border-radius:18px;padding:20px 18px;cursor:pointer;display:flex;align-items:center;gap:16px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
-        <div style="font-size:44px;line-height:1;">🃏</div>
-        <div style="flex:1;">
-          <div style="font-size:16px;font-weight:900;color:#fff;">Hi-Lo Cartas</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;">Baraja francesa · Adivina si la siguiente carta es mayor o menor</div>
-          <div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 7px;font-size:9px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
-        </div>
-      </div>
-
-      <!-- Hi-Lo Dice -->
-      <div onclick="selectGame('hilodice')" style="background:linear-gradient(135deg,rgba(231,76,60,.18),rgba(192,57,43,.06));border:1.5px solid rgba(231,76,60,.45);border-radius:18px;padding:20px 18px;cursor:pointer;display:flex;align-items:center;gap:16px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
-        <div style="font-size:44px;line-height:1;">🎲</div>
-        <div style="flex:1;">
-          <div style="font-size:16px;font-weight:900;color:#fff;">Hi-Lo Dados</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;">Dos dados · Predice si el total será mayor, menor o igual</div>
-          <div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 7px;font-size:9px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
-        </div>
-      </div>
-
-      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;margin-bottom:8px;">📖 CÓMO SE JUEGA</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.45);line-height:1.7;">Se revela una carta/dado inicial. Apostás si el siguiente resultado será <b style="color:#2ecc71;">mayor ↑</b> o <b style="color:#e74c3c;">menor ↓</b>. Acertás → el multiplicador <b style="color:#fff;">sube</b>. Podés cobrar en cualquier momento o seguir arriesgando.</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <!-- ════════ HI-LO CARTAS ════════ -->
@@ -7055,6 +7017,21 @@ function applyGoogleUser(user) {
         coinBurst(gift, window.innerWidth/2, window.innerHeight/3);
         toast('💰 +$' + gift.toLocaleString() + ' fichas recibidas!', 3500);
       });
+      // ── Real-time balance watcher (for admin deduct/reset) ──
+      db.ref('ranking/' + myId + '/bal').on('value', snap3 => {
+        const remoteBal = snap3.val();
+        if(remoteBal === null || remoteBal === undefined) return;
+        // Only apply if it differs from local (admin changed it externally)
+        if(remoteBal !== myBal){
+          myBal = remoteBal;
+          saveLocal();
+          const ALL_BAL_IDS = ['myBalance','lobbyBal','mlBal','fsBal','knBal','bcBal','lwBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal','hlcBal','hldBal','gsBal2','slBal'];
+          ALL_BAL_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.textContent = (id==='myBalance'?'$':'')+myBal.toLocaleString();
+          });
+        }
+      });
       setTimeout(() => goLobbyAsGoogle(), 200);
     }).catch(() => setTimeout(() => goLobbyAsGoogle(), 400));
   } else {
@@ -8048,7 +8025,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -12192,7 +12169,7 @@ function bnGo(tab){
     rlStopTimer();
         const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'];
+      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -12222,7 +12199,7 @@ function bnGo(tab){
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
     'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
-    'scSlotsSection','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice',
+    'scSlotsSection','scGemSlots','scHiLoCards','scHiLoDice',
     'scCartasSection','scMesaSection','scArcadeSection','scMultiSection',
     'scDominoLobby','scDomino'];
   allScreens.forEach(id=>hide(id));
@@ -12251,7 +12228,7 @@ function bnSync(screenId){
     scSlots:'games', scCrash:'games', scMines:'games',
     scDice:'games', scRoulette:'games',
     scRouletteLobby:'games', scLobby:'games', scFootball:'games',
-    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoSection:'games', scHiLoCards:'games', scHiLoDice:'games', scCartasSection:'games', scMesaSection:'games', scArcadeSection:'games', scMultiSection:'games'
+    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoCards:'games', scHiLoDice:'games', scCartasSection:'games', scMesaSection:'games', scArcadeSection:'games', scMultiSection:'games'
   };
   bnSetActive(map[screenId]||'');
   // Push a history state so the phone's back button is intercepted
@@ -12289,7 +12266,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -12315,8 +12292,6 @@ window.addEventListener('popstate', function(e) {
     case 'scDomino':
       dmLeave(); break;
     case 'scGemSlots':
-      goGameSelect(); break;
-    case 'scHiLoSection':
       goGameSelect(); break;
     case 'scHiLoCards':
       hlcLeave(); break;
@@ -13993,11 +13968,7 @@ const GS_PAY3 = {0:15,1:12,2:25,3:10,4:10,5:18,6:40,7:50}; // wild3=50
 const GS_PAY2 = 1.5;
 let gsBet2=20, gsSpinning=false, gsReelResults=[0,0,0];
 
-function openHiLoSection(){
-  hide('scGameSelect');
-  show('scHiLoSection'); bnShow(); bnSync('scHiLoSection');
-  navPush('scHiLoSection');
-}
+
 
 function gsStartGemSlots(){
   goGameSelect(); // hides everything
@@ -14160,7 +14131,7 @@ function hlcInit(){
   hlcBuildDeck();
 }
 
-function hlcLeave(){ hide('scHiLoCards'); show('scHiLoSection'); bnSync('scHiLoSection'); }
+function hlcLeave(){ hide('scHiLoCards'); openCartasSection(); }
 
 function hlcBuildDeck(){
   hlcDeck=[];
@@ -14299,7 +14270,7 @@ function hldInit(){
   hldActive=false; hldMult=1; hldStreak=0;
 }
 
-function hldLeave(){ hide('scHiLoDice'); show('scHiLoSection'); bnSync('scHiLoSection'); }
+function hldLeave(){ hide('scHiLoDice'); openMesaSection(); }
 
 function hldAdjBet(v){
   const inp=document.getElementById('hldBetInput');
@@ -14627,6 +14598,37 @@ function dmRenderOpponents(room){
   }).join('');
 }
 
+
+// ── Domino pip SVG renderer ──────────────────────────────────────────────────
+function dmPips(n){
+  // Pip positions as [cx, cy] in a 36×36 viewBox (3×3 grid, margins 9, spacing 9)
+  const pos = {
+    tl:[9,9], tc:[18,9], tr:[27,9],
+    ml:[9,18],mc:[18,18],mr:[27,18],
+    bl:[9,27],bc:[18,27],br:[27,27]
+  };
+  const layouts = [
+    [],                                          // 0
+    [pos.mc],                                    // 1
+    [pos.tr, pos.bl],                            // 2
+    [pos.tr, pos.mc, pos.bl],                    // 3
+    [pos.tl, pos.tr, pos.bl, pos.br],            // 4
+    [pos.tl, pos.tr, pos.mc, pos.bl, pos.br],   // 5
+    [pos.tl, pos.tr, pos.ml, pos.mr, pos.bl, pos.br] // 6
+  ];
+  const dots = (layouts[n]||[]).map(([cx,cy])=>
+    `<circle cx="${cx}" cy="${cy}" r="3.2" fill="#1a1a1a"/>`
+  ).join('');
+  return `<svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">${dots}</svg>`;
+}
+
+function dmTileHtml(a, b, extraClass=''){
+  return `<div class="dm-tile${extraClass}">
+    <div class="dm-half">${dmPips(a)}</div>
+    <div class="dm-divider"></div>
+    <div class="dm-half">${dmPips(b)}</div>
+  </div>`;
+}
 function dmRenderBoard(board){
   const el = document.getElementById('dmBoard'); if(!el) return;
   if(!board.length){
@@ -14634,10 +14636,8 @@ function dmRenderBoard(board){
     return;
   }
   el.innerHTML = board.map(entry=>{
-    const [a,b,horiz] = entry;
-    const cls = horiz ? 'dm-tile horizontal' : 'dm-tile';
-    const divClass = horiz ? 'dm-divider v' : 'dm-divider';
-    return `<div class="${cls} other"><div class="dm-half">${a}</div><div class="${divClass}"></div><div class="dm-half">${b}</div></div>`;
+    const [a,b] = entry;
+    return dmTileHtml(a, b, ' other');
   }).join('');
 }
 
@@ -14651,9 +14651,9 @@ function dmRenderHand(){
     const selClass = (dmSelectedTile===i) ? ' selected' : '';
     const playClass = fits ? ' playable' : '';
     return `<div class="dm-tile${selClass}${playClass}" onclick="dmSelectTile(${i})">
-      <div class="dm-half">${a}</div>
+      <div class="dm-half">${dmPips(a)}</div>
       <div class="dm-divider"></div>
-      <div class="dm-half">${b}</div>
+      <div class="dm-half">${dmPips(b)}</div>
     </div>`;
   }).join('');
 }
