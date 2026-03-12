@@ -1924,7 +1924,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-name">Ruleta</div>
       <div class="gs-card-desc">Europea · 37 números</div>
     </div>
-    <div class="gs-card gs-card-slot gs-card-slots-section" onclick="openSlotsSection()" style="grid-column:span 2;">
+    <div class="gs-card gs-card-slot gs-card-slots-section" onclick="openSlotsSection()">
       <div style="display:flex;align-items:center;gap:14px;width:100%;">
         <div style="font-size:36px;line-height:1;">🎰</div>
         <div style="flex:1;">
@@ -1969,10 +1969,13 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-name">Lucky Wheel</div>
       <div class="gs-card-desc">Gira y multiplica · Hasta 20×</div>
     </div>
-    <div class="gs-card" style="background:linear-gradient(135deg,rgba(52,152,219,.15),rgba(41,128,185,.05));border:1px solid rgba(52,152,219,.3);" onclick="openHiLoSection()">
-      <div class="gs-card-icon">🃏</div>
-      <div class="gs-card-name">Hi-Lo</div>
-      <div class="gs-card-desc">Cartas · Dados · ¿Mayor o menor?</div>
+    <div onclick="openHiLoSection()" style="grid-column:span 2;background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(41,128,185,.06));border:1.5px solid rgba(52,152,219,.4);border-radius:18px;padding:16px 14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
+      <div style="font-size:36px;line-height:1;">🃏</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:900;color:#fff;">Hi-Lo</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;">Cartas · Dados · ¿Mayor o menor?</div>
+      </div>
+      <div style="font-size:16px;color:rgba(52,152,219,.6);">→</div>
     </div>
     <div class="gs-card gs-card-domino" onclick="selectGame('domino')">
       <div class="gs-card-icon">🁣</div>
@@ -1994,7 +1997,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
   <div style="width:100%;max-width:400px;padding:20px 16px 0;">
     <!-- Header -->
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-      <button onclick="goBack()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
       <div>
         <div style="font-size:20px;font-weight:900;color:#ffb400;letter-spacing:2px;">🎰 SLOTS</div>
         <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">Elige tu máquina</div>
@@ -2005,14 +2008,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 
       <!-- Classic Slots — available -->
-      <div onclick="selectGame('slots')" style="grid-column:span 2;background:linear-gradient(135deg,rgba(255,180,0,.18),rgba(255,140,0,.06));border:1.5px solid rgba(255,180,0,.4);border-radius:18px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;" onmousedown="this.style.transform='scale(.97)'" onmouseup="this.style.transform=''">
-        <div style="font-size:40px;line-height:1;">🎰</div>
-        <div style="flex:1;">
-          <div style="font-size:15px;font-weight:900;color:#fff;">Classic Slots</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:2px;">5 carretes · 5 líneas · Bonus spins</div>
-          <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 7px;font-size:9px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
-        </div>
-        <div style="font-size:18px;color:rgba(255,180,0,.6);">→</div>
+      <div onclick="selectGame('slots')" style="background:linear-gradient(135deg,rgba(255,180,0,.18),rgba(255,140,0,.06));border:1.5px solid rgba(255,180,0,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎰</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Classic Slots</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">5 carretes · 5 líneas</div>
+        <div style="background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:6px;padding:2px 8px;font-size:8px;color:#2ecc71;font-weight:700;">● DISPONIBLE</div>
       </div>
 
       <!-- Gem Slots — available -->
@@ -2143,7 +2143,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ GEM SLOTS ════════ -->
 <div class="fullscreen hidden mg-screen" id="scGemSlots">
   <div class="mg-topbar" style="border-bottom:1px solid rgba(138,43,226,.35);">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openSlotsSection()">← Salir</button>
     <div class="mg-title" style="color:#b39ddb;">💎 GEM SLOTS</div>
     <div class="mg-bal" id="gsBal2">$0</div>
   </div>
@@ -2186,7 +2186,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <div class="fullscreen hidden" id="scHiLoSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#001a2e,#020609);">
   <div style="width:100%;max-width:400px;padding:20px 16px 0;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-      <button onclick="goBack()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
       <div>
         <div style="font-size:20px;font-weight:900;color:#3498db;letter-spacing:2px;">🃏 HI-LO</div>
         <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">¿Mayor o menor?</div>
@@ -2516,7 +2516,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ SLOTS ════════ -->
 <div class="fullscreen hidden mg-screen" id="scSlots">
   <div class="mg-topbar" style="border-bottom:1px solid rgba(139,94,0,.35);">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openSlotsSection()">← Salir</button>
     <div class="mg-title" style="color:#c9a84c;">🎰 SLOTS</div>
     <div class="mg-bal" id="slBal">$0</div>
   </div>
@@ -12072,7 +12072,9 @@ function bnGo(tab){
   
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection'];
+    'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
+    'scSlotsSection','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice',
+    'scDominoLobby','scDomino'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -13843,6 +13845,8 @@ function openHiLoSection(){
 }
 
 function gsStartGemSlots(){
+  goGameSelect(); // hides everything
+  hide('scGameSelect');
   show('scGemSlots'); bnShow(); bnSync('scGemSlots');
   gsInitReels();
   document.getElementById('gsBal2').textContent = '$'+myBal.toLocaleString();
@@ -14001,7 +14005,7 @@ function hlcInit(){
   hlcBuildDeck();
 }
 
-function hlcLeave(){ hide('scHiLoCards'); show('scGameSelect'); bnSync('scHiLoSection'); }
+function hlcLeave(){ hide('scHiLoCards'); show('scHiLoSection'); bnSync('scHiLoSection'); }
 
 function hlcBuildDeck(){
   hlcDeck=[];
@@ -14140,7 +14144,7 @@ function hldInit(){
   hldActive=false; hldMult=1; hldStreak=0;
 }
 
-function hldLeave(){ hide('scHiLoDice'); show('scGameSelect'); bnSync('scHiLoSection'); }
+function hldLeave(){ hide('scHiLoDice'); show('scHiLoSection'); bnSync('scHiLoSection'); }
 
 function hldAdjBet(v){
   const inp=document.getElementById('hldBetInput');
