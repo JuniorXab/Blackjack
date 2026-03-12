@@ -1022,6 +1022,8 @@ canvas#rouletteWheel.big{width:200px;height:200px;}
 .gs-card-dice:hover{box-shadow:0 0 30px rgba(52,152,219,.15);}
 .gs-card-football{background:linear-gradient(135deg,rgba(192,57,43,.18),rgba(41,128,185,.15));border:1px solid rgba(160,80,100,.4);}
 .gs-card-football:hover{box-shadow:0 0 30px rgba(192,57,43,.2);}
+.gs-card-domino{background:linear-gradient(135deg,rgba(240,160,20,.15),rgba(180,110,0,.05));border:1px solid rgba(240,160,20,.3);}
+.gs-card-domino:hover{box-shadow:0 0 30px rgba(240,160,20,.15);}
 .gs-card-rummy{background:linear-gradient(135deg,rgba(155,89,182,.18),rgba(52,152,219,.12));border:1px solid rgba(155,89,182,.4);}
 .gs-card-rummy:hover{box-shadow:0 0 30px rgba(155,89,182,.2);}
 
@@ -1680,6 +1682,79 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 
 
 
+
+/* ════════ DOMINÓ ════════ */
+#scDominoLobby{background:radial-gradient(ellipse at 50% 20%,#1a1000,#04080f);overflow-y:auto;justify-content:flex-start;}
+#scDomino{background:radial-gradient(ellipse at 50% 30%,#0d1a0d,#030a03);flex-direction:column;overflow:hidden;}
+.dm-lobby-wrap{width:100%;max-width:420px;margin:0 auto;padding:16px 16px 100px;}
+.dm-lobby-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.dm-lobby-back{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;padding:7px 14px;}
+.dm-logo-inline{display:flex;align-items:center;gap:8px;}
+.dm-logo-title{font-size:20px;font-weight:900;letter-spacing:3px;color:#fff;}
+.dm-logo-sub{font-size:8px;color:rgba(240,208,96,.6);letter-spacing:2px;}
+.dm-bet-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;font-weight:700;margin-bottom:10px;}
+.dm-bet-chips{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px;scrollbar-width:none;}
+.dm-bet-chips::-webkit-scrollbar{display:none;}
+.dm-chip{width:56px;height:56px;border-radius:50%;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:11px;font-weight:900;transition:transform .12s,box-shadow .15s;background:rgba(0,0,0,.4);}
+.dm-chip:active{transform:scale(.93);}
+.dm-chip.sel{transform:scale(1.1);box-shadow:0 0 18px currentColor;}
+.dm-chip[data-v="50"]{border-color:#27ae60;color:#2ecc71;}
+.dm-chip[data-v="100"]{border-color:#2980b9;color:#3498db;}
+.dm-chip[data-v="300"]{border-color:#d35400;color:#e67e22;}
+.dm-chip[data-v="500"]{border-color:#8e44ad;color:#9b59b6;}
+.dm-chip[data-v="1000"]{border-color:#c0392b;color:#e74c3c;}
+.dm-chip[data-v="2000"]{border-color:#b7950b;color:#f0d060;}
+.dm-chip[data-v="5000"]{border-color:#e84393;color:#fd79a8;}
+.dm-action-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.dm-action-card{border-radius:16px;padding:16px;cursor:pointer;transition:transform .12s;text-align:center;position:relative;overflow:hidden;}
+.dm-action-card:active{transform:scale(.97);}
+.dm-action-card.create{background:linear-gradient(135deg,rgba(240,160,20,.25),rgba(180,110,0,.1));border:1px solid rgba(240,160,20,.5);}
+.dm-action-card.join{background:linear-gradient(135deg,rgba(46,204,113,.15),rgba(39,174,96,.08));border:1px solid rgba(46,204,113,.3);}
+.dm-action-card-icon{font-size:28px;margin-bottom:6px;}
+.dm-action-card-title{font-size:13px;font-weight:900;color:#fff;margin-bottom:3px;}
+.dm-action-card-sub{font-size:9px;color:rgba(255,255,255,.4);}
+.dm-code-panel{background:rgba(240,160,20,.08);border:1px solid rgba(240,160,20,.25);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px;display:none;}
+.dm-code-val{font-size:32px;font-weight:900;letter-spacing:6px;color:#f0d060;margin:8px 0;}
+.dm-code-copy{background:rgba(240,208,96,.1);border:1px solid rgba(240,208,96,.25);border-radius:10px;color:#f0d060;font-size:11px;font-weight:700;padding:6px 16px;cursor:pointer;margin-bottom:10px;}
+.dm-players-list{margin:8px 0;}
+.dm-player-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.dm-player-row:last-child{border:none;}
+.dm-start-btn{width:100%;padding:12px;background:linear-gradient(135deg,#f0d060,#c9840a);border:none;border-radius:12px;color:#000;font-size:14px;font-weight:900;cursor:pointer;margin-top:8px;}
+.dm-start-btn:disabled{opacity:.4;cursor:not-allowed;background:rgba(255,255,255,.1);color:rgba(255,255,255,.3);}
+.dm-join-row{display:flex;gap:8px;}
+.dm-join-input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;font-weight:900;letter-spacing:4px;text-align:center;padding:10px;outline:none;text-transform:uppercase;}
+.dm-join-btn{background:linear-gradient(135deg,#2ecc71,#27ae60);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:900;padding:10px 18px;cursor:pointer;}
+/* Game screen */
+.dm-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.dm-pot{font-size:13px;font-weight:900;color:#f0d060;}
+.dm-board-wrap{flex:1;overflow:auto;position:relative;background:rgba(0,60,0,.3);border:1px solid rgba(255,255,255,.06);margin:8px;border-radius:14px;}
+.dm-board{display:flex;flex-wrap:wrap;gap:4px;padding:12px;align-content:flex-start;min-height:160px;}
+/* Domino tile */
+.dm-tile{display:inline-flex;flex-direction:column;background:#f5f0e0;border-radius:5px;border:2px solid #c8c0a0;cursor:pointer;flex-shrink:0;transition:transform .12s,box-shadow .15s;position:relative;}
+.dm-tile.horizontal{flex-direction:row;}
+.dm-tile.playable{border-color:#2ecc71;box-shadow:0 0 8px rgba(46,204,113,.5);cursor:pointer;}
+.dm-tile.playable:active{transform:scale(.92);}
+.dm-tile.selected{border-color:#f0d060;box-shadow:0 0 12px rgba(240,208,96,.7);transform:translateY(-4px);}
+.dm-tile.other{cursor:default;opacity:.85;}
+.dm-half{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#222;}
+.dm-divider{width:100%;height:2px;background:#c8c0a0;}
+.dm-divider.v{width:2px;height:100%;}
+/* Hand row */
+.dm-hand-wrap{background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.08);padding:10px 6px 8px;flex-shrink:0;}
+.dm-hand-label{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:2px;text-align:center;margin-bottom:6px;}
+.dm-hand-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;justify-content:center;scrollbar-width:none;}
+.dm-hand-row::-webkit-scrollbar{display:none;}
+/* Opponents */
+.dm-opponents{display:flex;gap:6px;padding:6px 10px;flex-shrink:0;overflow-x:auto;}
+.dm-opp{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.dm-opp.active-turn{border-color:#f0d060;background:rgba(240,208,96,.08);}
+.dm-opp-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.7);}
+.dm-opp-count{font-size:9px;color:rgba(255,255,255,.35);}
+/* Pass/Draw button */
+.dm-pass-btn{margin:0 10px 6px;padding:10px;background:rgba(52,152,219,.15);border:1px solid rgba(52,152,219,.35);border-radius:12px;color:#5dade2;font-size:12px;font-weight:700;cursor:pointer;width:calc(100% - 20px);}
+.dm-pass-btn:disabled{opacity:.3;cursor:not-allowed;}
+.dm-turn-badge{position:absolute;top:6px;left:50%;transform:translateX(-50%);background:rgba(240,208,96,.9);color:#000;font-size:9px;font-weight:900;padding:2px 8px;border-radius:8px;white-space:nowrap;}
+
 </style>
 </head>
 <body>
@@ -1872,6 +1947,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       <div class="gs-card-name">Lucky Wheel</div>
       <div class="gs-card-desc">Gira y multiplica · Hasta 20×</div>
     </div>
+    <div class="gs-card gs-card-domino" onclick="selectGame('domino')">
+      <div class="gs-card-icon">🁣</div>
+      <div class="gs-card-name">Dominó</div>
+      <div class="gs-card-desc">2–4 jugadores · Multijugador</div>
+    </div>
     <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')">
       <div class="gs-card-icon">🃏</div>
       <div class="gs-card-name">Rummy</div>
@@ -1925,6 +2005,110 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
       </div>
 
     </div>
+  </div>
+</div>
+
+
+<!-- ════════ DOMINÓ LOBBY ════════ -->
+<div class="fullscreen hidden" id="scDominoLobby">
+  <div class="dm-lobby-wrap">
+    <div class="dm-lobby-header">
+      <button class="dm-lobby-back" onclick="goGameSelect()">← Juegos</button>
+      <div class="dm-logo-inline">
+        <div style="font-size:28px;">🁣</div>
+        <div>
+          <div class="dm-logo-title">DOMINÓ</div>
+          <div class="dm-logo-sub">2–4 JUGADORES · MULTIJUGADOR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-bet-label">APUESTA POR JUGADOR</div>
+    <div class="dm-bet-chips" id="dmBetChips">
+      <div class="dm-chip sel" data-v="50"  onclick="dmSelectBet(50)"><span>$</span><span>50</span></div>
+      <div class="dm-chip" data-v="100"  onclick="dmSelectBet(100)"><span>$</span><span>100</span></div>
+      <div class="dm-chip" data-v="300"  onclick="dmSelectBet(300)"><span>$</span><span>300</span></div>
+      <div class="dm-chip" data-v="500"  onclick="dmSelectBet(500)"><span>$</span><span>500</span></div>
+      <div class="dm-chip" data-v="1000" onclick="dmSelectBet(1000)"><span>$</span><span>1K</span></div>
+      <div class="dm-chip" data-v="2000" onclick="dmSelectBet(2000)"><span>$</span><span>2K</span></div>
+      <div class="dm-chip" data-v="5000" onclick="dmSelectBet(5000)"><span>$</span><span>5K</span></div>
+    </div>
+
+    <div class="dm-action-cards">
+      <div class="dm-action-card create" onclick="dmCreateRoom()">
+        <div class="dm-action-card-icon">👥</div>
+        <div class="dm-action-card-title">Crear sala</div>
+        <div class="dm-action-card-sub">2–4 jugadores</div>
+      </div>
+      <div class="dm-action-card join" onclick="document.getElementById('dmJoinInput').focus()">
+        <div class="dm-action-card-icon">🔗</div>
+        <div class="dm-action-card-title">Unirse</div>
+        <div class="dm-action-card-sub">Con código</div>
+      </div>
+    </div>
+
+    <div class="dm-code-panel" id="dmCodePanel">
+      <div style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;">CÓDIGO DE SALA</div>
+      <div class="dm-code-val" id="dmCodeVal">——</div>
+      <button class="dm-code-copy" onclick="dmCopyCode()">📋 Copiar código</button>
+      <div class="dm-players-list" id="dmLobbyPlayers"></div>
+      <button class="dm-start-btn" id="dmStartBtn" onclick="dmHostStart()" disabled>Esperando jugadores...</button>
+    </div>
+
+    <div class="dm-join-row">
+      <input class="dm-join-input" id="dmJoinInput" placeholder="CÓDIGO" maxlength="6"
+        oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')dmJoinRoom()">
+      <button class="dm-join-btn" onclick="dmJoinRoom()">Unirse</button>
+    </div>
+
+    <div style="margin-top:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px;">
+      <div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;margin-bottom:8px;">📖 CÓMO SE JUEGA</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.6;">
+        Cada jugador recibe <b style="color:#fff;">7 fichas</b>. El doble más alto sale primero. En tu turno coloca una ficha que coincida con los extremos del tablero, o <b style="color:#fff;">roba del pozo</b>. Gana quien se quede sin fichas — si nadie puede, gana el de <b style="color:#fff;">menor puntaje</b>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ DOMINÓ GAME ════════ -->
+<div class="fullscreen hidden" id="scDomino" style="display:flex;flex-direction:column;overflow:hidden;padding:0!important;align-items:stretch!important;justify-content:flex-start!important;">
+  <!-- Top bar -->
+  <div class="dm-topbar">
+    <button onclick="dmLeave()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:rgba(255,255,255,.5);font-size:13px;padding:5px 12px;cursor:pointer;">← Salir</button>
+    <div class="dm-pot">🁣 Dominó · Pozo: <span id="dmPotDisplay">$0</span></div>
+    <div id="dmTurnLabel" style="font-size:10px;color:rgba(255,255,255,.4);">—</div>
+  </div>
+
+  <!-- Opponents -->
+  <div class="dm-opponents" id="dmOpponents"></div>
+
+  <!-- Board -->
+  <div class="dm-board-wrap">
+    <div style="position:relative;">
+      <div id="dmTurnBadge" style="display:none;" class="dm-turn-badge">⭐ TU TURNO</div>
+    </div>
+    <div class="dm-board" id="dmBoard">
+      <div style="width:100%;text-align:center;color:rgba(255,255,255,.2);font-size:11px;padding:30px 0;">Esperando inicio...</div>
+    </div>
+  </div>
+
+  <!-- Pass/Draw button -->
+  <button class="dm-pass-btn" id="dmPassBtn" onclick="dmPassOrDraw()" disabled style="display:none;">
+    🃏 Robar del pozo
+  </button>
+
+  <!-- My hand -->
+  <div class="dm-hand-wrap">
+    <div class="dm-hand-label">TUS FICHAS · <span id="dmMyCount">0</span></div>
+    <div class="dm-hand-row" id="dmMyHand"></div>
+  </div>
+
+  <!-- Result overlay -->
+  <div id="dmResultOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.85);z-index:800;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+    <div id="dmResultIcon" style="font-size:60px;">🏆</div>
+    <div id="dmResultTitle" style="font-size:24px;font-weight:900;color:#f0d060;">¡GANASTE!</div>
+    <div id="dmResultSub" style="font-size:13px;color:rgba(255,255,255,.6);text-align:center;"></div>
+    <button onclick="dmLeave()" style="margin-top:12px;padding:12px 32px;background:linear-gradient(135deg,#f0d060,#c9840a);border:none;border-radius:14px;color:#000;font-size:14px;font-weight:900;cursor:pointer;">Salir</button>
   </div>
 </div>
 
@@ -7473,7 +7657,7 @@ function openSlotsSection() {
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -8163,6 +8347,8 @@ function selectGame(game) {
     startFootball();
   } else if (game === 'rummy') {
     rmShowLobby();
+  } else if (game === 'domino') {
+    dmShowLobby();
   }
 }
 
@@ -11284,7 +11470,8 @@ function renderAdminPlayerList(list) {
       <div class="adm-player-bal">$${(p.bal||0).toLocaleString()}</div>
       <div class="adm-quick-give">
         <input class="adm-give-inp" type="tel" inputmode="numeric" placeholder="$" id="admGive_${p.uid}">
-        <button class="adm-action-btn adm-btn-give" onclick="admQuickGive('${p.uid}','${sn}')">💰</button>
+        <button class="adm-action-btn adm-btn-give" onclick="admQuickGive('${p.uid}','${sn}')" title="Dar fichas">💰</button>
+        <button class="adm-action-btn" style="background:rgba(231,76,60,.2);color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:8px;padding:4px 7px;font-size:12px;cursor:pointer;" onclick="admQuickDeduct('${p.uid}','${sn}')" title="Quitar fichas">➖</button>
         <button class="adm-action-btn adm-btn-ban" onclick="adminToggleBan('${p.uid}','${sn}',${banned})" title="${banned?'Desbanear':'Banear'}">${banned?'🔓':'🚫'}</button>
         <button class="adm-action-btn adm-btn-del" onclick="adminDeletePlayer('${p.uid}','${sn}')" title="Eliminar">🗑️</button>
       </div>
@@ -11314,6 +11501,28 @@ async function admQuickGive(uid, name) {
     if(inp) inp.value='';
     admAddLog('💰 +$'+amount.toLocaleString()+' → '+name);
     toast('✅ $'+amount.toLocaleString()+' enviadas a '+name, 2000);
+    loadAdminData();
+  } catch(e){ toast('Error: '+e.message); }
+}
+
+async function admQuickDeduct(uid, name) {
+  const inp = document.getElementById('admGive_'+uid);
+  const amount = parseInt(inp?.value) || 0;
+  if(amount <= 0){ toast('⚠️ Ingresa una cantidad a quitar'); return; }
+  if(!confirm('¿Quitar $'+amount.toLocaleString()+' a '+name+'?')) return;
+  if(!db) return;
+  try {
+    const snap = await db.ref('ranking/'+uid+'/bal').once('value');
+    const curBal = snap.val() || 0;
+    const newBal = Math.max(0, curBal - amount);
+    await db.ref('ranking/'+uid).update({bal: newBal, updatedAt: Date.now()});
+    if(uid === myId){
+      myBal = newBal; saveLocal();
+      ['myBalance','lobbyBal','mlBal','gsBal'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=(id==='myBalance'?'$':'')+myBal.toLocaleString();});
+    }
+    if(inp) inp.value='';
+    admAddLog('➖ -$'+amount.toLocaleString()+' → '+name+' (saldo: $'+newBal.toLocaleString()+')');
+    toast('✅ -$'+amount.toLocaleString()+' quitados a '+name, 2000);
     loadAdminData();
   } catch(e){ toast('Error: '+e.message); }
 }
@@ -11549,7 +11758,7 @@ function bnGo(tab){
     rlStopTimer();
         const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'];
+      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -11578,7 +11787,7 @@ function bnGo(tab){
   
   const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-    'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy'];
+    'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -11605,7 +11814,7 @@ function bnSync(screenId){
     scSlots:'games', scCrash:'games', scMines:'games',
     scDice:'games', scRoulette:'games',
     scRouletteLobby:'games', scLobby:'games', scFootball:'games',
-    scRummyLobby:'games', scRummy:'games'
+    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games'
   };
   bnSetActive(map[screenId]||'');
   // Push a history state so the phone's back button is intercepted
@@ -11643,7 +11852,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -11664,6 +11873,10 @@ window.addEventListener('popstate', function(e) {
     case 'scRouletteLobby':
     case 'scSlotsSection':
       goGameSelect(); break;
+    case 'scDominoLobby':
+      goGameSelect(); break;
+    case 'scDomino':
+      dmLeave(); break;
     case 'scSlots':
     case 'scCrash':
     case 'scMines':
@@ -13311,6 +13524,461 @@ function rmBotTurnSolo(){
   rmHandleRoomUpdate(rmCurrentRoom);
 }
 
+
+
+
+
+// ════════════════════════════════════════════
+//  DOMINÓ — Motor completo
+// ════════════════════════════════════════════
+const DM_PATH = 'casino-domino';
+
+let dmBet = 50, dmRoomCode = '', dmIsHost = false;
+let dmRoomRef = null, dmCurrentRoom = null;
+let dmMyHand = [], dmSelectedTile = null;
+let dmLeftEnd = -1, dmRightEnd = -1;
+let dmIsMyTurn = false;
+
+// ── Helpers ──────────────────────────────────
+function dmGenCode(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+
+function dmSelectBet(v){
+  dmBet = v;
+  document.querySelectorAll('.dm-chip').forEach(el=>{
+    el.classList.toggle('sel', parseInt(el.dataset.v)===v);
+  });
+}
+
+function dmCopyCode(){
+  const code = document.getElementById('dmCodeVal').textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(code).then(()=>toast('✅ Código copiado: '+code,2000));
+  else{ const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('✅ Código copiado',1500); }
+}
+
+// Build the 28 domino tiles
+function dmMakeDeck(){
+  const tiles = [];
+  for(let i=0;i<=6;i++) for(let j=i;j<=6;j++) tiles.push([i,j]);
+  // shuffle
+  for(let i=tiles.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [tiles[i],tiles[j]]=[tiles[j],tiles[i]];
+  }
+  return tiles;
+}
+
+// ── Lobby ─────────────────────────────────────
+function dmShowLobby(){
+  ['scLobby','scGameSelect','scDomino'].forEach(id=>hide(id));
+  const cp = document.getElementById('dmCodePanel');
+  if(cp) cp.style.display='none';
+  show('scDominoLobby'); bnShow(); bnSync('scDominoLobby');
+}
+
+async function dmCreateRoom(){
+  if(!myId.startsWith('g_')){ toast('⚠️ Necesitas cuenta Google'); return; }
+  if(myBal < dmBet){ toast('⚠️ Saldo insuficiente para apostar $'+dmBet); return; }
+  if(!db) return;
+  const code = dmGenCode();
+  dmRoomCode = code; dmIsHost = true;
+  const playerData = {uid:myId, name:myName, color:myColor||'#f0d060'};
+  await db.ref(`${DM_PATH}/${code}`).set({
+    status:'lobby', bet:dmBet, host:myId, createdAt:Date.now(),
+    players:{[myId]:playerData}
+  });
+  db.ref(`${DM_PATH}/${code}/players/${myId}`).onDisconnect().remove();
+  const cp = document.getElementById('dmCodePanel');
+  if(cp){ cp.style.display='block'; document.getElementById('dmCodeVal').textContent=code; }
+  const sb = document.getElementById('dmStartBtn');
+  if(sb){ sb.disabled=true; sb.textContent='Esperando jugadores... (1/4)'; }
+  dmListenLobby(code);
+}
+
+function dmListenLobby(code){
+  if(dmRoomRef) dmRoomRef.off();
+  dmRoomRef = db.ref(`${DM_PATH}/${code}`);
+  dmRoomRef.on('value', snap=>{
+    if(!snap.exists()){ toast('La sala fue cerrada'); return; }
+    const room = snap.val();
+    dmCurrentRoom = room;
+    if(room.status==='playing'){
+      dmRoomRef.off();
+      hide('scDominoLobby'); show('scDomino'); bnSync('scDomino');
+      dmStartGame(room);
+      dmListenGame(code);
+      return;
+    }
+    const players = Object.values(room.players||{});
+    const plEl = document.getElementById('dmLobbyPlayers');
+    if(plEl) plEl.innerHTML = players.map(p=>`
+      <div class="dm-player-row">
+        <div style="width:28px;height:28px;border-radius:50%;background:${p.color||'#f0d060'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#000;">${(p.name||'?')[0].toUpperCase()}</div>
+        <div style="font-size:12px;font-weight:700;color:#fff;">${escHtml(p.name||'Jugador')}</div>
+        ${p.uid===room.host?'<div style="font-size:9px;color:#f0d060;margin-left:auto;">HOST</div>':''}
+      </div>`).join('');
+    const sb = document.getElementById('dmStartBtn');
+    if(sb && dmIsHost){
+      const can = players.length>=2;
+      sb.disabled = !can;
+      sb.textContent = can ? `▶ Iniciar (${players.length} jugadores)` : `Esperando... (${players.length}/4 mín 2)`;
+    }
+  });
+}
+
+async function dmJoinRoom(){
+  if(!myId.startsWith('g_')){ toast('⚠️ Necesitas cuenta Google'); return; }
+  const code = (document.getElementById('dmJoinInput').value||'').trim().toUpperCase();
+  if(code.length<4){ toast('⚠️ Código inválido'); return; }
+  if(!db) return;
+  const snap = await db.ref(`${DM_PATH}/${code}`).once('value');
+  if(!snap.exists()){ toast('❌ Sala no encontrada'); return; }
+  const room = snap.val();
+  if(room.status!=='lobby'){ toast('❌ La partida ya comenzó'); return; }
+  const count = Object.keys(room.players||{}).length;
+  if(count>=4){ toast('❌ Sala llena'); return; }
+  if(myBal<room.bet){ toast('⚠️ Saldo insuficiente ($'+room.bet+' requeridos)'); return; }
+  dmBet = room.bet; dmRoomCode = code; dmIsHost = false;
+  await db.ref(`${DM_PATH}/${code}/players/${myId}`).set({uid:myId,name:myName,color:myColor||'#f0d060'});
+  db.ref(`${DM_PATH}/${code}/players/${myId}`).onDisconnect().remove();
+  const cp = document.getElementById('dmCodePanel');
+  if(cp){ cp.style.display='block'; document.getElementById('dmCodeVal').textContent=code; }
+  const sb = document.getElementById('dmStartBtn');
+  if(sb){ sb.textContent='Esperando al host...'; sb.disabled=true; }
+  dmListenLobby(code);
+}
+
+async function dmHostStart(){
+  if(!dmIsHost||!db) return;
+  const snap = await db.ref(`${DM_PATH}/${dmRoomCode}`).once('value');
+  const room = snap.val();
+  const playerIds = Object.keys(room.players||{});
+  if(playerIds.length<2){ toast('⚠️ Mínimo 2 jugadores'); return; }
+
+  // Deal tiles
+  const deck = dmMakeDeck();
+  const tilesPerPlayer = 7;
+  const hands = {};
+  playerIds.forEach((uid,i)=>{
+    hands[uid] = deck.slice(i*tilesPerPlayer, (i+1)*tilesPerPlayer);
+  });
+  const remaining = deck.slice(playerIds.length*tilesPerPlayer);
+
+  // Find who has [6,6] or highest double to start
+  let startPlayer = playerIds[0];
+  let highDouble = -1;
+  playerIds.forEach(uid=>{
+    hands[uid].forEach(tile=>{
+      if(tile[0]===tile[1] && tile[0]>highDouble){ highDouble=tile[0]; startPlayer=uid; }
+    });
+  });
+
+  // Deduct bets
+  const updates = {};
+  playerIds.forEach(uid=>{ updates[`${DM_PATH}/${dmRoomCode}/players/${uid}/hand`] = hands[uid]; });
+  updates[`${DM_PATH}/${dmRoomCode}/deck`] = remaining;
+  updates[`${DM_PATH}/${dmRoomCode}/board`] = [];
+  updates[`${DM_PATH}/${dmRoomCode}/status`] = 'playing';
+  updates[`${DM_PATH}/${dmRoomCode}/currentTurn`] = startPlayer;
+  updates[`${DM_PATH}/${dmRoomCode}/turnOrder`] = playerIds;
+  updates[`${DM_PATH}/${dmRoomCode}/leftEnd`] = -1;
+  updates[`${DM_PATH}/${dmRoomCode}/rightEnd`] = -1;
+  updates[`${DM_PATH}/${dmRoomCode}/pot`] = dmBet * playerIds.length;
+
+  // Deduct bet from each player's balance
+  for(const uid of playerIds){
+    if(uid===myId){ myBal-=dmBet; saveLocal(); mgUpdateBal(''); updateRanking(); }
+    else await db.ref(`ranking/${uid}/bal`).transaction(b=>(b||0)-dmBet);
+  }
+
+  await db.ref().update(updates);
+}
+
+// ── Game ──────────────────────────────────────
+function dmListenGame(code){
+  if(dmRoomRef) dmRoomRef.off();
+  dmRoomRef = db.ref(`${DM_PATH}/${code}`);
+  dmRoomRef.on('value', snap=>{
+    if(!snap.exists()){ toast('La sala fue cerrada'); dmLeave(); return; }
+    dmCurrentRoom = snap.val();
+    dmHandleUpdate(dmCurrentRoom);
+  });
+}
+
+function dmStartGame(room){
+  dmMyHand = (room.players?.[myId]?.hand)||[];
+  dmSelectedTile = null;
+  dmLeftEnd = room.leftEnd ?? -1;
+  dmRightEnd = room.rightEnd ?? -1;
+  document.getElementById('dmResultOverlay').style.display='none';
+}
+
+function dmHandleUpdate(room){
+  if(!room) return;
+  dmMyHand = (room.players?.[myId]?.hand)||[];
+  dmLeftEnd = room.leftEnd ?? -1;
+  dmRightEnd = room.rightEnd ?? -1;
+  dmIsMyTurn = room.currentTurn === myId;
+  dmSelectedTile = null;
+
+  // Pot
+  document.getElementById('dmPotDisplay').textContent = '$'+(room.pot||0).toLocaleString();
+
+  // Turn label
+  const curPlayer = room.players?.[room.currentTurn];
+  document.getElementById('dmTurnLabel').textContent = room.currentTurn===myId ? '⭐ Tu turno' : (curPlayer?.name||'...')+' juega';
+
+  // Turn badge
+  const badge = document.getElementById('dmTurnBadge');
+  if(badge){ badge.style.display = dmIsMyTurn ? 'block' : 'none'; }
+
+  // Opponents
+  dmRenderOpponents(room);
+
+  // Board
+  dmRenderBoard(room.board||[]);
+
+  // My hand
+  dmRenderHand();
+
+  // Pass/Draw button
+  const pb = document.getElementById('dmPassBtn');
+  if(pb){
+    const canPlay = dmIsMyTurn && dmMyHand.some(t=>dmTileFits(t, dmLeftEnd, dmRightEnd));
+    const deckEmpty = (room.deck||[]).length===0;
+    pb.style.display = dmIsMyTurn ? 'block' : 'none';
+    pb.disabled = !dmIsMyTurn || canPlay;
+    pb.textContent = deckEmpty ? '⏭ Pasar turno' : '🃏 Robar del pozo';
+  }
+
+  // Check end
+  if(room.status==='done') dmShowResult(room);
+}
+
+function dmTileFits(tile, left, right){
+  if(left===-1) return true; // board empty
+  return tile[0]===left||tile[1]===left||tile[0]===right||tile[1]===right;
+}
+
+function dmRenderOpponents(room){
+  const el = document.getElementById('dmOpponents'); if(!el) return;
+  const players = Object.values(room.players||{}).filter(p=>p.uid!==myId);
+  el.innerHTML = players.map(p=>{
+    const isActive = room.currentTurn===p.uid;
+    const count = (p.hand||[]).length;
+    return `<div class="dm-opp ${isActive?'active-turn':''}">
+      <div style="width:22px;height:22px;border-radius:50%;background:${p.color||'#f0d060'};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#000;">${(p.name||'?')[0]}</div>
+      <div><div class="dm-opp-name">${escHtml(p.name||'?')}</div><div class="dm-opp-count">${count} fichas</div></div>
+      ${isActive?'<div style="font-size:8px;color:#f0d060;margin-left:4px;">▶</div>':''}
+    </div>`;
+  }).join('');
+}
+
+function dmRenderBoard(board){
+  const el = document.getElementById('dmBoard'); if(!el) return;
+  if(!board.length){
+    el.innerHTML='<div style="width:100%;text-align:center;color:rgba(255,255,255,.2);font-size:11px;padding:30px 0;">Tablero vacío — primera ficha inicia</div>';
+    return;
+  }
+  el.innerHTML = board.map(entry=>{
+    const [a,b,horiz] = entry;
+    const cls = horiz ? 'dm-tile horizontal' : 'dm-tile';
+    const divClass = horiz ? 'dm-divider v' : 'dm-divider';
+    return `<div class="${cls} other"><div class="dm-half">${a}</div><div class="${divClass}"></div><div class="dm-half">${b}</div></div>`;
+  }).join('');
+}
+
+function dmRenderHand(){
+  const el = document.getElementById('dmMyHand'); if(!el) return;
+  const countEl = document.getElementById('dmMyCount');
+  if(countEl) countEl.textContent = dmMyHand.length;
+  el.innerHTML = dmMyHand.map((tile,i)=>{
+    const [a,b] = tile;
+    const fits = dmIsMyTurn && dmTileFits(tile, dmLeftEnd, dmRightEnd);
+    const selClass = (dmSelectedTile===i) ? ' selected' : '';
+    const playClass = fits ? ' playable' : '';
+    return `<div class="dm-tile${selClass}${playClass}" onclick="dmSelectTile(${i})">
+      <div class="dm-half">${a}</div>
+      <div class="dm-divider"></div>
+      <div class="dm-half">${b}</div>
+    </div>`;
+  }).join('');
+}
+
+function dmSelectTile(idx){
+  if(!dmIsMyTurn) return;
+  const tile = dmMyHand[idx];
+  if(!dmTileFits(tile, dmLeftEnd, dmRightEnd)){ toast('⚠️ Esta ficha no encaja'); return; }
+
+  if(dmSelectedTile===idx){
+    // Second tap — place tile
+    dmPlaceTile(idx);
+    return;
+  }
+  dmSelectedTile = idx;
+  dmRenderHand();
+  // If board is empty, place immediately (no side choice needed)
+  if(dmLeftEnd===-1){ dmPlaceTile(idx); return; }
+  // If only one side fits, place immediately
+  const fitsLeft = tile[0]===dmLeftEnd||tile[1]===dmLeftEnd;
+  const fitsRight = tile[0]===dmRightEnd||tile[1]===dmRightEnd;
+  if(fitsLeft && !fitsRight){ dmPlaceTileOnSide(idx,'left'); return; }
+  if(fitsRight && !fitsLeft){ dmPlaceTileOnSide(idx,'right'); return; }
+  // Both sides fit — ask
+  const sideMsg='¿Dónde colocar? Aceptar=izquierda ('+dmLeftEnd+')  Cancelar=derecha ('+dmRightEnd+')';
+
+  if(confirm(sideMsg)){
+    dmPlaceTileOnSide(idx,'left');
+  } else {
+    dmPlaceTileOnSide(idx,'right');
+  }
+}
+
+function dmPlaceTile(idx){ dmPlaceTileOnSide(idx, dmLeftEnd===-1?'left':'right'); }
+
+async function dmPlaceTileOnSide(idx, side){
+  if(!db||!dmIsMyTurn) return;
+  const room = dmCurrentRoom;
+  const tile = [...dmMyHand[idx]];
+  let [a,b] = tile;
+  const board = [...(room.board||[])];
+  let newLeft = dmLeftEnd, newRight = dmRightEnd;
+
+  if(board.length===0){
+    // First tile
+    board.push([a,b,true]);
+    newLeft = a; newRight = b;
+    // If double, both ends same
+    if(a===b){ newLeft=a; newRight=a; }
+  } else if(side==='left'){
+    // Orient tile so matching number is on the LEFT (outward)
+    if(b===newLeft){ board.unshift([a,b,true]); newLeft=a; }
+    else { board.unshift([b,a,true]); newLeft=b; }
+  } else {
+    // Orient so matching number is on RIGHT (outward)
+    if(a===newRight){ board.push([a,b,true]); newRight=b; }
+    else { board.push([b,a,true]); newRight=a; }
+  }
+
+  const newHand = dmMyHand.filter((_,i)=>i!==idx);
+
+  // Next turn
+  const order = room.turnOrder||Object.keys(room.players||{});
+  const myIdx = order.indexOf(myId);
+  const nextId = order[(myIdx+1)%order.length];
+
+  const updates = {
+    [`${DM_PATH}/${dmRoomCode}/board`]: board,
+    [`${DM_PATH}/${dmRoomCode}/leftEnd`]: newLeft,
+    [`${DM_PATH}/${dmRoomCode}/rightEnd`]: newRight,
+    [`${DM_PATH}/${dmRoomCode}/players/${myId}/hand`]: newHand,
+    [`${DM_PATH}/${dmRoomCode}/currentTurn`]: nextId,
+  };
+
+  // Win check — hand empty
+  if(newHand.length===0){
+    const pot = room.pot||0;
+    updates[`${DM_PATH}/${dmRoomCode}/status`] = 'done';
+    updates[`${DM_PATH}/${dmRoomCode}/winner`] = myId;
+    updates[`${DM_PATH}/${dmRoomCode}/winnerName`] = myName;
+    updates[`${DM_PATH}/${dmRoomCode}/pot`] = 0;
+    // Give pot to winner
+    myBal += pot; saveLocal(); updateRanking();
+    ['lwBal','bcBal','slBal','gsBal','mlBal'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=myBal.toLocaleString();});
+    mlRecordGameStat('domino', true, pot - dmBet);
+    mlUpdateMissionProgress('domino', true, pot - dmBet, {});
+  }
+
+  await db.ref().update(updates);
+  dmSelectedTile = null;
+}
+
+async function dmPassOrDraw(){
+  if(!db||!dmIsMyTurn) return;
+  const room = dmCurrentRoom;
+  const deck = [...(room.deck||[])];
+  const order = room.turnOrder||Object.keys(room.players||{});
+  const myIdx = order.indexOf(myId);
+  const nextId = order[(myIdx+1)%order.length];
+
+  if(deck.length > 0){
+    // Draw a tile
+    const drawn = deck.shift();
+    const newHand = [...dmMyHand, drawn];
+    await db.ref().update({
+      [`${DM_PATH}/${dmRoomCode}/deck`]: deck,
+      [`${DM_PATH}/${dmRoomCode}/players/${myId}/hand`]: newHand,
+      [`${DM_PATH}/${dmRoomCode}/currentTurn`]: nextId,
+    });
+    toast('🃏 Robaste una ficha');
+  } else {
+    // Pass turn, check if game is stuck (no one can play = lowest score wins)
+    await db.ref(`${DM_PATH}/${dmRoomCode}/currentTurn`).set(nextId);
+
+    // Check if ALL players passed consecutively — detect via passCount
+    const passCount = (room.passCount||0) + 1;
+    if(passCount >= order.length){
+      // Game stuck — find lowest score
+      await dmCheckStuck(room, order);
+      return;
+    }
+    await db.ref(`${DM_PATH}/${dmRoomCode}/passCount`).set(passCount);
+    toast('⏭ Turno pasado');
+  }
+}
+
+async function dmCheckStuck(room, order){
+  // Sum of remaining tiles per player
+  const scores = {};
+  order.forEach(uid=>{
+    const hand = room.players?.[uid]?.hand||[];
+    scores[uid] = hand.reduce((s,t)=>s+(t[0]+t[1]),0);
+  });
+  const winnerId = order.reduce((best,uid)=>scores[uid]<scores[best]?uid:best, order[0]);
+  const winnerName = room.players?.[winnerId]?.name||'Jugador';
+  const pot = room.pot||0;
+  const updates = {
+    [`${DM_PATH}/${dmRoomCode}/status`]:'done',
+    [`${DM_PATH}/${dmRoomCode}/winner`]:winnerId,
+    [`${DM_PATH}/${dmRoomCode}/winnerName`]:winnerName,
+    [`${DM_PATH}/${dmRoomCode}/pot`]:0,
+    [`${DM_PATH}/${dmRoomCode}/scores`]:scores,
+  };
+  await db.ref().update(updates);
+  if(winnerId===myId){
+    myBal+=pot; saveLocal(); updateRanking();
+    mlRecordGameStat('domino',true,pot-dmBet);
+    mlUpdateMissionProgress('domino',true,pot-dmBet,{});
+  } else {
+    mlRecordGameStat('domino',false,-dmBet);
+    mlUpdateMissionProgress('domino',false,-dmBet,{});
+  }
+}
+
+function dmShowResult(room){
+  const overlay = document.getElementById('dmResultOverlay');
+  if(!overlay||overlay.style.display==='flex') return;
+  const won = room.winner===myId;
+  overlay.style.display='flex';
+  document.getElementById('dmResultIcon').textContent = won ? '🏆' : '😔';
+  document.getElementById('dmResultTitle').textContent = won ? '¡GANASTE!' : 'Perdiste';
+  const pot = won ? (dmBet*(Object.keys(room.players||{}).length)) : dmBet;
+  document.getElementById('dmResultSub').textContent = won
+    ? `Ganaste $${pot.toLocaleString()} · Quedaste sin fichas primero`
+    : `${escHtml(room.winnerName||'Alguien')} ganó la partida`;
+  if(won){ burst(window.innerWidth/2, window.innerHeight/3, 30); }
+}
+
+function dmLeave(){
+  if(dmRoomRef){ dmRoomRef.off(); dmRoomRef=null; }
+  if(dmRoomCode && db){
+    db.ref(`${DM_PATH}/${dmRoomCode}/players/${myId}`).remove();
+    if(dmIsHost) db.ref(`${DM_PATH}/${dmRoomCode}`).remove();
+  }
+  dmRoomCode=''; dmIsHost=false; dmCurrentRoom=null;
+  dmMyHand=[]; dmSelectedTile=null;
+  hide('scDomino'); hide('scDominoLobby');
+  show('scGameSelect'); bnSync('scGameSelect');
+}
 
 
 // ── Firebase cleanup on room player removal ──────
