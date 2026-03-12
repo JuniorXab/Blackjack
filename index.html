@@ -1796,6 +1796,16 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 /* Multi badge */
 .gs-multi-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(240,208,96,.12);border:1px solid rgba(240,208,96,.3);border-radius:6px;padding:2px 6px;font-size:7px;color:#f0d060;font-weight:800;margin-top:4px;letter-spacing:.5px;}
 
+
+/* ════ GAME SELECT BANNERS ════ */
+.gss-banner{display:flex;align-items:center;gap:16px;border-radius:20px;padding:18px 16px;cursor:pointer;transition:transform .12s,box-shadow .15s;width:100%;}
+.gss-banner:active{transform:scale(.97);}
+.gss-banner-icon{font-size:40px;line-height:1;flex-shrink:0;}
+.gss-banner-body{flex:1;min-width:0;}
+.gss-banner-title{font-size:17px;font-weight:900;color:#fff;letter-spacing:2px;}
+.gss-banner-sub{font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.5px;}
+.gss-banner-arrow{font-size:20px;color:rgba(255,180,0,.5);flex-shrink:0;}
+
 </style>
 </head>
 <body>
@@ -1931,146 +1941,190 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
   </div>
   <div class="gs-title">CASINO</div>
   <div class="gs-sub">Royale</div>
-  <div style="padding-bottom:80px;width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;padding-left:12px;padding-right:12px;">
+  <div style="padding-bottom:80px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:14px;padding-left:14px;padding-right:14px;margin-top:8px;">
 
-    <!-- ── 🎰 SLOTS ───────────────────────────── -->
-    <div class="gs-section">
-      <div class="gs-section-hdr">
-        <span class="gs-section-icon">🎰</span>
-        <span class="gs-section-title">Slots</span>
-        <div class="gs-section-line"></div>
+    <!-- 🎰 SLOTS -->
+    <div class="gss-banner" onclick="openSlotsSection()" style="background:linear-gradient(135deg,rgba(255,180,0,.18),rgba(200,120,0,.06));border:1.5px solid rgba(255,180,0,.4);">
+      <div class="gss-banner-icon">🎰</div>
+      <div class="gss-banner-body">
+        <div class="gss-banner-title">SLOTS</div>
+        <div class="gss-banner-sub">Classic · Gem · Mega</div>
       </div>
-      <div class="gs-section-grid">
-        <div class="gs-section-banner" onclick="openSlotsSection()" style="background:linear-gradient(135deg,rgba(255,180,0,.16),rgba(255,140,0,.05));border:1.5px solid rgba(255,180,0,.35);">
-          <div style="font-size:38px;line-height:1;">🎰</div>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:900;color:#fff;">Máquinas Slots</div>
-            <div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;">Classic · Gem · Mega</div>
-          </div>
-          <div style="font-size:12px;color:rgba(255,180,0,.5);background:rgba(255,180,0,.08);border:1px solid rgba(255,180,0,.2);border-radius:8px;padding:3px 8px;white-space:nowrap;">VER →</div>
-        </div>
-      </div>
+      <div class="gss-banner-arrow">→</div>
     </div>
 
-    <!-- ── 🃏 CARTAS ──────────────────────────── -->
-    <div class="gs-section">
-      <div class="gs-section-hdr">
-        <span class="gs-section-icon">🃏</span>
-        <span class="gs-section-title">Cartas</span>
-        <div class="gs-section-line"></div>
+    <!-- 🃏 CARTAS -->
+    <div class="gss-banner" onclick="openCartasSection()" style="background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(30,90,160,.06));border:1.5px solid rgba(52,152,219,.4);">
+      <div class="gss-banner-icon">🃏</div>
+      <div class="gss-banner-body">
+        <div class="gss-banner-title">CARTAS</div>
+        <div class="gss-banner-sub">Baccarat · Football · Hi-Lo</div>
       </div>
-      <div class="gs-section-grid">
-        <div class="gs-card gs-card-baccarat" onclick="selectGame('baccarat')">
-          <div class="gs-card-icon">🎴</div>
-          <div class="gs-card-name">Baccarat</div>
-          <div class="gs-card-desc">Jugador · Banca · Empate</div>
-        </div>
-        <div class="gs-card gs-card-football" onclick="selectGame('football')">
-          <div class="gs-card-icon">⚽</div>
-          <div class="gs-card-name">Football Studio</div>
-          <div class="gs-card-desc">Local · Empate · Visitante</div>
-        </div>
-        <div class="gs-section-banner" onclick="selectGame('hilocards')" style="background:linear-gradient(135deg,rgba(52,152,219,.16),rgba(41,128,185,.05));border:1.5px solid rgba(52,152,219,.35);">
-          <div style="font-size:32px;line-height:1;">🃏</div>
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:900;color:#fff;">Hi-Lo Cartas</div>
-            <div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;">¿Mayor o menor?</div>
-          </div>
-          <div style="font-size:12px;color:rgba(52,152,219,.5);">→</div>
-        </div>
-      </div>
+      <div class="gss-banner-arrow" style="color:rgba(52,152,219,.6);">→</div>
     </div>
 
-    <!-- ── 🎲 MESA ─────────────────────────────── -->
-    <div class="gs-section">
-      <div class="gs-section-hdr">
-        <span class="gs-section-icon">🎲</span>
-        <span class="gs-section-title">Mesa</span>
-        <div class="gs-section-line"></div>
+    <!-- 🎲 MESA -->
+    <div class="gss-banner" onclick="openMesaSection()" style="background:linear-gradient(135deg,rgba(46,204,113,.16),rgba(20,130,70,.05));border:1.5px solid rgba(46,204,113,.38);">
+      <div class="gss-banner-icon">🎲</div>
+      <div class="gss-banner-body">
+        <div class="gss-banner-title">MESA</div>
+        <div class="gss-banner-sub">Ruleta · Dados · Keno · Hi-Lo</div>
       </div>
-      <div class="gs-section-grid">
-        <div class="gs-card gs-card-rl" onclick="selectGame('rl')">
-          <div class="gs-card-icon">🎡</div>
-          <div class="gs-card-name">Ruleta</div>
-          <div class="gs-card-desc">Europea · 37 números</div>
-        </div>
-        <div class="gs-card gs-card-dice" onclick="selectGame('dice')">
-          <div class="gs-card-icon">🎲</div>
-          <div class="gs-card-name">Dados</div>
-          <div class="gs-card-desc">Hi-Lo · Elige tu riesgo</div>
-        </div>
-        <div class="gs-card gs-card-keno" onclick="selectGame('keno')">
-          <div class="gs-card-icon">🎱</div>
-          <div class="gs-card-name">Keno</div>
-          <div class="gs-card-desc">Elige números · Lotería</div>
-        </div>
-        <div class="gs-card" onclick="selectGame('hilodice')" style="background:linear-gradient(135deg,rgba(231,76,60,.15),rgba(192,57,43,.05));border:1px solid rgba(231,76,60,.3);">
-          <div class="gs-card-icon">🎲</div>
-          <div class="gs-card-name">Hi-Lo Dados</div>
-          <div class="gs-card-desc">Mayor · Menor · Igual</div>
-        </div>
-      </div>
+      <div class="gss-banner-arrow" style="color:rgba(46,204,113,.6);">→</div>
     </div>
 
-    <!-- ── ⚡ ARCADE ─────────────────────────────── -->
-    <div class="gs-section">
-      <div class="gs-section-hdr">
-        <span class="gs-section-icon">⚡</span>
-        <span class="gs-section-title">Arcade</span>
-        <div class="gs-section-line"></div>
+    <!-- ⚡ ARCADE -->
+    <div class="gss-banner" onclick="openArcadeSection()" style="background:linear-gradient(135deg,rgba(155,89,182,.18),rgba(100,40,140,.06));border:1.5px solid rgba(155,89,182,.4);">
+      <div class="gss-banner-icon">⚡</div>
+      <div class="gss-banner-body">
+        <div class="gss-banner-title">ARCADE</div>
+        <div class="gss-banner-sub">Crash · Minas · Lucky Wheel</div>
       </div>
-      <div class="gs-section-grid">
-        <div class="gs-card gs-card-crash" onclick="selectGame('crash')">
-          <div class="gs-card-icon">📈</div>
-          <div class="gs-card-name">Crash</div>
-          <div class="gs-card-desc">Retira antes del crash</div>
-        </div>
-        <div class="gs-card gs-card-mines" onclick="selectGame('mines')">
-          <div class="gs-card-icon">💣</div>
-          <div class="gs-card-name">Minas</div>
-          <div class="gs-card-desc">5×5 · Campo minado</div>
-        </div>
-        <div class="gs-card gs-card-wheel" onclick="selectGame('wheel')">
-          <div class="gs-card-icon">🎡</div>
-          <div class="gs-card-name">Lucky Wheel</div>
-          <div class="gs-card-desc">Gira y multiplica</div>
-        </div>
-      </div>
+      <div class="gss-banner-arrow" style="color:rgba(155,89,182,.6);">→</div>
     </div>
 
-    <!-- ── 👥 MULTIJUGADOR ─────────────────────── -->
-    <div class="gs-section">
-      <div class="gs-section-hdr">
-        <span class="gs-section-icon">👥</span>
-        <span class="gs-section-title">Multijugador</span>
-        <div class="gs-section-line"></div>
+    <!-- 👥 MULTIJUGADOR -->
+    <div class="gss-banner" onclick="openMultiSection()" style="background:linear-gradient(135deg,rgba(240,208,96,.16),rgba(180,140,0,.05));border:1.5px solid rgba(240,208,96,.38);">
+      <div class="gss-banner-icon">👥</div>
+      <div class="gss-banner-body">
+        <div class="gss-banner-title">MULTIJUGADOR</div>
+        <div class="gss-banner-sub">Blackjack · Rummy · Dominó</div>
       </div>
-      <div class="gs-section-grid">
-        <div class="gs-card gs-card-bj" onclick="selectGame('bj')">
-          <div class="gs-card-icon">🃏</div>
-          <div class="gs-card-name">BlackJack</div>
-          <div class="gs-card-desc">Solo · Multi · Torneos</div>
-          <div class="gs-multi-badge">👥 MULTI</div>
-        </div>
-        <div class="gs-card gs-card-rummy" onclick="selectGame('rummy')">
-          <div class="gs-card-icon">🀇</div>
-          <div class="gs-card-name">Rummy</div>
-          <div class="gs-card-desc">2–4 jugadores · 4+4+3</div>
-          <div class="gs-multi-badge">👥 MULTI</div>
-        </div>
-        <div class="gs-card gs-card-domino" onclick="selectGame('domino')">
-          <div class="gs-card-icon">🁣</div>
-          <div class="gs-card-name">Dominó</div>
-          <div class="gs-card-desc">2–4 jugadores · Pozo</div>
-          <div class="gs-multi-badge">👥 MULTI</div>
-        </div>
-      </div>
+      <div class="gss-banner-arrow" style="color:rgba(240,208,96,.6);">→</div>
     </div>
 
     <div class="gs-bal">Tus fichas: <span id="gsBal">0</span></div>
   </div>
 </div>
 
+
+<!-- ════════ CARTAS SECTION ════════ -->
+<div class="fullscreen hidden" id="scCartasSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#001428,#020609);">
+  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#5dade2;letter-spacing:2px;">🃏 CARTAS</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">Juegos de cartas</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div onclick="selectGame('baccarat')" style="background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(52,152,219,.05));border:1.5px solid rgba(52,152,219,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎴</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Baccarat</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Jugador · Banca · Empate</div>
+      </div>
+      <div onclick="selectGame('football')" style="background:linear-gradient(135deg,rgba(46,204,113,.18),rgba(46,204,113,.05));border:1.5px solid rgba(46,204,113,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">⚽</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Football Studio</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Local · Empate · Visitante</div>
+      </div>
+      <div onclick="selectGame('hilocards')" style="background:linear-gradient(135deg,rgba(52,152,219,.18),rgba(52,152,219,.05));border:1.5px solid rgba(52,152,219,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🃏</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Hi-Lo Cartas</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">¿Mayor o menor?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MESA SECTION ════════ -->
+<div class="fullscreen hidden" id="scMesaSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#001a0d,#020906);">
+  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#2ecc71;letter-spacing:2px;">🎲 MESA</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">Juegos de mesa</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div onclick="selectGame('rl')" style="background:linear-gradient(135deg,rgba(231,76,60,.18),rgba(231,76,60,.05));border:1.5px solid rgba(231,76,60,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎡</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Ruleta</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Europea · 37 números</div>
+      </div>
+      <div onclick="selectGame('dice')" style="background:linear-gradient(135deg,rgba(230,126,34,.18),rgba(230,126,34,.05));border:1.5px solid rgba(230,126,34,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎲</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Dados</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Hi-Lo · Elige tu riesgo</div>
+      </div>
+      <div onclick="selectGame('keno')" style="background:linear-gradient(135deg,rgba(26,188,156,.18),rgba(26,188,156,.05));border:1.5px solid rgba(26,188,156,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎱</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Keno</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Elige números · Lotería</div>
+      </div>
+      <div onclick="selectGame('hilodice')" style="background:linear-gradient(135deg,rgba(231,76,60,.18),rgba(231,76,60,.05));border:1.5px solid rgba(231,76,60,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎲</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Hi-Lo Dados</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Mayor · Menor · Igual</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ARCADE SECTION ════════ -->
+<div class="fullscreen hidden" id="scArcadeSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#0d0020,#040008);">
+  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#b39ddb;letter-spacing:2px;">⚡ ARCADE</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">Juegos rápidos</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div onclick="selectGame('crash')" style="background:linear-gradient(135deg,rgba(46,204,113,.18),rgba(46,204,113,.05));border:1.5px solid rgba(46,204,113,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">📈</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Crash</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Retira antes del crash</div>
+      </div>
+      <div onclick="selectGame('mines')" style="background:linear-gradient(135deg,rgba(231,76,60,.18),rgba(231,76,60,.05));border:1.5px solid rgba(231,76,60,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">💣</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Minas</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">5×5 · Campo minado</div>
+      </div>
+      <div onclick="selectGame('wheel')" style="background:linear-gradient(135deg,rgba(155,89,182,.18),rgba(155,89,182,.05));border:1.5px solid rgba(155,89,182,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎡</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Lucky Wheel</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Gira · Hasta ×50</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MULTIJUGADOR SECTION ════════ -->
+<div class="fullscreen hidden" id="scMultiSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;background:radial-gradient(ellipse at 50% 20%,#1a1400,#080600);">
+  <div style="width:100%;max-width:400px;padding:20px 16px 0;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="goGameSelect()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:38px;height:38px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#f0d060;letter-spacing:2px;">👥 MULTIJUGADOR</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;">Juega con amigos</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div onclick="selectGame('bj')" style="background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.05));border:1.5px solid rgba(201,168,76,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🃏</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Blackjack</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Solo · Multi · Torneos</div>
+        <div style="margin-top:4px;display:inline-flex;align-items:center;gap:3px;background:rgba(240,208,96,.12);border:1px solid rgba(240,208,96,.3);border-radius:6px;padding:2px 6px;font-size:7px;color:#f0d060;font-weight:800;letter-spacing:.5px;">👥 MULTI</div>
+      </div>
+      <div onclick="selectGame('rummy')" style="background:linear-gradient(135deg,rgba(142,68,173,.18),rgba(142,68,173,.05));border:1.5px solid rgba(142,68,173,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🀇</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Rummy</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">2–4 jug · 4+4+3 cartas</div>
+        <div style="margin-top:4px;display:inline-flex;align-items:center;gap:3px;background:rgba(240,208,96,.12);border:1px solid rgba(240,208,96,.3);border-radius:6px;padding:2px 6px;font-size:7px;color:#f0d060;font-weight:800;letter-spacing:.5px;">👥 MULTI</div>
+      </div>
+      <div onclick="selectGame('domino')" style="background:linear-gradient(135deg,rgba(240,208,96,.18),rgba(240,208,96,.05));border:1.5px solid rgba(240,208,96,.4);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🁣</div>
+        <div style="font-size:12px;font-weight:900;color:#fff;">Dominó</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">2–4 jug · Gana el pozo</div>
+        <div style="margin-top:4px;display:inline-flex;align-items:center;gap:3px;background:rgba(240,208,96,.12);border:1px solid rgba(240,208,96,.3);border-radius:6px;padding:2px 6px;font-size:7px;color:#f0d060;font-weight:800;letter-spacing:.5px;">👥 MULTI</div>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- ════════ SLOTS SECTION ════════ -->
 <div class="fullscreen hidden" id="scSlotsSection" style="overflow-y:auto;justify-content:flex-start;align-items:center;padding:0 0 80px;">
   <div style="width:100%;max-width:400px;padding:20px 16px 0;">
@@ -7969,16 +8023,32 @@ function showGameSelect() {
   bnShow(); bnSync('scGameSelect');
 }
 function openSlotsSection() {
-  goGameSelect(); // hide other screens
+  goGameSelect();
   hide('scGameSelect');
   show('scSlotsSection');
   bnSync('scSlotsSection');
   navPush('scSlotsSection');
 }
+function openCartasSection(){
+  goGameSelect(); hide('scGameSelect');
+  show('scCartasSection'); bnShow(); bnSync('scCartasSection'); navPush('scCartasSection');
+}
+function openMesaSection(){
+  goGameSelect(); hide('scGameSelect');
+  show('scMesaSection'); bnShow(); bnSync('scMesaSection'); navPush('scMesaSection');
+}
+function openArcadeSection(){
+  goGameSelect(); hide('scGameSelect');
+  show('scArcadeSection'); bnShow(); bnSync('scArcadeSection'); navPush('scArcadeSection');
+}
+function openMultiSection(){
+  goGameSelect(); hide('scGameSelect');
+  show('scMultiSection'); bnShow(); bnSync('scMultiSection'); navPush('scMultiSection');
+}
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -12122,7 +12192,7 @@ function bnGo(tab){
     rlStopTimer();
         const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
-      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice'];
+      'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'];
     allScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
@@ -12153,6 +12223,7 @@ function bnGo(tab){
     'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
     'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
     'scSlotsSection','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice',
+    'scCartasSection','scMesaSection','scArcadeSection','scMultiSection',
     'scDominoLobby','scDomino'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
@@ -12180,7 +12251,7 @@ function bnSync(screenId){
     scSlots:'games', scCrash:'games', scMines:'games',
     scDice:'games', scRoulette:'games',
     scRouletteLobby:'games', scLobby:'games', scFootball:'games',
-    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoSection:'games', scHiLoCards:'games', scHiLoDice:'games'
+    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoSection:'games', scHiLoCards:'games', scHiLoDice:'games', scCartasSection:'games', scMesaSection:'games', scArcadeSection:'games', scMultiSection:'games'
   };
   bnSetActive(map[screenId]||'');
   // Push a history state so the phone's back button is intercepted
@@ -12218,7 +12289,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoSection','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -12251,6 +12322,11 @@ window.addEventListener('popstate', function(e) {
       hlcLeave(); break;
     case 'scHiLoDice':
       hldLeave(); break;
+    case 'scCartasSection':
+    case 'scMesaSection':
+    case 'scArcadeSection':
+    case 'scMultiSection':
+      goGameSelect(); break;
     case 'scSlots':
     case 'scCrash':
     case 'scMines':
