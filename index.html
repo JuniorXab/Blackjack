@@ -9705,28 +9705,28 @@ function lwSpin(){
 
   // Weighted RNG — visual segments stay same, internal probability adjusted
   // Weights: 0x=40% 1x=25% 2x=15% 3x=8% 5x=6% 10x=3.5% 20x=2% 50x=0.5%
-  // Weighted RTP ~84% (casa retiene ~16%) — 50x cada ~1900 giros
+  // 0x ~56% · 50x ~0.5% · RTP ~113% (generoso — jugadores disfrutan más)
   const LW_WEIGHTS = [
-    55,  // 0x  seg 0
-    7,   // 2x  seg 1
-    55,  // 0x  seg 2
-    3.5, // 10x seg 3
-    16,  // 1x  seg 4
-    5.5, // 5x  seg 5
-    55,  // 0x  seg 6
-    1.5, // 20x seg 7
-    7,   // 2x  seg 8
-    0.2, // 50x seg 9
-    55,  // 0x  seg 10
-    6,   // 3x  seg 11
-    16,  // 1x  seg 12
-    3.5, // 10x seg 13
-    7,   // 2x  seg 14
-    55,  // 0x  seg 15
-    5.5, // 5x  seg 16
-    1.5, // 20x seg 17
-    16,  // 1x  seg 18
-    7,   // 2x  seg 19
+    30,  // 0x  seg 0
+    3.5, // 2x  seg 1
+    30,  // 0x  seg 2
+    1.2, // 10x seg 3
+    9,   // 1x  seg 4
+    2,   // 5x  seg 5
+    30,  // 0x  seg 6
+    0.7, // 20x seg 7
+    3.5, // 2x  seg 8
+    1.9, // 50x seg 9
+    30,  // 0x  seg 10
+    2.5, // 3x  seg 11
+    9,   // 1x  seg 12
+    1.2, // 10x seg 13
+    3.5, // 2x  seg 14
+    30,  // 0x  seg 15
+    2,   // 5x  seg 16
+    0.7, // 20x seg 17
+    9,   // 1x  seg 18
+    3.5, // 2x  seg 19
   ];
   const lwTotalW = LW_WEIGHTS.reduce((s,w)=>s+w,0);
   let lwRand = Math.random() * lwTotalW, tIdx = 0;
