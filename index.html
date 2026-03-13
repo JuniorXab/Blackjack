@@ -13831,8 +13831,10 @@ async function rmConfirmDeclare(){
   const pids=Object.keys(players);
   const betAmt=room.bet||rmBet;
   const totalPot=betAmt*pids.length;
-  myBal+=totalPot; saveLocal(); updateRanking();
-  mlRecordGameStat('rummy',true,totalPot-betAmt);
+  // Winner gains only the other players' bets (their own bet was never deducted)
+  const rmProfit = totalPot - betAmt;
+  myBal+=rmProfit; saveLocal(); updateRanking();
+  mlRecordGameStat('rummy',true,rmProfit);
   if(rmSoloMode){
     Object.assign(rmCurrentRoom,{status:'done',winner:myId,winnerName:myName,winGroups:[rmDeclGroups[0],rmDeclGroups[1],rmDeclGroups[2]],pot:totalPot});
     rmHandleRoomUpdate(rmCurrentRoom);
@@ -13879,16 +13881,14 @@ async function rmPlayAgain(){
   const overlay=document.getElementById('rmWinOverlay');
   if(overlay) overlay.style.display='none';
   if(rmSoloMode){ rmStartSolo(); return; }
-  // Everyone (host and guest) goes back to lobby screen to start fresh
-  // Clean up old room from Firebase to avoid stale winner state
-  if(db && rmRoomCode && rmRoomCode!=='SOLO'){
-    try{ await db.ref(`${RM_PATH}/${rmRoomCode}`).remove(); }catch(e){}
-  }
+  // Stop listening to old room but DON'T delete it (would fire "sala cerrada" for others)
   if(rmRoomRef){ rmRoomRef.off(); rmRoomRef=null; }
   rmClearSession();
+  const prevBet=rmBet; // keep same bet for convenience
   rmRoomCode=''; rmIsHost=false; rmCurrentRoom=null;
   rmMyHand=[]; rmGroups=[[],[],[]]; rmSelectedIdx=null; rmPhase='idle';
   rmStopTurnTimer();
+  rmBet=prevBet;
   hide('scRummy');
   rmShowLobby();
 }
@@ -14712,39 +14712,37 @@ function dmTileHtml(a, b, extraClass=''){
 // Each tile stored as [a, b] — a is "left/top" half, b is "right/bottom" half
 // Layout: horiz rows that wrap into snake pattern
 // ── Domino snake-board layout ────────────────────────────────────────────────
-// Base tile size — will be scaled down if too many tiles
-const DM_BASE_TS = 32; // half-side px
-const DM_BASE_TL = 66; // long side (32+2+32)
-const DM_GAP = 4;
-const DM_PAD = 8;
+// Tiles laid in a snake: row 0 goes right, corner turns, row 1 goes left, etc.
+// The WHOLE layout is centered horizontally on the board each render.
+const DM_BASE_TS = 32; // half-side (each domino half is a square)
+const DM_BASE_TL = 66; // long side = 32+2+32
+const DM_BASE_GAP = 4;
+const DM_BASE_PAD = 10;
 let dmLayoutPositions = [];
-let dmCurScale = 1;
 
 function dmCalcScale(n, BW){
-  // Try to fit on screen, shrink tile if needed
-  // Estimate: with perRow tiles, rows = ceil(n/perRow)
-  // perRow based on BW, scale=1 first
-  for(let s=1.0; s>=0.45; s-=0.05){
+  // Shrink tile size until the layout fits vertically
+  for(let s=1.0; s>=0.42; s=parseFloat((s-0.05).toFixed(2))){
     const ts=Math.round(DM_BASE_TS*s);
     const tl=ts*2+2;
-    const gap=Math.max(2,Math.round(DM_GAP*s));
-    const pad=Math.max(4,Math.round(DM_PAD*s));
+    const gap=Math.max(2,Math.round(DM_BASE_GAP*s));
+    const pad=Math.max(4,Math.round(DM_BASE_PAD*s));
     const perRow=Math.max(2,Math.floor((BW-pad*2+gap)/(tl+gap)));
-    // rows: each "segment" of perRow horiz tiles + 1 corner tile per row
-    const rows=Math.ceil(n/(perRow));
+    const rows=Math.ceil(n/perRow);
     const totalH=rows*(tl+gap)+pad*2;
-    if(totalH<420) return {s,ts,tl,gap,pad,perRow};
+    if(totalH<400) return {s,ts,tl,gap,pad,perRow};
   }
-  const s=0.45, ts=Math.round(DM_BASE_TS*s), tl=ts*2+2, gap=2, pad=4;
+  const s=0.42,ts=Math.round(DM_BASE_TS*s),tl=ts*2+2,gap=2,pad=4;
   return {s,ts,tl,gap,pad,perRow:Math.max(2,Math.floor((BW-pad*2+gap)/(tl+gap)))};
 }
 
 function dmRenderBoard(board){
-  const el = document.getElementById('dmBoard'); if(!el) return;
+  const el=document.getElementById('dmBoard'); if(!el) return;
 
+  // Empty state
   if(!board.length){
     Array.from(el.querySelectorAll('.dm-board-tile')).forEach(c=>c.remove());
-    const ph = el.querySelector('.dm-empty-ph');
+    const ph=el.querySelector('.dm-empty-ph');
     if(!ph){
       const d=document.createElement('div'); d.className='dm-empty-ph';
       d.style.cssText='width:100%;text-align:center;color:rgba(255,255,255,.2);font-size:11px;padding:30px 0;';
@@ -14754,17 +14752,14 @@ function dmRenderBoard(board){
   }
   const ph=el.querySelector('.dm-empty-ph'); if(ph) ph.remove();
 
-  const BW = el.clientWidth || 320;
-  const {s,ts,tl,gap,pad,perRow} = dmCalcScale(board.length, BW);
-  dmCurScale = s;
+  const BW=el.offsetWidth||el.clientWidth||320;
+  const {ts,tl,gap,pad,perRow}=dmCalcScale(board.length, BW);
 
-  // ── Build positions array using snake layout ──────────────────────────────
-  // Strategy: tiles go right in row 0, corner turns down-right, then left in row 1, etc.
-  // Each "row" holds perRow horizontal tiles. The last tile of a non-final row is VERTICAL (corner).
-  const positions = []; // {x,y,w,h,flex,a,b}
-  let cx = 0, cy = 0; // relative to top-left of layout (we'll center later)
-  let dir = 1; // 1=right, -1=left
-  let inRow = 0; // how many horiz tiles placed in current row
+  // ── Compute raw positions (uncentered, starting at x=0, y=0) ─────────────
+  const raw=[]; // {rx,ry,w,h,flex,a,b}
+  let cx=0, cy=0;
+  let dir=1; // 1=right, -1=left
+  let inRow=0;
 
   for(let i=0;i<board.length;i++){
     const [a,b]=board[i];
@@ -14772,55 +14767,56 @@ function dmRenderBoard(board){
     const isCorner=!isLast && inRow===perRow-1;
 
     if(isCorner){
-      // Vertical corner tile
-      const px=(dir===1)?cx:cx-ts;
-      positions.push({x:px,y:cy,w:ts,h:tl,flex:'column',a,b});
-      // Move to next row
+      // Vertical tile at the turning point
+      const flipV=(dir===-1);
+      const ta=flipV?b:a, tb=flipV?a:b;
+      const rx=(dir===1)?cx:cx-ts;
+      raw.push({rx,ry:cy,w:ts,h:tl,flex:'column',a:ta,b:tb});
+      // Advance to next row
       cy+=tl+gap;
-      if(dir===1){ cx=BW-pad-ts; dir=-1; }
-      else { cx=pad; dir=1; }
+      // next row starts from the SAME edge (the corner tile is already at the edge)
+      if(dir===1){ cx=rx; dir=-1; }
+      else        { cx=rx+ts; dir=1; }
       inRow=0;
     } else {
       // Horizontal tile
-      const flipForDir=(dir===-1);
-      const ta=flipForDir?b:a, tb=flipForDir?a:b;
-      const px=(dir===1)?cx:cx-tl;
-      positions.push({x:px,y:cy,w:tl,h:ts,flex:'row',a:ta,b:tb});
+      const flipH=(dir===-1);
+      const ta=flipH?b:a, tb=flipH?a:b;
+      const rx=(dir===1)?cx:cx-tl;
+      raw.push({rx,ry:cy,w:tl,h:ts,flex:'row',a:ta,b:tb});
       if(dir===1) cx+=tl+gap; else cx-=tl+gap;
       inRow++;
     }
   }
 
-  // ── Center the whole layout horizontally ─────────────────────────────────
-  const minX=Math.min(...positions.map(p=>p.x));
-  const maxX=Math.max(...positions.map(p=>p.x+p.w));
-  const layoutW=maxX-minX;
-  const offsetX=Math.max(0,Math.round((BW-layoutW)/2))-minX;
-  positions.forEach(p=>p.x+=offsetX);
-
-  // Vertical: first tile starts padded from top
+  // ── Center horizontally ───────────────────────────────────────────────────
+  const minRX=Math.min(...raw.map(p=>p.rx));
+  const maxRX=Math.max(...raw.map(p=>p.rx+p.w));
+  const layoutW=maxRX-minRX;
+  const shiftX=Math.round((BW-layoutW)/2)-minRX;
   const offsetY=pad;
-  positions.forEach(p=>p.y+=offsetY);
 
-  dmLayoutPositions=positions.map(p=>({x:p.x,y:p.y,w:p.w,h:p.h}));
+  dmLayoutPositions=raw.map(p=>({x:p.rx+shiftX, y:p.ry+offsetY, w:p.w, h:p.h}));
 
   // ── Build HTML ─────────────────────────────────────────────────────────────
+  const svgSz=Math.round(ts*0.92);
+  function pip(n){ return dmPips(n).replace('width="36" height="36"',`width="${svgSz}" height="${svgSz}"`); }
   const halfSt=`width:${ts}px;height:${ts}px;display:flex;align-items:center;justify-content:center;flex-shrink:0;`;
-  const svgS=Math.round(ts*0.95);
-  function pip(n){ return dmPips(n).replace('width="36" height="36"',`width="${svgS}" height="${svgS}"`); }
+
   let html='';
-  positions.forEach((p,i)=>{
-    const isEndTile=i===0||i===positions.length-1;
-    const border=isEndTile?'border-color:#a0c8a0;':'';
-    const div=p.flex==='row'
-      ?`<div style="width:2px;background:#aaa;align-self:stretch;margin:2px 0;flex-shrink:0;"></div>`
-      :`<div style="height:2px;background:#aaa;align-self:stretch;margin:0 2px;flex-shrink:0;"></div>`;
-    html+=`<div class="dm-board-tile dm-tile other" style="position:absolute;left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;display:flex;flex-direction:${p.flex};align-items:center;${border}">
-      <div style="${halfSt}">${pip(p.a)}</div>${div}<div style="${halfSt}">${pip(p.b)}</div>
+  dmLayoutPositions.forEach((p,i)=>{
+    const r=raw[i];
+    const isEnd=i===0||i===dmLayoutPositions.length-1;
+    const endBorder=isEnd?'border-color:#8fd08f;':'';
+    const div=r.flex==='row'
+      ?`<div style="width:2px;background:#bbb;align-self:stretch;margin:2px 0;flex-shrink:0;"></div>`
+      :`<div style="height:2px;background:#bbb;align-self:stretch;margin:0 2px;flex-shrink:0;"></div>`;
+    html+=`<div class="dm-board-tile dm-tile other" style="position:absolute;left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;display:flex;flex-direction:${r.flex};align-items:center;${endBorder}">
+      <div style="${halfSt}">${pip(r.a)}</div>${div}<div style="${halfSt}">${pip(r.b)}</div>
     </div>`;
   });
 
-  const maxY=Math.max(...positions.map(p=>p.y+p.h))+pad;
+  const maxY=Math.max(...dmLayoutPositions.map(p=>p.y+p.h))+pad;
   el.style.height=maxY+'px';
   Array.from(el.querySelectorAll('.dm-board-tile')).forEach(c=>c.remove());
   el.insertAdjacentHTML('afterbegin',html);
