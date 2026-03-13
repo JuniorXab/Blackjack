@@ -8333,6 +8333,7 @@ function mlRefresh(){
   // Ranking
   mlLoadRanking();
   // Daily streak
+  migrateLocalStorage();
   streakCheckLogin();
   streakRender();
   // Chat
@@ -11476,6 +11477,32 @@ function streakGetData(){
   try{ return JSON.parse(localStorage.getItem('bjmp_sk_'+(myId||'g'))||'{}'); }catch(e){ return {}; }
 }
 function streakSave(d){ localStorage.setItem('bjmp_sk_'+(myId||'g'),JSON.stringify(d)); }
+
+
+// ── MIGRATE legacy localStorage keys to per-user keys ────────────────────────
+// Called once after myId is known. Copies old shared keys → new user-keyed keys
+// if the new key doesn't exist yet (so we never overwrite real user data).
+function migrateLocalStorage(){
+  if(!myId) return;
+  const uid = myId.replace(/[^a-z0-9_]/gi,'_');
+  const pairs = [
+    ['bjmp_game_stats', 'bjmp_gs_'+uid],
+    ['bjmp_missions',   'bjmp_ms_'+uid],
+    ['bjmp_streak',     'bjmp_sk_'+uid],
+    ['bjmp_spin',       'bjmp_spin_'+uid],
+    ['bjmp_lw_count',   'bjmp_lw_count_'+uid],
+    ['bjmp_lw_free',    'bjmp_lw_free_'+uid],
+    ['bjmp_duelo_log',  'bjmp_duelo_log_'+uid],
+  ];
+  pairs.forEach(([oldKey, newKey])=>{
+    // Only migrate if old data exists AND new key is empty
+    const oldVal = localStorage.getItem(oldKey);
+    if(oldVal && !localStorage.getItem(newKey)){
+      localStorage.setItem(newKey, oldVal);
+      // Don't delete old key — safe fallback
+    }
+  });
+}
 
 function streakCheckLogin(){
   const d = streakGetData();
