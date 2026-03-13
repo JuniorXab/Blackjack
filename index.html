@@ -10433,6 +10433,10 @@ function lwCurrentIdx(angle){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 function lwInit(){
+  lwUpdateFreeBar();
+  const freeReady = lwGetFreeReady();
+  const spinBtn = document.getElementById('lwSpinBtn');
+  if(spinBtn) spinBtn.textContent = freeReady ? '🎁 GIRO GRATIS' : '🎡 GIRAR';
   lwBet=100; lwDouble=false; lwSpinning=false;
   if(lwAnimId){cancelAnimationFrame(lwAnimId);lwAnimId=null;}
   if(_lwStarRaf){cancelAnimationFrame(_lwStarRaf);_lwStarRaf=null;}
@@ -10462,12 +10466,25 @@ function lwToggleDouble(){
 // ── Spin ──────────────────────────────────────────────────────────────────────
 function lwSpin(){
   if(lwSpinning) return;
-  const eff=lwDouble?lwBet*2:lwBet;
-  if(eff>myBal){toast('Fichas insuficientes',1500);return;}
+  const isFree = lwGetFreeReady();
+  const eff = isFree ? 0 : (lwDouble?lwBet*2:lwBet);
+  if(!isFree && eff>myBal){toast('Fichas insuficientes',1500);return;}
   lwSpinning=true;
   document.getElementById('lwSpinBtn').disabled=true;
   document.getElementById('lwResultBanner').innerHTML='';
-  myBal-=eff; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
+  if(isFree){
+    lwSetFreeReady(false);
+    toast('🎁 ¡Giro GRATIS activado!', 1500);
+  } else {
+    myBal-=eff; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
+    // Track paid spins toward free spin
+    if(!isFree){
+      let c = lwGetSpinCount()+1;
+      if(c>=10){ lwSetFreeReady(true); lwSetSpinCount(0); toast('🎁 ¡Giro gratis desbloqueado! Próximo giro sin costo',3500); }
+      else lwSetSpinCount(c);
+      lwUpdateFreeBar();
+    }
+  }
 
   // Weighted RNG — visual segments stay same, internal probability adjusted
   // Weights: 0x=40% 1x=25% 2x=15% 3x=8% 5x=6% 10x=3.5% 20x=2% 50x=0.5%
@@ -11376,14 +11393,51 @@ function updateRanking() {
 // ═══════════════════════════════════════════
 //  DAILY SPIN WHEEL
 // ═══════════════════════════════════════════
-const SPIN_PRIZES = [
-  { label: '$100',   amount: 100,  color: '#3498db', weight: 30 },
-  { label: '$200',   amount: 200,  color: '#2ecc71', weight: 25 },
-  { label: '$300',   amount: 300,  color: '#e67e22', weight: 20 },
-  { label: '$100',   amount: 100,  color: '#3498db', weight: 15 },
-  { label: '$500',   amount: 500,  color: '#3498db', weight: 8  },
-  { label: '$1,000', amount: 1000, color: '#f0d060', weight: 2  },
+// Daily spin prizes — 10 segments, vary by streak
+// streak bonus: 7+ days → tier +1, 14+ days → tier +2
+const SPIN_PRIZES_BASE = [
+  { label:'$50',    amount:50,    color:'#2c5f8a', weight:22, icon:'💰' },
+  { label:'$150',   amount:150,   color:'#1a7a42', weight:20, icon:'💵' },
+  { label:'$100',   amount:100,   color:'#3498db', weight:18, icon:'💰' },
+  { label:'$250',   amount:250,   color:'#2ecc71', weight:14, icon:'💵' },
+  { label:'$500',   amount:500,   color:'#8e44ad', weight:10, icon:'💎' },
+  { label:'$300',   amount:300,   color:'#e67e22', weight:8,  icon:'🌟' },
+  { label:'$750',   amount:750,   color:'#c0392b', weight:4,  icon:'🔥' },
+  { label:'$1,500', amount:1500,  color:'#e74c3c', weight:2.5,icon:'🏆' },
+  { label:'$3,000', amount:3000,  color:'#c9a84c', weight:1,  icon:'👑' },
+  { label:'$10,000',amount:10000, color:'#f0d060', weight:0.5,icon:'💫' },
 ];
+const SPIN_PRIZES_MID = [ // 7+ streak — all amounts ×1.5
+  { label:'$75',    amount:75,    color:'#2c5f8a', weight:22, icon:'💰' },
+  { label:'$225',   amount:225,   color:'#1a7a42', weight:20, icon:'💵' },
+  { label:'$150',   amount:150,   color:'#3498db', weight:18, icon:'💰' },
+  { label:'$375',   amount:375,   color:'#2ecc71', weight:14, icon:'💎' },
+  { label:'$750',   amount:750,   color:'#8e44ad', weight:10, icon:'💎' },
+  { label:'$450',   amount:450,   color:'#e67e22', weight:8,  icon:'🌟' },
+  { label:'$1,100', amount:1100,  color:'#c0392b', weight:4,  icon:'🔥' },
+  { label:'$2,250', amount:2250,  color:'#e74c3c', weight:2.5,icon:'🏆' },
+  { label:'$4,500', amount:4500,  color:'#c9a84c', weight:1,  icon:'👑' },
+  { label:'$15,000',amount:15000, color:'#f0d060', weight:0.5,icon:'💫' },
+];
+const SPIN_PRIZES_HIGH = [ // 14+ streak — all amounts ×2.5
+  { label:'$125',   amount:125,   color:'#2c5f8a', weight:22, icon:'💰' },
+  { label:'$375',   amount:375,   color:'#1a7a42', weight:20, icon:'💵' },
+  { label:'$250',   amount:250,   color:'#3498db', weight:18, icon:'💰' },
+  { label:'$625',   amount:625,   color:'#2ecc71', weight:14, icon:'💎' },
+  { label:'$1,250', amount:1250,  color:'#8e44ad', weight:10, icon:'💎' },
+  { label:'$750',   amount:750,   color:'#e67e22', weight:8,  icon:'🌟' },
+  { label:'$1,875', amount:1875,  color:'#c0392b', weight:4,  icon:'🔥' },
+  { label:'$3,750', amount:3750,  color:'#e74c3c', weight:2.5,icon:'🏆' },
+  { label:'$7,500', amount:7500,  color:'#c9a84c', weight:1,  icon:'👑' },
+  { label:'$25,000',amount:25000, color:'#f0d060', weight:0.5,icon:'💫' },
+];
+
+function spinGetPrizes(){
+  const streak = streakGetData().count || 0;
+  if(streak >= 14) return SPIN_PRIZES_HIGH;
+  if(streak >= 7)  return SPIN_PRIZES_MID;
+  return SPIN_PRIZES_BASE;
+}
 
 let spinDone = false;
 
@@ -11476,7 +11530,16 @@ function openSpinModal() {
   }
   spinDone = false;
   document.getElementById('spinModal').style.display = 'flex';
-  document.getElementById('spinResult').textContent = '';
+  // Show streak tier info
+  const streak = streakGetData().count || 0;
+  const tierHtml = streak>=14
+    ? '<span style="color:#f0d060;font-size:11px;font-weight:800;">🔥🔥 Racha '+streak+' días — premios ×2.5</span>'
+    : streak>=7
+    ? '<span style="color:#f39c12;font-size:11px;font-weight:800;">🔥 Racha '+streak+' días — premios ×1.5</span>'
+    : streak>=3
+    ? '<span style="color:#e67e22;font-size:11px;">Racha '+streak+' días · a los 7 los premios mejoran</span>'
+    : '<span style="color:rgba(255,255,255,.3);font-size:11px;">Juega cada día para desbloquear mejores premios</span>';
+  document.getElementById('spinResult').innerHTML = tierHtml;
   document.getElementById('spinBtn').disabled = false;
   document.getElementById('spinBtn').textContent = '🎰 ¡Girar!';
   drawWheel(0);
@@ -11499,33 +11562,43 @@ function drawWheel(rotation) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const cx = 110, cy = 110, r = 106;
-  const total = SPIN_PRIZES.reduce((s, p) => s + p.weight, 0);
+  const prizes = spinGetPrizes();
+  const total = prizes.reduce((s, p) => s + p.weight, 0);
   let angle = rotation * Math.PI / 180;
   ctx.clearRect(0, 0, 220, 220);
-  SPIN_PRIZES.forEach(p => {
+  prizes.forEach((p, i) => {
     const slice = (p.weight / total) * 2 * Math.PI;
+    // Alternating shade for adjacent segments
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.arc(cx, cy, r, angle, angle + slice);
     ctx.closePath();
     ctx.fillStyle = p.color;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,.3)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(0,0,0,.5)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-    // Label
+    // Icon
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(angle + slice / 2);
     ctx.textAlign = 'right';
+    ctx.font = '12px Arial';
+    ctx.fillText(p.icon, r - 62, -5);
+    // Label
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 13px Georgia';
-    ctx.shadowColor = 'rgba(0,0,0,.8)';
-    ctx.shadowBlur = 4;
-    ctx.fillText(p.label, r - 10, 5);
+    ctx.font = 'bold 12px Georgia';
+    ctx.shadowColor = 'rgba(0,0,0,.9)';
+    ctx.shadowBlur = 5;
+    ctx.fillText(p.label, r - 8, 5);
     ctx.restore();
     angle += slice;
   });
+  // Center gold circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, Math.PI*2);
+  ctx.fillStyle = '#f0d060';
+  ctx.fill();
 }
 
 function doSpin() {
@@ -11535,44 +11608,46 @@ function doSpin() {
   btn.disabled = true;
   btn.textContent = '⏳ Girando...';
 
-  // Pick prize by weight
-  const total = SPIN_PRIZES.reduce((s, p) => s + p.weight, 0);
+  const prizes = spinGetPrizes();
+  const total = prizes.reduce((s, p) => s + p.weight, 0);
   let rand = Math.random() * total;
   let prizeIdx = 0;
-  for (let i = 0; i < SPIN_PRIZES.length; i++) {
-    rand -= SPIN_PRIZES[i].weight;
+  for (let i = 0; i < prizes.length; i++) {
+    rand -= prizes[i].weight;
     if (rand <= 0) { prizeIdx = i; break; }
   }
-  const prize = SPIN_PRIZES[prizeIdx];
+  const prize = prizes[prizeIdx];
 
-  // Build cumulative angle positions (0-360 range, canvas 0=3 o'clock)
-  // Pointer is at top = 270° in canvas
   let cumulAngle = 0;
-  const starts = SPIN_PRIZES.map(p => {
+  const starts = prizes.map(p => {
     const s = cumulAngle;
     cumulAngle += (p.weight / total) * 360;
     return s;
   });
   const sliceDeg = (prize.weight / total) * 360;
-  // Land at center of prize slice, with small random offset (±30% of half-slice) to avoid exact boundary
   const offset = (Math.random() - 0.5) * sliceDeg * 0.5;
   const prizeCenter = starts[prizeIdx] + sliceDeg / 2 + offset;
   const spins = 5 + Math.floor(Math.random() * 3);
-  // After rotation, canvas angle of segment start = finalRotation (mod 360)
-  // Prize center = finalRotation + prizeCenter ≡ 270° (mod 360)
   const finalRotation = spins * 360 + (270 - prizeCenter);
 
-  const wheel = document.getElementById('spinWheel');
-  wheel.style.transform = '';
-  wheel.style.transition = 'none';
-
+  // tick sound as wheel spins
+  let lastAngle = 0;
+  const segAng = 360 / prizes.length;
   let startTime = null;
-  const duration = 3500;
+  const duration = 3800;
   const animate = (ts) => {
     if (!startTime) startTime = ts;
     const prog = Math.min(1, (ts - startTime) / duration);
-    const eased = 1 - Math.pow(1 - prog, 3);
-    drawWheel(finalRotation * eased);
+    const eased = 1 - Math.pow(1 - prog, 3.5);
+    const curAngle = finalRotation * eased;
+    drawWheel(curAngle);
+    // tick
+    const seg = Math.floor(curAngle / segAng);
+    if(seg !== Math.floor(lastAngle / segAng)){
+      const spd = 1 - prog;
+      playTone(600 + Math.random()*200, 0.025, 'square', 0.04 + spd*0.08);
+    }
+    lastAngle = curAngle;
     if (prog < 1) requestAnimationFrame(animate);
     else drawWheel(finalRotation);
   };
@@ -11581,20 +11656,21 @@ function doSpin() {
   setTimeout(() => {
     setLastSpinDate();
     myBal += prize.amount;
-    saveLocal();
-    updateRanking();
-    const balEl = document.getElementById('myBalance');
-    if (balEl) balEl.textContent = '$' + myBal.toLocaleString();
+    saveLocal(); updateRanking();
+    const big = prize.amount >= 3000;
+    const streak = streakGetData().count || 0;
+    const tierLabel = streak>=14?' 🔥🔥 (×2.5 racha)':streak>=7?' 🔥 (×1.5 racha)':'';
     document.getElementById('spinResult').innerHTML =
-      '<span style="font-size:24px;font-weight:900;color:' + prize.color + '">+$' + prize.amount.toLocaleString() + ' fichas!</span>';
-    btn.textContent = '✅ Reclamado — Cerrar';
+      `<span style="font-size:${big?28:22}px;font-weight:900;color:${prize.color};">${prize.icon} +$${prize.amount.toLocaleString()}${tierLabel}</span>`;
+    btn.textContent = '✅ ¡Reclamar y cerrar!';
     btn.disabled = false;
     btn.onclick = closeSpinModal;
-    toast('🎰 ¡Ganaste $' + prize.amount.toLocaleString() + ' en la ruleta!', 3500);
-    const lb = document.getElementById('lobbyBal');
-    if (lb) lb.textContent = myBal.toLocaleString();
+    if(big){ sfxWin(); setTimeout(sfxWin,160); burst(innerWidth/2,300,30); }
+    else { playTone(660,0.18,'sine',0.2); playTone(880,0.18,'sine',0.18,0.15); }
+    toast(prize.icon+' Ruleta diaria: +$' + prize.amount.toLocaleString(), 3500);
+    ['myBalance','lobbyBal'].forEach(id=>{ const e=document.getElementById(id); if(e) e.textContent=(id==='myBalance'?'$':'')+myBal.toLocaleString(); });
     const spinBtn = document.getElementById('spinLobbyBtn');
-    if (spinBtn) { spinBtn.style.background = ''; spinBtn.style.borderColor = ''; spinBtn.style.color = ''; spinBtn.textContent = '🎰 Ruleta'; }
+    if (spinBtn) { spinBtn.style.background=''; spinBtn.style.borderColor=''; spinBtn.style.color=''; spinBtn.textContent='🎰 Ruleta'; }
   }, duration + 200);
 }
 
@@ -15187,6 +15263,8 @@ function dueloInit(){
   show('scDuelo'); bnShow(); bnSync('scDuelo');
   document.getElementById('dueloBal').textContent = myBal.toLocaleString();
   dueloResetUI();
+  dueloLogData = JSON.parse(localStorage.getItem('bjmp_duelo_log')||'[]');
+  dueloLogRender();
 }
 
 function dueloLeave(){ hide('scDuelo'); openArcadeSection(); }
@@ -15295,6 +15373,8 @@ function dueloFire(){
     }, 1400);
     mlRecordGameStat('duelo', false, -dueloBet);
     mlUpdateMissionProgress('duelo', false, -dueloBet, {});
+    dueloLogSave({shots:dueloShotsFired, outcome:'dead', bet:dueloBet, profit:-dueloBet});
+    dueloLogRender();
     if(myBal<=0) mgCheckBankruptcy('dueloBal');
     return;
   }
@@ -15366,6 +15446,8 @@ function dueloCash(auto=false){
   setTimeout(()=>{ document.getElementById('dueloNewPanel').style.display='flex'; }, 800);
   mlRecordGameStat('duelo', profit>0, profit);
   mlUpdateMissionProgress('duelo', profit>0, profit, {});
+  dueloLogSave({shots:dueloShotsFired, outcome: auto?'auto':'cash', bet:dueloBet, profit});
+  dueloLogRender();
 }
 
 
@@ -15815,6 +15897,65 @@ function bingoShowNewGame(){
   bingoUpdateCost();
 }
 
+
+// ── DUELO DEL OESTE — Historial ───────────────────────────────────────────────
+let dueloLogData = JSON.parse(localStorage.getItem('bjmp_duelo_log')||'[]');
+
+function dueloLogSave(entry){
+  dueloLogData.unshift(entry); // newest first
+  if(dueloLogData.length > 20) dueloLogData.length = 20;
+  localStorage.setItem('bjmp_duelo_log', JSON.stringify(dueloLogData));
+}
+
+function dueloLogRender(){
+  const el = document.getElementById('dueloLog');
+  const statsEl = document.getElementById('dueloLogStats');
+  if(!el) return;
+  if(!dueloLogData.length){
+    el.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);text-align:center;padding:8px 0;">Sin partidas aún</div>';
+    if(statsEl) statsEl.textContent='';
+    return;
+  }
+  // Stats summary
+  const survived = dueloLogData.filter(e=>e.outcome==='cash'||e.outcome==='auto').length;
+  const survived5 = dueloLogData.filter(e=>e.shots===5&&e.outcome!=='dead').length;
+  if(statsEl) statsEl.textContent=`${survived}/${dueloLogData.length} sobrevividos`;
+
+  el.innerHTML = dueloLogData.slice(0,12).map(e=>{
+    const dead = e.outcome==='dead';
+    const icons = ['🔴','🔴','🔴','🔴','🔴','🔴'].map((c,i)=>
+      i < e.shots ? (dead && i===e.shots-1 ? '💥' : '✅') : '⬜'
+    ).join('');
+    const profitColor = e.profit>0 ? '#2ecc71' : '#e74c3c';
+    const profitStr = e.profit>0 ? '+$'+e.profit.toLocaleString() : '-$'+Math.abs(e.profit).toLocaleString();
+    return `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:6px 10px;">
+      <div style="font-size:11px;letter-spacing:1px;flex:1;">${icons}</div>
+      <div style="font-size:11px;color:${profitColor};font-weight:800;flex-shrink:0;">${profitStr}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── LUCKY WHEEL — Free spin every 10 paid spins ───────────────────────────────
+let lwFreeSpinReady = false;
+
+function lwGetSpinCount(){ return parseInt(localStorage.getItem('bjmp_lw_count')||'0'); }
+function lwSetSpinCount(n){ localStorage.setItem('bjmp_lw_count', n); }
+function lwGetFreeReady(){ return localStorage.getItem('bjmp_lw_free')==='1'; }
+function lwSetFreeReady(v){ localStorage.setItem('bjmp_lw_free', v?'1':'0'); }
+
+function lwUpdateFreeBar(){
+  const free = lwGetFreeReady();
+  const count = free ? 10 : lwGetSpinCount();
+  const pct = Math.min(100, Math.round(count/10*100));
+  const lbl = document.getElementById('lwFreeLabel');
+  const bar = document.getElementById('lwFreeBar');
+  const badge = document.getElementById('lwFreeBadge');
+  if(lbl) lbl.textContent = free ? '¡Listo!' : count+'/10';
+  if(bar) bar.style.width = pct+'%';
+  if(badge){ badge.style.display = free?'block':'none'; }
+  if(bar) bar.style.background = free ? 'linear-gradient(90deg,#2ecc71,#27ae60)' : 'linear-gradient(90deg,#f39c12,#f0d060)';
+}
+
 </script>
 
 <!-- ════════ BOTTOM NAV BAR ════════ -->
@@ -16020,6 +16161,17 @@ function bingoShowNewGame(){
       <button onclick="dueloStart()" style="width:100%;padding:17px;background:linear-gradient(135deg,#c8973a,#8B6014);border:none;border-radius:18px;color:#fff;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:2px;box-shadow:0 4px 20px rgba(200,150,40,.3);">
         🤠 NUEVO DUELO
       </button>
+    </div>
+
+    <!-- History panel -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,150,60,.12);border-radius:16px;padding:12px 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:10px;color:rgba(245,210,122,.6);letter-spacing:1px;">HISTORIAL</div>
+        <div id="dueloLogStats" style="font-size:9px;color:rgba(255,255,255,.3);"></div>
+      </div>
+      <div id="dueloLog" style="display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;">
+        <div style="font-size:11px;color:rgba(255,255,255,.2);text-align:center;padding:8px 0;">Sin partidas aún</div>
+      </div>
     </div>
 
     <!-- Payout table -->
