@@ -1809,6 +1809,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .gss-banner-sub{font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.5px;}
 .gss-banner-arrow{font-size:20px;color:rgba(255,180,0,.5);flex-shrink:0;}
 
+
+@keyframes bngPulse {
+  0%,100%{ box-shadow:0 0 0 0 rgba(52,152,219,.4); }
+  50%    { box-shadow:0 0 0 6px rgba(52,152,219,.0); }
+}
 </style>
 </head>
 <body>
@@ -15262,346 +15267,499 @@ function dueloCash(auto=false){
 }
 
 
+
+
 // ════════════════════════════════════════════
 //  🎱 BINGO 75
 // ════════════════════════════════════════════
-// Cartón 5×5 con FREE en el centro.
-// Columnas: B=1-15, I=16-30, N=31-45, G=46-60, O=61-75
-// Premios por cada línea completada (fila, col, diagonal)
-// Jackpot ×20 al completar todo el cartón
+// Flujo: 1) Elige apuesta + nº cartones → 2) Rellena cartones (manual o auto)
+//         → 3) Bolas salen solas, usuario toca sus celdas para marcarlas.
+// Límite: 50 bolas máximo (evita jackpot garantizado con 75).
 
-const BINGO_COLS = ['B','I','N','G','O'];
-const BINGO_RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]];
-// Payout multipliers per line won (1st, 2nd, 3rd, 4th, 5th)
-const BINGO_LINE_MULTS = [0.5, 1.0, 1.5, 2.0, 3.0];
-const BINGO_JACKPOT_MULT = 20;
-// Column colors
-const BINGO_COL_COLORS = ['#e74c3c','#f39c12','#2ecc71','#3498db','#9b59b6'];
-// Ball delay ms per speed level
-const BINGO_SPEEDS = [0,2400,1400,900,500]; // index=speed 1-4
+const BINGO_COLS        = ['B','I','N','G','O'];
+const BINGO_RANGES      = [[1,15],[16,30],[31,45],[46,60],[61,75]];
+const BINGO_LINE_MULTS  = [0.5, 1.0, 1.5, 2.0, 2.5]; // por línea #1-5+
+const BINGO_JACKPOT_MULT= 20;
+const BINGO_COL_COLORS  = ['#e74c3c','#f39c12','#2ecc71','#3498db','#9b59b6'];
+const BINGO_SPEEDS      = [0, 2400, 1400, 900, 500];
+const BINGO_MAX_BALLS   = 50;  // límite — sin esto jackpot es casi seguro
 
-let bingoCard = [];       // 25 numbers (null = FREE at [2][2])
-let bingoCalled = new Set();
-let bingoBet = 100;
-let bingoActive = false;
-let bingoPaused = false;
-let bingoTimer = null;
-let bingoDrawn = 0;
+let bingoBet      = 100;
+let bingoNumCards = 1;
+let bingoCards    = [];  // array of 5×5 grids (null=FREE, 0=empty slot)
+let bingoMarked   = [];  // array of Set() per card — manually marked by user
+let bingoCalled   = new Set();
+let bingoDrawn    = 0;
+let bingoActive   = false;
+let bingoPaused   = false;
+let bingoTimer    = null;
 let bingoLinesWon = 0;
-let bingoEarned = 0;
-let bingoCompletedLines = new Set(); // stringified line keys
-let bingoBag = [];        // shuffled 1-75
+let bingoEarned   = 0;
+let bingoCompletedLines = []; // array of Set per card
+let bingoBag      = [];
+// picker state
+let bingoPickerCard = -1, bingoPickerRow = -1, bingoPickerCol = -1;
 
+// ── Init / Leave ─────────────────────────────────────────────────────────────
 function bingoInit(){
   show('scBingo'); bnShow(); bnSync('scBingo');
   document.getElementById('bingoBal').textContent = myBal.toLocaleString();
-  bingoResetUI();
-  bingoUpdateSpeedLabel();
+  document.getElementById('bingoNewPanel').style.display = 'flex';
+  document.getElementById('bingoSetupPanel').style.display = 'none';
+  document.getElementById('bingoGamePanel').style.display = 'none';
+  bingoNumCards = 1;
+  bingoHighlightCardBtn(1);
+  bingoUpdateCost();
   document.getElementById('bingoSpeed').oninput = bingoUpdateSpeedLabel;
+  bingoUpdateSpeedLabel();
 }
 function bingoLeave(){
-  bingoStop();
+  bingoStopTimer();
   hide('scBingo'); openArcadeSection();
 }
-function bingoStop(){
+function bingoStopTimer(){
   if(bingoTimer){ clearTimeout(bingoTimer); bingoTimer=null; }
   bingoActive=false; bingoPaused=false;
 }
 
+// ── Panel 1: bet + card count ─────────────────────────────────────────────────
+function bingoAdj(v){
+  const inp=document.getElementById('bingoBetInput');
+  if(v==='max') bingoBet=Math.min(myBal,20000);
+  else bingoBet=Math.max(1,Math.floor((parseInt(inp.value)||100)*v));
+  inp.value=bingoBet;
+  bingoUpdateCost();
+}
+function bingoSetNumCards(n){
+  bingoNumCards=n;
+  bingoHighlightCardBtn(n);
+  bingoUpdateCost();
+}
+function bingoHighlightCardBtn(n){
+  for(let i=1;i<=4;i++){
+    const b=document.getElementById('bngCardBtn'+i);
+    if(!b) continue;
+    if(i===n){
+      b.style.borderColor='rgba(52,152,219,.6)'; b.style.background='rgba(52,152,219,.2)'; b.style.color='#7ec8f7';
+    } else {
+      b.style.borderColor='rgba(255,255,255,.1)'; b.style.background='rgba(255,255,255,.05)'; b.style.color='rgba(255,255,255,.5)';
+    }
+  }
+}
+function bingoUpdateCost(){
+  bingoBet=parseInt(document.getElementById('bingoBetInput').value)||100;
+  const total=bingoBet*bingoNumCards;
+  document.getElementById('bingoTotalCost').textContent=total.toLocaleString();
+}
 function bingoUpdateSpeedLabel(){
   const v=parseInt(document.getElementById('bingoSpeed').value||2);
   const labels=['','Lento','Normal','Rápido','Turbo'];
   document.getElementById('bingoSpeedLbl').textContent=labels[v]||'Normal';
 }
 
-function bingoAdj(v){
-  const inp=document.getElementById('bingoBetInput');
-  if(v==='max') bingoBet=Math.min(myBal,20000);
-  else bingoBet=Math.max(1,Math.floor((parseInt(inp.value)||100)*v));
-  inp.value=bingoBet;
+// ── Panel 2: Card setup ───────────────────────────────────────────────────────
+function bingoPrepareCards(){
+  bingoUpdateCost();
+  const total=bingoBet*bingoNumCards;
+  if(myBal<total){ toast('⚠️ Saldo insuficiente ($'+total.toLocaleString()+' total)'); return; }
+
+  // Init empty cards: 5 rows × 5 cols, center=null, rest=0 (empty)
+  bingoCards=[];
+  for(let k=0;k<bingoNumCards;k++){
+    const grid=[];
+    for(let r=0;r<5;r++){
+      const row=[0,0,0,0,0];
+      grid.push(row);
+    }
+    grid[2][2]=null; // FREE
+    bingoCards.push(grid);
+  }
+
+  document.getElementById('bingoNewPanel').style.display='none';
+  document.getElementById('bingoSetupPanel').style.display='flex';
+  bingoRenderSetup();
 }
 
-function bingoResetUI(){
-  bingoActive=false; bingoPaused=false;
-  bingoCalled=new Set(); bingoDrawn=0;
-  bingoLinesWon=0; bingoEarned=0; bingoCompletedLines=new Set();
-  document.getElementById('bingoCurLetter').textContent='—';
-  document.getElementById('bingoCurNum').textContent='—';
-  document.getElementById('bingoHistory').innerHTML='';
-  document.getElementById('bingoCount').textContent='0/75';
-  document.getElementById('bingoMsg').textContent='';
-  document.getElementById('bingoMsg').style.color='#7ec8f7';
-  document.getElementById('bingoPrizes').style.display='none';
-  document.getElementById('bingoControls').style.display='none';
-  document.getElementById('bingoNewPanel').style.display='flex';
-  document.getElementById('bingoStopBtn').style.display='none';
-  document.getElementById('bingoCurBall').style.background='rgba(52,152,219,.15)';
-  document.getElementById('bingoCurBall').style.borderColor='rgba(52,152,219,.5)';
+function bingoRenderSetup(){
+  const el=document.getElementById('bingoCardsSetup'); el.innerHTML='';
+  bingoCards.forEach((grid,k)=>{
+    const filled=bingoCardFilled(k);
+    const div=document.createElement('div');
+    div.style.cssText='background:rgba(255,255,255,.04);border:1.5px solid rgba(52,152,219,.2);border-radius:16px;padding:12px;margin-bottom:10px;';
+    // Header
+    const hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;';
+    hdr.innerHTML=`<div style="font-size:12px;font-weight:900;color:#7ec8f7;">CARTÓN ${k+1} ${filled?'✅':''}</div>
+      <button onclick="bingoAutoFillCard(${k})" style="background:rgba(52,152,219,.18);border:1px solid rgba(52,152,219,.35);border-radius:8px;color:#7ec8f7;font-size:11px;padding:5px 12px;cursor:pointer;font-weight:700;">⚡ Auto</button>`;
+    div.appendChild(hdr);
+    // BINGO header
+    const colHdr=document.createElement('div');
+    colHdr.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:3px;text-align:center;';
+    BINGO_COLS.forEach((l,c)=>{
+      colHdr.innerHTML+=`<div style="font-size:13px;font-weight:900;color:${BINGO_COL_COLORS[c]};">${l}</div>`;
+    });
+    div.appendChild(colHdr);
+    // Grid
+    const gridEl=document.createElement('div');
+    gridEl.id='bng-setup-'+k;
+    gridEl.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:3px;';
+    for(let r=0;r<5;r++){
+      for(let c=0;c<5;c++){
+        const val=grid[r][c];
+        const isFree=val===null;
+        const isEmpty=val===0;
+        const cell=document.createElement('div');
+        cell.id=`bng-s-${k}-${r}-${c}`;
+        cell.style.cssText=`aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;
+          font-size:${isFree?'9px':'14px'};font-weight:800;cursor:${isFree?'default':'pointer'};
+          background:${isFree?'rgba(240,208,96,.15)':isEmpty?'rgba(255,255,255,.04)':BINGO_COL_COLORS[c]+'2a'};
+          border:2px solid ${isFree?'rgba(240,208,96,.4)':isEmpty?'rgba(255,255,255,.1)':BINGO_COL_COLORS[c]+'88'};
+          color:${isFree?'#f0d060':isEmpty?'rgba(255,255,255,.2)':'#fff'};transition:all .2s;`;
+        cell.innerHTML=isFree?'⭐':isEmpty?'+':val;
+        if(!isFree) cell.onclick=()=>bingoOpenPicker(k,r,c);
+        gridEl.appendChild(cell);
+      }
+    }
+    div.appendChild(gridEl);
+    el.appendChild(div);
+  });
+  bingoCheckAllFilled();
 }
 
-function bingoMakeCard(){
-  const card=[];
-  for(let col=0;col<5;col++){
-    const [lo,hi]=BINGO_RANGES[col];
+function bingoCardFilled(k){
+  const grid=bingoCards[k];
+  for(let r=0;r<5;r++) for(let c=0;c<5;c++) if(grid[r][c]===0) return false;
+  return true;
+}
+function bingoCheckAllFilled(){
+  const allFilled=bingoCards.every((_,k)=>bingoCardFilled(k));
+  const btn=document.getElementById('bingoStartBtn');
+  btn.style.opacity=allFilled?'1':'0.4';
+  btn.style.pointerEvents=allFilled?'auto':'none';
+}
+
+// ── Number Picker ─────────────────────────────────────────────────────────────
+function bingoOpenPicker(k,r,c){
+  bingoPickerCard=k; bingoPickerRow=r; bingoPickerCol=c;
+  const [lo,hi]=BINGO_RANGES[c];
+  const colColor=BINGO_COL_COLORS[c];
+  const colLetter=BINGO_COLS[c];
+  // Numbers used in this column on this card (excluding current cell)
+  const used=new Set();
+  for(let r2=0;r2<5;r2++){
+    const v=bingoCards[k][r2][c];
+    if(v && v!==bingoCards[k][r][c]) used.add(v);
+  }
+  const el=document.getElementById('bingoPickerNums'); el.innerHTML='';
+  document.getElementById('bingoPickerTitle').textContent=`Cartón ${k+1} · Columna ${colLetter} (${lo}–${hi})`;
+  document.getElementById('bingoPickerTitle').style.color=colColor;
+  for(let n=lo;n<=hi;n++){
+    const taken=used.has(n);
+    const btn=document.createElement('button');
+    btn.style.cssText=`width:44px;height:44px;border-radius:50%;font-size:14px;font-weight:800;cursor:${taken?'default':'pointer'};
+      background:${taken?'rgba(255,255,255,.04)':colColor+'22'};
+      border:2px solid ${taken?'rgba(255,255,255,.08)':colColor+'88'};
+      color:${taken?'rgba(255,255,255,.2)':'#fff'};`;
+    btn.textContent=n;
+    if(!taken) btn.onclick=()=>bingoPickNum(n);
+    el.appendChild(btn);
+  }
+  const modal=document.getElementById('bingoPickerModal');
+  modal.style.display='flex';
+}
+function bingoPickNum(n){
+  bingoCards[bingoPickerCard][bingoPickerRow][bingoPickerCol]=n;
+  bingoClosePicker();
+  bingoRenderSetup();
+}
+function bingoClosePicker(){
+  document.getElementById('bingoPickerModal').style.display='none';
+  bingoPickerCard=-1;
+}
+
+// ── Auto fill a card ──────────────────────────────────────────────────────────
+function bingoAutoFillCard(k){
+  const grid=bingoCards[k];
+  for(let c=0;c<5;c++){
+    const [lo,hi]=BINGO_RANGES[c];
     const pool=[];
     for(let n=lo;n<=hi;n++) pool.push(n);
-    // shuffle and pick 5
+    // shuffle
     for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]; }
-    card.push(pool.slice(0,5));
-  }
-  // card[col][row] — transpose to card[row][col] for rendering
-  const grid=[];
-  for(let r=0;r<5;r++){
-    const row=[];
-    for(let c=0;c<5;c++) row.push(card[c][r]);
-    grid.push(row);
-  }
-  grid[2][2]=null; // FREE center
-  return grid;
-}
-
-function bingoRenderCard(){
-  const el=document.getElementById('bingoCard');
-  let html='';
-  for(let r=0;r<5;r++){
-    for(let c=0;c<5;c++){
-      const val=bingoCard[r][c];
-      const isFree=val===null;
-      const called=isFree||bingoCalled.has(val);
-      const colColor=BINGO_COL_COLORS[c];
-      html+=`<div id="bcell-${r}-${c}" style="
-        aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-        background:${called?colColor+'33':'rgba(255,255,255,.05)'};
-        border:2px solid ${called?colColor:'rgba(255,255,255,.1)'};
-        color:${called?'#fff':'rgba(255,255,255,.6)'};
-        font-size:${isFree?'9px':'15px'};font-weight:${isFree?'700':'800'};
-        transition:all .3s;${called?'box-shadow:0 0 8px '+colColor+'55;':''}
-      ">${isFree?'⭐<br>FREE':val}</div>`;
-    }
-  }
-  el.innerHTML=html;
-}
-
-function bingoDaubCell(val){
-  for(let r=0;r<5;r++){
-    for(let c=0;c<5;c++){
-      if(bingoCard[r][c]===val){
-        const colColor=BINGO_COL_COLORS[c];
-        const cell=document.getElementById('bcell-'+r+'-'+c);
-        if(cell){
-          cell.style.background=colColor+'44';
-          cell.style.borderColor=colColor;
-          cell.style.color='#fff';
-          cell.style.boxShadow='0 0 10px '+colColor+'66';
-          // pop animation
-          cell.style.transform='scale(1.15)';
-          setTimeout(()=>{ if(cell) cell.style.transform='scale(1)'; },200);
+    let pi=0;
+    for(let r=0;r<5;r++){
+      if(grid[r][c]===null) continue; // FREE
+      if(grid[r][c]===0){             // empty
+        // find a number not yet used in this column
+        while(pi<pool.length){
+          const n=pool[pi++];
+          let used=false;
+          for(let r2=0;r2<5;r2++) if(grid[r2][c]===n){ used=true; break; }
+          if(!used){ grid[r][c]=n; break; }
         }
       }
     }
   }
+  bingoRenderSetup();
+}
+
+// ── Start game ────────────────────────────────────────────────────────────────
+function bingoStartGame(){
+  if(!bingoCards.every((_,k)=>bingoCardFilled(k))){ toast('⚠️ Completa todos los cartones'); return; }
+  const total=bingoBet*bingoNumCards;
+  if(myBal<total){ toast('⚠️ Saldo insuficiente'); return; }
+
+  myBal-=total; saveLocal(); mgUpdateBal('bingoBal'); updateRanking();
+
+  // Init game state
+  bingoMarked=bingoCards.map(()=>new Set());
+  // Mark FREE center on each card
+  bingoCards.forEach((grid,k)=>{ if(grid[2][2]===null) bingoMarked[k].add('2-2'); });
+  bingoCompletedLines=bingoCards.map(()=>new Set());
+  bingoCalled=new Set(); bingoDrawn=0;
+  bingoLinesWon=0; bingoEarned=0;
+  bingoActive=true; bingoPaused=false;
+  bingoBag=bingoMakeBag();
+
+  document.getElementById('bingoSetupPanel').style.display='none';
+  document.getElementById('bingoGamePanel').style.display='flex';
+  document.getElementById('bingoLinesWon').textContent='0';
+  document.getElementById('bingoEarned').textContent='$0';
+  document.getElementById('bingoJackpotAmt').textContent='$'+Math.floor(bingoBet*BINGO_JACKPOT_MULT).toLocaleString();
+  document.getElementById('bingoCount').textContent='0/'+BINGO_MAX_BALLS;
+  document.getElementById('bingoMsg').textContent='🎱 ¡Marca los números cuando salgan!';
+  document.getElementById('bingoHistory').innerHTML='';
+  document.getElementById('bingoCurLetter').textContent='—';
+  document.getElementById('bingoCurNum').textContent='—';
+  document.getElementById('bingoCurBall').style.background='rgba(52,152,219,.15)';
+  document.getElementById('bingoCurBall').style.borderColor='rgba(52,152,219,.5)';
+  document.getElementById('bingoStopBtn').style.display='block';
+  document.getElementById('bingoStopBtn').textContent='⏸ Pausar';
+
+  bingoRenderGameCards();
+  bingoScheduleNext();
 }
 
 function bingoMakeBag(){
-  const bag=[];
-  for(let i=1;i<=75;i++) bag.push(i);
+  const bag=[]; for(let i=1;i<=75;i++) bag.push(i);
   for(let i=74;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]; }
   return bag;
 }
 
-function bingoStart(){
-  bingoBet=parseInt(document.getElementById('bingoBetInput').value)||100;
-  if(bingoBet<1){ toast('⚠️ Apuesta mínima $1'); return; }
-  if(myBal<bingoBet){ toast('⚠️ Saldo insuficiente'); return; }
-
-  myBal-=bingoBet; saveLocal(); mgUpdateBal('bingoBal'); updateRanking();
-
-  bingoCard=bingoMakeCard();
-  bingoBag=bingoMakeBag();
-  bingoCalled=new Set();
-  bingoDrawn=0; bingoLinesWon=0; bingoEarned=0; bingoCompletedLines=new Set();
-  bingoActive=true; bingoPaused=false;
-
-  bingoRenderCard();
-  document.getElementById('bingoNewPanel').style.display='none';
-  document.getElementById('bingoPrizes').style.display='block';
-  document.getElementById('bingoControls').style.display='flex';
-  document.getElementById('bingoStopBtn').style.display='block';
-  document.getElementById('bingoLinesWon').textContent='0';
-  document.getElementById('bingoEarned').textContent='$0';
-  document.getElementById('bingoJackpotAmt').textContent='$'+Math.floor(bingoBet*BINGO_JACKPOT_MULT).toLocaleString();
-  document.getElementById('bingoMsg').textContent='🎱 ¡Las bolas ruedan!';
-
-  bingoScheduleNext();
+// ── Render game cards (manual tap) ───────────────────────────────────────────
+function bingoRenderGameCards(){
+  const el=document.getElementById('bingoCardsGame'); el.innerHTML='';
+  bingoCards.forEach((grid,k)=>{
+    const wrap=document.createElement('div');
+    wrap.style.cssText='background:rgba(255,255,255,.04);border:1.5px solid rgba(52,152,219,.15);border-radius:16px;padding:10px;margin-bottom:10px;';
+    wrap.innerHTML=`<div style="font-size:11px;font-weight:900;color:#7ec8f7;margin-bottom:6px;">CARTÓN ${k+1}</div>`;
+    // col headers
+    const hdr=document.createElement('div');
+    hdr.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:2px;text-align:center;';
+    BINGO_COLS.forEach((l,c)=>{ hdr.innerHTML+=`<div style="font-size:12px;font-weight:900;color:${BINGO_COL_COLORS[c]};">${l}</div>`; });
+    wrap.appendChild(hdr);
+    // grid
+    const gridEl=document.createElement('div');
+    gridEl.id='bng-game-'+k;
+    gridEl.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:2px;';
+    for(let r=0;r<5;r++){
+      for(let c=0;c<5;c++){
+        bingoRenderGameCell(gridEl,k,r,c,grid[r][c]);
+      }
+    }
+    wrap.appendChild(gridEl);
+    el.appendChild(wrap);
+  });
 }
 
+function bingoRenderGameCell(parentEl, k, r, c, val){
+  const isFree=val===null;
+  const isMarked=bingoMarked[k].has(r+'-'+c);
+  const canMark=!isFree && !isMarked && bingoCalled.has(val);
+  const colColor=BINGO_COL_COLORS[c];
+  const cell=document.createElement('div');
+  cell.id=`bng-g-${k}-${r}-${c}`;
+  cell.style.cssText=`aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:${isFree?'9px':'13px'};font-weight:800;
+    background:${isMarked?colColor+'44':canMark?colColor+'18':'rgba(255,255,255,.04)'};
+    border:2px solid ${isMarked?colColor:canMark?colColor+'88':'rgba(255,255,255,.08)'};
+    color:${isMarked?'#fff':canMark?'#fff':'rgba(255,255,255,.4)'};
+    cursor:${canMark?'pointer':'default'};transition:all .2s;
+    ${isMarked?'box-shadow:0 0 8px '+colColor+'55;':''}
+    ${canMark?'animation:bngPulse 1s infinite;':''}`;
+  cell.innerHTML=isFree?'⭐':val;
+  if(canMark) cell.onclick=()=>bingoMarkCell(k,r,c);
+  if(parentEl) parentEl.appendChild(cell);
+}
+
+function bingoRefreshGameCard(k){
+  const gridEl=document.getElementById('bng-game-'+k); if(!gridEl) return;
+  gridEl.innerHTML='';
+  for(let r=0;r<5;r++)
+    for(let c=0;c<5;c++)
+      bingoRenderGameCell(gridEl,k,r,c,bingoCards[k][r][c]);
+}
+
+// ── Manual mark ──────────────────────────────────────────────────────────────
+function bingoMarkCell(k,r,c){
+  const val=bingoCards[k][r][c];
+  if(!bingoCalled.has(val)){ toast('⚠️ Ese número aún no fue llamado'); return; }
+  if(bingoMarked[k].has(r+'-'+c)) return;
+  bingoMarked[k].add(r+'-'+c);
+  bingoRefreshGameCard(k);
+  playTone(500+c*40,'sine',0.08,0.08);
+  // Check lines for this card
+  bingoCheckLines(k);
+  // Check full card
+  if(bingoCheckFullCard(k)){ bingoWinJackpot(k); }
+}
+
+// ── Ball drawing ──────────────────────────────────────────────────────────────
 function bingoScheduleNext(){
   if(!bingoActive||bingoPaused) return;
   const speed=parseInt(document.getElementById('bingoSpeed').value||2);
   const delay=BINGO_SPEEDS[speed]||1400;
-  bingoTimer=setTimeout(bingoDrawBall, delay);
+  bingoTimer=setTimeout(bingoDrawBall,delay);
 }
-
 function bingoTogglePause(){
   if(!bingoActive) return;
   bingoPaused=!bingoPaused;
   const btn=document.getElementById('bingoStopBtn');
   if(bingoPaused){
     if(bingoTimer){ clearTimeout(bingoTimer); bingoTimer=null; }
-    btn.textContent='▶ Continuar';
-    btn.style.background='rgba(52,152,219,.2)';
-    btn.style.borderColor='rgba(52,152,219,.4)';
+    btn.textContent='▶ Continuar'; btn.style.background='rgba(52,152,219,.2)';
   } else {
-    btn.textContent='⏸ Pausar';
-    btn.style.background='rgba(255,255,255,.07)';
-    btn.style.borderColor='rgba(255,255,255,.15)';
+    btn.textContent='⏸ Pausar'; btn.style.background='rgba(255,255,255,.07)';
     bingoScheduleNext();
   }
 }
 
-function bingoNumToCol(n){
-  for(let c=0;c<5;c++){
-    const [lo,hi]=BINGO_RANGES[c];
-    if(n>=lo&&n<=hi) return c;
-  }
-  return 0;
-}
-
 function bingoDrawBall(){
   if(!bingoActive||bingoPaused) return;
-  if(bingoDrawn>=75){ bingoFinish(); return; }
+  if(bingoDrawn>=BINGO_MAX_BALLS){ bingoFinish(); return; }
 
-  const num=bingoBag[bingoDrawn];
-  bingoDrawn++;
+  const num=bingoBag[bingoDrawn]; bingoDrawn++;
   bingoCalled.add(num);
-
-  const col=bingoNumToCol(num);
+  const col=BINGO_COLS.findIndex((_,i)=>{ const [lo,hi]=BINGO_RANGES[i]; return num>=lo&&num<=hi; });
   const letter=BINGO_COLS[col];
   const colColor=BINGO_COL_COLORS[col];
 
-  // Update current ball display
+  // Animate ball display
   const ballEl=document.getElementById('bingoCurBall');
-  ballEl.style.background=colColor+'33';
-  ballEl.style.borderColor=colColor;
+  ballEl.style.background=colColor+'33'; ballEl.style.borderColor=colColor;
   ballEl.style.transform='scale(1.2)';
   setTimeout(()=>{ if(ballEl) ballEl.style.transform='scale(1)'; },200);
   document.getElementById('bingoCurLetter').textContent=letter;
   document.getElementById('bingoCurLetter').style.color=colColor;
   document.getElementById('bingoCurNum').textContent=num;
-  document.getElementById('bingoCount').textContent=bingoDrawn+'/75';
+  document.getElementById('bingoCount').textContent=bingoDrawn+'/'+BINGO_MAX_BALLS;
 
-  // Add to history (last 8)
+  // History
   const hist=document.getElementById('bingoHistory');
   const chip=document.createElement('div');
-  chip.style.cssText=`width:28px;height:28px;border-radius:50%;background:${colColor}33;border:1px solid ${colColor}77;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;`;
-  chip.textContent=num;
-  hist.prepend(chip);
+  chip.style.cssText=`width:26px;height:26px;border-radius:50%;background:${colColor}33;border:1px solid ${colColor}88;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;`;
+  chip.textContent=num; hist.prepend(chip);
   while(hist.children.length>8) hist.removeChild(hist.lastChild);
 
-  // Daub card
-  bingoDaubCell(num);
-  playTone(440+num*2,'sine',0.06,0.08);
+  // Highlight available cells to tap on all cards
+  bingoCards.forEach((_,k)=>bingoRefreshGameCard(k));
 
-  // Check lines
-  bingoCheckLines();
-
-  // Check full card
-  if(bingoCheckFullCard()){
-    bingoWinJackpot(); return;
+  // Check if num appears on any card and show hint
+  let onCard=false;
+  bingoCards.forEach((grid,k)=>{
+    for(let r=0;r<5;r++) for(let c=0;c<5;c++){
+      if(grid[r][c]===num && !bingoMarked[k].has(r+'-'+c)){ onCard=true; }
+    }
+  });
+  if(onCard){
+    document.getElementById('bingoMsg').textContent='✨ '+letter+num+' — ¡Tócalo en tu cartón!';
+    document.getElementById('bingoMsg').style.color='#f0d060';
+  } else {
+    document.getElementById('bingoMsg').textContent='Bola '+letter+num;
+    document.getElementById('bingoMsg').style.color='rgba(255,255,255,.4)';
   }
 
-  // Continue
+  playTone(380+num*1.5,'sine',0.05,0.09);
   bingoScheduleNext();
 }
 
-function bingoGetCardCalled(r,c){
-  const val=bingoCard[r][c];
-  return val===null||bingoCalled.has(val);
-}
+// ── Line check ────────────────────────────────────────────────────────────────
+function bingoGetMarked(k,r,c){ return bingoMarked[k].has(r+'-'+c); }
 
-function bingoCheckLines(){
+function bingoCheckLines(k){
   const newLines=[];
-  // 5 rows
   for(let r=0;r<5;r++){
     const key='r'+r;
-    if(bingoCompletedLines.has(key)) continue;
-    if([0,1,2,3,4].every(c=>bingoGetCardCalled(r,c))){ newLines.push(key); }
+    if(!bingoCompletedLines[k].has(key)&&[0,1,2,3,4].every(c=>bingoGetMarked(k,r,c))) newLines.push(key);
   }
-  // 5 cols
   for(let c=0;c<5;c++){
     const key='c'+c;
-    if(bingoCompletedLines.has(key)) continue;
-    if([0,1,2,3,4].every(r=>bingoGetCardCalled(r,c))){ newLines.push(key); }
+    if(!bingoCompletedLines[k].has(key)&&[0,1,2,3,4].every(r=>bingoGetMarked(k,r,c))) newLines.push(key);
   }
-  // 2 diagonals
-  if(!bingoCompletedLines.has('d1')&&[0,1,2,3,4].every(i=>bingoGetCardCalled(i,i))) newLines.push('d1');
-  if(!bingoCompletedLines.has('d2')&&[0,1,2,3,4].every(i=>bingoGetCardCalled(i,4-i))) newLines.push('d2');
+  if(!bingoCompletedLines[k].has('d1')&&[0,1,2,3,4].every(i=>bingoGetMarked(k,i,i))) newLines.push('d1');
+  if(!bingoCompletedLines[k].has('d2')&&[0,1,2,3,4].every(i=>bingoGetMarked(k,i,4-i))) newLines.push('d2');
 
   for(const key of newLines){
-    bingoCompletedLines.add(key);
+    bingoCompletedLines[k].add(key);
     bingoLinesWon++;
     const multIdx=Math.min(bingoLinesWon-1,BINGO_LINE_MULTS.length-1);
-    const linePrize=Math.floor(bingoBet*BINGO_LINE_MULTS[multIdx]);
-    bingoEarned+=linePrize;
-    myBal+=linePrize; saveLocal(); mgUpdateBal('bingoBal'); updateRanking();
+    const prize=Math.floor(bingoBet*BINGO_LINE_MULTS[multIdx]);
+    bingoEarned+=prize;
+    myBal+=prize; saveLocal(); mgUpdateBal('bingoBal'); updateRanking();
     document.getElementById('bingoLinesWon').textContent=bingoLinesWon;
     document.getElementById('bingoEarned').textContent='$'+bingoEarned.toLocaleString();
-    document.getElementById('bingoMsg').textContent='🎉 ¡LÍNEA #'+bingoLinesWon+'! +$'+linePrize.toLocaleString();
+    document.getElementById('bingoMsg').textContent='🎉 ¡LÍNEA! Cartón '+(k+1)+' +$'+prize.toLocaleString();
     document.getElementById('bingoMsg').style.color='#2ecc71';
-    sfxWin();
-    burst(innerWidth/2, innerHeight*.35, 10);
+    sfxWin(); burst(innerWidth/2,innerHeight*.35,10);
   }
 }
 
-function bingoCheckFullCard(){
-  for(let r=0;r<5;r++)
-    for(let c=0;c<5;c++)
-      if(!bingoGetCardCalled(r,c)) return false;
+function bingoCheckFullCard(k){
+  for(let r=0;r<5;r++) for(let c=0;c<5;c++) if(!bingoGetMarked(k,r,c)) return false;
   return true;
 }
 
-function bingoWinJackpot(){
-  bingoActive=false;
-  if(bingoTimer){ clearTimeout(bingoTimer); bingoTimer=null; }
+function bingoWinJackpot(k){
+  bingoActive=false; bingoStopTimer();
   const jackpot=Math.floor(bingoBet*BINGO_JACKPOT_MULT);
-  myBal+=jackpot; saveLocal(); mgUpdateBal('bingoBal'); updateRanking();
   bingoEarned+=jackpot;
+  myBal+=jackpot; saveLocal(); mgUpdateBal('bingoBal'); updateRanking();
   document.getElementById('bingoEarned').textContent='$'+bingoEarned.toLocaleString();
-  document.getElementById('bingoMsg').textContent='🏆 ¡¡BINGO!! +$'+jackpot.toLocaleString()+' (×'+BINGO_JACKPOT_MULT+')';
+  document.getElementById('bingoMsg').textContent='🏆 ¡¡BINGO!! Cartón '+(k+1)+' +$'+jackpot.toLocaleString()+' (×'+BINGO_JACKPOT_MULT+')';
   document.getElementById('bingoMsg').style.color='#f0d060';
   document.getElementById('bingoStopBtn').style.display='none';
-  sfxWin(); bigBurst();
-  burst(innerWidth/2,innerHeight*.4,40);
-  mlRecordGameStat('bingo',true,bingoEarned-bingoBet);
-  mlUpdateMissionProgress('bingo',true,bingoEarned-bingoBet,{});
-  setTimeout(()=>{
-    document.getElementById('bingoNewPanel').style.display='flex';
-    document.getElementById('bingoControls').style.display='none';
-  },1800);
+  sfxWin(); bigBurst(); burst(innerWidth/2,innerHeight*.4,40);
+  mlRecordGameStat('bingo',true,bingoEarned-bingoBet*bingoNumCards);
+  mlUpdateMissionProgress('bingo',true,bingoEarned-bingoBet*bingoNumCards,{});
+  setTimeout(()=>{ bingoShowNewGame(); },2000);
 }
 
 function bingoFinish(){
-  // All 75 balls drawn, no jackpot
   bingoActive=false;
-  const profit=bingoEarned-bingoBet;
+  const profit=bingoEarned-bingoBet*bingoNumCards;
   if(profit>0){
-    document.getElementById('bingoMsg').textContent='✅ Partida terminada. Ganancia neta: +$'+profit.toLocaleString();
+    document.getElementById('bingoMsg').textContent='✅ Fin. Ganancia neta: +$'+profit.toLocaleString();
     document.getElementById('bingoMsg').style.color='#2ecc71';
   } else if(profit===0){
     document.getElementById('bingoMsg').textContent='🤝 Tablas. Recuperaste la apuesta.';
     document.getElementById('bingoMsg').style.color='#aaa';
   } else {
-    document.getElementById('bingoMsg').textContent='📭 Sin bingo. Perdiste $'+Math.abs(profit).toLocaleString();
+    document.getElementById('bingoMsg').textContent='📭 Sin bingo en 50 bolas. -$'+Math.abs(profit).toLocaleString();
     document.getElementById('bingoMsg').style.color='#e74c3c';
   }
   document.getElementById('bingoStopBtn').style.display='none';
   mlRecordGameStat('bingo',profit>0,profit);
   mlUpdateMissionProgress('bingo',profit>0,profit,{});
   if(myBal<=0) mgCheckBankruptcy('bingoBal');
-  setTimeout(()=>{
-    document.getElementById('bingoNewPanel').style.display='flex';
-    document.getElementById('bingoControls').style.display='none';
-  },1500);
+  setTimeout(()=>{ bingoShowNewGame(); },1500);
+}
+
+function bingoShowNewGame(){
+  document.getElementById('bingoGamePanel').style.display='none';
+  document.getElementById('bingoNewPanel').style.display='flex';
+  bingoHighlightCardBtn(1);
+  bingoNumCards=1;
+  bingoUpdateCost();
 }
 
 </script>
@@ -15847,95 +16005,96 @@ function bingoFinish(){
 
   <div style="width:100%;max-width:420px;margin:0 auto;padding:12px 12px 100px;display:flex;flex-direction:column;gap:10px;">
 
-    <!-- Ball display -->
-    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(52,152,219,.2);border-radius:18px;padding:12px 14px;">
-      <div id="bingoCurBall" style="width:58px;height:58px;border-radius:50%;background:rgba(52,152,219,.15);border:3px solid rgba(52,152,219,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;">
-        <div id="bingoCurLetter" style="font-size:11px;font-weight:900;color:#7ec8f7;line-height:1;">—</div>
-        <div id="bingoCurNum" style="font-size:20px;font-weight:900;color:#fff;line-height:1;">—</div>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1px;margin-bottom:4px;">ÚLTIMAS BOLAS</div>
-        <div id="bingoHistory" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-      </div>
-      <div style="text-align:center;flex-shrink:0;">
-        <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1px;">BOLAS</div>
-        <div id="bingoCount" style="font-size:20px;font-weight:900;color:#fff;">0/75</div>
-      </div>
-    </div>
-
-    <!-- B-I-N-G-O Header -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;text-align:center;">
-      <div style="font-size:16px;font-weight:900;color:#e74c3c;padding:4px 0;">B</div>
-      <div style="font-size:16px;font-weight:900;color:#f39c12;padding:4px 0;">I</div>
-      <div style="font-size:16px;font-weight:900;color:#2ecc71;padding:4px 0;">N</div>
-      <div style="font-size:16px;font-weight:900;color:#3498db;padding:4px 0;">G</div>
-      <div style="font-size:16px;font-weight:900;color:#9b59b6;padding:4px 0;">O</div>
-    </div>
-
-    <!-- Bingo card 5×5 -->
-    <div id="bingoCard" style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;"></div>
-
-    <!-- Status message -->
-    <div id="bingoMsg" style="text-align:center;font-size:14px;font-weight:800;color:#7ec8f7;min-height:20px;letter-spacing:.3px;"></div>
-
-    <!-- Speed + drawn balls count -->
-    <div id="bingoControls" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 14px;display:none;flex-direction:column;gap:8px;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:10px;color:rgba(255,255,255,.4);min-width:50px;">VELOCIDAD</span>
-        <input type="range" id="bingoSpeed" min="1" max="4" value="2" style="flex:1;accent-color:#3498db;">
-        <span id="bingoSpeedLbl" style="font-size:10px;color:#7ec8f7;min-width:36px;">Normal</span>
-      </div>
-    </div>
-
-    <!-- Prize tracker -->
-    <div id="bingoPrizes" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 14px;">
-      <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1px;margin-bottom:8px;text-align:center;">PREMIOS</div>
-      <div style="display:flex;justify-content:space-around;text-align:center;">
-        <div>
-          <div style="font-size:9px;color:rgba(255,255,255,.4);">LÍNEAS</div>
-          <div id="bingoLinesWon" style="font-size:18px;font-weight:900;color:#2ecc71;">0</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:rgba(255,255,255,.4);">GANADO</div>
-          <div id="bingoEarned" style="font-size:18px;font-weight:900;color:#f0d060;">$0</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:rgba(255,255,255,.4);">JACKPOT</div>
-          <div id="bingoJackpotAmt" style="font-size:18px;font-weight:900;color:#e74c3c;">$0</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- New game panel -->
+    <!-- ── PANEL 1: Apuesta y número de cartones ────────────── -->
     <div id="bingoNewPanel" style="display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;">
-        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;min-width:52px;">APUESTA</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;min-width:56px;">APUESTA<br>POR CARTÓN</div>
         <input id="bingoBetInput" type="number" value="100" min="1"
           style="flex:1;background:transparent;border:none;color:#fff;font-size:18px;font-weight:800;text-align:center;outline:none;width:0;">
         <button onclick="bingoAdj(.5)" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:11px;padding:5px 9px;cursor:pointer;">½</button>
         <button onclick="bingoAdj(2)"  style="background:rgba(100,180,255,.15);border:1px solid rgba(100,180,255,.3);border-radius:8px;color:#7ec8f7;font-size:11px;padding:5px 9px;cursor:pointer;">×2</button>
         <button onclick="bingoAdj('max')" style="background:rgba(240,208,96,.15);border:1px solid rgba(240,208,96,.3);border-radius:8px;color:#f0d060;font-size:11px;padding:5px 9px;cursor:pointer;">MAX</button>
       </div>
-      <!-- Payout table preview -->
-      <div style="background:rgba(52,152,219,.06);border:1px solid rgba(52,152,219,.2);border-radius:14px;padding:10px 14px;">
-        <div style="font-size:9px;color:rgba(126,200,247,.5);letter-spacing:1px;margin-bottom:8px;text-align:center;">TABLA DE PREMIOS</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:11px;">
-          <div style="color:rgba(255,255,255,.5);">1ª línea</div><div style="color:#2ecc71;font-weight:700;" id="bingoPayLine1">×0.5</div>
-          <div style="color:rgba(255,255,255,.5);">2ª línea</div><div style="color:#2ecc71;font-weight:700;" id="bingoPayLine2">×1.0</div>
-          <div style="color:rgba(255,255,255,.5);">3ª línea</div><div style="color:#f39c12;font-weight:700;" id="bingoPayLine3">×1.5</div>
-          <div style="color:rgba(255,255,255,.5);">4ª línea</div><div style="color:#f39c12;font-weight:700;" id="bingoPayLine4">×2.0</div>
-          <div style="color:rgba(255,255,255,.5);">5ª línea</div><div style="color:#e74c3c;font-weight:700;" id="bingoPayLine5">×3.0</div>
-          <div style="color:rgba(255,255,255,.5);">🏆 BINGO</div><div style="color:#f0d060;font-weight:900;" id="bingoPayFull">×20</div>
+      <!-- Número de cartones -->
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;">
+        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:10px;">¿CUÁNTOS CARTONES?</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="bingoSetNumCards(1)" id="bngCardBtn1" class="bng-card-btn active" style="flex:1;padding:12px 4px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;border:2px solid rgba(52,152,219,.6);background:rgba(52,152,219,.2);color:#7ec8f7;">1</button>
+          <button onclick="bingoSetNumCards(2)" id="bngCardBtn2" class="bng-card-btn" style="flex:1;padding:12px 4px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);">2</button>
+          <button onclick="bingoSetNumCards(3)" id="bngCardBtn3" class="bng-card-btn" style="flex:1;padding:12px 4px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);">3</button>
+          <button onclick="bingoSetNumCards(4)" id="bngCardBtn4" class="bng-card-btn" style="flex:1;padding:12px 4px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);">4</button>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,.3);text-align:center;">Total: $<span id="bingoTotalCost">100</span></div>
+      </div>
+      <!-- Tabla de premios -->
+      <div style="background:rgba(52,152,219,.05);border:1px solid rgba(52,152,219,.15);border-radius:14px;padding:10px 14px;">
+        <div style="font-size:9px;color:rgba(126,200,247,.5);letter-spacing:1px;margin-bottom:8px;text-align:center;">PREMIOS POR CARTÓN</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:11px;">
+          <div style="color:rgba(255,255,255,.45);">1ª línea</div><div style="color:#2ecc71;font-weight:700;">×0.5</div>
+          <div style="color:rgba(255,255,255,.45);">2ª línea</div><div style="color:#2ecc71;font-weight:700;">×1.0</div>
+          <div style="color:rgba(255,255,255,.45);">3ª línea</div><div style="color:#f39c12;font-weight:700;">×1.5</div>
+          <div style="color:rgba(255,255,255,.45);">4ª+ línea</div><div style="color:#f39c12;font-weight:700;">×2.5</div>
+          <div style="color:rgba(255,255,255,.45);">🏆 BINGO</div><div style="color:#f0d060;font-weight:900;">×20</div>
         </div>
       </div>
-      <button onclick="bingoStart()" style="width:100%;padding:17px;background:linear-gradient(135deg,#1a6fa8,#0d4a7a);border:2px solid rgba(52,152,219,.5);border-radius:18px;color:#fff;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:2px;box-shadow:0 4px 20px rgba(52,152,219,.25);">
-        🎱 ¡JUGAR BINGO!
+      <button onclick="bingoPrepareCards()" style="width:100%;padding:17px;background:linear-gradient(135deg,#1a6fa8,#0d4a7a);border:2px solid rgba(52,152,219,.5);border-radius:18px;color:#fff;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:1px;">
+        🎱 Preparar cartones →
       </button>
     </div>
 
-    <!-- Stop/Continue button -->
-    <button id="bingoStopBtn" onclick="bingoTogglePause()" style="display:none;width:100%;padding:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:16px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">⏸ Pausar</button>
+    <!-- ── PANEL 2: Setup de cartones (usuario rellena/auto) ── -->
+    <div id="bingoSetupPanel" style="display:none;flex-direction:column;gap:12px;">
+      <div style="text-align:center;font-size:12px;color:rgba(255,255,255,.4);">Toca las celdas para elegir tus números · o usa <b style="color:#7ec8f7">Auto</b></div>
+      <div id="bingoCardsSetup"></div>
+      <button onclick="bingoStartGame()" id="bingoStartBtn" style="width:100%;padding:16px;background:linear-gradient(135deg,#27ae60,#1a7a42);border:none;border-radius:18px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;opacity:.4;pointer-events:none;">¡JUGAR! →</button>
+    </div>
 
+    <!-- ── PANEL 3: Juego activo ──────────────────────────── -->
+    <div id="bingoGamePanel" style="display:none;flex-direction:column;gap:10px;">
+      <!-- Bola actual + historial -->
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(52,152,219,.2);border-radius:18px;padding:12px 14px;">
+        <div id="bingoCurBall" style="width:58px;height:58px;border-radius:50%;background:rgba(52,152,219,.15);border:3px solid rgba(52,152,219,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;">
+          <div id="bingoCurLetter" style="font-size:11px;font-weight:900;color:#7ec8f7;line-height:1;">—</div>
+          <div id="bingoCurNum" style="font-size:20px;font-weight:900;color:#fff;line-height:1.1;">—</div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:4px;">ÚLTIMAS</div>
+          <div id="bingoHistory" style="display:flex;gap:3px;flex-wrap:wrap;"></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:9px;color:rgba(255,255,255,.3);">BOLAS</div>
+          <div id="bingoCount" style="font-size:19px;font-weight:900;color:#fff;">0/50</div>
+        </div>
+      </div>
+      <!-- Velocidad -->
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:9px 14px;">
+        <span style="font-size:10px;color:rgba(255,255,255,.35);min-width:50px;">VELOCIDAD</span>
+        <input type="range" id="bingoSpeed" min="1" max="4" value="2" style="flex:1;accent-color:#3498db;">
+        <span id="bingoSpeedLbl" style="font-size:10px;color:#7ec8f7;min-width:40px;text-align:right;">Normal</span>
+      </div>
+      <!-- Status msg -->
+      <div id="bingoMsg" style="text-align:center;font-size:14px;font-weight:800;color:#7ec8f7;min-height:20px;"></div>
+      <!-- Premio acumulado -->
+      <div style="display:flex;justify-content:space-around;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px;">
+        <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,.35);">LÍNEAS</div><div id="bingoLinesWon" style="font-size:18px;font-weight:900;color:#2ecc71;">0</div></div>
+        <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,.35);">GANADO</div><div id="bingoEarned" style="font-size:18px;font-weight:900;color:#f0d060;">$0</div></div>
+        <div style="text-align:center;"><div style="font-size:9px;color:rgba(255,255,255,.35);">JACKPOT</div><div id="bingoJackpotAmt" style="font-size:18px;font-weight:900;color:#e74c3c;">$0</div></div>
+      </div>
+      <!-- Cartones en juego -->
+      <div id="bingoCardsGame"></div>
+      <!-- Pause -->
+      <button id="bingoStopBtn" onclick="bingoTogglePause()" style="width:100%;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:14px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">⏸ Pausar</button>
+    </div>
+
+  </div>
+
+  <!-- Number picker modal -->
+  <div id="bingoPickerModal" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.75);align-items:flex-end;justify-content:center;">
+    <div style="width:100%;max-width:420px;background:#0a1a2e;border-radius:24px 24px 0 0;padding:16px 16px 32px;">
+      <div style="text-align:center;font-size:13px;font-weight:900;color:#7ec8f7;margin-bottom:12px;" id="bingoPickerTitle">Elige un número</div>
+      <div id="bingoPickerNums" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-height:220px;overflow-y:auto;"></div>
+      <button onclick="bingoClosePicker()" style="width:100%;margin-top:14px;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#aaa;font-size:13px;cursor:pointer;">Cancelar</button>
+    </div>
   </div>
 </div>
 
