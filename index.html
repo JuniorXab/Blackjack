@@ -2113,6 +2113,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:13px;font-weight:900;color:#7ec8f7;letter-spacing:1px;">BINGO 75</div>
         <div style="font-size:9px;color:rgba(126,200,247,.6);text-align:center;">B-I-N-G-O · Línea + Cartón lleno · Jackpot ×20</div>
       </div>
+      <div onclick="selectGame('scratch')" style="background:linear-gradient(135deg,rgba(46,213,115,.2),rgba(30,150,80,.06));border:1.5px solid rgba(46,213,115,.45);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎟️</div>
+        <div style="font-size:13px;font-weight:900;color:#2ed573;letter-spacing:1px;">RASCA Y GANA</div>
+        <div style="font-size:9px;color:rgba(46,213,115,.6);text-align:center;">Rasca 3 de 9 · Combina símbolos · ¡Jackpot!</div>
+      </div>
     </div>
   </div>
 </div>
@@ -8131,7 +8136,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -8362,7 +8367,7 @@ const RANK_GAMES={
   mines:{icon:'💣',name:'Minas'},dice:{icon:'🎲',name:'Dados'},football:{icon:'⚽',name:'Football'},
   keno:{icon:'🎱',name:'Keno'},baccarat:{icon:'🎴',name:'Baccarat'},wheel:{icon:'🎡',name:'Lucky Wheel'},
   hilocards:{icon:'🃏',name:'Hi-Lo Cartas'},hilodice:{icon:'🎲',name:'Hi-Lo Dados'},
-  duelo:{icon:'🤠',name:'Duelo del Oeste'},bingo:{icon:'🎱',name:'Bingo 75'}
+  duelo:{icon:'🤠',name:'Duelo del Oeste'},bingo:{icon:'🎱',name:'Bingo 75'},scratch:{icon:'🎟️',name:'Rasca y Gana'}
 };
 
 function mlToggleRanking(){
@@ -8476,6 +8481,7 @@ const ML_GAME_STATS_KEYS = [
   {key:'hilodice',  icon:'🎲', name:'Hi-Lo Dados'},
   {key:'duelo',     icon:'🤠', name:'Duelo del Oeste'},
   {key:'bingo',     icon:'🎱', name:'Bingo 75'},
+  {key:'scratch',   icon:'🎟️', name:'Rasca y Gana'},
 ];
 
 function mlOpenStats(){
@@ -8844,6 +8850,8 @@ function selectGame(game) {
     dueloInit();
   } else if (game === 'bingo') {
     bingoInit();
+  } else if (game === 'scratch') {
+    scratchInit();
   }
 }
 
@@ -11378,6 +11386,7 @@ async function loadRanking(tab) {
 // Update ranking after each result
 function updateRanking() {
   if (!db || !myId || !myId.startsWith('g_')) return;
+  chCheckProgress();
   db.ref('ranking/' + myId).update({
     name: myName,
     bal: myBal,
@@ -12325,6 +12334,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initAuth(); // immediate — no delay
   setTimeout(checkPendingRecharge, 1500);
   setTimeout(listenBroadcast, 2000);
+  setTimeout(chListenIncoming, 3000);
 });
 
 
@@ -15956,6 +15966,437 @@ function lwUpdateFreeBar(){
   if(bar) bar.style.background = free ? 'linear-gradient(90deg,#2ecc71,#27ae60)' : 'linear-gradient(90deg,#f39c12,#f0d060)';
 }
 
+
+// ════════════════════════════════════════════
+//  🎟️ SCRATCH CARDS — Rasca y Gana
+// ════════════════════════════════════════════
+const SCRATCH_TICKETS = [
+  { name:'Básico',   price:100,  color:'#1e8449', glow:'#2ed573', mult:{jackpot:50,diam:20,star:10,cherry:5,bell:3,lemon:2,pair:0.5} },
+  { name:'Plata',    price:500,  color:'#5d6d7e', glow:'#aab7c4', mult:{jackpot:50,diam:20,star:10,cherry:5,bell:3,lemon:2,pair:0.5} },
+  { name:'Oro',      price:2000, color:'#9a7d0a', glow:'#f0d060', mult:{jackpot:50,diam:20,star:10,cherry:5,bell:3,lemon:2,pair:0.5} },
+];
+// Symbols: 0=🎰(jackpot only) 1=💎 2=⭐ 3=🍒 4=🔔 5=🍋 6=🃏(wild card used as filler)
+const SC_SYMS = ['🎰','💎','⭐','🍒','🔔','🍋','🃏'];
+// Probability pool: weighted toward non-jackpot
+const SC_POOL = [0,1,1,2,2,2,3,3,3,4,4,4,5,5,5,5,6,6,6,6];
+
+let scratchTicketIdx = 0; // 0=Básico,1=Plata,2=Oro
+let scratchCells = [];    // 9 symbols
+let scratchRevealed = []; // booleans
+let scratchLeft = 3;
+let scratchActive = false;
+let scratchBetAmt = 0;
+
+function scratchInit(){
+  show('scScratch'); bnShow(); bnSync('scScratch');
+  document.getElementById('scratchBal').textContent = myBal.toLocaleString();
+  scratchActive = false;
+  scratchRenderTicketPicker();
+  document.getElementById('scratchNewPanel').style.display = 'flex';
+  document.getElementById('scratchPlayPanel').style.display = 'none';
+}
+function scratchLeave(){
+  hide('scScratch'); openArcadeSection();
+}
+
+function scratchRenderTicketPicker(){
+  const el = document.getElementById('scratchTicketPicker');
+  el.innerHTML = SCRATCH_TICKETS.map((t,i)=>`
+    <div id="scTkt${i}" onclick="scratchSelectTicket(${i})" style="border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;
+      background:${i===scratchTicketIdx?'rgba('+hexToRgb(t.glow)+',.15)':'rgba(255,255,255,.04)'};
+      border:2px solid ${i===scratchTicketIdx?t.glow:'rgba(255,255,255,.1)'};color:${i===scratchTicketIdx?t.glow:'rgba(255,255,255,.5)'};">
+      <div style="font-size:20px;">🎟️</div>
+      <div style="font-size:11px;font-weight:900;margin-top:4px;">${t.name}</div>
+      <div style="font-size:13px;font-weight:900;margin-top:2px;">$${t.price.toLocaleString()}</div>
+    </div>`).join('');
+  scratchUpdatePrizeTable();
+}
+
+function hexToRgb(hex){
+  const n=parseInt(hex.replace('#',''),16);
+  return `${n>>16},${(n>>8)&255},${n&255}`;
+}
+
+function scratchSelectTicket(i){
+  scratchTicketIdx = i;
+  scratchRenderTicketPicker();
+  const t = SCRATCH_TICKETS[i];
+  const btn = document.getElementById('scratchBuyBtn');
+  const canBuy = myBal >= t.price;
+  btn.style.opacity = canBuy ? '1' : '0.4';
+  btn.style.pointerEvents = canBuy ? 'auto' : 'none';
+  btn.textContent = `🎟️ COMPRAR — $${t.price.toLocaleString()}`;
+}
+
+function scratchUpdatePrizeTable(){
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const m = t.mult;
+  document.getElementById('scratchPrizeJP').textContent     = '×'+m.jackpot;
+  document.getElementById('scratchPrizeDiam').textContent   = '×'+m.diam;
+  document.getElementById('scratchPrizeStar').textContent   = '×'+m.star;
+  document.getElementById('scratchPrizeCherry').textContent = '×'+m.cherry;
+  document.getElementById('scratchPrizeBell').textContent   = '×'+m.bell;
+  document.getElementById('scratchPrizeLemon').textContent  = '×'+m.lemon;
+  document.getElementById('scratchPrizePair').textContent   = '×'+m.pair;
+}
+
+function scratchBuyTicket(){
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  if(myBal < t.price){ toast('⚠️ Saldo insuficiente'); return; }
+  myBal -= t.price;
+  scratchBetAmt = t.price;
+  saveLocal(); mgUpdateBal('scratchBal'); updateRanking();
+
+  // Generate 9 cells — guarantee at least 2 different symbols (no free jackpot)
+  scratchCells = Array.from({length:9}, ()=> SC_POOL[Math.floor(Math.random()*SC_POOL.length)]);
+  scratchRevealed = Array(9).fill(false);
+  scratchLeft = 3;
+  scratchActive = true;
+
+  document.getElementById('scratchNewPanel').style.display = 'none';
+  document.getElementById('scratchPlayPanel').style.display = 'flex';
+  document.getElementById('scratchResult').textContent = '';
+  document.getElementById('scratchNewBtn').style.display = 'none';
+  document.getElementById('scratchLeft').textContent = '3';
+  document.getElementById('scratchInstr').style.display = 'block';
+  scratchRenderGrid();
+}
+
+function scratchRenderGrid(){
+  const el = document.getElementById('scratchGrid');
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  el.innerHTML = scratchCells.map((sym,i)=>{
+    const rev = scratchRevealed[i];
+    return `<div id="sc-cell-${i}" onclick="scratchReveal(${i})" style="
+      aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;
+      font-size:${rev?'32px':'24px'};
+      background:${rev?'rgba(46,213,115,.12)':'linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.05))'};
+      border:2px solid ${rev?'rgba(46,213,115,.4)':'rgba(255,255,255,.15)'};
+      cursor:${scratchActive&&!rev&&scratchLeft>0?'pointer':'default'};
+      transition:all .25s;user-select:none;
+      ${rev?'box-shadow:0 0 10px rgba(46,213,115,.2);':''}">
+      ${rev ? SC_SYMS[sym] : '✨'}
+    </div>`;
+  }).join('');
+}
+
+function scratchReveal(i){
+  if(!scratchActive || scratchRevealed[i] || scratchLeft<=0) return;
+  scratchRevealed[i] = true;
+  scratchLeft--;
+  document.getElementById('scratchLeft').textContent = scratchLeft;
+
+  // Animate cell
+  const cell = document.getElementById('sc-cell-'+i);
+  cell.style.transform = 'scale(1.15)';
+  cell.style.background = 'rgba(46,213,115,.12)';
+  cell.style.borderColor = 'rgba(46,213,115,.4)';
+  cell.style.fontSize = '32px';
+  cell.textContent = SC_SYMS[scratchCells[i]];
+  setTimeout(()=>{ if(cell) cell.style.transform=''; }, 200);
+  playTone(600+i*30,'sine',0.06,0.09);
+
+  if(scratchLeft === 0) scratchEvaluate();
+}
+
+function scratchEvaluate(){
+  scratchActive = false;
+  document.getElementById('scratchInstr').style.display = 'none';
+
+  // Count revealed symbols
+  const revSyms = scratchCells.filter((_,i)=>scratchRevealed[i]);
+  const counts = {};
+  revSyms.forEach(s=>{ counts[s]=(counts[s]||0)+1; });
+  const maxCount = Math.max(...Object.values(counts));
+  const topSym = parseInt(Object.keys(counts).find(k=>counts[k]===maxCount));
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const m = t.mult;
+
+  let mult = 0, label = '', won = false;
+  if(maxCount === 3){
+    won = true;
+    if(topSym === 0)     { mult=m.jackpot; label='🎰 ¡¡JACKPOT!! 3 iguales'; }
+    else if(topSym === 1){ mult=m.diam;    label='💎 ¡3 Diamantes!'; }
+    else if(topSym === 2){ mult=m.star;    label='⭐ ¡3 Estrellas!'; }
+    else if(topSym === 3){ mult=m.cherry;  label='🍒 ¡3 Cerezas!'; }
+    else if(topSym === 4){ mult=m.bell;    label='🔔 ¡3 Campanas!'; }
+    else if(topSym === 5){ mult=m.lemon;   label='🍋 3 Limones'; }
+    else                  { mult=m.lemon;  label='🃏 3 iguales'; }
+  } else if(maxCount === 2){
+    mult = m.pair; won = false; // pair returns fraction
+    label = '🃏 Par — recuperas algo';
+  }
+
+  const payout = Math.floor(scratchBetAmt * mult);
+  const profit = payout - scratchBetAmt;
+
+  const res = document.getElementById('scratchResult');
+  if(payout > 0){
+    myBal += payout; saveLocal(); mgUpdateBal('scratchBal'); updateRanking();
+    res.innerHTML = `<div style="color:${mult>=20?'#f0d060':mult>=5?'#2ecc71':'#aaa'};font-size:${mult>=20?'20':'16'}px;">${label}<br>+$${profit>=0?profit.toLocaleString():'0'} (×${mult})</div>`;
+    if(mult>=20){ sfxWin(); setTimeout(sfxWin,160); burst(innerWidth/2,innerHeight*.4,mult>=50?40:20); }
+    else if(mult>=3){ sfxWin(); }
+    else { playTone(440,'sine',0.12,0.12); }
+  } else {
+    res.innerHTML = `<div style="color:rgba(255,255,255,.3);">Sin premio esta vez 😔</div>`;
+    sfxLose();
+  }
+
+  mlRecordGameStat('scratch', payout>scratchBetAmt, profit);
+  mlUpdateMissionProgress('scratch', payout>scratchBetAmt, profit, {});
+  if(myBal<=0) mgCheckBankruptcy('scratchBal');
+
+  document.getElementById('scratchNewBtn').style.display = 'block';
+}
+
+function scratchNew(){
+  document.getElementById('scratchNewPanel').style.display = 'flex';
+  document.getElementById('scratchPlayPanel').style.display = 'none';
+  scratchSelectTicket(scratchTicketIdx);
+}
+
+
+// ════════════════════════════════════════════
+//  ⚔️ DESAFÍOS ENTRE JUGADORES
+// ════════════════════════════════════════════
+let chTab = 'incoming';
+let chSelectedOpponent = null; // {uid, name}
+let chType = 'balance';        // 'balance' | 'wins'
+let chDeadlineDays = 3;
+let _chListener = null;
+
+// ── Open / Close ──────────────────────────────────────────────────────────────
+function openChallenges(){
+  if(!myId || !myId.startsWith('g_')){ toast('Necesitas cuenta para usar desafíos'); return; }
+  document.getElementById('scChallenges').style.display = 'block';
+  chSetTab('incoming');
+  chListenIncoming();
+}
+function closeChallenges(){
+  document.getElementById('scChallenges').style.display = 'none';
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function chSetTab(tab){
+  chTab = tab;
+  const inc = document.getElementById('chTabInc');
+  const out = document.getElementById('chTabOut');
+  if(tab==='incoming'){
+    inc.style.background='rgba(240,208,96,.15)'; inc.style.borderColor='rgba(240,208,96,.5)'; inc.style.color='#f0d060';
+    out.style.background='rgba(255,255,255,.05)'; out.style.borderColor='rgba(255,255,255,.1)'; out.style.color='rgba(255,255,255,.5)';
+  } else {
+    out.style.background='rgba(240,208,96,.15)'; out.style.borderColor='rgba(240,208,96,.5)'; out.style.color='#f0d060';
+    inc.style.background='rgba(255,255,255,.05)'; inc.style.borderColor='rgba(255,255,255,.1)'; inc.style.color='rgba(255,255,255,.5)';
+  }
+  chLoadList();
+}
+
+// ── Firebase listener for incoming ───────────────────────────────────────────
+function chListenIncoming(){
+  if(!db||!myId) return;
+  if(_chListener) { _chListener(); _chListener=null; }
+  db.ref('challenges').orderByChild('to').equalTo(myId).on('value', snap=>{
+    const pending = [];
+    snap.forEach(c=>{ const d=c.val(); if(d.status==='pending') pending.push({id:c.key,...d}); });
+    const badge = document.getElementById('chIncBadge');
+    if(badge){
+      badge.style.display = pending.length ? 'inline' : 'none';
+      badge.textContent = pending.length;
+    }
+    // Also update lobby badge
+    chUpdateLobbyBadge(pending.length);
+    if(chTab==='incoming') chLoadList();
+  });
+}
+
+function chUpdateLobbyBadge(n){
+  let b = document.getElementById('chLobbyBadge');
+  if(!b) return;
+  b.style.display = n>0 ? 'flex' : 'none';
+  b.textContent = n;
+}
+
+function chLoadList(){
+  if(!db||!myId) return;
+  const el = document.getElementById('chList');
+  el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.2);font-size:12px;padding:20px;">Cargando...</div>';
+  const field = chTab==='incoming' ? 'to' : 'from';
+  db.ref('challenges').orderByChild(field).equalTo(myId).once('value').then(snap=>{
+    const rows = [];
+    snap.forEach(c=>{ rows.push({id:c.key,...c.val()}); });
+    rows.sort((a,b)=>b.createdAt-a.createdAt);
+    if(!rows.length){
+      el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.2);font-size:12px;padding:30px 0;">'+(chTab==='incoming'?'Sin desafíos recibidos':'No has enviado desafíos')+'</div>';
+      return;
+    }
+    el.innerHTML = rows.map(r=>chRowHtml(r)).join('');
+  });
+}
+
+function chRowHtml(r){
+  const isInc = chTab==='incoming';
+  const opponent = isInc ? r.fromName : r.toName;
+  const typeLabel = r.type==='balance'
+    ? `💰 Llegar a $${(r.target||0).toLocaleString()}`
+    : `🏆 Ganar ${r.target} veces`;
+  const deadline = r.expiresAt ? new Date(r.expiresAt).toLocaleDateString('es') : '—';
+  const statusColor = r.status==='pending'?'#f0d060':r.status==='accepted'?'#2ecc71':r.status==='declined'?'#e74c3c':r.status==='won'?'#f0d060':'#aaa';
+  const statusLabel = {pending:'⏳ Pendiente',accepted:'▶ En curso',declined:'❌ Rechazado',won:'🏆 Ganado',expired:'💨 Expirado'}[r.status]||r.status;
+  const actions = isInc && r.status==='pending'
+    ? `<div style="display:flex;gap:6px;margin-top:8px;">
+        <button onclick="chAccept('${r.id}')" style="flex:1;padding:8px;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.35);border-radius:10px;color:#2ecc71;font-size:11px;font-weight:800;cursor:pointer;">✅ Aceptar</button>
+        <button onclick="chDecline('${r.id}')" style="flex:1;padding:8px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-radius:10px;color:#e74c3c;font-size:11px;font-weight:700;cursor:pointer;">❌ Rechazar</button>
+      </div>` : '';
+  return `<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div style="font-size:13px;font-weight:800;color:#fff;">⚔️ ${escHtml(opponent)}</div>
+      <div style="font-size:10px;font-weight:700;color:${statusColor};">${statusLabel}</div>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);">${typeLabel}</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Vence: ${deadline}</div>
+    ${actions}
+  </div>`;
+}
+
+// ── New challenge modal ────────────────────────────────────────────────────────
+function openNewChallenge(){
+  if(!db||!myId){ toast('Necesitas cuenta'); return; }
+  document.getElementById('scNewChallenge').style.display='flex';
+  chSelectedOpponent = null;
+  chType = 'balance';
+  chDeadlineDays = 3;
+  chSelectType('balance');
+  chSelectDeadline(3);
+  // Load opponents from ranking
+  const el = document.getElementById('chOpponentList');
+  el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:11px;padding:8px;">Cargando jugadores...</div>';
+  db.ref('ranking').orderByChild('bal').limitToLast(20).once('value').then(snap=>{
+    const players = [];
+    snap.forEach(c=>{ const d=c.val(); if(c.key!==myId && d.name) players.push({uid:c.key,...d}); });
+    players.sort((a,b)=>(b.bal||0)-(a.bal||0));
+    if(!players.length){ el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:11px;padding:8px;">No hay otros jugadores aún</div>'; return; }
+    el.innerHTML = players.slice(0,10).map(p=>`
+      <div id="chOpp_${p.uid}" onclick="chSelectOpponent('${p.uid}','${escHtml(p.name).replace(/'/g,"\\'")}' )" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;border:1.5px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);transition:all .15s;">
+        <div style="width:28px;height:28px;border-radius:50%;background:${p.color||'#3498db'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0;">${(p.name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;font-size:12px;font-weight:700;color:rgba(255,255,255,.75);">${escHtml(p.name)}</div>
+        <div style="font-size:11px;color:#2ecc71;font-weight:800;">$${(p.bal||0).toLocaleString()}</div>
+      </div>`).join('');
+  });
+}
+function closeNewChallenge(){
+  document.getElementById('scNewChallenge').style.display='none';
+}
+
+function chSelectOpponent(uid, name){
+  chSelectedOpponent = {uid, name};
+  document.querySelectorAll('[id^="chOpp_"]').forEach(el=>{
+    el.style.borderColor = el.id==='chOpp_'+uid ? 'rgba(240,208,96,.6)' : 'rgba(255,255,255,.07)';
+    el.style.background  = el.id==='chOpp_'+uid ? 'rgba(240,208,96,.1)' : 'rgba(255,255,255,.04)';
+  });
+}
+
+function chSelectType(t){
+  chType = t;
+  const b = document.getElementById('chTypeBal');
+  const w = document.getElementById('chTypeWins');
+  const lbl = document.getElementById('chTargetLabel');
+  if(t==='balance'){
+    b.style.background='rgba(240,208,96,.15)'; b.style.borderColor='rgba(240,208,96,.5)'; b.style.color='#f0d060';
+    w.style.background='rgba(255,255,255,.05)'; w.style.borderColor='rgba(255,255,255,.1)'; w.style.color='rgba(255,255,255,.5)';
+    lbl.textContent='META (saldo $)';
+    document.getElementById('chTargetInput').value='5000';
+  } else {
+    w.style.background='rgba(240,208,96,.15)'; w.style.borderColor='rgba(240,208,96,.5)'; w.style.color='#f0d060';
+    b.style.background='rgba(255,255,255,.05)'; b.style.borderColor='rgba(255,255,255,.1)'; b.style.color='rgba(255,255,255,.5)';
+    lbl.textContent='VICTORIAS META (nº)';
+    document.getElementById('chTargetInput').value='10';
+  }
+}
+
+function chSelectDeadline(d){
+  chDeadlineDays = d;
+  [1,3,7].forEach(n=>{
+    const btn = document.getElementById('chDead'+n);
+    if(!btn) return;
+    const active = n===d;
+    btn.style.background = active?'rgba(240,208,96,.15)':'rgba(255,255,255,.05)';
+    btn.style.borderColor= active?'rgba(240,208,96,.5)':'rgba(255,255,255,.1)';
+    btn.style.color      = active?'#f0d060':'rgba(255,255,255,.5)';
+  });
+}
+
+function chSend(){
+  if(!chSelectedOpponent){ toast('⚠️ Elige un jugador'); return; }
+  const target = parseInt(document.getElementById('chTargetInput').value)||0;
+  if(target<1){ toast('⚠️ Meta inválida'); return; }
+  const now = Date.now();
+  const ch = {
+    from: myId,
+    fromName: myName,
+    to: chSelectedOpponent.uid,
+    toName: chSelectedOpponent.name,
+    type: chType,
+    target,
+    status: 'pending',
+    createdAt: now,
+    expiresAt: now + chDeadlineDays*86400000,
+    fromBal: myBal,       // snapshot at time of challenge
+    fromWins: (soloStats.wins||0)+(mpStats.wins||0),
+  };
+  db.ref('challenges').push(ch).then(()=>{
+    toast('⚔️ Desafío enviado a '+chSelectedOpponent.name, 2500);
+    closeNewChallenge();
+    chSetTab('outgoing');
+  }).catch(e=>toast('Error: '+e.message));
+}
+
+function chAccept(id){
+  db.ref('challenges/'+id).update({
+    status:'accepted',
+    acceptedAt: Date.now(),
+    toBal: myBal,
+    toWins: (soloStats.wins||0)+(mpStats.wins||0),
+  }).then(()=>{
+    toast('✅ Desafío aceptado — ¡buena suerte!', 2500);
+    chLoadList();
+    // Notify challenger via their pendingGift or broadcast
+    db.ref('ranking/'+myId).once('value').then(snap=>{
+      const d = snap.val();
+      const name = d?.name || myName;
+    });
+  });
+}
+
+function chDecline(id){
+  db.ref('challenges/'+id).update({status:'declined'}).then(()=>{
+    toast('❌ Desafío rechazado', 1800);
+    chLoadList();
+  });
+}
+
+// Called from updateRanking — check if any accepted challenge is won
+function chCheckProgress(){
+  if(!db||!myId||!myId.startsWith('g_')) return;
+  db.ref('challenges').orderByChild('from').equalTo(myId).once('value').then(snap=>{
+    snap.forEach(c=>{
+      const d=c.val(); if(d.status!=='accepted') return;
+      if(Date.now()>d.expiresAt){ db.ref('challenges/'+c.key).update({status:'expired'}).catch(()=>{}); return; }
+      let won=false;
+      if(d.type==='balance' && myBal>=(d.target||0)) won=true;
+      if(d.type==='wins'){
+        const totalWins=(soloStats.wins||0)+(mpStats.wins||0);
+        if(totalWins-(d.fromWins||0)>=(d.target||0)) won=true;
+      }
+      if(won){
+        db.ref('challenges/'+c.key).update({status:'won',wonAt:Date.now()}).then(()=>{
+          toast('🏆 ¡Ganaste el desafío vs '+d.toName+'!', 3500);
+          burst(innerWidth/2,innerHeight*.4,25);
+        }).catch(()=>{});
+      }
+    });
+  });
+}
+
 </script>
 
 <!-- ════════ BOTTOM NAV BAR ════════ -->
@@ -16302,6 +16743,113 @@ function lwUpdateFreeBar(){
       <button id="bingoStopBtn" onclick="bingoTogglePause()" style="width:100%;padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;">⏸ Pausar</button>
     </div>
 
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     🎟️  SCRATCH CARDS
+════════════════════════════════════════════════════════ -->
+<div class="fullscreen hidden" id="scScratch" style="overflow-y:auto;justify-content:flex-start;background:radial-gradient(ellipse at 50% 0%,#001a08,#010802);min-height:100vh;">
+  <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,.5);border-bottom:1px solid rgba(46,213,115,.2);flex-shrink:0;">
+    <button onclick="scratchLeave()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:13px;padding:8px 14px;cursor:pointer;">← Salir</button>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <span style="font-size:15px;">🎟️</span>
+      <span style="font-size:14px;font-weight:900;color:#2ed573;letter-spacing:1.5px;">RASCA Y GANA</span>
+    </div>
+    <div style="font-size:13px;font-weight:800;color:#f0d060;">$<span id="scratchBal">0</span></div>
+  </div>
+
+  <div style="width:100%;max-width:400px;margin:0 auto;padding:14px 14px 100px;display:flex;flex-direction:column;gap:12px;">
+
+    <!-- Ticket selector -->
+    <div id="scratchNewPanel" style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-align:center;">ELIGE TU RASPADITO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="scratchTicketPicker">
+        <!-- filled by JS -->
+      </div>
+      <button onclick="scratchBuyTicket()" id="scratchBuyBtn" style="width:100%;padding:16px;background:linear-gradient(135deg,#1e8449,#0e5c2a);border:none;border-radius:18px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;opacity:.4;pointer-events:none;">
+        🎟️ COMPRAR RASPADITO
+      </button>
+      <!-- Prize table -->
+      <div style="background:rgba(46,213,115,.04);border:1px solid rgba(46,213,115,.12);border-radius:14px;padding:10px 14px;">
+        <div style="font-size:9px;color:rgba(46,213,115,.5);letter-spacing:1.5px;margin-bottom:8px;text-align:center;">PREMIOS</div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:3px 10px;font-size:11px;align-items:center;">
+          <span style="font-size:16px;">🎰</span><span style="color:rgba(255,255,255,.5);">3 iguales (JACKPOT)</span><span style="color:#f0d060;font-weight:800;" id="scratchPrizeJP">×50</span>
+          <span style="font-size:14px;">💎</span><span style="color:rgba(255,255,255,.5);">3 diamantes</span><span style="color:#f0d060;font-weight:800;" id="scratchPrizeDiam">×20</span>
+          <span style="font-size:14px;">⭐</span><span style="color:rgba(255,255,255,.5);">3 estrellas</span><span style="color:#2ecc71;font-weight:800;" id="scratchPrizeStar">×10</span>
+          <span style="font-size:14px;">🍒</span><span style="color:rgba(255,255,255,.5);">3 cerezas</span><span style="color:#2ecc71;font-weight:800;" id="scratchPrizeCherry">×5</span>
+          <span style="font-size:14px;">🔔</span><span style="color:rgba(255,255,255,.5);">3 campanas</span><span style="color:#2ecc71;font-weight:800;" id="scratchPrizeBell">×3</span>
+          <span style="font-size:14px;">🍋</span><span style="color:rgba(255,255,255,.5);">3 limones</span><span style="color:#e67e22;font-weight:800;" id="scratchPrizeLemon">×2</span>
+          <span style="font-size:14px;">🃏</span><span style="color:rgba(255,255,255,.5);">2 iguales</span><span style="color:#aaa;font-weight:800;" id="scratchPrizePair">×0.5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scratch play panel -->
+    <div id="scratchPlayPanel" style="display:none;flex-direction:column;gap:12px;align-items:center;">
+      <div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;" id="scratchInstr">Toca las casillas para raspar · Quedan <span id="scratchLeft">3</span></div>
+      <!-- 3×3 grid -->
+      <div id="scratchGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:340px;"></div>
+      <!-- Result -->
+      <div id="scratchResult" style="min-height:32px;font-size:17px;font-weight:900;text-align:center;color:#2ed573;"></div>
+      <button onclick="scratchNew()" id="scratchNewBtn" style="display:none;width:100%;padding:14px;background:linear-gradient(135deg,#1e8449,#0e5c2a);border:none;border-radius:16px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;">🎟️ Nuevo raspadito</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     ⚔️  DESAFÍOS ENTRE JUGADORES
+════════════════════════════════════════════════════════ -->
+<div id="scChallenges" style="display:none;position:fixed;inset:0;z-index:9975;background:rgba(0,0,0,.97);overflow-y:auto;animation:jpIn .25s;">
+  <div style="max-width:420px;margin:0 auto;padding:16px 16px 80px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-top:8px;">
+      <button onclick="closeChallenges()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;width:40px;height:40px;cursor:pointer;flex-shrink:0;">←</button>
+      <div>
+        <div style="font-size:18px;font-weight:900;color:#f0d060;letter-spacing:1.5px;">⚔️ DESAFÍOS</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);">Reta a otros jugadores</div>
+      </div>
+      <button onclick="openNewChallenge()" style="margin-left:auto;background:linear-gradient(135deg,rgba(240,208,96,.2),rgba(240,208,96,.06));border:1px solid rgba(240,208,96,.4);border-radius:12px;color:#f0d060;font-size:12px;font-weight:800;padding:8px 14px;cursor:pointer;">+ Nuevo reto</button>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">
+      <button id="chTabInc" onclick="chSetTab('incoming')" style="padding:10px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(240,208,96,.15);border:1.5px solid rgba(240,208,96,.5);color:#f0d060;">📥 Recibidos <span id="chIncBadge" style="display:none;background:#e74c3c;color:#fff;border-radius:8px;padding:1px 6px;font-size:9px;margin-left:4px;"></span></button>
+      <button id="chTabOut" onclick="chSetTab('outgoing')" style="padding:10px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);">📤 Enviados</button>
+    </div>
+
+    <div id="chList" style="display:flex;flex-direction:column;gap:8px;">
+      <div style="text-align:center;color:rgba(255,255,255,.2);font-size:12px;padding:30px 0;">Cargando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- New Challenge modal -->
+<div id="scNewChallenge" style="display:none;position:fixed;inset:0;z-index:9980;background:rgba(0,0,0,.92);align-items:flex-end;justify-content:center;animation:jpIn .2s;">
+  <div style="width:100%;max-width:420px;background:linear-gradient(160deg,#0d1a0d,#060c06);border-radius:24px 24px 0 0;padding:18px 16px 36px;border-top:1px solid rgba(46,213,115,.2);">
+    <div style="font-size:14px;font-weight:900;color:#2ed573;margin-bottom:14px;text-align:center;">⚔️ Nuevo Desafío</div>
+    <!-- Select opponent -->
+    <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:6px;">JUGADOR A RETAR</div>
+    <div id="chOpponentList" style="display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;margin-bottom:12px;"></div>
+    <!-- Challenge type -->
+    <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:6px;">TIPO DE DESAFÍO</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+      <button id="chTypeBal" onclick="chSelectType('balance')" style="padding:10px 6px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(240,208,96,.15);border:1.5px solid rgba(240,208,96,.5);color:#f0d060;">💰 Llegar a saldo</button>
+      <button id="chTypeWins" onclick="chSelectType('wins')" style="padding:10px 6px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);">🏆 Ganar X veces</button>
+    </div>
+    <!-- Target -->
+    <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px;" id="chTargetLabel">META (saldo $)</div>
+    <input id="chTargetInput" type="number" value="5000" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:16px;font-weight:800;text-align:center;padding:10px;outline:none;margin-bottom:10px;box-sizing:border-box;">
+    <!-- Deadline -->
+    <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px;">PLAZO</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;" id="chDeadlinePicker">
+      <button onclick="chSelectDeadline(1)" id="chDead1" style="padding:9px 4px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);">1 día</button>
+      <button onclick="chSelectDeadline(3)" id="chDead3" style="padding:9px 4px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(240,208,96,.15);border:1.5px solid rgba(240,208,96,.5);color:#f0d060;">3 días</button>
+      <button onclick="chSelectDeadline(7)" id="chDead7" style="padding:9px 4px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);">7 días</button>
+    </div>
+    <button onclick="chSend()" style="width:100%;padding:15px;background:linear-gradient(135deg,#1e8449,#0e5c2a);border:none;border-radius:16px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;">⚔️ Enviar Desafío</button>
+    <button onclick="closeNewChallenge()" style="width:100%;margin-top:8px;background:none;border:none;color:rgba(255,255,255,.3);font-size:12px;cursor:pointer;padding:6px;">Cancelar</button>
   </div>
 </div>
 
