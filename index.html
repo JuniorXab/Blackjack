@@ -2913,6 +2913,21 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <div class="lw-result-banner" id="lwResultBanner"></div>
   </div>
 
+  <!-- Free spin progress bar -->
+  <div style="margin:6px 16px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+    <span style="font-size:15px;">🎁</span>
+    <div style="flex:1;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;">GIRO GRATIS</span>
+        <span id="lwFreeLabel" style="font-size:10px;color:#f0d060;font-weight:800;">0/10</span>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:6px;height:5px;overflow:hidden;">
+        <div id="lwFreeBar" style="width:0%;height:100%;background:linear-gradient(90deg,#f39c12,#f0d060);border-radius:6px;transition:width .4s;"></div>
+      </div>
+    </div>
+    <div id="lwFreeBadge" style="display:none;font-size:10px;font-weight:900;color:#2ecc71;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:3px 8px;white-space:nowrap;">¡GRATIS!</div>
+  </div>
+
   <div class="lw-double-row">
     <span style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;">DOBLE APUESTA</span>
     <button class="lw-double-btn" id="lwDoubleBtn" onclick="lwToggleDouble()">× OFF</button>
@@ -10467,23 +10482,22 @@ function lwToggleDouble(){
 function lwSpin(){
   if(lwSpinning) return;
   const isFree = lwGetFreeReady();
-  const eff = isFree ? 0 : (lwDouble?lwBet*2:lwBet);
+  const eff = lwDouble ? lwBet*2 : lwBet; // always use real bet value for payout calc
   if(!isFree && eff>myBal){toast('Fichas insuficientes',1500);return;}
   lwSpinning=true;
   document.getElementById('lwSpinBtn').disabled=true;
   document.getElementById('lwResultBanner').innerHTML='';
   if(isFree){
     lwSetFreeReady(false);
-    toast('🎁 ¡Giro GRATIS activado!', 1500);
+    lwUpdateFreeBar();
+    toast('🎁 ¡Giro GRATIS! Las ganancias son tuyas', 2000);
+    // Don't deduct bet — but eff is still used for payout calculation
   } else {
     myBal-=eff; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
-    // Track paid spins toward free spin
-    if(!isFree){
-      let c = lwGetSpinCount()+1;
-      if(c>=10){ lwSetFreeReady(true); lwSetSpinCount(0); toast('🎁 ¡Giro gratis desbloqueado! Próximo giro sin costo',3500); }
-      else lwSetSpinCount(c);
-      lwUpdateFreeBar();
-    }
+    let c = lwGetSpinCount()+1;
+    if(c>=10){ lwSetFreeReady(true); lwSetSpinCount(0); toast('🎁 ¡Giro gratis desbloqueado! Próximo giro sin costo',3500); }
+    else lwSetSpinCount(c);
+    lwUpdateFreeBar();
   }
 
   // Weighted RNG — visual segments stay same, internal probability adjusted
@@ -11441,8 +11455,8 @@ function spinGetPrizes(){
 
 let spinDone = false;
 
-function getLastSpinDate() { return localStorage.getItem('bjmp_spin') || ''; }
-function setLastSpinDate() { localStorage.setItem('bjmp_spin', new Date().toDateString()); }
+function getLastSpinDate() { return localStorage.getItem('bjmp_spin_'+(myId||'guest')) || ''; }
+function setLastSpinDate() { localStorage.setItem('bjmp_spin_'+(myId||'guest'), new Date().toDateString()); }
 
 
 // ─── DAILY STREAK ─────────────────────────────────────────
@@ -15263,7 +15277,7 @@ function dueloInit(){
   show('scDuelo'); bnShow(); bnSync('scDuelo');
   document.getElementById('dueloBal').textContent = myBal.toLocaleString();
   dueloResetUI();
-  dueloLogData = JSON.parse(localStorage.getItem('bjmp_duelo_log')||'[]');
+  dueloLogData = JSON.parse(localStorage.getItem(dueloLogKey())||'[]');
   dueloLogRender();
 }
 
@@ -15899,12 +15913,13 @@ function bingoShowNewGame(){
 
 
 // ── DUELO DEL OESTE — Historial ───────────────────────────────────────────────
-let dueloLogData = JSON.parse(localStorage.getItem('bjmp_duelo_log')||'[]');
+let dueloLogData = [];
+function dueloLogKey(){ return 'bjmp_duelo_log_'+(myId||'g'); }
 
 function dueloLogSave(entry){
   dueloLogData.unshift(entry); // newest first
   if(dueloLogData.length > 20) dueloLogData.length = 20;
-  localStorage.setItem('bjmp_duelo_log', JSON.stringify(dueloLogData));
+  localStorage.setItem(dueloLogKey(), JSON.stringify(dueloLogData));
 }
 
 function dueloLogRender(){
@@ -15938,10 +15953,10 @@ function dueloLogRender(){
 // ── LUCKY WHEEL — Free spin every 10 paid spins ───────────────────────────────
 let lwFreeSpinReady = false;
 
-function lwGetSpinCount(){ return parseInt(localStorage.getItem('bjmp_lw_count')||'0'); }
-function lwSetSpinCount(n){ localStorage.setItem('bjmp_lw_count', n); }
-function lwGetFreeReady(){ return localStorage.getItem('bjmp_lw_free')==='1'; }
-function lwSetFreeReady(v){ localStorage.setItem('bjmp_lw_free', v?'1':'0'); }
+function lwGetSpinCount(){ return parseInt(localStorage.getItem('bjmp_lw_count_'+(myId||'g'))||'0'); }
+function lwSetSpinCount(n){ localStorage.setItem('bjmp_lw_count_'+(myId||'g'), n); }
+function lwGetFreeReady(){ return localStorage.getItem('bjmp_lw_free_'+(myId||'g'))==='1'; }
+function lwSetFreeReady(v){ localStorage.setItem('bjmp_lw_free_'+(myId||'g'), v?'1':'0'); }
 
 function lwUpdateFreeBar(){
   const free = lwGetFreeReady();
