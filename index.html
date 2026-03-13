@@ -2092,6 +2092,11 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:12px;font-weight:900;color:#fff;">Lucky Wheel</div>
         <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Gira · Hasta ×50</div>
       </div>
+      <div onclick="selectGame('duelo')" style="background:linear-gradient(135deg,rgba(180,120,40,.22),rgba(120,70,10,.08));border:1.5px solid rgba(200,150,60,.5);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;grid-column:span 2;" onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''">
+        <div style="font-size:36px;">🤠</div>
+        <div style="font-size:13px;font-weight:900;color:#f5d27a;letter-spacing:1px;">DUELO DEL OESTE</div>
+        <div style="font-size:9px;color:rgba(245,210,122,.6);text-align:center;">6 cámaras · 1 bala · Cobrad o morid</div>
+      </div>
     </div>
   </div>
 </div>
@@ -7022,7 +7027,7 @@ function applyGoogleUser(user) {
         saveLocal();
         updateRanking();
         // Refresh all balance displays
-        ['myBalance','lobbyBal','mlBal','fsBal','knBal','bcBal','lwBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal'].forEach(id => {
+        ['myBalance','lobbyBal','mlBal','fsBal','knBal','bcBal','lwBal','slBal','crBal','mnBal','dcBal','gsBal','pfBal','rlBal','dueloBal'].forEach(id => {
           const el = document.getElementById(id);
           if(el) el.textContent = (id==='myBalance'?'$':'')+myBal.toLocaleString();
         });
@@ -8037,7 +8042,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -8737,6 +8742,8 @@ function selectGame(game) {
     hlcInit();
   } else if (game === 'hilodice') {
     hldInit();
+  } else if (game === 'duelo') {
+    dueloInit();
   }
 }
 
@@ -12220,7 +12227,7 @@ function bnGo(tab){
     'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
     'scSlotsSection','scGemSlots','scHiLoCards','scHiLoDice',
     'scCartasSection','scMesaSection','scArcadeSection','scMultiSection',
-    'scDominoLobby','scDomino'];
+    'scDominoLobby','scDomino','scDuelo'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -15048,6 +15055,205 @@ function rmCheckRoomEmpty(room){
   const pids=Object.keys(room.players||{});
   if(pids.length===0&&db){ db.ref(`${RM_PATH}/${rmRoomCode}`).remove(); }
 }
+
+// ════════════════════════════════════════════
+//  🤠 DUELO DEL OESTE
+// ════════════════════════════════════════════
+// Mecánica: 6 cámaras, 1 bala colocada aleatoriamente en posición 1-6.
+// El jugador apuesta al inicio. Cada disparo que sobrevive acumula multiplicador.
+// Puede cobrar en cualquier momento. Si sale la bala → pierde la apuesta.
+// Máximo 5 disparos (si sobrevive 5, el 6° es certeza de bala → auto-cobra).
+const DUELO_MULTS = [0, 1.30, 1.75, 2.50, 4.00, 7.00]; // payout after n survivals
+const DUELO_RISK  = [0, 17, 20, 25, 33, 50]; // % risk per shot
+
+let dueloBet = 100;
+let dueloBulletPos = 0;   // 1-6 random
+let dueloShotsFired = 0;  // 0-5
+let dueloActive = false;
+
+function dueloInit(){
+  show('scDuelo'); bnShow(); bnSync('scDuelo');
+  document.getElementById('dueloBal').textContent = myBal.toLocaleString();
+  dueloResetUI();
+}
+
+function dueloLeave(){ hide('scDuelo'); openArcadeSection(); }
+
+function dueloResetUI(){
+  dueloActive = false; dueloShotsFired = 0;
+  document.getElementById('dueloShot').textContent = '—';
+  document.getElementById('dueloMult').textContent = '1.00×';
+  document.getElementById('dueloMult').style.color = '#2ecc71';
+  document.getElementById('dueloGain').textContent = '$0';
+  document.getElementById('dueloMsg').textContent = '';
+  document.getElementById('dueloCashBtn').style.display = 'none';
+  document.getElementById('dueloFireBtn').style.display = 'none';
+  document.getElementById('dueloNewPanel').style.display = 'flex';
+  document.getElementById('dueloDanger').style.width = '0%';
+  document.getElementById('dueloRisk').textContent = 'Probabilidad de bala: 0%';
+  document.getElementById('dueloGun').style.transform = '';
+  document.getElementById('dueloGun').textContent = '🔫';
+  dueloRenderChambers(-1);
+}
+
+function dueloRenderChambers(firedAt){
+  // firedAt = index (0-based) of the chamber that just fired, -1 = none yet
+  const el = document.getElementById('dueloChambers');
+  let html = '';
+  for(let i=0;i<6;i++){
+    const isFired  = i < dueloShotsFired;
+    const isCurrent = i === dueloShotsFired - 1;
+    const isBullet  = firedAt >= 0 && i === firedAt;
+    let bg, border, icon;
+    if(isBullet){
+      bg='rgba(231,76,60,.5)'; border='rgba(231,76,60,.9)'; icon='🔴';
+    } else if(isFired){
+      bg='rgba(255,255,255,.06)'; border='rgba(255,255,255,.15)'; icon='⭕';
+    } else {
+      bg='rgba(200,150,40,.12)'; border='rgba(200,150,40,.35)'; icon='🟡';
+    }
+    html+=`<div style="width:36px;height:36px;border-radius:50%;background:${bg};border:2px solid ${border};display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s;">${icon}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function dueloAdj(v){
+  const inp = document.getElementById('dueloBetInput');
+  if(v==='max') dueloBet = Math.min(myBal, 10000);
+  else dueloBet = Math.max(1, Math.floor((parseInt(inp.value)||100)*v));
+  inp.value = dueloBet;
+}
+
+function dueloStart(){
+  dueloBet = parseInt(document.getElementById('dueloBetInput').value)||100;
+  if(dueloBet < 1){ toast('⚠️ Apuesta mínima $1'); return; }
+  if(myBal < dueloBet){ toast('⚠️ Saldo insuficiente'); return; }
+
+  // Deduct bet
+  myBal -= dueloBet; saveLocal(); mgUpdateBal('dueloBal'); updateRanking();
+
+  // Place bullet randomly in chamber 1-6
+  dueloBulletPos = Math.ceil(Math.random()*6);
+  dueloShotsFired = 0;
+  dueloActive = true;
+
+  document.getElementById('dueloNewPanel').style.display = 'none';
+  document.getElementById('dueloFireBtn').style.display = 'block';
+  document.getElementById('dueloCashBtn').style.display = 'none';
+  document.getElementById('dueloShot').textContent = '1/5';
+  document.getElementById('dueloMsg').textContent = '🤠 ¿Apretás el gatillo, forastero?';
+  document.getElementById('dueloMsg').style.color = '#f5d27a';
+  document.getElementById('dueloDanger').style.width = '17%';
+  document.getElementById('dueloRisk').textContent = 'Probabilidad de bala: 17%';
+  dueloRenderChambers(-1);
+}
+
+function dueloFire(){
+  if(!dueloActive) return;
+  dueloShotsFired++;
+  const chamberIndex = dueloShotsFired - 1; // 0-based
+
+  // Animate gun shake
+  const gun = document.getElementById('dueloGun');
+  gun.style.transform = 'rotate(-15deg) scale(1.2)';
+  setTimeout(()=>{ gun.style.transform='rotate(5deg) scale(0.95)'; },120);
+  setTimeout(()=>{ gun.style.transform=''; },250);
+
+  const hitBullet = (dueloBulletPos === dueloShotsFired);
+
+  if(hitBullet){
+    // 💀 Dead
+    dueloActive = false;
+    gun.textContent = '💥';
+    dueloRenderChambers(chamberIndex);
+    document.getElementById('dueloFireBtn').style.display = 'none';
+    document.getElementById('dueloCashBtn').style.display = 'none';
+    document.getElementById('dueloMsg').textContent = '💀 ¡La bala era tuya, forastero!';
+    document.getElementById('dueloMsg').style.color = '#e74c3c';
+    document.getElementById('dueloMult').textContent = '0×';
+    document.getElementById('dueloMult').style.color = '#e74c3c';
+    document.getElementById('dueloGain').textContent = '-$'+dueloBet.toLocaleString();
+    document.getElementById('dueloDanger').style.width = '100%';
+    playTone(120, 'sawtooth', 0.35, 0.5);
+    setTimeout(()=>{
+      document.getElementById('dueloNewPanel').style.display = 'flex';
+      document.getElementById('dueloMsg').textContent = '💀 ¡La bala era tuya, forastero! Intenta de nuevo.';
+    }, 1400);
+    mlRecordGameStat('duelo', false, -dueloBet);
+    mlUpdateMissionProgress('duelo', false, -dueloBet, {});
+    if(myBal<=0) mgCheckBankruptcy('dueloBal');
+    return;
+  }
+
+  // ✅ Survived
+  const mult = DUELO_MULTS[dueloShotsFired];
+  const payout = Math.floor(dueloBet * mult);
+  const gain = payout - dueloBet;
+  const riskNext = dueloShotsFired < 5 ? DUELO_RISK[dueloShotsFired+1] : 100;
+
+  dueloRenderChambers(-1);
+  gun.textContent = '🔫';
+
+  document.getElementById('dueloMult').textContent = mult.toFixed(2)+'×';
+  document.getElementById('dueloMult').style.color = '#2ecc71';
+  document.getElementById('dueloGain').textContent = '$'+payout.toLocaleString();
+  document.getElementById('dueloCashBtn').style.display = 'block';
+  document.getElementById('dueloCashBtn').querySelector('#dueloCashAmt').textContent = payout.toLocaleString();
+
+  const shotMsgs = [
+    '😅 ¡Sobreviviste el primer disparo!',
+    '😤 Dos tiros y sigues de pie...',
+    '😬 Tres y sigues vivo, valiente...',
+    '🤯 ¡Cuatro disparos! Eres una leyenda.',
+    '🏆 ¡CINCO DISPAROS! ¡El vaquero inmortal!'
+  ];
+  document.getElementById('dueloMsg').textContent = shotMsgs[dueloShotsFired-1]||'';
+  document.getElementById('dueloMsg').style.color = '#f5d27a';
+
+  playTone(660, 'sine', 0.15, 0.1);
+
+  if(dueloShotsFired >= 5){
+    // Max shots — auto cashout
+    dueloActive = false;
+    document.getElementById('dueloFireBtn').style.display = 'none';
+    document.getElementById('dueloShot').textContent = '5/5';
+    document.getElementById('dueloDanger').style.width = '100%';
+    document.getElementById('dueloRisk').textContent = '⚠️ El 6° disparo es muerte segura';
+    setTimeout(()=>{ dueloCash(true); }, 800);
+  } else {
+    document.getElementById('dueloShot').textContent = (dueloShotsFired+1)+'/5';
+    const dangerPct = [0,17,33,50,67,83][dueloShotsFired];
+    document.getElementById('dueloDanger').style.width = dangerPct+'%';
+    document.getElementById('dueloRisk').textContent = `Próximo disparo: ${riskNext}% riesgo de bala`;
+  }
+}
+
+function dueloCash(auto=false){
+  if(!dueloActive && !auto) return;
+  dueloActive = false;
+  const mult = DUELO_MULTS[dueloShotsFired];
+  const payout = Math.floor(dueloBet * mult);
+  const profit = payout - dueloBet;
+
+  myBal += payout; saveLocal(); mgUpdateBal('dueloBal'); updateRanking();
+  document.getElementById('dueloCashBtn').style.display = 'none';
+  document.getElementById('dueloFireBtn').style.display = 'none';
+
+  if(profit > 0){
+    document.getElementById('dueloMsg').textContent = `💰 ¡Cobrado! +$${profit.toLocaleString()} (×${mult.toFixed(2)})`;
+    document.getElementById('dueloMsg').style.color = '#f0d060';
+    sfxWin();
+    if(profit > 200) burst(innerWidth/2, innerHeight*.4, 18);
+  } else {
+    document.getElementById('dueloMsg').textContent = `💸 Cobrado antes de morir. $${payout.toLocaleString()} recuperados.`;
+    document.getElementById('dueloMsg').style.color = '#aaa';
+  }
+
+  setTimeout(()=>{ document.getElementById('dueloNewPanel').style.display='flex'; }, 800);
+  mlRecordGameStat('duelo', profit>0, profit);
+  mlUpdateMissionProgress('duelo', profit>0, profit, {});
+}
+
 </script>
 
 <!-- ════════ BOTTOM NAV BAR ════════ -->
@@ -15171,6 +15377,104 @@ function rmCheckRoomEmpty(room){
     </div>
 
     <button class="pf-sign-out" onclick="mlSignOut()">Cerrar sesión</button>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     🤠  DUELO DEL OESTE
+════════════════════════════════════════════════════════ -->
+<div class="fullscreen hidden" id="scDuelo" style="overflow-y:auto;justify-content:flex-start;background:radial-gradient(ellipse at 50% 0%,#2a1800,#0e0800);min-height:100vh;">
+
+  <!-- Top bar -->
+  <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(200,150,60,.2);flex-shrink:0;">
+    <button onclick="dueloLeave()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:13px;padding:8px 14px;cursor:pointer;">← Salir</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">🤠</span>
+      <span style="font-size:14px;font-weight:900;color:#f5d27a;letter-spacing:1.5px;">DUELO DEL OESTE</span>
+    </div>
+    <div style="font-size:13px;font-weight:800;color:#f0d060;">$<span id="dueloBal">0</span></div>
+  </div>
+
+  <div style="width:100%;max-width:420px;margin:0 auto;padding:16px 16px 100px;display:flex;flex-direction:column;gap:14px;">
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 8px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px;">DISPARO</div>
+        <div style="font-size:22px;font-weight:900;color:#fff;" id="dueloShot">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 8px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px;">MULTIPLIER</div>
+        <div style="font-size:22px;font-weight:900;color:#2ecc71;" id="dueloMult">1.00×</div>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 8px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px;">GANANCIA</div>
+        <div style="font-size:18px;font-weight:900;color:#f0d060;" id="dueloGain">$0</div>
+      </div>
+    </div>
+
+    <!-- Revolver visual -->
+    <div style="background:linear-gradient(135deg,rgba(80,50,10,.4),rgba(40,20,0,.6));border:1.5px solid rgba(200,150,60,.25);border-radius:20px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;">
+
+      <!-- Revolver SVG art -->
+      <div id="dueloGun" style="font-size:72px;transition:all .15s;user-select:none;filter:drop-shadow(0 4px 16px rgba(200,150,60,.3));">🔫</div>
+
+      <!-- 6 chambers -->
+      <div style="display:flex;gap:10px;align-items:center;" id="dueloChambers">
+        <!-- filled by JS -->
+      </div>
+
+      <!-- Danger meter bar -->
+      <div style="width:100%;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">
+        <div id="dueloDanger" style="height:100%;width:0%;background:linear-gradient(90deg,#2ecc71,#f39c12,#e74c3c);border-radius:3px;transition:width .6s ease;"></div>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.35);" id="dueloRisk">Probabilidad de bala: 0%</div>
+    </div>
+
+    <!-- Message -->
+    <div id="dueloMsg" style="text-align:center;font-size:15px;font-weight:800;color:#f0d060;min-height:22px;letter-spacing:.5px;"></div>
+
+    <!-- Cashout button (visible when active) -->
+    <button id="dueloCashBtn" onclick="dueloCash()" style="display:none;width:100%;padding:16px;background:linear-gradient(135deg,#27ae60,#1e8449);border:none;border-radius:18px;color:#fff;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:1px;">
+      💰 COBRAR — $<span id="dueloCashAmt">0</span>
+    </button>
+
+    <!-- Fire button -->
+    <button id="dueloFireBtn" onclick="dueloFire()" style="display:none;width:100%;padding:18px;background:linear-gradient(135deg,#8B1A1A,#5C0000);border:2px solid rgba(220,80,60,.5);border-radius:18px;color:#fff;font-size:17px;font-weight:900;cursor:pointer;letter-spacing:2px;box-shadow:0 4px 20px rgba(220,80,60,.3);">
+      🔫 DISPARAR
+    </button>
+
+    <!-- New round -->
+    <div id="dueloNewPanel" style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;">
+        <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;min-width:52px;">APUESTA</div>
+        <input id="dueloBetInput" type="number" value="100" min="1"
+          style="flex:1;background:transparent;border:none;color:#fff;font-size:18px;font-weight:800;text-align:center;outline:none;width:0;">
+        <button onclick="dueloAdj(.5)" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:11px;padding:5px 9px;cursor:pointer;">½</button>
+        <button onclick="dueloAdj(2)" style="background:rgba(100,180,255,.15);border:1px solid rgba(100,180,255,.3);border-radius:8px;color:#7ec8f7;font-size:11px;padding:5px 9px;cursor:pointer;">×2</button>
+        <button onclick="dueloAdj('max')" style="background:rgba(240,208,96,.15);border:1px solid rgba(240,208,96,.3);border-radius:8px;color:#f0d060;font-size:11px;padding:5px 9px;cursor:pointer;">MAX</button>
+      </div>
+      <button onclick="dueloStart()" style="width:100%;padding:17px;background:linear-gradient(135deg,#c8973a,#8B6014);border:none;border-radius:18px;color:#fff;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:2px;box-shadow:0 4px 20px rgba(200,150,40,.3);">
+        🤠 NUEVO DUELO
+      </button>
+    </div>
+
+    <!-- Payout table -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,150,60,.15);border-radius:16px;padding:14px;">
+      <div style="font-size:10px;color:rgba(245,210,122,.6);letter-spacing:1px;margin-bottom:10px;text-align:center;">TABLA DE PAGOS</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;text-align:center;">
+        <div style="font-size:9px;color:rgba(255,255,255,.3);">DISPARO</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);">RIESGO</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);">COBRAR</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">1°</div><div style="font-size:11px;color:#2ecc71;">17%</div><div style="font-size:11px;color:#f0d060;">×1.30</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">2°</div><div style="font-size:11px;color:#58d68d;">20%</div><div style="font-size:11px;color:#f0d060;">×1.75</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">3°</div><div style="font-size:11px;color:#f39c12;">25%</div><div style="font-size:11px;color:#f0d060;">×2.50</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">4°</div><div style="font-size:11px;color:#e67e22;">33%</div><div style="font-size:11px;color:#f0d060;">×4.00</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">5°</div><div style="font-size:11px;color:#e74c3c;">50%</div><div style="font-size:11px;color:#f5d27a;font-weight:900;">×7.00 🏆</div>
+      </div>
+    </div>
 
   </div>
 </div>
