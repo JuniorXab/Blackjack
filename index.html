@@ -2097,13 +2097,13 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:12px;font-weight:900;color:#fff;">Lucky Wheel</div>
         <div style="font-size:9px;color:rgba(255,255,255,.45);text-align:center;">Gira · Hasta ×50</div>
       </div>
-      <div onclick="selectGame('duelo')" style="background:linear-gradient(135deg,rgba(180,120,40,.22),rgba(120,70,10,.08));border:1.5px solid rgba(200,150,60,.5);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;grid-column:span 2;" onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''">
-        <div style="font-size:36px;">🤠</div>
+      <div onclick="selectGame('duelo')" style="background:linear-gradient(135deg,rgba(180,120,40,.22),rgba(120,70,10,.08));border:1.5px solid rgba(200,150,60,.5);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🤠</div>
         <div style="font-size:13px;font-weight:900;color:#f5d27a;letter-spacing:1px;">DUELO DEL OESTE</div>
         <div style="font-size:9px;color:rgba(245,210,122,.6);text-align:center;">6 cámaras · 1 bala · Cobrad o morid</div>
       </div>
-      <div onclick="selectGame('bingo')" style="background:linear-gradient(135deg,rgba(52,152,219,.2),rgba(41,128,185,.06));border:1.5px solid rgba(52,152,219,.45);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;grid-column:span 2;" onmousedown="this.style.transform='scale(.98)'" onmouseup="this.style.transform=''">
-        <div style="font-size:36px;">🎱</div>
+      <div onclick="selectGame('bingo')" style="background:linear-gradient(135deg,rgba(52,152,219,.2),rgba(41,128,185,.06));border:1.5px solid rgba(52,152,219,.45);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">🎱</div>
         <div style="font-size:13px;font-weight:900;color:#7ec8f7;letter-spacing:1px;">BINGO 75</div>
         <div style="font-size:9px;color:rgba(126,200,247,.6);text-align:center;">B-I-N-G-O · Línea + Cartón lleno · Jackpot ×20</div>
       </div>
@@ -4361,6 +4361,78 @@ function sfxLose() {
 function sfxDealerFlip() {
   playTone(440, 0.1, 'triangle', 0.15);
   playTone(330, 0.12, 'triangle', 0.1, 0.08);
+}
+
+// ── DUELO DEL OESTE SFX ────────────────────────
+function sfxGunshot() {
+  // Click del martillo + detonación corta
+  try {
+    const ctx = getAudio();
+    // Hammer click
+    const o1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    o1.connect(g1); g1.connect(ctx.destination);
+    o1.type = 'square'; o1.frequency.value = 1800;
+    g1.gain.setValueAtTime(0.18, ctx.currentTime);
+    g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+    o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.05);
+    // White noise bang
+    const bufSize = ctx.sampleRate * 0.15;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i/bufSize, 2);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const g2 = ctx.createGain();
+    src.connect(g2); g2.connect(ctx.destination);
+    g2.gain.setValueAtTime(0.28, ctx.currentTime + 0.02);
+    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+    src.start(ctx.currentTime + 0.02);
+    // Low thud
+    playTone(80, 0.12, 'sawtooth', 0.2, 0.02);
+  } catch(e) { playTone(120, 0.15, 'sawtooth', 0.3); }
+}
+
+function sfxExplosion() {
+  // Boom — baja frecuencia + ruido largo
+  try {
+    const ctx = getAudio();
+    const bufSize = ctx.sampleRate * 0.6;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i/bufSize, 1.4);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const g = ctx.createGain();
+    src.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.5, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
+    src.start(ctx.currentTime);
+    // Sub bass drop
+    playTone(55, 0.5, 'sawtooth', 0.35);
+    playTone(80, 0.4, 'sawtooth', 0.22, 0.05);
+  } catch(e) { sfxLose(); }
+}
+
+// ── BINGO SFX ─────────────────────────────────
+function sfxBingoBall(col) {
+  // Bola cayendo en la máquina — pitch según columna
+  const freqs = [420, 480, 540, 600, 660];
+  const f = freqs[col] || 480;
+  try {
+    const ctx = getAudio();
+    // Bounce 1
+    playTone(f,    0.06, 'sine', 0.12);
+    // Bounce 2 slightly lower
+    playTone(f * 0.85, 0.05, 'sine', 0.08, 0.07);
+    // Soft rattle
+    playTone(f * 1.4, 0.04, 'triangle', 0.05, 0.13);
+  } catch(e) {}
+}
+
+function sfxBingoLine() {
+  // Línea completa — fanfarria corta ascendente
+  [440, 554, 659, 880].forEach((f, i) => playTone(f, 0.13, 'sine', 0.18, i * 0.07));
 }
 
 // ═══════════════════════════════════════════
@@ -15165,7 +15237,8 @@ function dueloFire(){
   dueloShotsFired++;
   const chamberIndex = dueloShotsFired - 1; // 0-based
 
-  // Animate gun shake
+  // Animate gun shake + gunshot sound
+  sfxGunshot();
   const gun = document.getElementById('dueloGun');
   gun.style.transform = 'rotate(-15deg) scale(1.2)';
   setTimeout(()=>{ gun.style.transform='rotate(5deg) scale(0.95)'; },120);
@@ -15177,6 +15250,7 @@ function dueloFire(){
     // 💀 Dead
     dueloActive = false;
     gun.textContent = '💥';
+    setTimeout(sfxExplosion, 80);
     dueloRenderChambers(chamberIndex);
     document.getElementById('dueloFireBtn').style.display = 'none';
     document.getElementById('dueloCashBtn').style.display = 'none';
@@ -15222,7 +15296,7 @@ function dueloFire(){
   document.getElementById('dueloMsg').textContent = shotMsgs[dueloShotsFired-1]||'';
   document.getElementById('dueloMsg').style.color = '#f5d27a';
 
-  playTone(660, 'sine', 0.15, 0.1);
+  // sfxGunshot already played above
 
   if(dueloShotsFired >= 5){
     // Max shots — auto cashout
@@ -15594,8 +15668,8 @@ function bingoDrawBall(){
     }
   });
 
-  if(hit) playTone(480+col*60,'sine',0.07,0.09);
-  else     playTone(220,'sine',0.03,0.06);
+  if(hit) sfxBingoBall(col);
+  else     playTone(200,0.05,'sine',0.04);
 
   // Check lines on all cards
   bingoCards.forEach((_,k)=>{ bingoCheckLines(k); });
@@ -15637,8 +15711,32 @@ function bingoCheckLines(k){
     if(lbl) lbl.textContent=bingoCompLines[k].size+' línea'+(bingoCompLines[k].size>1?'s':'');
     document.getElementById('bingoMsg').textContent='🎉 ¡LÍNEA! +$'+prize.toLocaleString();
     document.getElementById('bingoMsg').style.color='#2ecc71';
-    sfxWin(); burst(innerWidth/2,innerHeight*.35,8);
+    sfxBingoLine(); burst(innerWidth/2,innerHeight*.35,8);
+    // Illuminate winning line cells
+    bingoFlashLine(k, key);
   }
+}
+
+function bingoFlashLine(k, key){
+  // Get cell coords for this line key
+  const cells=[];
+  if(key.startsWith('r')){ const r=parseInt(key[1]); for(let c=0;c<5;c++) cells.push([r,c]); }
+  else if(key.startsWith('c')){ const c=parseInt(key[1]); for(let r=0;r<5;r++) cells.push([r,c]); }
+  else if(key==='d1'){ for(let i=0;i<5;i++) cells.push([i,i]); }
+  else if(key==='d2'){ for(let i=0;i<5;i++) cells.push([i,4-i]); }
+  // Flash gold border 3 times
+  let flashes=0;
+  const flash=()=>{
+    cells.forEach(([r,c])=>{
+      const el=document.getElementById(`bng-g-${k}-${r}-${c}`); if(!el) return;
+      el.style.borderColor=flashes%2===0?'#f0d060':'';
+      el.style.boxShadow=flashes%2===0?'0 0 10px #f0d06088':'';
+      el.style.transform=flashes%2===0?'scale(1.12)':'scale(1)';
+    });
+    flashes++;
+    if(flashes<6) setTimeout(flash,180);
+  };
+  flash();
 }
 
 function bingoCheckFullCard(k){
