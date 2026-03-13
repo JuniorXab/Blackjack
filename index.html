@@ -2176,7 +2176,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <div class="fullscreen hidden" id="scDominoLobby">
   <div class="dm-lobby-wrap">
     <div class="dm-lobby-header">
-      <button class="dm-lobby-back" onclick="goGameSelect()">← Juegos</button>
+      <button class="dm-lobby-back" onclick="openMultiSection()">← Juegos</button>
       <div class="dm-logo-inline">
         <div style="font-size:28px;">🁣</div>
         <div>
@@ -2462,7 +2462,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <div class="fullscreen hidden" id="scRouletteLobby" style="overflow-y:auto;justify-content:flex-start;">
   <div class="rl-lobby-card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <button onclick="goGameSelect()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;padding:5px 12px;">← Juegos</button>
+      <button onclick="openMesaSection()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;padding:5px 12px;">← Juegos</button>
       <div style="font-size:11px;color:rgba(46,160,80,.8);font-weight:bold;letter-spacing:2px;">🎡 RULETA</div>
     </div>
     <div class="rl-hero">
@@ -2697,7 +2697,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ CRASH ════════ -->
 <div class="fullscreen hidden mg-screen" id="scCrash">
   <div class="mg-topbar">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openArcadeSection()">← Salir</button>
     <div class="mg-title" style="color:#2ecc71;">📈 CRASH</div>
     <div class="mg-bal" id="crBal">$0</div>
   </div>
@@ -2741,7 +2741,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ MINES ════════ -->
 <div class="fullscreen hidden mg-screen" id="scMines">
   <div class="mg-topbar">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openArcadeSection()">← Salir</button>
     <div class="mg-title" style="color:#3498db;">💣 MINAS</div>
     <div class="mg-bal" id="mnBal">$0</div>
   </div>
@@ -2785,7 +2785,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ DICE ════════ -->
 <div class="fullscreen hidden mg-screen" id="scDice">
   <div class="mg-topbar">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openMesaSection()">← Salir</button>
     <div class="mg-title" style="color:#f5d978;">🎲 DADOS</div>
     <div class="mg-bal" id="dcBal">$0</div>
   </div>
@@ -2837,7 +2837,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ KENO ════════ -->
 <div class="fullscreen hidden mg-screen" id="scKeno">
   <div class="mg-topbar">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openMesaSection()">← Salir</button>
     <div class="mg-title" style="color:#40a0ff;">🎱 KENO</div>
     <div class="mg-bal" id="knBal">$0</div>
   </div>
@@ -2875,7 +2875,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ LUCKY WHEEL ════════ -->
 <div class="fullscreen hidden mg-screen" id="scWheel">
   <div class="mg-topbar">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openArcadeSection()">← Salir</button>
     <div class="mg-title" style="color:#c084fc;letter-spacing:1px;">🎡 LUCKY WHEEL</div>
     <div class="mg-bal" id="lwBal">$0</div>
   </div>
@@ -2921,7 +2921,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ BACCARAT ════════ -->
 <div class="fullscreen hidden mg-screen" id="scBaccarat">
   <div class="mg-topbar">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openCartasSection()">← Salir</button>
     <div class="mg-title" style="color:#00c864;">🎴 BACCARAT</div>
     <div class="mg-bal" id="bcBal">$0</div>
   </div>
@@ -2985,7 +2985,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ FOOTBALL STUDIO ════════ -->
 <div class="fullscreen hidden mg-screen" id="scFootball">
   <div class="mg-topbar" style="border-bottom:1px solid rgba(46,180,50,.3);">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
+    <button class="mg-back" onclick="openCartasSection()">← Salir</button>
     <div class="mg-title" style="color:#4caf50;">⚽ FOOTBALL STUDIO</div>
     <div class="mg-bal" id="fsBal">$0</div>
   </div>
@@ -3133,7 +3133,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <button onclick="goGameSelect()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.35);font-size:12px;cursor:pointer;padding:5px 12px;">← Salir</button>
       <div style="display:flex;gap:5px;">
-        <button onclick="goGameSelect()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.3);font-size:11px;cursor:pointer;padding:5px 10px;">🎮 Juegos</button>
+        <button onclick="openMultiSection()" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.3);font-size:11px;cursor:pointer;padding:5px 10px;">🎮 Juegos</button>
         <button id="lobbySignOutBtn" onclick="lobbySignOut()" style="display:none;background:none;border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.35);font-size:11px;padding:5px 10px;cursor:pointer;">Cerrar sesión</button>
       </div>
     </div>
@@ -3436,13 +3436,14 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <!-- ════════ CHAT SCREEN ════════ -->
 <div class="fullscreen hidden" id="scChat" style="padding-bottom:62px;display:flex;flex-direction:column;">
   <div class="chat-screen-topbar" style="flex-shrink:0;">
-    <div style="display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);flex:1;max-width:260px;">
+    <button id="chatBackBtn" onclick="chatGoBack()" style="display:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;padding:5px 10px;white-space:nowrap;">← Volver</button>
+    <div style="display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);flex:1;max-width:220px;">
       <button id="scChatTabGlobal" onclick="scChatSetTab('global')"
         style="flex:1;padding:7px 0;border:none;background:rgba(240,208,96,.2);color:#f0d060;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:.5px;">🌐 GLOBAL</button>
       <button id="scChatTabFriends" onclick="scChatSetTab('friends')"
         style="flex:1;padding:7px 0;border:none;background:transparent;color:rgba(255,255,255,.4);font-size:11px;font-weight:800;cursor:pointer;letter-spacing:.5px;">👥 AMIGOS</button>
     </div>
-    <div style="font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px;">CASINO ROYALE</div>
+    <div style="font-size:9px;color:rgba(255,255,255,.2);letter-spacing:1px;">ROYALE</div>
   </div>
   <!-- Global tab -->
   <div id="scChatGlobalPanel" style="flex:1;display:flex;flex-direction:column;min-height:0;">
@@ -3463,7 +3464,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 <div class="fullscreen hidden" id="scRummyLobby">
   <div class="rm-lobby-wrap">
     <div class="rm-lobby-header">
-      <button class="rm-lobby-back" onclick="goGameSelect()">← Juegos</button>
+      <button class="rm-lobby-back" onclick="openMultiSection()">← Juegos</button>
       <div class="rm-logo-inline">
         <div class="rm-logo-icon">🃏</div>
         <div>
@@ -4044,6 +4045,7 @@ let myBet = 0, myCardIdx = 0, lastBet = 0; // index into pre-dealt cards
 
 // ── SOLO MODE STATE ──
 let soloMode = false;
+let lastGameScreen = ''; // screen to return to after chat
 let currentGame = ''; // 'bj' or 'rl'
 let soloDeck = [], soloPlayerHand = [], soloDealerHand = [], soloBet = 0;
 let soloPhase = 'idle'; // idle | betting | playing | dealer | results
@@ -12176,16 +12178,21 @@ function bnGo(tab){
       crState='idle'; if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
     }
     rlStopTimer();
-        const allScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
+    // Save active game screen so we can return
+    const _chatAllScreens = ['scMainLobby','scGameSelect','scProfile','scChat',
       'scLobby','scRouletteLobby','scRoulette','scSlots','scCrash',
       'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scGameSelect','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection'];
-    allScreens.forEach(id=>hide(id));
+    lastGameScreen = _chatAllScreens.find(id=>{ const el=document.getElementById(id); return el&&!el.classList.contains('hidden')&&id!=='scChat'; }) || '';
+    _chatAllScreens.forEach(id=>hide(id));
     currentGame='';
     chatScreenOpen();
     show('scChat');
     navPush('scChat');
     chatHideFab(); // hide floating FAB while on full chat screen
     bnSetActive('chat');
+    // Show "← Volver" only if we came from a game screen
+    const _cbBtn = document.getElementById('chatBackBtn');
+    if(_cbBtn) _cbBtn.style.display = lastGameScreen ? 'block' : 'none';
     return;
   }
   // Warn if in a risky game state
@@ -12390,6 +12397,18 @@ async function scChatLoadFriends(){
     </div>`;
     el.appendChild(div);
   });
+}
+
+function chatGoBack(){
+  if(!lastGameScreen){ bnGo('games'); return; }
+  hide('scChat');
+  show(lastGameScreen);
+  bnSync(lastGameScreen);
+  // Show back btn to game-like screen ids, update active tab
+  const btn = document.getElementById('chatBackBtn');
+  if(btn) btn.style.display='none';
+  lastGameScreen='';
+  chatShowFab();
 }
 
 function chatScreenOpen(){
@@ -14167,6 +14186,7 @@ function hlcCardHtml(card){
 }
 
 function hlcStart(){
+  if(hlcActive){toast('⚠️ Ya tienes una ronda activa — adivina Mayor o Menor');return;}
   hlcBet=parseInt(document.getElementById('hlcBetInput').value)||50;
   if(hlcBet<1){toast('⚠️ Apuesta mínima $1');return;}
   if(myBal<hlcBet){toast('⚠️ Saldo insuficiente');return;}
@@ -14188,42 +14208,59 @@ function hlcStart(){
 }
 
 function hlcUpdateHint(){
-  // How many cards are higher/lower?
-  const higher=HLC_VALS.filter(v=>v>hlcCurVal).length * 4;
-  const lower=HLC_VALS.filter(v=>v<hlcCurVal).length * 4;
-  document.getElementById('hlcHint').textContent=`↑ ${higher}/52 cartas mayores · ↓ ${lower}/52 menores`;
+  const {pHi,pLo,higher,lower}=hlcProbs(hlcCurVal);
+  const mHi=hlcStepMult(pHi), mLo=hlcStepMult(pLo);
+  const hiPct=Math.round(pHi*100), loPct=Math.round(pLo*100);
+  document.getElementById('hlcHint').textContent=
+    `↑ ${higher} cartas (${hiPct}%) +${mHi.toFixed(2)}×  ·  ↓ ${lower} cartas (${loPct}%) +${mLo.toFixed(2)}×`;
 }
 
-function hlcMultForStreak(streak){
-  // Each correct guess multiplies by ~1.4–1.8 depending on card position odds
-  return Math.pow(1.5, streak);
+// Returns {pHi, pLo} probability of higher/lower for current card value
+function hlcProbs(val){
+  const higher=(13-val)*4;  // cards strictly above
+  const lower=(val-1)*4;    // cards strictly below
+  const total=higher+lower; // ties excluded
+  return { pHi:higher/total, pLo:lower/total, higher, lower };
+}
+
+// Step multiplier = fair odds × house edge (0.92)
+function hlcStepMult(prob){
+  if(prob<=0) return 1;
+  return Math.max(1.05, parseFloat((0.92/prob).toFixed(2)));
 }
 
 function hlcGuess(dir){
   if(!hlcActive){toast('⚠️ Inicia una ronda primero');return;}
+  const {pHi,pLo,higher,lower}=hlcProbs(hlcCurVal);
+  // Block impossible guesses
+  if(dir==='hi'&&higher===0){toast('⚠️ No hay cartas mayores posibles');return;}
+  if(dir==='lo'&&lower===0){toast('⚠️ No hay cartas menores posibles');return;}
+
   const prevCard=document.getElementById('hlcCardCur').innerHTML;
   document.getElementById('hlcCardPrev').innerHTML=prevCard;
   const next=hlcDraw();
   document.getElementById('hlcCardCur').innerHTML=hlcCardHtml(next);
 
-  const won=(dir==='hi' && next.val>hlcCurVal)||(dir==='lo' && next.val<hlcCurVal);
+  const won=(dir==='hi'&&next.val>hlcCurVal)||(dir==='lo'&&next.val<hlcCurVal);
   const tie=next.val===hlcCurVal;
 
   if(tie){
     document.getElementById('hlcResult').textContent='🤝 Empate — se repite';
     document.getElementById('hlcResult').style.color='#f0d060';
     hlcCurVal=next.val;
+    hlcUpdateHint();
     return;
   }
 
   if(won){
     hlcStreak++;
-    hlcMult=hlcMultForStreak(hlcStreak);
+    const step=hlcStepMult(dir==='hi'?pHi:pLo);
+    hlcMult=parseFloat((hlcMult*step).toFixed(2));
     const potential=Math.floor(hlcBet*hlcMult);
     document.getElementById('hlcStreak').textContent=hlcStreak;
     document.getElementById('hlcMult').textContent=hlcMult.toFixed(2)+'×';
     document.getElementById('hlcPotential').textContent='$'+potential.toLocaleString();
-    document.getElementById('hlcResult').textContent='✅ '+(dir==='hi'?'↑ Mayor':'↓ Menor')+' — Seguís en racha';
+    document.getElementById('hlcResult').textContent='✅ '+(dir==='hi'?'↑ Mayor':'↓ Menor')+' +'+step.toFixed(2)+'× — Racha '+hlcStreak+'!';
     document.getElementById('hlcResult').style.color='#2ecc71';
     document.getElementById('hlcCashBtn').style.display='block';
     document.getElementById('hlcCashAmt').textContent=potential.toLocaleString();
@@ -14231,7 +14268,6 @@ function hlcGuess(dir){
     hlcCurVal=next.val;
     hlcUpdateHint();
   } else {
-    // Lost
     hlcActive=false;
     document.getElementById('hlcResult').textContent='❌ '+(dir==='hi'?'↑ Mayor':'↓ Menor')+' — Era '+(dir==='hi'?'menor':'mayor')+'!';
     document.getElementById('hlcResult').style.color='#e74c3c';
@@ -14291,6 +14327,7 @@ function hldAdjBet(v){
 function hldRoll(){ return Math.floor(Math.random()*6)+1; }
 
 function hldStart(){
+  if(hldActive){toast('⚠️ Ya tienes una ronda activa — elige Mayor, Menor o Igual');return;}
   hldBet=parseInt(document.getElementById('hldBetInput').value)||50;
   if(hldBet<1){toast('⚠️ Apuesta mínima $1');return;}
   if(myBal<hldBet){toast('⚠️ Saldo insuficiente');return;}
@@ -14306,11 +14343,40 @@ function hldStart(){
   document.getElementById('hldStreak').textContent='0';
   document.getElementById('hldMult').textContent='1.00×';
   document.getElementById('hldPotential').textContent='$0';
-  document.getElementById('hldHint').textContent=`Total actual: ${hldCurTotal} — rango posible 2–12`;
+  hldUpdateHint(hldCurTotal);
+}
+
+// 2d6 probability table: ways[t] = number of ways to roll total t (index 0=unused,2..12)
+const HLD_WAYS=[0,0,1,2,3,4,5,6,5,4,3,2,1]; // sum=36
+
+function hldProbs(cur){
+  const ways=HLD_WAYS;
+  let hi=0,lo=0,eq=HLD_WAYS[cur]||0;
+  for(let t=2;t<=12;t++){
+    if(t>cur) hi+=HLD_WAYS[t];
+    else if(t<cur) lo+=HLD_WAYS[t];
+  }
+  return {pHi:hi/36, pLo:lo/36, pEq:eq/36, hi, lo, eq};
+}
+
+function hldStepMult(prob){
+  if(prob<=0) return 1;
+  return Math.max(1.05, parseFloat((0.92/prob).toFixed(2)));
+}
+
+function hldUpdateHint(cur){
+  const {pHi,pLo,pEq,hi,lo,eq}=hldProbs(cur);
+  const mHi=hldStepMult(pHi), mLo=hldStepMult(pLo), mEq=hldStepMult(pEq);
+  document.getElementById('hldHint').textContent=
+    `↑ ${hi}/36 (${Math.round(pHi*100)}%) +${mHi}×  ·  ↓ ${lo}/36 (${Math.round(pLo*100)}%) +${mLo}×  ·  = ${eq}/36 +${mEq}×`;
 }
 
 function hldGuess(dir){
   if(!hldActive){toast('⚠️ Inicia una ronda primero');return;}
+  const {pHi,pLo,pEq}=hldProbs(hldCurTotal);
+  if(dir==='hi'&&pHi===0){toast('⚠️ No hay total mayor posible (ya es 12)');return;}
+  if(dir==='lo'&&pLo===0){toast('⚠️ No hay total menor posible (ya es 2)');return;}
+
   const d1=hldRoll(), d2=hldRoll();
   const next=d1+d2;
   document.getElementById('hldDie1').textContent=HLD_FACES[d1-1];
@@ -14318,27 +14384,28 @@ function hldGuess(dir){
   document.getElementById('hldTotal').textContent=next;
 
   const won=(dir==='hi'&&next>hldCurTotal)||(dir==='lo'&&next<hldCurTotal)||(dir==='eq'&&next===hldCurTotal);
-  const eqBonus=dir==='eq';
+  const prob=dir==='hi'?pHi:dir==='lo'?pLo:pEq;
+  const step=hldStepMult(prob);
+  const isEq=dir==='eq';
 
   if(won){
     hldStreak++;
-    const baseInc=eqBonus?5:1.5;
-    hldMult=eqBonus?hldMult*baseInc:Math.pow(1.5,hldStreak);
+    hldMult=parseFloat((hldMult*step).toFixed(2));
     const potential=Math.floor(hldBet*hldMult);
     document.getElementById('hldStreak').textContent=hldStreak;
     document.getElementById('hldMult').textContent=hldMult.toFixed(2)+'×';
     document.getElementById('hldPotential').textContent='$'+potential.toLocaleString();
-    document.getElementById('hldResult').textContent='✅ '+(dir==='hi'?'↑ Mayor':dir==='lo'?'↓ Menor':'= Igual')+' — Racha '+hldStreak+'!';
-    document.getElementById('hldResult').style.color=eqBonus?'#f0d060':'#2ecc71';
+    document.getElementById('hldResult').textContent='✅ '+(dir==='hi'?'↑ Mayor':dir==='lo'?'↓ Menor':'= Igual')+' +'+step.toFixed(2)+'× — Racha '+hldStreak+'!';
+    document.getElementById('hldResult').style.color=isEq?'#f0d060':'#2ecc71';
     document.getElementById('hldCashBtn').style.display='block';
     document.getElementById('hldCashAmt').textContent=potential.toLocaleString();
     sfxWin();
-    if(eqBonus){burst(innerWidth/2,innerHeight*.4,25);}
+    if(isEq){burst(innerWidth/2,innerHeight*.4,25);}
     hldCurTotal=next;
-    document.getElementById('hldHint').textContent=`Total actual: ${next} — rango posible 2–12`;
+    hldUpdateHint(next);
   } else {
     hldActive=false;
-    document.getElementById('hldResult').textContent='❌ Falló — Era '+next+' vs '+hldCurTotal;
+    document.getElementById('hldResult').textContent='❌ Falló — Salió '+next+', necesitabas '+(dir==='hi'?'mayor':dir==='lo'?'menor':'igual')+' que '+hldCurTotal;
     document.getElementById('hldResult').style.color='#e74c3c';
     document.getElementById('hldCashBtn').style.display='none';
     sfxLose();
