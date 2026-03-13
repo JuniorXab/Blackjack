@@ -2913,21 +2913,6 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
     <div class="lw-result-banner" id="lwResultBanner"></div>
   </div>
 
-  <!-- Free spin progress bar -->
-  <div style="margin:6px 16px 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
-    <span style="font-size:15px;">🎁</span>
-    <div style="flex:1;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
-        <span style="font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;">GIRO GRATIS</span>
-        <span id="lwFreeLabel" style="font-size:10px;color:#f0d060;font-weight:800;">0/10</span>
-      </div>
-      <div style="background:rgba(255,255,255,.08);border-radius:6px;height:5px;overflow:hidden;">
-        <div id="lwFreeBar" style="width:0%;height:100%;background:linear-gradient(90deg,#f39c12,#f0d060);border-radius:6px;transition:width .4s;"></div>
-      </div>
-    </div>
-    <div id="lwFreeBadge" style="display:none;font-size:10px;font-weight:900;color:#2ecc71;background:rgba(46,204,113,.15);border:1px solid rgba(46,204,113,.3);border-radius:8px;padding:3px 8px;white-space:nowrap;">¡GRATIS!</div>
-  </div>
-
   <div class="lw-double-row">
     <span style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;">DOBLE APUESTA</span>
     <button class="lw-double-btn" id="lwDoubleBtn" onclick="lwToggleDouble()">× OFF</button>
@@ -3940,38 +3925,23 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 </div>
 
 <!-- DAILY SPIN MODAL -->
-<div id="spinModal" style="display:none;position:fixed;inset:0;z-index:9985;background:radial-gradient(ellipse at 50% 0%,#1a0d2e,#050508);align-items:center;justify-content:center;flex-direction:column;padding:20px;animation:jpIn .3s ease;overflow-y:auto;">
-  <div style="text-align:center;max-width:360px;width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;">
-    
-    <!-- Header -->
-    <div>
-      <div style="font-size:11px;letter-spacing:3px;color:rgba(201,168,76,.55);text-transform:uppercase;margin-bottom:4px;">Recompensa Diaria</div>
-      <div style="font-size:24px;font-weight:900;color:#f0d060;letter-spacing:1px;">🎰 Ruleta del Día</div>
+<div id="spinModal" style="display:none;position:fixed;inset:0;z-index:9985;background:rgba(0,0,0,.96);align-items:center;justify-content:center;flex-direction:column;padding:24px;animation:jpIn .3s ease;">
+  <div style="text-align:center;max-width:320px;width:100%;">
+    <div style="font-size:14px;letter-spacing:3px;color:rgba(201,168,76,.6);text-transform:uppercase;margin-bottom:4px;">Recompensa Diaria</div>
+    <div style="font-size:22px;font-weight:900;color:#f0d060;margin-bottom:20px;">🎰 Ruleta del día</div>
+    <!-- Roulette wheel -->
+    <div style="position:relative;width:220px;height:220px;margin:0 auto 16px;">
+      <div id="spinWheel" style="width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;border:4px solid #c9a84c;box-shadow:0 0 30px rgba(201,168,76,.3);transition:transform 3s cubic-bezier(.17,.67,.12,.99);">
+        <canvas id="wheelCanvas" width="220" height="220"></canvas>
+      </div>
+      <!-- Center pin -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:#f0d060;border:3px solid #fff;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.5);"></div>
+      <!-- Arrow -->
+      <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));">▼</div>
     </div>
-
-    <!-- Streak info -->
-    <div id="spinStreakInfo" style="font-size:12px;color:rgba(255,255,255,.45);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:7px 16px;"></div>
-
-    <!-- Wheel -->
-    <div style="position:relative;width:280px;height:280px;flex-shrink:0;">
-      <!-- Glow ring -->
-      <div style="position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(#c9a84c,#f0d060,#c9a84c,#8b6914,#c9a84c);opacity:.35;filter:blur(4px);"></div>
-      <!-- Border ring -->
-      <div style="position:absolute;inset:0;border-radius:50%;border:5px solid #c9a84c;box-shadow:0 0 28px rgba(201,168,76,.5),inset 0 0 20px rgba(0,0,0,.4);z-index:2;pointer-events:none;"></div>
-      <!-- Canvas -->
-      <canvas id="wheelCanvas" width="280" height="280" style="border-radius:50%;position:relative;z-index:1;"></canvas>
-      <!-- Center button -->
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:radial-gradient(circle,#fff,#f0d060);border:3px solid #fff;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.6);"></div>
-      <!-- Pointer -->
-      <div style="position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:10;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:26px solid #f0d060;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));"></div>
-    </div>
-
-    <!-- Result -->
-    <div id="spinResult" style="font-size:15px;font-weight:800;color:rgba(255,255,255,.45);min-height:28px;line-height:1.4;"></div>
-
-    <!-- Button -->
-    <button id="spinBtn" onclick="doSpin()" style="width:100%;padding:18px;background:linear-gradient(135deg,#c9a84c,#8b6914);border:none;border-radius:20px;color:#fff;font-size:17px;font-weight:900;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 24px rgba(201,168,76,.4);">🎰 ¡GIRAR!</button>
-    <button onclick="closeSpinModal()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:12px;cursor:pointer;padding:4px;">Más tarde</button>
+    <div id="spinResult" style="font-size:16px;color:rgba(255,255,255,.5);min-height:24px;margin-bottom:16px;"></div>
+    <button id="spinBtn" class="btn btn-gold btn-pill btn-full btn-lg" onclick="doSpin()">🎰 ¡Girar!</button>
+    <button onclick="closeSpinModal()" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:11px;cursor:pointer;margin-top:12px;display:block;width:100%;">Más tarde</button>
   </div>
 </div>
 
@@ -8333,7 +8303,6 @@ function mlRefresh(){
   // Ranking
   mlLoadRanking();
   // Daily streak
-  migrateLocalStorage();
   streakCheckLogin();
   streakRender();
   // Chat
@@ -8514,7 +8483,7 @@ function mlOpenStats(){
   if(!modal) return;
   modal.style.display='block';
   const el=document.getElementById('mlStatsContent');
-  const all=JSON.parse(localStorage.getItem('bjmp_gs_'+(myId||'g'))||'{}');
+  const all=JSON.parse(localStorage.getItem('bjmp_game_stats')||'{}');
 
   // Global totals (all games + BJ solo)
   let totalPlayed=soloStats.handsPlayed||0, totalWon=soloStats.wins||0, totalProfit=soloStats.totalProfit||0, bestSingleWin=0;
@@ -8586,14 +8555,14 @@ function mlResetStats(){
 
 // Hook to record game stats
 function mlRecordGameStat(gameKey, won, profitAmount, extra){
-  const all=JSON.parse(localStorage.getItem('bjmp_gs_'+(myId||'g'))||'{}');
+  const all=JSON.parse(localStorage.getItem('bjmp_game_stats')||'{}');
   const s=all[gameKey]||{played:0,won:0,netProfit:0,bestWin:0,worstLoss:0};
   s.played++; if(won) s.won++;
   s.netProfit=(s.netProfit||0)+profitAmount;
   if(profitAmount>0) s.bestWin=Math.max(s.bestWin||0,profitAmount);
   if(profitAmount<0) s.worstLoss=Math.min(s.worstLoss||0,profitAmount);
   all[gameKey]=s;
-  localStorage.setItem('bjmp_gs_'+(myId||'g'),JSON.stringify(all));
+  localStorage.setItem('bjmp_game_stats',JSON.stringify(all));
   // Sync this game's stats to Firebase for global ranking
   if(db && myId && myId.startsWith('g_')){
     db.ref(`ranking/${myId}/games/${gameKey}`).update({
@@ -8673,15 +8642,15 @@ let ML_MISSIONS = mlGetDailyMissions();
 
 function mlGetMissionData(){
   const today=new Date().toDateString();
-  const raw=JSON.parse(localStorage.getItem('bjmp_ms_'+(myId||'g'))||'{}');
+  const raw=JSON.parse(localStorage.getItem('bjmp_missions')||'{}');
   if(raw.date!==today){
     const fresh={date:today,progress:{},claimed:{}};
-    localStorage.setItem('bjmp_ms_'+(myId||'g'),JSON.stringify(fresh));
+    localStorage.setItem('bjmp_missions',JSON.stringify(fresh));
     return fresh;
   }
   return raw;
 }
-function mlSaveMissionData(d){ localStorage.setItem('bjmp_ms_'+(myId||'g'),JSON.stringify(d)); }
+function mlSaveMissionData(d){ localStorage.setItem('bjmp_missions',JSON.stringify(d)); }
 
 function mlRenderMissions(){
   const d=mlGetMissionData();
@@ -10498,22 +10467,23 @@ function lwToggleDouble(){
 function lwSpin(){
   if(lwSpinning) return;
   const isFree = lwGetFreeReady();
-  const eff = lwDouble ? lwBet*2 : lwBet; // always use real bet value for payout calc
+  const eff = isFree ? 0 : (lwDouble?lwBet*2:lwBet);
   if(!isFree && eff>myBal){toast('Fichas insuficientes',1500);return;}
   lwSpinning=true;
   document.getElementById('lwSpinBtn').disabled=true;
   document.getElementById('lwResultBanner').innerHTML='';
   if(isFree){
     lwSetFreeReady(false);
-    lwUpdateFreeBar();
-    toast('🎁 ¡Giro GRATIS! Las ganancias son tuyas', 2000);
-    // Don't deduct bet — but eff is still used for payout calculation
+    toast('🎁 ¡Giro GRATIS activado!', 1500);
   } else {
     myBal-=eff; saveLocal(); mgUpdateBal('lwBal'); updateRanking();
-    let c = lwGetSpinCount()+1;
-    if(c>=10){ lwSetFreeReady(true); lwSetSpinCount(0); toast('🎁 ¡Giro gratis desbloqueado! Próximo giro sin costo',3500); }
-    else lwSetSpinCount(c);
-    lwUpdateFreeBar();
+    // Track paid spins toward free spin
+    if(!isFree){
+      let c = lwGetSpinCount()+1;
+      if(c>=10){ lwSetFreeReady(true); lwSetSpinCount(0); toast('🎁 ¡Giro gratis desbloqueado! Próximo giro sin costo',3500); }
+      else lwSetSpinCount(c);
+      lwUpdateFreeBar();
+    }
   }
 
   // Weighted RNG — visual segments stay same, internal probability adjusted
@@ -11423,38 +11393,43 @@ function updateRanking() {
 // ═══════════════════════════════════════════
 //  DAILY SPIN WHEEL
 // ═══════════════════════════════════════════
-// Daily spin — 8 generous segments, easy to read on wheel
-// Alternating dark/light colors for clear separation
-// Streak tiers: base / 7+ days (×1.5) / 14+ days (×2.5)
+// Daily spin prizes — 10 segments, vary by streak
+// streak bonus: 7+ days → tier +1, 14+ days → tier +2
 const SPIN_PRIZES_BASE = [
-  { label:'$100',    amount:100,   color:'#1a5276', weight:28, icon:'💰' },
-  { label:'$300',    amount:300,   color:'#1e8449', weight:22, icon:'💵' },
-  { label:'$200',    amount:200,   color:'#6c3483', weight:18, icon:'⭐' },
-  { label:'$500',    amount:500,   color:'#935116', weight:12, icon:'💎' },
-  { label:'$150',    amount:150,   color:'#1a5276', weight:10, icon:'💰' },
-  { label:'$1,000',  amount:1000,  color:'#922b21', weight:6,  icon:'🔥' },
-  { label:'$2,500',  amount:2500,  color:'#1e8449', weight:2.5,icon:'🏆' },
-  { label:'$10,000', amount:10000, color:'#7d6608', weight:1.5,icon:'👑' },
+  { label:'$50',    amount:50,    color:'#2c5f8a', weight:22, icon:'💰' },
+  { label:'$150',   amount:150,   color:'#1a7a42', weight:20, icon:'💵' },
+  { label:'$100',   amount:100,   color:'#3498db', weight:18, icon:'💰' },
+  { label:'$250',   amount:250,   color:'#2ecc71', weight:14, icon:'💵' },
+  { label:'$500',   amount:500,   color:'#8e44ad', weight:10, icon:'💎' },
+  { label:'$300',   amount:300,   color:'#e67e22', weight:8,  icon:'🌟' },
+  { label:'$750',   amount:750,   color:'#c0392b', weight:4,  icon:'🔥' },
+  { label:'$1,500', amount:1500,  color:'#e74c3c', weight:2.5,icon:'🏆' },
+  { label:'$3,000', amount:3000,  color:'#c9a84c', weight:1,  icon:'👑' },
+  { label:'$10,000',amount:10000, color:'#f0d060', weight:0.5,icon:'💫' },
 ];
-const SPIN_PRIZES_MID = [ // 7+ streak ×1.5
-  { label:'$150',    amount:150,   color:'#1a5276', weight:28, icon:'💰' },
-  { label:'$450',    amount:450,   color:'#1e8449', weight:22, icon:'💵' },
-  { label:'$300',    amount:300,   color:'#6c3483', weight:18, icon:'⭐' },
-  { label:'$750',    amount:750,   color:'#935116', weight:12, icon:'💎' },
-  { label:'$225',    amount:225,   color:'#1a5276', weight:10, icon:'💰' },
-  { label:'$1,500',  amount:1500,  color:'#922b21', weight:6,  icon:'🔥' },
-  { label:'$3,750',  amount:3750,  color:'#1e8449', weight:2.5,icon:'🏆' },
-  { label:'$15,000', amount:15000, color:'#7d6608', weight:1.5,icon:'👑' },
+const SPIN_PRIZES_MID = [ // 7+ streak — all amounts ×1.5
+  { label:'$75',    amount:75,    color:'#2c5f8a', weight:22, icon:'💰' },
+  { label:'$225',   amount:225,   color:'#1a7a42', weight:20, icon:'💵' },
+  { label:'$150',   amount:150,   color:'#3498db', weight:18, icon:'💰' },
+  { label:'$375',   amount:375,   color:'#2ecc71', weight:14, icon:'💎' },
+  { label:'$750',   amount:750,   color:'#8e44ad', weight:10, icon:'💎' },
+  { label:'$450',   amount:450,   color:'#e67e22', weight:8,  icon:'🌟' },
+  { label:'$1,100', amount:1100,  color:'#c0392b', weight:4,  icon:'🔥' },
+  { label:'$2,250', amount:2250,  color:'#e74c3c', weight:2.5,icon:'🏆' },
+  { label:'$4,500', amount:4500,  color:'#c9a84c', weight:1,  icon:'👑' },
+  { label:'$15,000',amount:15000, color:'#f0d060', weight:0.5,icon:'💫' },
 ];
-const SPIN_PRIZES_HIGH = [ // 14+ streak ×2.5
-  { label:'$250',    amount:250,   color:'#1a5276', weight:28, icon:'💰' },
-  { label:'$750',    amount:750,   color:'#1e8449', weight:22, icon:'💵' },
-  { label:'$500',    amount:500,   color:'#6c3483', weight:18, icon:'⭐' },
-  { label:'$1,250',  amount:1250,  color:'#935116', weight:12, icon:'💎' },
-  { label:'$375',    amount:375,   color:'#1a5276', weight:10, icon:'💰' },
-  { label:'$2,500',  amount:2500,  color:'#922b21', weight:6,  icon:'🔥' },
-  { label:'$6,250',  amount:6250,  color:'#1e8449', weight:2.5,icon:'🏆' },
-  { label:'$25,000', amount:25000, color:'#7d6608', weight:1.5,icon:'👑' },
+const SPIN_PRIZES_HIGH = [ // 14+ streak — all amounts ×2.5
+  { label:'$125',   amount:125,   color:'#2c5f8a', weight:22, icon:'💰' },
+  { label:'$375',   amount:375,   color:'#1a7a42', weight:20, icon:'💵' },
+  { label:'$250',   amount:250,   color:'#3498db', weight:18, icon:'💰' },
+  { label:'$625',   amount:625,   color:'#2ecc71', weight:14, icon:'💎' },
+  { label:'$1,250', amount:1250,  color:'#8e44ad', weight:10, icon:'💎' },
+  { label:'$750',   amount:750,   color:'#e67e22', weight:8,  icon:'🌟' },
+  { label:'$1,875', amount:1875,  color:'#c0392b', weight:4,  icon:'🔥' },
+  { label:'$3,750', amount:3750,  color:'#e74c3c', weight:2.5,icon:'🏆' },
+  { label:'$7,500', amount:7500,  color:'#c9a84c', weight:1,  icon:'👑' },
+  { label:'$25,000',amount:25000, color:'#f0d060', weight:0.5,icon:'💫' },
 ];
 
 function spinGetPrizes(){
@@ -11466,43 +11441,17 @@ function spinGetPrizes(){
 
 let spinDone = false;
 
-function getLastSpinDate() { return localStorage.getItem('bjmp_spin_'+(myId||'guest')) || ''; }
-function setLastSpinDate() { localStorage.setItem('bjmp_spin_'+(myId||'guest'), new Date().toDateString()); }
+function getLastSpinDate() { return localStorage.getItem('bjmp_spin') || ''; }
+function setLastSpinDate() { localStorage.setItem('bjmp_spin', new Date().toDateString()); }
 
 
 // ─── DAILY STREAK ─────────────────────────────────────────
 const STREAK_BONUSES = {3:100, 7:300, 14:700, 30:2000}; // days → bonus
 
 function streakGetData(){
-  try{ return JSON.parse(localStorage.getItem('bjmp_sk_'+(myId||'g'))||'{}'); }catch(e){ return {}; }
+  try{ return JSON.parse(localStorage.getItem('bjmp_streak')||'{}'); }catch(e){ return {}; }
 }
-function streakSave(d){ localStorage.setItem('bjmp_sk_'+(myId||'g'),JSON.stringify(d)); }
-
-
-// ── MIGRATE legacy localStorage keys to per-user keys ────────────────────────
-// Called once after myId is known. Copies old shared keys → new user-keyed keys
-// if the new key doesn't exist yet (so we never overwrite real user data).
-function migrateLocalStorage(){
-  if(!myId) return;
-  const uid = myId.replace(/[^a-z0-9_]/gi,'_');
-  const pairs = [
-    ['bjmp_game_stats', 'bjmp_gs_'+uid],
-    ['bjmp_missions',   'bjmp_ms_'+uid],
-    ['bjmp_streak',     'bjmp_sk_'+uid],
-    ['bjmp_spin',       'bjmp_spin_'+uid],
-    ['bjmp_lw_count',   'bjmp_lw_count_'+uid],
-    ['bjmp_lw_free',    'bjmp_lw_free_'+uid],
-    ['bjmp_duelo_log',  'bjmp_duelo_log_'+uid],
-  ];
-  pairs.forEach(([oldKey, newKey])=>{
-    // Only migrate if old data exists AND new key is empty
-    const oldVal = localStorage.getItem(oldKey);
-    if(oldVal && !localStorage.getItem(newKey)){
-      localStorage.setItem(newKey, oldVal);
-      // Don't delete old key — safe fallback
-    }
-  });
-}
+function streakSave(d){ localStorage.setItem('bjmp_streak',JSON.stringify(d)); }
 
 function streakCheckLogin(){
   const d = streakGetData();
@@ -11584,15 +11533,13 @@ function openSpinModal() {
   // Show streak tier info
   const streak = streakGetData().count || 0;
   const tierHtml = streak>=14
-    ? '🔥🔥 Racha <b style="color:#f0d060;">'+streak+' días</b> — premios ×2.5'
+    ? '<span style="color:#f0d060;font-size:11px;font-weight:800;">🔥🔥 Racha '+streak+' días — premios ×2.5</span>'
     : streak>=7
-    ? '🔥 Racha <b style="color:#f39c12;">'+streak+' días</b> — premios ×1.5'
+    ? '<span style="color:#f39c12;font-size:11px;font-weight:800;">🔥 Racha '+streak+' días — premios ×1.5</span>'
     : streak>=3
-    ? '🔥 Racha <b style="color:#e67e22;">'+streak+' días</b> · llega a 7 para mejores premios'
-    : '🎯 Juega cada día para desbloquear mejores premios';
-  const si = document.getElementById('spinStreakInfo');
-  if(si) si.innerHTML = tierHtml;
-  document.getElementById('spinResult').textContent = '';
+    ? '<span style="color:#e67e22;font-size:11px;">Racha '+streak+' días · a los 7 los premios mejoran</span>'
+    : '<span style="color:rgba(255,255,255,.3);font-size:11px;">Juega cada día para desbloquear mejores premios</span>';
+  document.getElementById('spinResult').innerHTML = tierHtml;
   document.getElementById('spinBtn').disabled = false;
   document.getElementById('spinBtn').textContent = '🎰 ¡Girar!';
   drawWheel(0);
@@ -11614,86 +11561,44 @@ function drawWheel(rotation) {
   const canvas = document.getElementById('wheelCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const cx = W/2, cy = H/2, r = W/2 - 4;
+  const cx = 110, cy = 110, r = 106;
   const prizes = spinGetPrizes();
-  const N = prizes.length;
-  const total = prizes.reduce((s,p) => s+p.weight, 0);
-  let a = rotation * Math.PI / 180;
-  ctx.clearRect(0,0,W,H);
-
-  prizes.forEach((p,i) => {
+  const total = prizes.reduce((s, p) => s + p.weight, 0);
+  let angle = rotation * Math.PI / 180;
+  ctx.clearRect(0, 0, 220, 220);
+  prizes.forEach((p, i) => {
     const slice = (p.weight / total) * 2 * Math.PI;
-    const mid = a + slice/2;
-
-    // ── Segment ──
+    // Alternating shade for adjacent segments
     ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,a,a+slice);
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, angle, angle + slice);
     ctx.closePath();
-    // Radial gradient per segment for depth
-    const grd = ctx.createRadialGradient(cx,cy,r*0.25, cx,cy,r);
-    grd.addColorStop(0, lightenHex(p.color, 30));
-    grd.addColorStop(1, p.color);
-    ctx.fillStyle = grd;
+    ctx.fillStyle = p.color;
     ctx.fill();
-    // Divider line
-    ctx.save();
-    ctx.strokeStyle = 'rgba(0,0,0,.55)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(0,0,0,.5)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-    ctx.restore();
-
-    // ── Text labels (icon + amount) ──
+    // Icon
     ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(mid);
-    // Icon at ~65% radius
-    ctx.font = `${Math.floor(r*0.14)}px Arial`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(p.icon, r*0.55, 0);
-    // Amount label at ~82% radius
-    const fontSize = Math.max(11, Math.floor(r * 0.115));
-    ctx.font = `900 ${fontSize}px Arial`;
+    ctx.translate(cx, cy);
+    ctx.rotate(angle + slice / 2);
+    ctx.textAlign = 'right';
+    ctx.font = '12px Arial';
+    ctx.fillText(p.icon, r - 62, -5);
+    // Label
     ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px Georgia';
     ctx.shadowColor = 'rgba(0,0,0,.9)';
-    ctx.shadowBlur = 6;
-    ctx.fillText(p.label, r*0.80, 0);
+    ctx.shadowBlur = 5;
+    ctx.fillText(p.label, r - 8, 5);
     ctx.restore();
-
-    a += slice;
+    angle += slice;
   });
-
-  // ── Outer ring highlight ──
+  // Center gold circle
   ctx.beginPath();
-  ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.strokeStyle = 'rgba(255,255,255,.12)';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  // ── Center cap ──
-  const capR = r * 0.10;
-  const capGrd = ctx.createRadialGradient(cx-capR*.3,cy-capR*.3,0, cx,cy,capR);
-  capGrd.addColorStop(0,'#fff');
-  capGrd.addColorStop(0.5,'#f0d060');
-  capGrd.addColorStop(1,'#c9a84c');
-  ctx.beginPath();
-  ctx.arc(cx,cy,capR,0,Math.PI*2);
-  ctx.fillStyle = capGrd;
+  ctx.arc(cx, cy, 12, 0, Math.PI*2);
+  ctx.fillStyle = '#f0d060';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(0,0,0,.4)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
-
-function lightenHex(hex, amt){
-  // Simple lightener for gradient top
-  const n = parseInt(hex.replace('#',''),16);
-  const r = Math.min(255,(n>>16)+amt);
-  const g = Math.min(255,((n>>8)&0xff)+amt);
-  const b = Math.min(255,(n&0xff)+amt);
-  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
 
 function doSpin() {
@@ -12785,7 +12690,7 @@ function pfRefresh(){
   const isAdmin = auth && auth.currentUser && auth.currentUser.email==='juniorzab895@gmail.com';
   const adminRow = document.getElementById('pfAdminRow'); if(adminRow) adminRow.style.display=isAdmin?'':'none';
   // Stats
-  const allStats = JSON.parse(localStorage.getItem('bjmp_gs_'+(myId||'g'))||'{}');
+  const allStats = JSON.parse(localStorage.getItem('bjmp_game_stats')||'{}');
   let totalGames=0, totalWon=0, bestWin=0, netProfit=0;
   Object.values(allStats).forEach(s=>{
     totalGames += s.played||0;
@@ -15358,7 +15263,7 @@ function dueloInit(){
   show('scDuelo'); bnShow(); bnSync('scDuelo');
   document.getElementById('dueloBal').textContent = myBal.toLocaleString();
   dueloResetUI();
-  dueloLogData = JSON.parse(localStorage.getItem(dueloLogKey())||'[]');
+  dueloLogData = JSON.parse(localStorage.getItem('bjmp_duelo_log')||'[]');
   dueloLogRender();
 }
 
@@ -15994,13 +15899,12 @@ function bingoShowNewGame(){
 
 
 // ── DUELO DEL OESTE — Historial ───────────────────────────────────────────────
-let dueloLogData = [];
-function dueloLogKey(){ return 'bjmp_duelo_log_'+(myId||'g'); }
+let dueloLogData = JSON.parse(localStorage.getItem('bjmp_duelo_log')||'[]');
 
 function dueloLogSave(entry){
   dueloLogData.unshift(entry); // newest first
   if(dueloLogData.length > 20) dueloLogData.length = 20;
-  localStorage.setItem(dueloLogKey(), JSON.stringify(dueloLogData));
+  localStorage.setItem('bjmp_duelo_log', JSON.stringify(dueloLogData));
 }
 
 function dueloLogRender(){
@@ -16034,10 +15938,10 @@ function dueloLogRender(){
 // ── LUCKY WHEEL — Free spin every 10 paid spins ───────────────────────────────
 let lwFreeSpinReady = false;
 
-function lwGetSpinCount(){ return parseInt(localStorage.getItem('bjmp_lw_count_'+(myId||'g'))||'0'); }
-function lwSetSpinCount(n){ localStorage.setItem('bjmp_lw_count_'+(myId||'g'), n); }
-function lwGetFreeReady(){ return localStorage.getItem('bjmp_lw_free_'+(myId||'g'))==='1'; }
-function lwSetFreeReady(v){ localStorage.setItem('bjmp_lw_free_'+(myId||'g'), v?'1':'0'); }
+function lwGetSpinCount(){ return parseInt(localStorage.getItem('bjmp_lw_count')||'0'); }
+function lwSetSpinCount(n){ localStorage.setItem('bjmp_lw_count', n); }
+function lwGetFreeReady(){ return localStorage.getItem('bjmp_lw_free')==='1'; }
+function lwSetFreeReady(v){ localStorage.setItem('bjmp_lw_free', v?'1':'0'); }
 
 function lwUpdateFreeBar(){
   const free = lwGetFreeReady();
