@@ -7319,7 +7319,7 @@ let bkInterval = null;
 
 function getBkData() {
   try {
-    const d = JSON.parse(localStorage.getItem('bjmp_bk') || '{}');
+    const d = JSON.parse(localStorage.getItem(bkKey()) || '{}');
     const today = new Date().toDateString();
     // Only reset 'used' counter if day changed — NEVER reset timerStart based on day
     if (d.day !== today) {
@@ -7328,7 +7328,8 @@ function getBkData() {
     return d;
   } catch(e) { return { day: new Date().toDateString(), used: 0, timerStart: null }; }
 }
-function saveBkData(d) { localStorage.setItem('bjmp_bk', JSON.stringify(d)); }
+function bkKey(){ return 'bjmp_bk_'+(myId||'g'); }
+function saveBkData(d) { localStorage.setItem(bkKey(), JSON.stringify(d)); }
 
 function showBankruptModal() {
   const m = document.getElementById('bankruptModal');
@@ -12462,7 +12463,8 @@ function bnSync(screenId){
     scSlots:'games', scCrash:'games', scMines:'games',
     scDice:'games', scRoulette:'games',
     scRouletteLobby:'games', scLobby:'games', scFootball:'games',
-    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoCards:'games', scHiLoDice:'games', scCartasSection:'games', scMesaSection:'games', scArcadeSection:'games', scMultiSection:'games'
+    scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoCards:'games', scHiLoDice:'games', scCartasSection:'games', scMesaSection:'games', scArcadeSection:'games', scMultiSection:'games',
+    scDuelo:'games', scBingo:'games', scScratch:'games'
   };
   bnSetActive(map[screenId]||'');
   // Push a history state so the phone's back button is intercepted
@@ -12500,7 +12502,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -15977,81 +15979,108 @@ function lwUpdateFreeBar(){
 }
 
 
+
 // ════════════════════════════════════════════
 //  🎟️ SCRATCH CARDS — Rasca y Gana
 // ════════════════════════════════════════════
+// 3 tiers: Basic/Silver/Gold — different price, reveals, max prize
+// Symbols per tier have different icons for visual variety
+// History kept per user in localStorage
+
 const SCRATCH_TICKETS = [
-  // Básico: premios bajos, par recupera menos
-  { name:'Básico', price:100,  color:'#1e8449', glow:'#2ed573', shine:'#a8f0c0',
-    mult:{jackpot:20, diam:8,  star:5,  cherry:3, bell:2, lemon:1.5, pair:0.3},
-    pool:[0,1,1,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6], // rare jackpot
-    revealN:3, gridSize:9 },
-  // Plata: premios medios, rasca 4 de 9, jackpot más probable
-  { name:'Plata',  price:500,  color:'#4a6fa5', glow:'#a8c8ff', shine:'#d0e8ff',
-    mult:{jackpot:35, diam:15, star:8,  cherry:4, bell:3, lemon:2, pair:0.5},
-    pool:[0,0,1,1,2,2,2,3,3,3,4,4,4,5,5,5,5,6,6,6,6,6,6,6,6,6], // slightly more jackpot
-    revealN:4, gridSize:9 },
-  // Oro: premios altos, rasca 5 de 9, jackpot ×50, simbología premium
-  { name:'Oro',    price:2000, color:'#9a7d0a', glow:'#f0d060', shine:'#fffacd',
-    mult:{jackpot:50, diam:25, star:12, cherry:6, bell:4, lemon:2.5, pair:0.8},
-    pool:[0,0,0,1,1,2,2,3,3,4,4,5,5,5,6,6,6,6,6,6,6,6,6], // most jackpot chances
-    revealN:5, gridSize:9 },
+  { name:'Básico',  price:100,  glow:'#2ed573', bg:'linear-gradient(135deg,#0a2e16,#041208)',
+    headerBg:'linear-gradient(135deg,#0e3d1e,#061408)', borderColor:'rgba(46,213,115,.4)',
+    revealN:3, label:'3 raspaduras',
+    syms:['💰','🍒','⭐','🔔','🍋','7️⃣','💎','🃏','❌'],
+    pool:[0,1,1,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7],
+    mult:{0:20, 1:8, 2:5, 3:3, 4:2, 5:1.5, 6:0, 7:0}, pairMult:0.3 },
+  { name:'Plata',   price:500,  glow:'#74b9ff', bg:'linear-gradient(135deg,#091d38,#040e1e)',
+    headerBg:'linear-gradient(135deg,#0e2a52,#060f26)', borderColor:'rgba(116,185,255,.4)',
+    revealN:4, label:'4 raspaduras',
+    syms:['💎','🔮','⭐','🃏','🔔','🍒','7️⃣','💰','❌'],
+    pool:[0,0,1,1,2,2,2,3,3,3,4,4,4,5,5,5,5,6,6,6,6,6,7,7,7,7,7,7,7],
+    mult:{0:35, 1:15, 2:8, 3:4, 4:3, 5:2, 6:0, 7:0}, pairMult:0.5 },
+  { name:'Oro',     price:2000, glow:'#f0d060', bg:'linear-gradient(135deg,#2a1a00,#100900)',
+    headerBg:'linear-gradient(135deg,#3d2600,#160e00)', borderColor:'rgba(240,208,96,.5)',
+    revealN:5, label:'5 raspaduras',
+    syms:['👑','💎','⭐','🔥','💰','🌟','7️⃣','🃏','❌'],
+    pool:[0,0,0,1,1,2,2,3,3,4,4,5,5,5,6,6,6,7,7,7,7,7,7],
+    mult:{0:50, 1:25, 2:12, 3:6, 4:4, 5:2.5, 6:0, 7:0}, pairMult:0.8 },
 ];
-// Symbols: 0=🎰(jackpot only) 1=💎 2=⭐ 3=🍒 4=🔔 5=🍋 6=🃏(wild card used as filler)
-const SC_SYMS = ['🎰','💎','⭐','🍒','🔔','🍋','🃏'];
-// Probability pool: weighted toward non-jackpot
-const SC_POOL = [0,1,1,2,2,2,3,3,3,4,4,4,5,5,5,5,6,6,6,6];
 
-let scratchTicketIdx = 0; // 0=Básico,1=Plata,2=Oro
-let scratchCells = [];    // 9 symbols
-let scratchRevealed = []; // booleans
-let scratchLeft = 3;
-let scratchActive = false;
-let scratchBetAmt = 0;
+let scratchTicketIdx = 0;
+let scratchCells     = [];
+let scratchRevealed  = [];
+let scratchLeft      = 3;
+let scratchActive    = false;
+let scratchBetAmt    = 0;
+let scratchHistData  = [];
 
+function scratchHistKey(){ return 'bjmp_sc_hist_'+(myId||'g'); }
+
+// ── Init ──────────────────────────────────────────────────────────────────────
 function scratchInit(){
-  show('scScratch'); bnShow(); bnSync('scScratch'); navPush('scScratch');
+  show('scScratch'); bnShow(); bnSync('scScratch');
   document.getElementById('scratchBal').textContent = myBal.toLocaleString();
-  scratchActive = false;
-  scratchRenderTicketPicker();
-  document.getElementById('scratchNewPanel').style.display = 'flex';
+  scratchHistData = JSON.parse(localStorage.getItem(scratchHistKey())||'[]');
+  document.getElementById('scratchNewPanel').style.display  = 'flex';
   document.getElementById('scratchPlayPanel').style.display = 'none';
+  scratchRenderPicker();
+  scratchRenderHistory();
 }
-function scratchLeave(){
-  hide('scScratch'); openArcadeSection();
-}
+function scratchLeave(){ hide('scScratch'); openArcadeSection(); }
 
-const SCRATCH_TICKET_ICONS = ['🌿','🔷','👑'];
-const SCRATCH_TICKET_BG = [
-  'linear-gradient(135deg,#0d3320,#051a0e)',
-  'linear-gradient(135deg,#0a1e3a,#05101f)',
-  'linear-gradient(135deg,#2a1f00,#0e0900)',
-];
-const SCRATCH_GRID_SYMS_BASIC  = ['💰','🍒','⭐','🔔','🍋','7️⃣','💎','🃏','❌'];
-const SCRATCH_GRID_SYMS_PLATA  = ['💎','⭐','🔮','🃏','🔔','🍒','7️⃣','💰','❌'];
-const SCRATCH_GRID_SYMS_ORO    = ['👑','💎','⭐','🔥','💰','🃏','7️⃣','🌟','❌'];
-const SCRATCH_TIER_SYMS = [SCRATCH_GRID_SYMS_BASIC, SCRATCH_GRID_SYMS_PLATA, SCRATCH_GRID_SYMS_ORO];
-
-function scratchRenderTicketPicker(){
+// ── Ticket picker ─────────────────────────────────────────────────────────────
+function scratchRenderPicker(){
   const el = document.getElementById('scratchTicketPicker');
   el.innerHTML = SCRATCH_TICKETS.map((t,i)=>{
     const sel = i===scratchTicketIdx;
     const icons=['🌿','🔷','👑'];
-    const subtitles=['3 raspaduras · ×20 max','4 raspaduras · ×35 max','5 raspaduras · ×50 max'];
-    return `<div id="scTkt${i}" onclick="scratchSelectTicket(${i})" style="
-      border-radius:16px;padding:14px 8px 10px;text-align:center;cursor:pointer;transition:all .2s;
-      background:${sel?'rgba('+hexToRgb(t.glow)+',.18)':SCRATCH_TICKET_BG[i]};
+    return `<div onclick="scratchSelectTicket(${i})" style="
+      border-radius:16px;padding:14px 6px 10px;text-align:center;cursor:pointer;
+      background:${sel?t.bg:'rgba(255,255,255,.04)'};
       border:2px solid ${sel?t.glow:'rgba(255,255,255,.08)'};
-      transform:${sel?'scale(1.04)':'scale(1)'};
-      box-shadow:${sel?'0 4px 20px rgba('+hexToRgb(t.glow)+',.3)':'none'};
-      ">
-      <div style="font-size:${i===2?26:22}px;margin-bottom:4px;">${icons[i]}</div>
-      <div style="font-size:${i===2?13:11}px;font-weight:900;color:${sel?t.glow:'rgba(255,255,255,.55)'};">${t.name}</div>
-      <div style="font-size:${i===2?15:13}px;font-weight:900;color:${sel?t.shine||'#fff':'rgba(255,255,255,.8)'};margin-top:2px;">$${t.price.toLocaleString()}</div>
-      <div style="font-size:8px;color:${sel?t.glow:'rgba(255,255,255,.3)'};margin-top:3px;line-height:1.3;">${subtitles[i]}</div>
+      transform:${sel?'scale(1.05)':'scale(1)'};transition:all .2s;
+      box-shadow:${sel?'0 4px 18px rgba('+hexToRgb(t.glow)+',.28)':'none'};">
+      <div style="font-size:${i===2?26:22}px;">${icons[i]}</div>
+      <div style="font-size:11px;font-weight:900;color:${sel?t.glow:'rgba(255,255,255,.5)'};margin-top:4px;">${t.name}</div>
+      <div style="font-size:14px;font-weight:900;color:${sel?'#fff':'rgba(255,255,255,.7)'};margin-top:2px;">$${t.price.toLocaleString()}</div>
+      <div style="font-size:8px;color:${sel?t.glow:'rgba(255,255,255,.25)'};margin-top:3px;">${t.label}</div>
     </div>`;
   }).join('');
-  scratchUpdatePrizeTable();
+  scratchRenderPrizeBox();
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const btn = document.getElementById('scratchBuyBtn');
+  const can = myBal >= t.price;
+  btn.style.opacity = can?'1':'0.4';
+  btn.style.pointerEvents = can?'auto':'none';
+  btn.style.background = `linear-gradient(135deg,${t.glow}88,${t.glow}44)`;
+  btn.textContent = `🎟️ COMPRAR — $${t.price.toLocaleString()}`;
+}
+
+function scratchSelectTicket(i){
+  scratchTicketIdx = i;
+  scratchRenderPicker();
+}
+
+function scratchRenderPrizeBox(){
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const el = document.getElementById('scratchPrizeBox');
+  el.style.background = t.bg;
+  el.style.border = `1px solid ${t.borderColor}`;
+  const topPrize = Math.floor(t.price * t.mult[0]);
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1.5px;">PREMIOS</div>
+      <div style="font-size:10px;color:${t.glow};font-weight:900;">Jackpot: $${topPrize.toLocaleString()}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;font-size:10px;">
+      ${t.syms.slice(0,6).map((s,i)=>{
+        const m=t.mult[i]; if(!m) return '';
+        return `<div style="display:flex;justify-content:space-between;"><span>${s} 3×</span><span style="color:${m>=20?'#f0d060':m>=5?'#2ed573':'#aaa'};font-weight:800;">×${m}</span></div>`;
+      }).join('')}
+      <div style="display:flex;justify-content:space-between;"><span>Par</span><span style="color:rgba(255,255,255,.4);font-weight:800;">×${t.pairMult}</span></div>
+    </div>`;
 }
 
 function hexToRgb(hex){
@@ -16059,175 +16088,218 @@ function hexToRgb(hex){
   return `${n>>16},${(n>>8)&255},${n&255}`;
 }
 
-function scratchSelectTicket(i){
-  scratchTicketIdx = i;
-  scratchRenderTicketPicker();
-  const t = SCRATCH_TICKETS[i];
-  const btn = document.getElementById('scratchBuyBtn');
-  const canBuy = myBal >= t.price;
-  btn.style.opacity = canBuy ? '1' : '0.4';
-  btn.style.pointerEvents = canBuy ? 'auto' : 'none';
-  btn.textContent = `🎟️ COMPRAR — $${t.price.toLocaleString()}`;
-}
-
-function scratchUpdatePrizeTable(){
-  const t = SCRATCH_TICKETS[scratchTicketIdx];
-  const m = t.mult;
-  document.getElementById('scratchPrizeJP').textContent     = '×'+m.jackpot;
-  document.getElementById('scratchPrizeDiam').textContent   = '×'+m.diam;
-  document.getElementById('scratchPrizeStar').textContent   = '×'+m.star;
-  document.getElementById('scratchPrizeCherry').textContent = '×'+m.cherry;
-  document.getElementById('scratchPrizeBell').textContent   = '×'+m.bell;
-  document.getElementById('scratchPrizeLemon').textContent  = '×'+m.lemon;
-  document.getElementById('scratchPrizePair').textContent   = '×'+m.pair;
-}
-
+// ── Buy & generate ticket ─────────────────────────────────────────────────────
 function scratchBuyTicket(){
   const t = SCRATCH_TICKETS[scratchTicketIdx];
   if(myBal < t.price){ toast('⚠️ Saldo insuficiente'); return; }
-  myBal -= t.price;
-  scratchBetAmt = t.price;
+  myBal -= t.price; scratchBetAmt = t.price;
   saveLocal(); mgUpdateBal('scratchBal'); updateRanking();
+  document.getElementById('scratchBal').textContent = myBal.toLocaleString();
 
-  const t2 = SCRATCH_TICKETS[scratchTicketIdx];
-  // Use tier-specific pool
-  const pool = t2.pool || SC_POOL;
-  scratchCells = Array.from({length:9}, ()=> pool[Math.floor(Math.random()*pool.length)]);
+  scratchCells    = Array.from({length:9}, ()=> t.pool[Math.floor(Math.random()*t.pool.length)]);
   scratchRevealed = Array(9).fill(false);
-  scratchLeft = t2.revealN || 3;
-  scratchActive = true;
+  scratchLeft     = t.revealN;
+  scratchActive   = true;
 
-  document.getElementById('scratchNewPanel').style.display = 'none';
+  document.getElementById('scratchNewPanel').style.display  = 'none';
   document.getElementById('scratchPlayPanel').style.display = 'flex';
-  document.getElementById('scratchResult').textContent = '';
-  document.getElementById('scratchNewBtn').style.display = 'none';
-  document.getElementById('scratchLeft').textContent = (t2.revealN||3);
-  document.getElementById('scratchInstr').style.display = 'block';
+  document.getElementById('scratchResult').textContent      = '';
+  document.getElementById('scratchNewBtn').style.display    = 'none';
+  const liveEl = document.getElementById('scratchLiveEarn');
+  liveEl.style.display = 'none'; liveEl.textContent = '';
+
+  scratchRenderTicketHeader();
   scratchRenderGrid();
 }
 
+function scratchRenderTicketHeader(){
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const el = document.getElementById('scratchTicketHeader');
+  el.style.background = t.headerBg;
+  el.style.border = `1px solid ${t.borderColor}`;
+  el.innerHTML = `
+    <div style="font-size:13px;font-weight:900;color:${t.glow};">🎟️ ${t.name.toUpperCase()}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);">Raspa <strong style="color:#fff">${scratchLeft}</strong> de 9 casillas</div>
+    <div style="background:rgba(255,255,255,.08);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:900;color:#f0d060;" id="scratchLeftBadge">${scratchLeft} ⬜</div>`;
+}
+
+// ── Grid render ───────────────────────────────────────────────────────────────
 function scratchRenderGrid(){
   const el = document.getElementById('scratchGrid');
-  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const t  = SCRATCH_TICKETS[scratchTicketIdx];
   el.innerHTML = scratchCells.map((sym,i)=>{
-    const rev = scratchRevealed[i];
+    const rev    = scratchRevealed[i];
+    const canTap = scratchActive && !rev && scratchLeft>0;
+    const coverEmojis=['🟩','🟦','🟨'];
     return `<div id="sc-cell-${i}" onclick="scratchReveal(${i})" style="
-      aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;
-      font-size:${rev?'32px':'24px'};
-      background:${rev?'rgba(46,213,115,.12)':'linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.05))'};
-      border:2px solid ${rev?'rgba(46,213,115,.4)':'rgba(255,255,255,.15)'};
-      cursor:${scratchActive&&!rev&&scratchLeft>0?'pointer':'default'};
-      transition:all .25s;user-select:none;
-      ${rev?'box-shadow:0 0 10px rgba(46,213,115,.2);':''}">
-      ${rev ? SC_SYMS[sym] : '✨'}
+      aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      font-size:${rev?'28px':'22px'};user-select:none;transition:all .2s;
+      background:${rev?`rgba(${hexToRgb(t.glow)},.15)`:`${t.bg}`};
+      border:2px solid ${rev?t.glow:`rgba(${hexToRgb(t.glow)},.25)`};
+      cursor:${canTap?'pointer':'default'};
+      ${rev?`box-shadow:0 0 14px rgba(${hexToRgb(t.glow)},.3);`:''}
+      ${canTap?'animation:scPulse 2.5s infinite;':''}">
+      ${rev ? (t.syms[sym]||'?') : coverEmojis[scratchTicketIdx]}
     </div>`;
   }).join('');
 }
 
+// ── Reveal ────────────────────────────────────────────────────────────────────
 function scratchReveal(i){
   if(!scratchActive || scratchRevealed[i] || scratchLeft<=0) return;
   scratchRevealed[i] = true;
   scratchLeft--;
-  document.getElementById('scratchLeft').textContent = scratchLeft;
 
-  const t = SCRATCH_TICKETS[scratchTicketIdx];
-  const tierSyms = SCRATCH_TIER_SYMS[scratchTicketIdx];
-  const sym = scratchCells[i];
-
-  // Sound: scratch noise + reveal tone
+  // Scratch sound: white noise burst + pitch tone
   try {
     const ctx = getAudio();
-    const bufSize = Math.floor(ctx.sampleRate * 0.12);
-    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for(let k=0;k<bufSize;k++) data[k]=(Math.random()*2-1)*Math.pow(1-k/bufSize,1.5)*0.35;
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    const g = ctx.createGain();
-    src.connect(g); g.connect(ctx.destination);
-    g.gain.setValueAtTime(0.4,ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.12);
+    const N = Math.floor(ctx.sampleRate * 0.1);
+    const buf = ctx.createBuffer(1,N,ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let k=0;k<N;k++) d[k]=(Math.random()*2-1)*Math.pow(1-k/N,1.8)*0.4;
+    const src=ctx.createBufferSource(); src.buffer=buf;
+    const g=ctx.createGain(); src.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.45,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.1);
     src.start();
   } catch(e){}
-  setTimeout(()=>playTone(500+sym*60, 0.1, 'sine', 0.12), 80);
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const sym = scratchCells[i];
+  setTimeout(()=>playTone(420+sym*55, 0.09, 'sine', 0.14), 70);
 
   // Animate cell
   const cell = document.getElementById('sc-cell-'+i);
   if(cell){
-    cell.style.animation = 'none';
-    cell.style.transform = 'scale(1.18)';
-    const revBg = ['rgba(46,213,115,.15)','rgba(100,160,255,.15)','rgba(240,208,96,.15)'];
-    cell.style.background = revBg[scratchTicketIdx];
-    cell.style.borderColor = t.glow;
-    cell.style.fontSize = '26px';
-    cell.style.boxShadow = '0 0 14px rgba('+hexToRgb(t.glow)+',.4)';
-    cell.textContent = tierSyms[sym] || SC_SYMS[sym] || '?';
-    setTimeout(()=>{ if(cell) cell.style.transform='scale(1)'; }, 200);
+    cell.style.animation='none';
+    cell.style.transform='scale(1.2)';
+    cell.style.background=`rgba(${hexToRgb(t.glow)},.2)`;
+    cell.style.borderColor=t.glow;
+    cell.style.fontSize='28px';
+    cell.style.boxShadow=`0 0 16px rgba(${hexToRgb(t.glow)},.4)`;
+    cell.textContent = t.syms[sym]||'?';
+    setTimeout(()=>{ if(cell) cell.style.transform='scale(1)'; },200);
   }
 
-  if(scratchLeft === 0) setTimeout(scratchEvaluate, 300);
-  else scratchRenderGrid(); // refresh remaining cells to remove pulse from scraped
+  // Update left badge
+  const badge = document.getElementById('scratchLeftBadge');
+  if(badge) badge.textContent=`${scratchLeft} ⬜`;
+
+  // Check partial match while playing (live hint)
+  scratchCheckLive();
+
+  if(scratchLeft===0) setTimeout(scratchEvaluate, 350);
+  else {
+    // Re-render unrevealed cells to update canTap state cleanly
+    scratchCells.forEach((_,j)=>{
+      if(!scratchRevealed[j]){
+        const c=document.getElementById('sc-cell-'+j);
+        if(c){ c.style.cursor=scratchLeft>0?'pointer':'default'; }
+      }
+    });
+  }
 }
 
+// Show live running match while scratching
+function scratchCheckLive(){
+  const t = SCRATCH_TICKETS[scratchTicketIdx];
+  const revSyms = scratchCells.filter((_,i)=>scratchRevealed[i]);
+  const counts = {}; revSyms.forEach(s=>{ counts[s]=(counts[s]||0)+1; });
+  const maxC = counts[Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]]||0;
+  const topS = parseInt(Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]);
+  const liveEl = document.getElementById('scratchLiveEarn');
+  if(maxC>=2 && t.mult[topS]>=1){
+    const proj = Math.floor(scratchBetAmt*(maxC>=3?t.mult[topS]:t.pairMult));
+    liveEl.style.display='block';
+    liveEl.innerHTML=maxC>=3
+      ? `🔥 ¡${t.syms[topS]} ${maxC}× coinciden! → +$${(proj-scratchBetAmt).toLocaleString()}`
+      : `${t.syms[topS]} Par detectado → +$${Math.max(0,proj-scratchBetAmt).toLocaleString()||'…'}`;
+    liveEl.style.borderColor=maxC>=3?t.glow:'rgba(255,255,255,.2)';
+    liveEl.style.color=maxC>=3?t.glow:'rgba(255,255,255,.5)';
+  } else {
+    liveEl.style.display='none';
+  }
+}
+
+// ── Evaluate final result ─────────────────────────────────────────────────────
 function scratchEvaluate(){
   scratchActive = false;
-  document.getElementById('scratchInstr').style.display = 'none';
-
-  // Count revealed symbols
-  const revSyms = scratchCells.filter((_,i)=>scratchRevealed[i]);
-  const counts = {};
-  revSyms.forEach(s=>{ counts[s]=(counts[s]||0)+1; });
-  const maxCount = Math.max(...Object.values(counts));
-  const topSym = parseInt(Object.keys(counts).find(k=>counts[k]===maxCount));
   const t = SCRATCH_TICKETS[scratchTicketIdx];
-  const m = t.mult;
-  const tierSyms = SCRATCH_TIER_SYMS[scratchTicketIdx];
-  const symIcon = tierSyms[topSym] || '🎰';
+  const revIdxs = scratchCells.map((s,i)=>scratchRevealed[i]?s:null).filter(s=>s!==null);
+  const counts  = {};
+  revIdxs.forEach(s=>{ counts[s]=(counts[s]||0)+1; });
+  const sortedSyms = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  const topSym   = parseInt(sortedSyms[0]);
+  const maxCount = counts[topSym]||0;
 
-  let mult = 0, label = '', won = false;
-  const revN = t.revealN || 3;
-  if(maxCount >= 3){
-    won = true;
-    if(topSym === 0)     { mult=m.jackpot; label=symIcon+' ¡¡JACKPOT!! '+maxCount+' iguales ×'+m.jackpot; }
-    else if(topSym === 1){ mult=m.diam;    label=symIcon+' ¡'+maxCount+' símbolos iguales! ×'+m.diam; }
-    else if(topSym === 2){ mult=m.star;    label=symIcon+' ¡'+maxCount+' iguales! ×'+m.star; }
-    else if(topSym === 3){ mult=m.cherry;  label=symIcon+' ¡'+maxCount+' iguales! ×'+m.cherry; }
-    else if(topSym === 4){ mult=m.bell;    label=symIcon+' ¡'+maxCount+' iguales! ×'+m.bell; }
-    else if(topSym === 5){ mult=m.lemon;   label=symIcon+' '+maxCount+' iguales ×'+m.lemon; }
-    else                  { mult=m.lemon;  label=symIcon+' '+maxCount+' iguales ×'+m.lemon; }
-  } else if(maxCount === 2){
-    mult = m.pair; won = false;
-    label = symIcon+' Par — recuperas ×'+m.pair;
+  let mult=0, label='', won=false;
+  if(maxCount>=3){
+    mult = t.mult[topSym]||0;
+    if(mult>0){ won=true; label=`${t.syms[topSym]} ×3 — ×${mult}`; }
+    else       { label='Sin premio'; }
+  } else if(maxCount===2){
+    mult = t.pairMult;
+    label = `${t.syms[topSym]} Par — ×${mult}`;
   }
 
-  const payout = Math.floor(scratchBetAmt * mult);
+  const payout = Math.floor(scratchBetAmt*mult);
   const profit = payout - scratchBetAmt;
+  const res    = document.getElementById('scratchResult');
+  const liveEl = document.getElementById('scratchLiveEarn');
+  liveEl.style.display='none';
 
-  const res = document.getElementById('scratchResult');
-  if(payout > 0){
-    myBal += payout; saveLocal(); mgUpdateBal('scratchBal'); updateRanking();
-    res.innerHTML = `<div style="color:${mult>=20?'#f0d060':mult>=5?'#2ecc71':'#aaa'};font-size:${mult>=20?'20':'16'}px;">${label}<br>+$${profit>=0?profit.toLocaleString():'0'} (×${mult})</div>`;
-    if(mult>=20){ sfxWin(); setTimeout(sfxWin,160); burst(innerWidth/2,innerHeight*.4,mult>=50?40:20); }
+  if(payout>0){
+    myBal+=payout; saveLocal(); mgUpdateBal('scratchBal'); updateRanking();
+    document.getElementById('scratchBal').textContent = myBal.toLocaleString();
+    const big = mult>=20;
+    res.innerHTML=`<div style="color:${big?'#f0d060':mult>=5?'#2ed573':'#aaa'};font-size:${big?20:16}px;">${label}<br><span style="font-size:${big?24:18}px;">+$${profit.toLocaleString()}</span></div>`;
+    if(big){ sfxWin(); setTimeout(sfxWin,140); burst(innerWidth/2,innerHeight*.4,big?35:15); }
     else if(mult>=3){ sfxWin(); }
-    else { playTone(440,'sine',0.12,0.12); }
+    else { playTone(440,0.15,'sine',0.14); }
   } else {
-    res.innerHTML = `<div style="color:rgba(255,255,255,.3);">Sin premio esta vez 😔</div>`;
+    res.innerHTML=`<div style="color:rgba(255,255,255,.3);font-size:14px;">Sin premio esta vez 😔<br><span style="font-size:12px;opacity:.6;">-$${scratchBetAmt.toLocaleString()}</span></div>`;
     sfxLose();
   }
 
-  mlRecordGameStat('scratch', payout>scratchBetAmt, profit);
-  mlUpdateMissionProgress('scratch', payout>scratchBetAmt, profit, {});
-  if(myBal<=0) mgCheckBankruptcy('scratchBal');
+  // Record history
+  scratchHistData.unshift({tier:scratchTicketIdx,bet:scratchBetAmt,profit,label,ts:Date.now()});
+  if(scratchHistData.length>15) scratchHistData.length=15;
+  localStorage.setItem(scratchHistKey(), JSON.stringify(scratchHistData));
 
-  document.getElementById('scratchNewBtn').style.display = 'block';
+  mlRecordGameStat('scratch', profit>0, profit);
+  mlUpdateMissionProgress('scratch', profit>0, profit, {});
+  if(myBal<=0) mgCheckBankruptcy('scratchBal');
+  document.getElementById('scratchNewBtn').style.display='block';
 }
 
 function scratchNew(){
-  document.getElementById('scratchNewPanel').style.display = 'flex';
-  document.getElementById('scratchPlayPanel').style.display = 'none';
-  scratchSelectTicket(scratchTicketIdx);
+  document.getElementById('scratchPlayPanel').style.display='none';
+  document.getElementById('scratchNewPanel').style.display='flex';
+  scratchRenderPicker();
+  scratchRenderHistory();
 }
 
+// ── History ───────────────────────────────────────────────────────────────────
+function scratchRenderHistory(){
+  const el = document.getElementById('scratchHistList');
+  const statsEl = document.getElementById('scratchHistStats');
+  if(!scratchHistData.length){
+    el.innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.18);text-align:center;padding:6px 0;">Sin partidas aún</div>';
+    if(statsEl) statsEl.textContent='';
+    return;
+  }
+  const totalProfit = scratchHistData.reduce((s,r)=>s+r.profit,0);
+  const wins = scratchHistData.filter(r=>r.profit>0).length;
+  if(statsEl) statsEl.textContent=`${wins}W/${scratchHistData.length} · ${totalProfit>=0?'+':''}$${totalProfit.toLocaleString()}`;
+  const icons=['🌿','🔷','👑'];
+  el.innerHTML=scratchHistData.slice(0,8).map(r=>{
+    const col=r.profit>0?'#2ed573':r.profit===0?'#aaa':'rgba(255,255,255,.3)';
+    const pStr=r.profit>0?'+$'+r.profit.toLocaleString():(r.profit<0?'-$'+Math.abs(r.profit).toLocaleString():'±$0');
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px;">
+      <span style="color:rgba(255,255,255,.45);">${icons[r.tier]} ${r.label||'Sin premio'}</span>
+      <span style="color:${col};font-weight:800;">${pStr}</span>
+    </div>`;
+  }).join('');
+}
 
 // ════════════════════════════════════════════
 //  ⚔️ DESAFÍOS ENTRE JUGADORES
@@ -16823,50 +16895,62 @@ function chCheckProgress(){
 <!-- ════════════════════════════════════════════════════════
      🎟️  SCRATCH CARDS
 ════════════════════════════════════════════════════════ -->
-<div class="fullscreen hidden" id="scScratch" style="overflow-y:auto;justify-content:flex-start;background:radial-gradient(ellipse at 50% 0%,#001a08,#010802);min-height:100vh;">
-  <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,.5);border-bottom:1px solid rgba(46,213,115,.2);flex-shrink:0;">
+<div class="fullscreen hidden" id="scScratch" style="overflow-y:auto;justify-content:flex-start;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#001a08,#010802);">
+  <!-- Top bar -->
+  <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,.55);border-bottom:1px solid rgba(46,213,115,.18);flex-shrink:0;">
     <button onclick="scratchLeave()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:13px;padding:8px 14px;cursor:pointer;">← Salir</button>
-    <div style="display:flex;align-items:center;gap:7px;">
-      <span style="font-size:15px;">🎟️</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:16px;">🎟️</span>
       <span style="font-size:14px;font-weight:900;color:#2ed573;letter-spacing:1.5px;">RASCA Y GANA</span>
     </div>
     <div style="font-size:13px;font-weight:800;color:#f0d060;">$<span id="scratchBal">0</span></div>
   </div>
 
-  <div style="width:100%;max-width:400px;margin:0 auto;padding:14px 14px 100px;display:flex;flex-direction:column;gap:12px;">
+  <div style="width:100%;max-width:400px;margin:0 auto;padding:12px 14px 100px;display:flex;flex-direction:column;gap:12px;">
 
-    <!-- Ticket selector -->
+    <!-- ── PANEL 1: Ticket shop ── -->
     <div id="scratchNewPanel" style="display:flex;flex-direction:column;gap:10px;">
-      <div style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-align:center;">ELIGE TU RASPADITO</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;" id="scratchTicketPicker">
-        <!-- filled by JS -->
-      </div>
-      <button onclick="scratchBuyTicket()" id="scratchBuyBtn" style="width:100%;padding:16px;background:linear-gradient(135deg,#1e8449,#0e5c2a);border:none;border-radius:18px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;opacity:.4;pointer-events:none;">
+
+      <!-- Ticket selector -->
+      <div id="scratchTicketPicker" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+
+      <!-- Prize table (compact) -->
+      <div id="scratchPrizeBox" style="border-radius:14px;padding:10px 12px;"></div>
+
+      <!-- Buy button -->
+      <button onclick="scratchBuyTicket()" id="scratchBuyBtn" style="width:100%;padding:16px;border:none;border-radius:18px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;opacity:.4;pointer-events:none;letter-spacing:1px;background:linear-gradient(135deg,#1e8449,#0a3d1f);">
         🎟️ COMPRAR RASPADITO
       </button>
-      <!-- Prize table -->
-      <div style="background:rgba(46,213,115,.04);border:1px solid rgba(46,213,115,.12);border-radius:14px;padding:10px 14px;">
-        <div style="font-size:9px;color:rgba(46,213,115,.5);letter-spacing:1.5px;margin-bottom:8px;text-align:center;">PREMIOS</div>
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:3px 10px;font-size:11px;align-items:center;">
-          <span style="font-size:16px;">🎰</span><span style="color:rgba(255,255,255,.5);">3 iguales (JACKPOT)</span><span style="color:#f0d060;font-weight:800;" id="scratchPrizeJP">×50</span>
-          <span style="font-size:14px;">💎</span><span style="color:rgba(255,255,255,.5);">3 diamantes</span><span style="color:#f0d060;font-weight:800;" id="scratchPrizeDiam">×20</span>
-          <span style="font-size:14px;">⭐</span><span style="color:rgba(255,255,255,.5);">3 estrellas</span><span style="color:#2ecc71;font-weight:800;" id="scratchPrizeStar">×10</span>
-          <span style="font-size:14px;">🍒</span><span style="color:rgba(255,255,255,.5);">3 cerezas</span><span style="color:#2ecc71;font-weight:800;" id="scratchPrizeCherry">×5</span>
-          <span style="font-size:14px;">🔔</span><span style="color:rgba(255,255,255,.5);">3 campanas</span><span style="color:#2ecc71;font-weight:800;" id="scratchPrizeBell">×3</span>
-          <span style="font-size:14px;">🍋</span><span style="color:rgba(255,255,255,.5);">3 limones</span><span style="color:#e67e22;font-weight:800;" id="scratchPrizeLemon">×2</span>
-          <span style="font-size:14px;">🃏</span><span style="color:rgba(255,255,255,.5);">2 iguales</span><span style="color:#aaa;font-weight:800;" id="scratchPrizePair">×0.5</span>
+
+      <!-- History (compact) -->
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:1.5px;">HISTORIAL</div>
+          <div id="scratchHistStats" style="font-size:9px;color:rgba(255,255,255,.3);"></div>
+        </div>
+        <div id="scratchHistList" style="display:flex;flex-direction:column;gap:3px;max-height:110px;overflow-y:auto;">
+          <div style="font-size:11px;color:rgba(255,255,255,.18);text-align:center;padding:6px 0;">Sin partidas aún</div>
         </div>
       </div>
     </div>
 
-    <!-- Scratch play panel -->
-    <div id="scratchPlayPanel" style="display:none;flex-direction:column;gap:12px;align-items:center;">
-      <div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;" id="scratchInstr">Toca las casillas para raspar · Quedan <span id="scratchLeft">3</span></div>
+    <!-- ── PANEL 2: Play ── -->
+    <div id="scratchPlayPanel" style="display:none;flex-direction:column;gap:10px;align-items:center;">
+
+      <!-- Ticket header -->
+      <div id="scratchTicketHeader" style="width:100%;border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;"></div>
+
       <!-- 3×3 grid -->
-      <div id="scratchGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:340px;"></div>
+      <div id="scratchGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;"></div>
+
+      <!-- Live earnings display -->
+      <div id="scratchLiveEarn" style="display:none;width:100%;text-align:center;padding:8px;border-radius:12px;font-size:16px;font-weight:900;background:rgba(46,213,115,.1);border:1px solid rgba(46,213,115,.25);color:#2ed573;"></div>
+
       <!-- Result -->
-      <div id="scratchResult" style="min-height:32px;font-size:17px;font-weight:900;text-align:center;color:#2ed573;"></div>
-      <button onclick="scratchNew()" id="scratchNewBtn" style="display:none;width:100%;padding:14px;background:linear-gradient(135deg,#1e8449,#0e5c2a);border:none;border-radius:16px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;">🎟️ Nuevo raspadito</button>
+      <div id="scratchResult" style="width:100%;min-height:28px;font-size:16px;font-weight:900;text-align:center;"></div>
+
+      <!-- New ticket -->
+      <button onclick="scratchNew()" id="scratchNewBtn" style="display:none;width:100%;padding:14px;background:linear-gradient(135deg,#1e8449,#0a3d1f);border:none;border-radius:16px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;">🎟️ Nuevo raspadito</button>
     </div>
 
   </div>
