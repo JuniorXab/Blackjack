@@ -1818,6 +1818,283 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
   0%,100%{ box-shadow:0 0 0 0 rgba(52,152,219,.4); }
   50%    { box-shadow:0 0 0 6px rgba(52,152,219,.0); }
 }
+
+/* ══════════════════════════════════
+   SPORTS BETTING — DEPORTES TAB
+══════════════════════════════════ */
+#scSports{
+  background:#060e06;display:flex;flex-direction:column;
+  height:calc(100dvh - 62px);overflow:hidden;
+}
+/* top bar */
+.sp-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px 8px;flex-shrink:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.8) 0%,transparent 100%);
+}
+.sp-topbar-title{font-size:14px;font-weight:900;color:#fff;letter-spacing:1px;}
+.sp-topbar-bal{font-size:12px;font-weight:800;color:#f0d060;}
+.sp-refresh-btn{
+  background:none;border:1px solid rgba(255,255,255,.15);border-radius:8px;
+  color:rgba(255,255,255,.5);font-size:11px;padding:4px 9px;cursor:pointer;
+}
+/* league tabs */
+.sp-tabs-wrap{
+  flex-shrink:0;padding:0 10px 6px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.sp-tabs{
+  display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;
+}
+.sp-tabs::-webkit-scrollbar{display:none;}
+.sp-tab{
+  flex-shrink:0;padding:6px 12px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.5);font-size:10px;font-weight:800;letter-spacing:.5px;
+  cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;
+  white-space:nowrap;
+}
+.sp-tab.active{
+  background:rgba(34,197,94,.2);border-color:#22c55e;color:#22c55e;
+}
+.sp-tab:active{transform:scale(.94);}
+/* content scroll */
+.sp-content{flex:1;overflow-y:auto;padding:10px 10px 80px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.sp-content::-webkit-scrollbar{width:3px;}
+.sp-content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+/* league section header */
+.sp-league-hdr{
+  display:flex;align-items:center;gap:6px;
+  font-size:9px;font-weight:900;letter-spacing:2px;
+  color:rgba(255,255,255,.3);padding:14px 2px 6px;
+  text-transform:uppercase;
+}
+.sp-league-hdr-line{flex:1;height:1px;background:rgba(255,255,255,.06);}
+/* match card */
+.sp-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;margin-bottom:8px;overflow:hidden;
+  transition:border-color .15s;
+}
+.sp-card.live-card{border-color:rgba(239,68,68,.35);}
+.sp-card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px 5px;
+}
+.sp-time{font-size:10px;color:rgba(255,255,255,.35);font-weight:700;}
+.sp-live-badge{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);
+  border-radius:10px;padding:2px 7px;
+  font-size:9px;font-weight:900;color:#ef4444;letter-spacing:.5px;
+}
+.sp-live-dot{
+  width:6px;height:6px;border-radius:50%;background:#ef4444;
+  animation:spPulse 1.2s ease-in-out infinite;
+}
+@keyframes spPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.sp-fin-badge{
+  font-size:9px;font-weight:700;color:rgba(255,255,255,.25);
+  background:rgba(255,255,255,.05);border-radius:8px;padding:2px 7px;
+}
+/* teams row */
+.sp-teams-row{
+  display:flex;align-items:center;padding:6px 12px 8px;gap:8px;
+}
+.sp-team-info{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.sp-team-logo{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.08);object-fit:contain;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.sp-team-logo img{width:100%;height:100%;object-fit:contain;border-radius:50%;}
+.sp-team-name{
+  font-size:10px;font-weight:800;color:rgba(255,255,255,.8);
+  text-align:center;max-width:90px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;
+}
+.sp-score-box{
+  display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;
+}
+.sp-score{
+  font-size:22px;font-weight:900;color:#fff;letter-spacing:4px;
+  font-variant-numeric:tabular-nums;
+}
+.sp-score.upcoming{font-size:14px;color:rgba(255,255,255,.3);letter-spacing:2px;}
+.sp-clock{font-size:10px;color:#22c55e;font-weight:700;}
+/* odds row */
+.sp-odds-row{
+  display:grid;gap:5px;padding:0 10px 10px;
+}
+.sp-odds-row.two-col{grid-template-columns:1fr 1fr;}
+.sp-odds-row.three-col{grid-template-columns:1fr 1fr 1fr;}
+.sp-odd-btn{
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  background:rgba(255,255,255,.04);
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:7px 4px;cursor:pointer;transition:all .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.sp-odd-btn:active{transform:scale(.95);}
+.sp-odd-btn.home-odd{border-color:rgba(239,68,68,.2);}
+.sp-odd-btn.home-odd:hover,.sp-odd-btn.home-odd:active{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.5);}
+.sp-odd-btn.draw-odd{border-color:rgba(240,208,96,.2);}
+.sp-odd-btn.draw-odd:hover,.sp-odd-btn.draw-odd:active{background:rgba(240,208,96,.1);border-color:rgba(240,208,96,.5);}
+.sp-odd-btn.away-odd{border-color:rgba(59,130,246,.2);}
+.sp-odd-btn.away-odd:hover,.sp-odd-btn.away-odd:active{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.5);}
+.sp-odd-btn.disabled-odd{opacity:.35;cursor:not-allowed;}
+.sp-odd-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.5px;}
+.sp-odd-val{font-size:14px;font-weight:900;color:#f0d060;}
+/* loading / empty */
+.sp-loading{display:flex;flex-direction:column;align-items:center;padding:40px 20px;gap:10px;color:rgba(255,255,255,.3);font-size:12px;font-weight:700;}
+.sp-spinner{width:28px;height:28px;border:3px solid rgba(34,197,94,.2);border-top-color:#22c55e;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.sp-empty{text-align:center;padding:30px 20px;font-size:12px;color:rgba(255,255,255,.2);font-weight:700;}
+/* My Bets FAB */
+.sp-mybets-fab{
+  position:fixed;bottom:72px;right:14px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  border:none;border-radius:22px;color:#fff;
+  font-size:11px;font-weight:900;padding:10px 16px;
+  cursor:pointer;z-index:8900;
+  box-shadow:0 4px 20px rgba(34,197,94,.35);
+  display:none;align-items:center;gap:6px;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .12s;
+}
+.sp-mybets-fab:active{transform:scale(.95);}
+.sp-mybets-count{
+  background:rgba(0,0,0,.3);border-radius:10px;
+  padding:1px 7px;font-size:10px;
+}
+/* ── BET MODAL ── */
+#spBetModal{
+  position:fixed;inset:0;z-index:9800;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.sp-bet-sheet{
+  width:100%;max-width:480px;
+  background:#0f1a0f;
+  border-radius:20px 20px 0 0;
+  border:1px solid rgba(34,197,94,.2);
+  padding:0 0 env(safe-area-inset-bottom,14px);
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sp-bs-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:10px auto 14px;}
+.sp-bs-match{padding:0 16px 12px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sp-bs-match-name{font-size:13px;font-weight:800;color:#fff;margin-bottom:3px;}
+.sp-bs-league{font-size:10px;color:rgba(255,255,255,.35);font-weight:700;}
+.sp-bs-selection{
+  margin:12px 16px;padding:10px 14px;
+  background:rgba(255,255,255,.04);border-radius:12px;
+  border:1px solid rgba(34,197,94,.2);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.sp-bs-sel-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);}
+.sp-bs-sel-val{font-size:13px;font-weight:900;color:#fff;}
+.sp-bs-odds-lbl{font-size:10px;color:rgba(255,255,255,.4);font-weight:700;}
+.sp-bs-odds-val{font-size:18px;font-weight:900;color:#f0d060;text-align:right;}
+.sp-bs-chips{display:flex;gap:6px;padding:0 16px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px;}
+.sp-bs-chips::-webkit-scrollbar{display:none;}
+.sp-bs-chip{
+  flex-shrink:0;height:34px;padding:0 14px;border-radius:17px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  color:#fff;font-size:11px;font-weight:800;cursor:pointer;
+  transition:all .12s;-webkit-tap-highlight-color:transparent;
+}
+.sp-bs-chip.active,.sp-bs-chip:active{background:rgba(240,208,96,.15);border-color:#f0d060;color:#f0d060;}
+.sp-bs-custom{
+  display:flex;align-items:center;gap:8px;padding:0 16px;margin-bottom:14px;
+}
+.sp-bs-custom-inp{
+  flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;color:#fff;font-size:14px;font-weight:800;padding:9px 12px;
+  outline:none;
+}
+.sp-bs-custom-inp:focus{border-color:rgba(34,197,94,.5);}
+.sp-bs-potential{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 16px 14px;
+}
+.sp-bs-pot-lbl{font-size:11px;color:rgba(255,255,255,.4);font-weight:700;}
+.sp-bs-pot-val{font-size:16px;font-weight:900;color:#22c55e;}
+.sp-bs-confirm{
+  margin:0 16px 14px;width:calc(100% - 32px);
+  height:46px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;font-size:14px;font-weight:900;cursor:pointer;
+  box-shadow:0 4px 20px rgba(34,197,94,.3);
+  transition:transform .12s,opacity .12s;
+}
+.sp-bs-confirm:active{transform:scale(.97);}
+.sp-bs-confirm:disabled{opacity:.4;cursor:not-allowed;}
+.sp-bs-cancel{
+  display:block;width:calc(100% - 32px);margin:0 16px 8px;
+  background:none;border:1px solid rgba(255,255,255,.1);border-radius:14px;
+  color:rgba(255,255,255,.4);font-size:13px;font-weight:700;
+  padding:11px;cursor:pointer;
+}
+/* ── MY BETS MODAL ── */
+#spMyBetsModal{
+  position:fixed;inset:0;z-index:9800;
+  background:rgba(0,0,0,.8);backdrop-filter:blur(8px);
+  display:none;flex-direction:column;
+}
+.sp-mb-wrap{
+  flex:1;background:#0a100a;margin:60px 0 0;
+  border-radius:20px 20px 0 0;border-top:1px solid rgba(34,197,94,.25);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sp-mb-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);
+  flex-shrink:0;
+}
+.sp-mb-title{font-size:14px;font-weight:900;color:#fff;}
+.sp-mb-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:4px;}
+.sp-mb-tabs{
+  display:flex;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;
+}
+.sp-mb-tab{
+  flex:1;padding:9px;text-align:center;
+  font-size:10px;font-weight:800;letter-spacing:.5px;
+  color:rgba(255,255,255,.3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .15s;
+}
+.sp-mb-tab.active{color:#22c55e;border-bottom-color:#22c55e;}
+.sp-mb-list{flex:1;overflow-y:auto;padding:10px;}
+/* bet item */
+.sp-bet-item{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:12px 14px;margin-bottom:8px;
+}
+.sp-bet-item.won{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04);}
+.sp-bet-item.lost{border-color:rgba(231,76,60,.2);background:rgba(231,76,60,.03);}
+.sp-bet-item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.sp-bet-match{font-size:11px;font-weight:800;color:rgba(255,255,255,.7);}
+.sp-bet-status{font-size:10px;font-weight:800;border-radius:8px;padding:2px 8px;}
+.sp-bet-status.won{background:rgba(34,197,94,.15);color:#22c55e;}
+.sp-bet-status.lost{background:rgba(231,76,60,.12);color:#ef4444;}
+.sp-bet-status.pending{background:rgba(255,193,7,.1);color:#ffc107;}
+.sp-bet-detail{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:6px;}
+.sp-bet-amounts{display:flex;justify-content:space-between;align-items:center;}
+.sp-bet-stake{font-size:11px;color:rgba(255,255,255,.4);font-weight:700;}
+.sp-bet-profit{font-size:13px;font-weight:900;}
+.sp-bet-profit.won{color:#22c55e;}
+.sp-bet-profit.lost{color:#ef4444;}
+.sp-bet-profit.pending{color:#ffc107;}
+/* bottom nav — 5 items */
+#bottomNav{ display:none; }
+#bottomNav .bn-btn{ flex:1; }
+.bn-icon{ font-size:20px; line-height:1; }
+.bn-label{ font-size:8px; font-weight:700; letter-spacing:.4px; }
+.sp-nav-badge{
+  position:absolute;top:-2px;right:-2px;
+  width:8px;height:8px;border-radius:50%;
+  background:#ef4444;display:none;
+}
 </style>
 </head>
 <body>
@@ -12379,7 +12656,7 @@ function bnHide(){
 
 function bnSetActive(tab){
   _bnActive = tab;
-  ['lobby','games','chat','profile'].forEach(t=>{
+  ['lobby','games','sports','chat','profile'].forEach(t=>{
     const btn = document.getElementById('bn-'+t);
     if(btn) btn.classList.toggle('active', t===tab);
   });
@@ -12436,7 +12713,7 @@ function bnGo(tab){
     'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
     'scSlotsSection','scGemSlots','scHiLoCards','scHiLoDice',
     'scCartasSection','scMesaSection','scArcadeSection','scMultiSection',
-    'scDominoLobby','scDomino','scDuelo','scBingo'];
+    'scDominoLobby','scDomino','scDuelo','scBingo','scSports'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -12448,6 +12725,9 @@ function bnGo(tab){
     document.getElementById('gsBal').textContent = myBal.toLocaleString();
     show('scGameSelect');
     navPush('scGameSelect');
+  } else if(tab==='sports'){
+    startSports();
+    navPush('scSports');
   } else if(tab==='profile'){
     pfRefresh();
     show('scProfile');
@@ -16542,6 +16822,392 @@ function chCheckProgress(){
   });
 }
 
+
+// ══════════════════════════════════════════════════════════════
+//  SPORTS BETTING MODULE
+// ══════════════════════════════════════════════════════════════
+const SP_LEAGUES = [
+  {id:'all',                      label:'TODOS',       icon:'🌐', sport:null},
+  {id:'col.1',                    label:'BETPLAY',     icon:'🇨🇴', sport:'soccer'},
+  {id:'eng.1',                    label:'PREMIER',     icon:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', sport:'soccer'},
+  {id:'esp.1',                    label:'LA LIGA',     icon:'🇪🇸', sport:'soccer'},
+  {id:'ger.1',                    label:'BUNDESLIGA',  icon:'🇩🇪', sport:'soccer'},
+  {id:'ita.1',                    label:'SERIE A',     icon:'🇮🇹', sport:'soccer'},
+  {id:'UEFA.CHAMPIONS',           label:'CHAMPIONS',   icon:'⭐',  sport:'soccer'},
+  {id:'CONMEBOL.LIBERTADORES',    label:'LIBERTADORES',icon:'🌎', sport:'soccer'},
+  {id:'nba',                      label:'NBA',         icon:'🏀', sport:'basketball'},
+];
+const SP_LEAGUE_NAMES = {
+  'col.1':'Liga BetPlay','eng.1':'Premier League','esp.1':'La Liga',
+  'ger.1':'Bundesliga','ita.1':'Serie A','UEFA.CHAMPIONS':'Champions League',
+  'CONMEBOL.LIBERTADORES':'Copa Libertadores','nba':'NBA'
+};
+
+let spActiveLeague = 'all';
+let spAllMatches = []; // [{leagueId, leagueIcon, event}]
+let spRefreshTimer = null;
+let spCurrentBet = null; // {matchId, homeTeam, awayTeam, leagueId, leagueIcon, side, sideLabel, odds}
+let spMbActiveTab = 'pending';
+
+// ── Init ────────────────────────────────────────────────────
+function startSports(){
+  const el = document.getElementById('scSports');
+  el.classList.remove('hidden');
+  el.style.display = 'flex';
+  document.getElementById('spBal').textContent = myBal.toLocaleString();
+  spBuildTabs();
+  spLoad();
+  spUpdateBadge();
+  spSettlePendingBets();
+  if(spRefreshTimer) clearInterval(spRefreshTimer);
+  spRefreshTimer = setInterval(()=>{ if(!document.getElementById('scSports').classList.contains('hidden')) spLoad(); }, 60000);
+}
+
+function spBuildTabs(){
+  const wrap = document.getElementById('spTabs');
+  if(!wrap) return;
+  wrap.innerHTML = SP_LEAGUES.map(l=>
+    `<button class="sp-tab${l.id===spActiveLeague?' active':''}" onclick="spSelectLeague('${l.id}')">${l.icon} ${l.label}</button>`
+  ).join('');
+}
+
+function spSelectLeague(id){
+  spActiveLeague = id;
+  document.querySelectorAll('.sp-tab').forEach(b=>b.classList.remove('active'));
+  const tabs = document.querySelectorAll('.sp-tab');
+  const idx = SP_LEAGUES.findIndex(l=>l.id===id);
+  if(tabs[idx]) tabs[idx].classList.add('active');
+  spRender();
+}
+
+function spRefresh(){ spLoad(); document.getElementById('spBal').textContent = myBal.toLocaleString(); }
+
+// ── Fetch ────────────────────────────────────────────────────
+async function spFetchLeague(lg){
+  try {
+    let url;
+    if(lg.sport==='basketball'){
+      url = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard';
+    } else {
+      url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard`;
+    }
+    const res = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    const data = await res.json();
+    return (data.events||[]).map(ev=>({leagueId:lg.id, leagueName:SP_LEAGUE_NAMES[lg.id]||lg.label, leagueIcon:lg.icon, sport:lg.sport, event:ev}));
+  } catch(e){ return []; }
+}
+
+async function spLoad(){
+  document.getElementById('spContent').innerHTML = '<div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>';
+  const leagues = SP_LEAGUES.filter(l=>l.id!=='all');
+  const results = await Promise.all(leagues.map(l=>spFetchLeague(l)));
+  spAllMatches = results.flat();
+  spRender();
+  // Show/hide FAB
+  const fab = document.getElementById('spMyBetsFab');
+  if(fab) fab.style.display = 'flex';
+}
+
+// ── Render ───────────────────────────────────────────────────
+function spRender(){
+  const content = document.getElementById('spContent');
+  if(!content) return;
+  let matches = spAllMatches;
+  if(spActiveLeague !== 'all'){
+    matches = matches.filter(m=>m.leagueId===spActiveLeague);
+  }
+  if(!matches.length){
+    content.innerHTML = '<div class="sp-empty">📅 Sin partidos disponibles<br>para esta liga hoy</div>';
+    return;
+  }
+
+  // Sort: live > scheduled > final
+  const statusOrder = s => s==='STATUS_IN_PROGRESS'?0:s==='STATUS_SCHEDULED'?1:2;
+  matches.sort((a,b)=>{
+    const sa = a.event.competitions?.[0]?.status?.type?.name||'';
+    const sb = b.event.competitions?.[0]?.status?.type?.name||'';
+    const oa = statusOrder(sa), ob = statusOrder(sb);
+    if(oa!==ob) return oa-ob;
+    return new Date(a.event.date)-new Date(b.event.date);
+  });
+
+  // Group by league when showing ALL
+  let html='';
+  if(spActiveLeague==='all'){
+    const groups={};
+    matches.forEach(m=>{
+      const k=m.leagueId;
+      if(!groups[k]) groups[k]={icon:m.leagueIcon,name:m.leagueName,items:[]};
+      groups[k].items.push(m);
+    });
+    Object.values(groups).forEach(g=>{
+      html+=`<div class="sp-league-hdr"><span>${g.icon} ${g.name}</span><div class="sp-league-hdr-line"></div></div>`;
+      g.items.forEach(m=>{ html+=spMatchCard(m); });
+    });
+  } else {
+    matches.forEach(m=>{ html+=spMatchCard(m); });
+  }
+  content.innerHTML = html || '<div class="sp-empty">📅 Sin partidos hoy</div>';
+}
+
+function spMatchCard(m){
+  const ev = m.event;
+  const comp = ev.competitions?.[0];
+  if(!comp) return '';
+  const status = comp.status?.type?.name||'STATUS_SCHEDULED';
+  const completed = comp.status?.type?.completed||false;
+  const clock = comp.status?.displayClock||'';
+  const period = comp.status?.period||0;
+
+  // Competitors
+  const home = comp.competitors?.find(c=>c.homeAway==='home') || comp.competitors?.[0] || {};
+  const away = comp.competitors?.find(c=>c.homeAway==='away') || comp.competitors?.[1] || {};
+  const homeName = home.team?.shortDisplayName || home.team?.abbreviation || home.team?.displayName || '?';
+  const awayName = away.team?.shortDisplayName || away.team?.abbreviation || away.team?.displayName || '?';
+  const homeLogo = home.team?.logo || '';
+  const awayLogo = away.team?.logo || '';
+  const homeScore = home.score||'0';
+  const awayScore = away.score||'0';
+  const isLive = status==='STATUS_IN_PROGRESS';
+  const isFinal = completed || status==='STATUS_FINAL';
+  const isScheduled = !isLive && !isFinal;
+
+  // Time
+  const eventDate = new Date(ev.date);
+  const localTime = eventDate.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',timeZone:'America/Bogota'});
+  const localDate = eventDate.toLocaleDateString('es-CO',{day:'2-digit',month:'short',timeZone:'America/Bogota'});
+
+  // Logo HTML
+  const logoEl = (url, name) => url
+    ? `<div class="sp-team-logo"><img src="${url}" onerror="this.parentNode.innerHTML='<span>${name.charAt(0)}</span>'" loading="lazy"></div>`
+    : `<div class="sp-team-logo">${name.charAt(0)}</div>`;
+
+  // Status badge
+  let badge='';
+  if(isLive){
+    const clk = m.sport==='basketball' ? `${period}Q ${clock}` : (clock?`${clock}`:'EN VIVO');
+    badge=`<div class="sp-live-badge"><div class="sp-live-dot"></div>${clk}</div>`;
+  } else if(isFinal){
+    badge=`<div class="sp-fin-badge">FINALIZADO</div>`;
+  } else {
+    badge=`<div class="sp-time">${localDate} · ${localTime}</div>`;
+  }
+
+  // Score / vs
+  let scoreHtml='';
+  if(isScheduled){
+    scoreHtml=`<div class="sp-score upcoming">VS</div>`;
+  } else {
+    scoreHtml=`<div class="sp-score">${homeScore} - ${awayScore}</div>`;
+    if(isLive && m.sport!=='basketball') scoreHtml+=`<div class="sp-clock">⏱ EN VIVO</div>`;
+  }
+
+  // Odds
+  const odds = spGetOdds(ev.id||ev.name, m.sport==='basketball');
+  const isNBA = m.sport==='basketball';
+  const canBet = !isFinal; // can bet on live too
+  const disabledCls = isFinal?'disabled-odd':'';
+
+  let oddsHtml='';
+  const evId = ev.id||'';
+  if(isNBA){
+    oddsHtml=`<div class="sp-odds-row two-col">
+      <button class="sp-odd-btn home-odd ${disabledCls}" onclick="${isFinal?'':` spOpenBet('${evId}','${(homeName).replace(/'/g,"\\'")}','${(awayName).replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','home','LOCAL',${odds.home})`}">
+        <span class="sp-odd-label">LOCAL</span><span class="sp-odd-val">${odds.home.toFixed(2)}</span>
+      </button>
+      <button class="sp-odd-btn away-odd ${disabledCls}" onclick="${isFinal?'':` spOpenBet('${evId}','${(homeName).replace(/'/g,"\\'")}','${(awayName).replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','away','VISITANTE',${odds.away})`}">
+        <span class="sp-odd-label">VISITANTE</span><span class="sp-odd-val">${odds.away.toFixed(2)}</span>
+      </button>
+    </div>`;
+  } else {
+    oddsHtml=`<div class="sp-odds-row three-col">
+      <button class="sp-odd-btn home-odd ${disabledCls}" onclick="${isFinal?'':` spOpenBet('${evId}','${(homeName).replace(/'/g,"\\'")}','${(awayName).replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','home','LOCAL',${odds.home})`}">
+        <span class="sp-odd-label">LOCAL</span><span class="sp-odd-val">${odds.home.toFixed(2)}</span>
+      </button>
+      <button class="sp-odd-btn draw-odd ${disabledCls}" onclick="${isFinal?'':` spOpenBet('${evId}','${(homeName).replace(/'/g,"\\'")}','${(awayName).replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','draw','EMPATE',${odds.draw})`}">
+        <span class="sp-odd-label">EMPATE</span><span class="sp-odd-val">${odds.draw.toFixed(2)}</span>
+      </button>
+      <button class="sp-odd-btn away-odd ${disabledCls}" onclick="${isFinal?'':` spOpenBet('${evId}','${(homeName).replace(/'/g,"\\'")}','${(awayName).replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','away','VISITANTE',${odds.away})`}">
+        <span class="sp-odd-label">VISITANTE</span><span class="sp-odd-val">${odds.away.toFixed(2)}</span>
+      </button>
+    </div>`;
+  }
+
+  return `<div class="sp-card${isLive?' live-card':''}">
+    <div class="sp-card-head"><div class="sp-time">${isScheduled?localDate+' · '+localTime:''}</div>${badge}</div>
+    <div class="sp-teams-row">
+      <div class="sp-team-info">${logoEl(homeLogo,homeName)}<div class="sp-team-name">${homeName}</div></div>
+      <div class="sp-score-box">${scoreHtml}</div>
+      <div class="sp-team-info">${logoEl(awayLogo,awayName)}<div class="sp-team-name">${awayName}</div></div>
+    </div>
+    ${oddsHtml}
+  </div>`;
+}
+
+// ── Odds generation ──────────────────────────────────────────
+function spGetOdds(seed, isNBA){
+  let h=0; const s=String(seed);
+  for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0;
+  h=Math.abs(h);
+  const rnd=(min,max,mod=997)=>+(min+((h%mod)/mod)*(max-min)).toFixed(2);
+  if(isNBA){ return {home:rnd(1.55,2.65,101), away:rnd(1.55,2.65,173)}; }
+  return {home:rnd(1.50,3.80,103), draw:rnd(2.80,3.90,71), away:rnd(1.50,4.20,137)};
+}
+
+// ── Bet modal ────────────────────────────────────────────────
+function spOpenBet(matchId, homeTeam, awayTeam, leagueId, leagueIcon, side, sideLabel, odds){
+  spCurrentBet = {matchId, homeTeam, awayTeam, leagueId, leagueIcon, side, sideLabel, odds};
+  document.getElementById('spBsMatchName').textContent = homeTeam + ' vs ' + awayTeam;
+  document.getElementById('spBsLeague').textContent = (leagueIcon||'') + ' ' + (SP_LEAGUE_NAMES[leagueId]||leagueId);
+  document.getElementById('spBsSelVal').textContent = sideLabel + ' — ' + homeTeam;
+  document.getElementById('spBsOddsVal').textContent = odds.toFixed(2);
+  document.getElementById('spBsAmt').value = '';
+  document.getElementById('spBsPotential').textContent = '$0.00';
+  const modal = document.getElementById('spBetModal');
+  modal.style.display = 'flex';
+  setTimeout(()=>{ document.getElementById('spBsAmt').focus(); },300);
+}
+function spCloseBetModal(){
+  document.getElementById('spBetModal').style.display='none';
+  spCurrentBet=null;
+}
+function spSetBetAmt(amt){
+  document.getElementById('spBsAmt').value = amt;
+  spUpdatePotential();
+  document.querySelectorAll('.sp-bs-chip').forEach(c=>c.classList.toggle('active', parseInt(c.textContent.replace('$',''))===amt));
+}
+function spUpdatePotential(){
+  const amt=parseFloat(document.getElementById('spBsAmt').value)||0;
+  const odds=spCurrentBet?spCurrentBet.odds:1;
+  const pot=(amt*odds).toFixed(2);
+  document.getElementById('spBsPotential').textContent='$'+pot;
+  document.getElementById('spBsConfirm').disabled=amt<=0||amt>myBal;
+}
+function spConfirmBet(){
+  if(!spCurrentBet) return;
+  const amt=parseFloat(document.getElementById('spBsAmt').value)||0;
+  if(amt<=0){toast('Ingresa un monto');return;}
+  if(amt>myBal){toast('Saldo insuficiente');return;}
+  myBal-=amt; saveLocal(); updateRanking();
+  document.getElementById('spBal').textContent=myBal.toLocaleString();
+  const bet={
+    id:'sp_'+Date.now(),
+    matchId:spCurrentBet.matchId,
+    homeTeam:spCurrentBet.homeTeam,
+    awayTeam:spCurrentBet.awayTeam,
+    leagueId:spCurrentBet.leagueId,
+    leagueIcon:spCurrentBet.leagueIcon,
+    side:spCurrentBet.side,
+    sideLabel:spCurrentBet.sideLabel,
+    odds:spCurrentBet.odds,
+    amount:amt,
+    potential:+(amt*spCurrentBet.odds).toFixed(2),
+    status:'pending',
+    placedAt:Date.now()
+  };
+  const bets=spGetBets();
+  bets.unshift(bet);
+  localStorage.setItem('sp_bets',JSON.stringify(bets));
+  spCloseBetModal();
+  spUpdateBadge();
+  toast('🎟️ Apuesta registrada: $'+amt.toLocaleString()+' → ganas $'+bet.potential.toLocaleString());
+  playTone(600,.1,'sine',.08);
+}
+
+// ── My bets ──────────────────────────────────────────────────
+function spGetBets(){ try{return JSON.parse(localStorage.getItem('sp_bets'))||[];}catch(e){return[];} }
+function spSaveBets(b){ localStorage.setItem('sp_bets',JSON.stringify(b)); }
+
+function spOpenMyBets(){
+  spMbActiveTab='pending';
+  document.getElementById('spMyBetsModal').style.display='flex';
+  spMbRender();
+}
+function spCloseMyBets(){ document.getElementById('spMyBetsModal').style.display='none'; }
+function spMbShowTab(tab){
+  spMbActiveTab=tab;
+  ['pending','won','lost'].forEach(t=>{
+    const el=document.getElementById('spMbTab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el) el.classList.toggle('active',t===tab);
+  });
+  spMbRender();
+}
+function spMbRender(){
+  const bets=spGetBets().filter(b=>b.status===spMbActiveTab);
+  const list=document.getElementById('spMbList');
+  if(!bets.length){
+    list.innerHTML=`<div class="sp-empty" style="padding:40px 20px;">Sin apuestas ${spMbActiveTab==='pending'?'pendientes':spMbActiveTab==='won'?'ganadas':'perdidas'}</div>`;
+    return;
+  }
+  list.innerHTML=bets.map(b=>{
+    const date=new Date(b.placedAt).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    let profitTxt='', profitCls=b.status;
+    if(b.status==='won') profitTxt='+$'+b.potential.toLocaleString();
+    else if(b.status==='lost') profitTxt='-$'+b.amount.toLocaleString();
+    else profitTxt='Potencial: $'+b.potential.toLocaleString();
+    const statusLabel=b.status==='won'?'GANADA':b.status==='lost'?'PERDIDA':'PENDIENTE';
+    return `<div class="sp-bet-item ${b.status}">
+      <div class="sp-bet-item-head">
+        <div class="sp-bet-match">${b.homeTeam} vs ${b.awayTeam}</div>
+        <div class="sp-bet-status ${b.status}">${statusLabel}</div>
+      </div>
+      <div class="sp-bet-detail">${b.leagueIcon||''} ${SP_LEAGUE_NAMES[b.leagueId]||b.leagueId} · ${b.sideLabel} @ ${b.odds.toFixed(2)} · ${date}</div>
+      <div class="sp-bet-amounts">
+        <div class="sp-bet-stake">Apostado: $${b.amount.toLocaleString()}</div>
+        <div class="sp-bet-profit ${profitCls}">${profitTxt}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function spUpdateBadge(){
+  const pending=spGetBets().filter(b=>b.status==='pending').length;
+  const badge=document.getElementById('spNavBadge');
+  const count=document.getElementById('spMyBetsCount');
+  if(badge) badge.style.display=pending>0?'block':'none';
+  if(count){count.textContent=pending;count.style.display=pending>0?'inline':'none';}
+}
+
+// ── Settlement ───────────────────────────────────────────────
+async function spSettlePendingBets(){
+  const bets=spGetBets();
+  const pending=bets.filter(b=>b.status==='pending');
+  if(!pending.length) return;
+  // For each pending bet, check if we have match data in spAllMatches
+  let changed=false;
+  pending.forEach(b=>{
+    const match=spAllMatches.find(m=>m.event.id===b.matchId);
+    if(!match) return;
+    const comp=match.event.competitions?.[0];
+    if(!comp) return;
+    const isFinal=comp.status?.type?.completed||comp.status?.type?.name==='STATUS_FINAL';
+    if(!isFinal) return;
+    const home=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
+    const away=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
+    const hs=parseInt(home.score||0), as_=parseInt(away.score||0);
+    let result='draw';
+    if(hs>as_) result='home';
+    else if(as_>hs) result='away';
+    const idx=bets.findIndex(x=>x.id===b.id);
+    if(idx===-1) return;
+    if(b.side===result){
+      bets[idx].status='won';
+      myBal+=b.potential; saveLocal(); updateRanking();
+      toast('🏆 ¡Apuesta ganada! +$'+b.potential.toLocaleString()+' ('+b.homeTeam+' vs '+b.awayTeam+')');
+      burst(innerWidth/2,200,14);
+    } else {
+      bets[idx].status='lost';
+      toast('❌ Apuesta perdida: '+b.homeTeam+' vs '+b.awayTeam);
+    }
+    changed=true;
+  });
+  if(changed){
+    spSaveBets(bets);
+    spUpdateBadge();
+    document.getElementById('spBal').textContent=myBal.toLocaleString();
+  }
+}
+
 </script>
 
 <!-- ════════ BOTTOM NAV BAR ════════ -->
@@ -16554,6 +17220,13 @@ function chCheckProgress(){
     <div class="bn-icon-wrap"><span class="bn-icon">🎮</span></div>
     <span class="bn-label">JUEGOS</span>
   </button>
+  <button class="bn-btn" id="bn-sports" onclick="bnGo('sports')">
+    <div class="bn-icon-wrap" style="position:relative;">
+      <span class="bn-icon">⚽</span>
+      <span class="sp-nav-badge" id="spNavBadge"></span>
+    </div>
+    <span class="bn-label">APOSTAR</span>
+  </button>
   <button class="bn-btn" id="bn-chat" onclick="bnGo('chat')">
     <div class="bn-icon-wrap">
       <span class="bn-icon">💬</span>
@@ -16565,6 +17238,90 @@ function chCheckProgress(){
     <div class="bn-icon-wrap"><span class="bn-icon" id="bnProfileIcon">👤</span></div>
     <span class="bn-label">PERFIL</span>
   </button>
+</div>
+
+
+<!-- ════════ SPORTS BETTING SCREEN ════════ -->
+<div class="fullscreen hidden" id="scSports" style="display:none;">
+
+  <!-- Top bar -->
+  <div class="sp-topbar">
+    <div class="sp-topbar-title">⚽ DEPORTES</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="sp-refresh-btn" onclick="spRefresh()">↻ Actualizar</button>
+      <div class="sp-topbar-bal">$<span id="spBal">0</span></div>
+    </div>
+  </div>
+
+  <!-- League tabs -->
+  <div class="sp-tabs-wrap">
+    <div class="sp-tabs" id="spTabs"></div>
+  </div>
+
+  <!-- Match list -->
+  <div class="sp-content" id="spContent">
+    <div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>
+  </div>
+
+  <!-- My bets FAB -->
+  <button class="sp-mybets-fab" id="spMyBetsFab" onclick="spOpenMyBets()">
+    🎟️ MIS APUESTAS
+    <span class="sp-mybets-count" id="spMyBetsCount" style="display:none;">0</span>
+  </button>
+</div>
+
+<!-- ════ BET PLACEMENT MODAL ════ -->
+<div id="spBetModal" onclick="if(event.target===this)spCloseBetModal()">
+  <div class="sp-bet-sheet" id="spBetSheet">
+    <div class="sp-bs-handle"></div>
+    <div class="sp-bs-match">
+      <div class="sp-bs-match-name" id="spBsMatchName">-</div>
+      <div class="sp-bs-league" id="spBsLeague">-</div>
+    </div>
+    <div class="sp-bs-selection">
+      <div>
+        <div class="sp-bs-sel-label">TU APUESTA</div>
+        <div class="sp-bs-sel-val" id="spBsSelVal">-</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="sp-bs-odds-lbl">CUOTA</div>
+        <div class="sp-bs-odds-val" id="spBsOddsVal">0.00</div>
+      </div>
+    </div>
+    <div class="sp-bs-chips">
+      <button class="sp-bs-chip" onclick="spSetBetAmt(10)">$10</button>
+      <button class="sp-bs-chip" onclick="spSetBetAmt(25)">$25</button>
+      <button class="sp-bs-chip" onclick="spSetBetAmt(50)">$50</button>
+      <button class="sp-bs-chip" onclick="spSetBetAmt(100)">$100</button>
+      <button class="sp-bs-chip" onclick="spSetBetAmt(250)">$250</button>
+      <button class="sp-bs-chip" onclick="spSetBetAmt(500)">$500</button>
+    </div>
+    <div class="sp-bs-custom">
+      <input class="sp-bs-custom-inp" id="spBsAmt" type="number" min="1" placeholder="Monto personalizado..." oninput="spUpdatePotential()">
+    </div>
+    <div class="sp-bs-potential">
+      <div class="sp-bs-pot-lbl">GANANCIA POTENCIAL</div>
+      <div class="sp-bs-pot-val" id="spBsPotential">$0.00</div>
+    </div>
+    <button class="sp-bs-confirm" id="spBsConfirm" onclick="spConfirmBet()">CONFIRMAR APUESTA</button>
+    <button class="sp-bs-cancel" onclick="spCloseBetModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ════ MY BETS MODAL ════ -->
+<div id="spMyBetsModal" onclick="if(event.target===this)spCloseMyBets()">
+  <div class="sp-mb-wrap">
+    <div class="sp-mb-head">
+      <div class="sp-mb-title">🎟️ Mis Apuestas</div>
+      <button class="sp-mb-close" onclick="spCloseMyBets()">✕</button>
+    </div>
+    <div class="sp-mb-tabs">
+      <button class="sp-mb-tab active" id="spMbTabPending" onclick="spMbShowTab('pending')">PENDIENTES</button>
+      <button class="sp-mb-tab" id="spMbTabWon" onclick="spMbShowTab('won')">GANADAS</button>
+      <button class="sp-mb-tab" id="spMbTabLost" onclick="spMbShowTab('lost')">PERDIDAS</button>
+    </div>
+    <div class="sp-mb-list" id="spMbList"></div>
+  </div>
 </div>
 
 <!-- ════════ PROFILE SCREEN ════════ -->
