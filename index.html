@@ -7349,6 +7349,7 @@ function goLobbyAsGoogle() {
   if (nameOverride) myName = nameOverride;
   hide('scWelcome');
   goMainLobby();
+        setTimeout(()=>{ if(typeof spSettlePendingBets==='function') spSettlePendingBets(); },1500);
 }
 
 function showGuestForm() {
@@ -17204,10 +17205,15 @@ function spConfirmBet(){
   myBal-=amt; saveLocal(); updateRanking();
   document.getElementById('spBal').textContent=myBal.toLocaleString();
   const bet={id:'sp_'+Date.now(),type:isP?'parlay':'single',
-    legs:spSlip.map(s=>({matchId:s.matchId,homeTeam:s.homeTeam,awayTeam:s.awayTeam,
-      leagueId:s.leagueId,leagueIcon:s.leagueIcon,side:s.side,
-      sideLabel:s.sideLabel,market:s.market||'1x2',marketLabel:s.marketLabel||'1X2',
-      odds:s.odds,status:'pending'})),
+    legs:spSlip.map(s=>{
+      const mc_=spMatchCache[s.matchId];
+      return {matchId:s.matchId,homeTeam:s.homeTeam,awayTeam:s.awayTeam,
+        leagueId:s.leagueId,leagueIcon:s.leagueIcon,side:s.side,
+        sideLabel:s.sideLabel,market:s.market||'1x2',marketLabel:s.marketLabel||'1X2',
+        odds:s.odds,sport:s.sport||'soccer',status:'pending',
+        ouLine:mc_?.odds?.ouLine??2.5,
+        ahLine:mc_?.odds?.ahLine??'0'};
+    }),
     combinedOdds:combined,amount:amt,potential:+(amt*combined).toFixed(2),
     status:'pending',placedAt:Date.now()};
   const bets=spGetBets(); bets.unshift(bet);
@@ -17288,58 +17294,109 @@ function spUpdateBadge(){
   if(badge) badge.style.display=pending>0?'block':'none';
   if(cnt){ cnt.textContent=pending; cnt.style.display=pending>0?'inline':'none'; }
 }
-// ── Settlement ────────────────────────────────────────────────
+// ── Settlement — fetches results directly, NO dependency on spAllMatches ──
+// Called on login AND every time sports tab opens.
+// For each pending leg, hits ESPN summary endpoint to get final score.
+async function spFetchEventResult(leagueId, eventId, sport){
+  try{
+    const base = sport==='basketball'
+      ? 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba'
+      : `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueId}`;
+    const res = await fetch(`${base}/summary?event=${eventId}`, {signal:AbortSignal.timeout(8000)});
+    if(!res.ok) return null;
+    const d = await res.json();
+    const comp = d.header?.competitions?.[0] || d.competitions?.[0];
+    if(!comp) return null;
+    const sname = comp.status?.type?.name || comp.status?.name || '';
+    const scompleted = comp.status?.type?.completed || false;
+    const isFinal = scompleted || SP_FINAL_STATUSES.has(sname);
+    if(!isFinal) return null; // still in progress or not started
+    const home = comp.competitors?.find(c=>c.homeAway==='home') || comp.competitors?.[0] || {};
+    const away = comp.competitors?.find(c=>c.homeAway==='away') || comp.competitors?.[1] || {};
+    return {
+      homeScore: parseInt(home.score ?? home.linescores?.reduce((s,l)=>s+parseInt(l.value||0),0) ?? 0),
+      awayScore: parseInt(away.score ?? away.linescores?.reduce((s,l)=>s+parseInt(l.value||0),0) ?? 0),
+    };
+  } catch(e){ return null; }
+}
+
 async function spSettlePendingBets(){
-  const bets=spGetBets();
-  const pending=bets.filter(b=>b.status==='pending');
-  if(!pending.length) return;
-  let changed=false;
+  const bets = spGetBets();
+  const pending = bets.filter(b => b.status==='pending');
+  if(!pending.length){ spUpdateBadge(); return; }
+
+  // Collect unique legs that still need a result
+  const toFetch = []; // {betId, legIdx, leagueId, matchId, sport}
   pending.forEach(b=>{
-    const legs=b.legs||[]; if(!legs.length) return;
-    legs.forEach((leg,i)=>{
+    (b.legs||[]).forEach((leg,i)=>{
       if(leg.status==='won'||leg.status==='lost') return;
-      const match=spAllMatches.find(m=>m.event.id===leg.matchId); if(!match) return;
-      const comp=match.event.competitions?.[0]; if(!comp) return;
-      const isFinal=SP_FINAL_STATUSES.has(comp.status?.type?.name||'')||comp.status?.type?.completed;
-      if(!isFinal) return;
-      const home_=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
-      const away_=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
-      const hs=parseInt(home_.score||0), as_=parseInt(away_.score||0);
-      const bIdx=bets.findIndex(x=>x.id===b.id); if(bIdx<0) return;
-      let legWon=false;
-      const mkt=leg.market||'1x2';
-      if(mkt==='1x2'){
-        const r3=hs>as_?'home':as_>hs?'away':'draw';
-        legWon=leg.side===r3;
-      } else if(mkt==='ou'){
-        const mc_=spMatchCache[leg.matchId]; const line=mc_?.odds?.ouLine??2.5;
-        legWon=leg.side==='over'?(hs+as_>line):(hs+as_<line);
-      } else if(mkt==='ah'){
-        const mc_=spMatchCache[leg.matchId]; const line=parseFloat(mc_?.odds?.ahLine||0);
-        legWon=leg.side==='ahHome'?(hs-as_+line>0):(as_-hs-line>0);
-      }
-      bets[bIdx].legs[i].status=legWon?'won':'lost';
+      toFetch.push({betId:b.id, legIdx:i, leagueId:leg.leagueId,
+        matchId:leg.matchId, sport:leg.sport||'soccer'});
     });
-    const bIdx=bets.findIndex(x=>x.id===b.id); if(bIdx<0) return;
-    if(bets[bIdx].legs.some(l=>l.status!=='won'&&l.status!=='lost')) return;
-    const wonAll=bets[bIdx].legs.every(l=>l.status==='won');
-    bets[bIdx].status=wonAll?'won':'lost';
-    if(wonAll){
-      myBal+=b.potential; saveLocal(); updateRanking();
-      const msg=(b.type==='parlay'?'¡Combinada ganada!':'¡Apuesta ganada!')+' +$'+b.potential.toLocaleString();
-      toast('🏆 '+msg);
-      spSendNotif('🏆 Casino Royale',msg);
-      burst(innerWidth/2,200,16);
-    } else {
-      const msg=(b.type==='parlay'?'Combinada perdida':'Apuesta perdida')+' -$'+b.amount.toLocaleString();
-      toast('❌ '+msg);
-      spSendNotif('❌ Casino Royale',msg);
-    }
-    changed=true;
   });
+  if(!toFetch.length) return;
+
+  // De-duplicate: fetch each unique matchId only once
+  const unique = {};
+  toFetch.forEach(t=>{ unique[t.matchId] = t; });
+
+  // Fetch all in parallel
+  const results = {}; // matchId → {homeScore, awayScore} | null
+  await Promise.all(Object.values(unique).map(async t=>{
+    results[t.matchId] = await spFetchEventResult(t.leagueId, t.matchId, t.sport);
+  }));
+
+  // Apply results
+  let changed = false;
+  pending.forEach(b=>{
+    const bIdx = bets.findIndex(x=>x.id===b.id); if(bIdx<0) return;
+    (b.legs||[]).forEach((leg,i)=>{
+      if(leg.status==='won'||leg.status==='lost') return;
+      const res = results[leg.matchId];
+      if(!res) return; // not finished yet
+      const hs = res.homeScore, as_ = res.awayScore;
+      let legWon = false;
+      const mkt = leg.market||'1x2';
+      if(mkt==='1x2'){
+        const r3 = hs>as_?'home':as_>hs?'away':'draw';
+        legWon = leg.side===r3;
+      } else if(mkt==='ou'){
+        const line = leg.ouLine ?? 2.5;
+        legWon = leg.side==='over' ? (hs+as_>line) : (hs+as_<line);
+      } else if(mkt==='ah'){
+        const line = parseFloat(leg.ahLine||0);
+        legWon = leg.side==='ahHome' ? (hs-as_+line>0) : (as_-hs-line>0);
+      }
+      bets[bIdx].legs[i].status = legWon?'won':'lost';
+      changed = true;
+    });
+
+    // Check if whole bet is now resolved
+    if(!bets[bIdx].legs.every(l=>l.status==='won'||l.status==='lost')) return;
+    const wonAll = bets[bIdx].legs.every(l=>l.status==='won');
+    bets[bIdx].status = wonAll?'won':'lost';
+
+    if(wonAll){
+      myBal += b.potential; saveLocal(); updateRanking();
+      const msg = (b.type==='parlay'?'¡Combinada ganada!':'¡Apuesta ganada!') + ' +$' + b.potential.toLocaleString();
+      toast('🏆 ' + msg);
+      spSendNotif('🏆 Casino Royale – ' + msg,
+        b.legs.map(l=>l.homeTeam+' vs '+l.awayTeam).join(' · '));
+      setTimeout(()=>burst(innerWidth/2, 200, 16), 300);
+    } else {
+      const msg = (b.type==='parlay'?'Combinada perdida':'Apuesta perdida') + ' -$' + b.amount.toLocaleString();
+      toast('❌ ' + msg);
+      spSendNotif('❌ Casino Royale – ' + msg,
+        b.legs.map(l=>l.homeTeam+' vs '+l.awayTeam).join(' · '));
+    }
+  });
+
   if(changed){
-    spSaveBets(bets); spUpdateBadge();
-    const balEl=document.getElementById('spBal'); if(balEl) balEl.textContent=myBal.toLocaleString();
+    spSaveBets(bets);
+    spUpdateBadge();
+    const balEl = document.getElementById('spBal'); if(balEl) balEl.textContent = myBal.toLocaleString();
+    // Refresh my bets modal if open
+    if(document.getElementById('spMyBetsModal')?.style.display==='flex') spMbRender();
   }
 }
 
