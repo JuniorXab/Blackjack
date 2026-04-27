@@ -15455,7 +15455,7 @@ function rmCheckRoomEmpty(room){
 // El jugador apuesta al inicio. Cada disparo que sobrevive acumula multiplicador.
 // Puede cobrar en cualquier momento. Si sale la bala → pierde la apuesta.
 // Máximo 5 disparos (si sobrevive 5, el 6° es certeza de bala → auto-cobra).
-const DUELO_MULTS = [0, 1.30, 1.75, 2.50, 4.00, 7.00]; // payout after n survivals
+const DUELO_MULTS = [0, 1.10, 1.32, 1.76, 2.64, 5.28]; // payout after n survivals — ~10% house edge
 const DUELO_RISK  = [0, 17, 20, 25, 33, 50]; // % risk per shot
 
 let dueloBet = 100;
@@ -15513,15 +15513,24 @@ function dueloRenderChambers(firedAt){
 
 function dueloAdj(v){
   const inp = document.getElementById('dueloBetInput');
-  if(v==='max') dueloBet = Math.min(myBal, 10000);
+  if(v==='max') dueloBet = Math.min(Math.floor(myBal*0.25)||1, 5000);
   else dueloBet = Math.max(1, Math.floor((parseInt(inp.value)||100)*v));
   inp.value = dueloBet;
 }
 
+let dueloCooldown = false;
 function dueloStart(){
+  if(dueloCooldown){ toast('⏳ Espera un momento...'); return; }
   dueloBet = parseInt(document.getElementById('dueloBetInput').value)||100;
   if(dueloBet < 1){ toast('⚠️ Apuesta mínima $1'); return; }
   if(myBal < dueloBet){ toast('⚠️ Saldo insuficiente'); return; }
+  // Max bet: 25% of balance to prevent all-in exploit
+  const maxBet = Math.max(1, Math.floor(myBal * 0.25));
+  if(dueloBet > maxBet){
+    dueloBet = maxBet;
+    document.getElementById('dueloBetInput').value = dueloBet;
+    toast('⚠️ Apuesta limitada al 25% del saldo ($'+maxBet.toLocaleString()+')');
+  }
 
   // Deduct bet
   myBal -= dueloBet; saveLocal(); mgUpdateBal('dueloBal'); updateRanking();
@@ -15574,7 +15583,9 @@ function dueloFire(){
     setTimeout(()=>{
       document.getElementById('dueloNewPanel').style.display = 'flex';
       document.getElementById('dueloMsg').textContent = '💀 ¡La bala era tuya, forastero! Intenta de nuevo.';
-    }, 1400);
+      dueloCooldown = false;
+    }, 2000);
+    dueloCooldown = true;
     mlRecordGameStat('duelo', false, -dueloBet);
     mlUpdateMissionProgress('duelo', false, -dueloBet, {});
     dueloLogSave({shots:dueloShotsFired, outcome:'dead', bet:dueloBet, profit:-dueloBet});
@@ -15595,11 +15606,13 @@ function dueloFire(){
   document.getElementById('dueloMult').textContent = mult.toFixed(2)+'×';
   document.getElementById('dueloMult').style.color = '#2ecc71';
   document.getElementById('dueloGain').textContent = '$'+payout.toLocaleString();
-  document.getElementById('dueloCashBtn').style.display = 'block';
-  document.getElementById('dueloCashBtn').querySelector('#dueloCashAmt').textContent = payout.toLocaleString();
+  // Cashout only available from shot 2 onwards (shot 1 = too easy to exploit)
+  const canCashNow = dueloShotsFired >= 2;
+  document.getElementById('dueloCashBtn').style.display = canCashNow ? 'block' : 'none';
+  if(canCashNow) document.getElementById('dueloCashBtn').querySelector('#dueloCashAmt').textContent = payout.toLocaleString();
 
   const shotMsgs = [
-    '😅 ¡Sobreviviste el primer disparo!',
+    '😅 Sobreviviste el 1° disparo — ¡dispara otra vez para poder cobrar!',
     '😤 Dos tiros y sigues de pie...',
     '😬 Tres y sigues vivo, valiente...',
     '🤯 ¡Cuatro disparos! Eres una leyenda.',
@@ -15647,7 +15660,8 @@ function dueloCash(auto=false){
     document.getElementById('dueloMsg').style.color = '#aaa';
   }
 
-  setTimeout(()=>{ document.getElementById('dueloNewPanel').style.display='flex'; }, 800);
+  dueloCooldown = true;
+  setTimeout(()=>{ document.getElementById('dueloNewPanel').style.display='flex'; dueloCooldown=false; }, 2000);
   mlRecordGameStat('duelo', profit>0, profit);
   mlUpdateMissionProgress('duelo', profit>0, profit, {});
   dueloLogSave({shots:dueloShotsFired, outcome: auto?'auto':'cash', bet:dueloBet, profit});
@@ -17769,11 +17783,11 @@ async function spSettlePendingBets(){
         <div style="font-size:9px;color:rgba(255,255,255,.3);">DISPARO</div>
         <div style="font-size:9px;color:rgba(255,255,255,.3);">RIESGO</div>
         <div style="font-size:9px;color:rgba(255,255,255,.3);">COBRAR</div>
-        <div style="font-size:11px;color:#fff;font-weight:700;">1°</div><div style="font-size:11px;color:#2ecc71;">17%</div><div style="font-size:11px;color:#f0d060;">×1.30</div>
-        <div style="font-size:11px;color:#fff;font-weight:700;">2°</div><div style="font-size:11px;color:#58d68d;">20%</div><div style="font-size:11px;color:#f0d060;">×1.75</div>
-        <div style="font-size:11px;color:#fff;font-weight:700;">3°</div><div style="font-size:11px;color:#f39c12;">25%</div><div style="font-size:11px;color:#f0d060;">×2.50</div>
-        <div style="font-size:11px;color:#fff;font-weight:700;">4°</div><div style="font-size:11px;color:#e67e22;">33%</div><div style="font-size:11px;color:#f0d060;">×4.00</div>
-        <div style="font-size:11px;color:#fff;font-weight:700;">5°</div><div style="font-size:11px;color:#e74c3c;">50%</div><div style="font-size:11px;color:#f5d27a;font-weight:900;">×7.00 🏆</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">1°</div><div style="font-size:11px;color:#2ecc71;">17%</div><div style="font-size:11px;color:rgba(255,255,255,.3);">×1.10 🔒</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">2°</div><div style="font-size:11px;color:#58d68d;">20%</div><div style="font-size:11px;color:#f0d060;">×1.32</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">3°</div><div style="font-size:11px;color:#f39c12;">25%</div><div style="font-size:11px;color:#f0d060;">×1.76</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">4°</div><div style="font-size:11px;color:#e67e22;">33%</div><div style="font-size:11px;color:#f0d060;">×2.64</div>
+        <div style="font-size:11px;color:#fff;font-weight:700;">5°</div><div style="font-size:11px;color:#e74c3c;">50%</div><div style="font-size:11px;color:#f5d27a;font-weight:900;">×5.28 🏆</div>
       </div>
     </div>
 
