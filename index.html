@@ -16907,20 +16907,44 @@ function spBuildOdds(realOdds,seed,isNBA){
 
 async function spFetchLeague(lg){
   try{
+    const fmtDate=d=>{
+      // Format as YYYYMMDD in local Colombia time
+      const col=new Date(d.toLocaleString('en-US',{timeZone:'America/Bogota'}));
+      return col.getFullYear()+String(col.getMonth()+1).padStart(2,'0')+String(col.getDate()).padStart(2,'0');
+    };
     const today=new Date();
-    const fmt=d=>d.toISOString().slice(0,10).replace(/-/g,'');
-    // Fetch without date filter to catch live games, PLUS today filter as fallback
-    let url;
+    const tomorrow=new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
+    const tdStr=fmtDate(today), tmStr=fmtDate(tomorrow);
+
+    // Fetch URLs: no-date (catches live) + today explicit + tomorrow
+    let urls;
     if(lg.sport==='basketball'){
-      url=`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?limit=25&enable=odds`;
+      urls=[
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?limit=30&enable=odds`,
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tdStr}&limit=20&enable=odds`,
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tmStr}&limit=20&enable=odds`,
+      ];
     } else {
-      url=`https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?limit=20&enable=odds`;
+      urls=[
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?limit=20&enable=odds`,
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tdStr}&limit=20&enable=odds`,
+        `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tmStr}&limit=20&enable=odds`,
+      ];
     }
-    const res=await fetch(url,{signal:AbortSignal.timeout(10000)});
-    if(!res.ok) return [];
-    const data=await res.json();
-    const events=data.events||[];
-    // Also try to get events from the calendar dates returned
+
+    // Fetch all 3 in parallel, then deduplicate by event id
+    const responses=await Promise.allSettled(urls.map(u=>
+      fetch(u,{signal:AbortSignal.timeout(9000)}).then(r=>r.ok?r.json():null)
+    ));
+    const seenIds=new Set();
+    const events=[];
+    responses.forEach(res=>{
+      if(res.status!=='fulfilled'||!res.value) return;
+      (res.value.events||[]).forEach(ev=>{
+        if(!seenIds.has(ev.id)){ seenIds.add(ev.id); events.push(ev); }
+      });
+    });
+
     return events.map(ev=>({leagueId:lg.id,leagueName:SP_LN[lg.id]||lg.label,leagueIcon:lg.icon,sport:lg.sport,event:ev}));
   }catch(e){ return []; }
 }
@@ -16938,7 +16962,7 @@ async function spLoad(){
     const isNBA=m.sport==='basketball';
     const statusName=comp.status?.type?.name||'';
     const isLiveNow=SP_LIVE_STATUSES.has(statusName);
-    const isFinalNow=SP_FINAL_STATUSES.has(comp.status?.type?.name||'')||comp.status?.type?.completed;
+    const isFinalNow=SP_FINAL_STATUSES.has(comp.status?.type?.name||'');
     const realOdds=spParseCompOdds(comp,isNBA);
     const odds=spBuildOdds(realOdds,ev.id||ev.name,isNBA);
     spMatchCache[ev.id]={
@@ -16995,7 +17019,7 @@ function spMatchCard(m){
   const ev=m.event,comp=ev.competitions?.[0]; if(!comp) return '';
   const statusName=comp.status?.type?.name||'STATUS_SCHEDULED';
   const isLive=SP_LIVE_STATUSES.has(statusName);
-  const isFinal=SP_FINAL_STATUSES.has(statusName)||comp.status?.type?.completed;
+  const isFinal=SP_FINAL_STATUSES.has(statusName); // don't use .completed — causes false positives on pre-match events
   const isScheduled=!isLive&&!isFinal;
   const clock=comp.status?.displayClock||'';
   const period=comp.status?.period||0;
@@ -17108,8 +17132,17 @@ function spToggleMarkets(panelId,btn){
 // ── Betslip ───────────────────────────────────────────────────
 function spToggleSlip(matchId,side,market,oddsVal,customLabel){
   const mc=spMatchCache[matchId]; if(!mc) return;
-  // Block if live
-  if(mc.isLive||mc.isFinal){ toast('Apuestas cerradas para este partido'); return; }
+  // Re-derive live/final from fresh event data (not stale cache)
+  const liveEv=spAllMatches.find(m=>m.event.id===matchId);
+  if(liveEv){
+    const sn=liveEv.event.competitions?.[0]?.status?.type?.name||'';
+    const isNowLive=SP_LIVE_STATUSES.has(sn);
+    const isNowFinal=SP_FINAL_STATUSES.has(sn); // don't use .completed here
+    if(isNowLive||isNowFinal){ toast('Apuestas cerradas para este partido'); return; }
+  } else if(mc.isFinal){
+    // Only block if explicitly final (not just from .completed flag)
+    toast('Apuestas cerradas para este partido'); return;
+  }
   const existing=spSlip.findIndex(s=>s.matchId===matchId&&s.market===market&&s.side===side);
   if(existing>=0){ spSlip.splice(existing,1); }
   else {
