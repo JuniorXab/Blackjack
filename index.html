@@ -1996,6 +1996,20 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .sp-bet-profit.pending{color:#ffc107;}
 .sp-nav-badge{position:absolute;top:-2px;right:-3px;width:8px;height:8px;border-radius:50%;background:#ef4444;display:none;}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+
+/* Markets v2 extras */
+.sp-markets-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px;}
+.sp-mkt-btn{border:1.5px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.03);
+  padding:8px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;text-align:center;}
+.sp-mkt-btn:active{transform:scale(.94);}
+.sp-mkt-btn.selected{border-color:#22c55e!important;background:rgba(34,197,94,.1)!important;}
+.sp-mkt-btn.disabled-odd{opacity:.25;cursor:not-allowed;pointer-events:none;}
+.sp-mkt-label{font-size:9px;color:rgba(255,255,255,.4);font-weight:700;line-height:1.3;}
+.sp-mkt-odds{font-size:14px;font-weight:900;color:#f0d060;}
+.sp-odds-src.real{color:#22c55e;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);
+  font-size:8px;font-weight:900;padding:2px 6px;border-radius:5px;letter-spacing:.3px;}
+.sp-odds-src.calc{color:rgba(255,255,255,.18);font-size:8px;font-weight:700;}
 </style>
 </head>
 <body>
@@ -16777,8 +16791,9 @@ function chCheckProgress(){
 
 
 
+
 // ══════════════════════════════════════════════════════════════
-//  SPORTS BETTING MODULE v4
+//  SPORTS BETTING MODULE v5
 // ══════════════════════════════════════════════════════════════
 const SP_LEAGUES = [
   {id:'all',                    label:'TODAS',       icon:'🌐', sport:null},
@@ -16796,12 +16811,10 @@ const SP_LN = {
   'ger.1':'Bundesliga','ita.1':'Serie A','UEFA.CHAMPIONS':'Champions League',
   'CONMEBOL.LIBERTADORES':'Copa Libertadores','nba':'NBA','all':'Todas las ligas'
 };
-// ESPN status codes that mean "live right now"
 const SP_LIVE_STATUSES = new Set([
   'STATUS_IN_PROGRESS','STATUS_HALFTIME','STATUS_END_PERIOD',
   'STATUS_OVERTIME','STATUS_2ND_HALF','STATUS_FIRST_HALF','STATUS_EXTRA_TIME'
 ]);
-// ESPN status codes that mean "finished"
 const SP_FINAL_STATUSES = new Set([
   'STATUS_FINAL','STATUS_FULL_TIME','STATUS_FULL_PEN','STATUS_FT_PEN',
   'STATUS_POSTPONED','STATUS_SUSPENDED','STATUS_CANCELED','STATUS_ABANDONED'
@@ -16822,32 +16835,31 @@ function startSports(){
   if(spRefreshTimer) clearInterval(spRefreshTimer);
   spRefreshTimer=setInterval(()=>{
     if(!document.getElementById('scSports').classList.contains('hidden')) spLoad();
-  },45000); // refresh every 45s for live scores
+  },60000);
 }
 function spRefresh(){
-  document.getElementById('spContent').innerHTML='<div class="sp-loading"><div class="sp-spinner"></div>Actualizando...</div>';
   spLoad();
   document.getElementById('spBal').textContent=myBal.toLocaleString();
 }
 
 // ── Notifications ─────────────────────────────────────────────
 function spCheckNotifBanner(){
-  const banner=document.getElementById('spNotifBanner'); if(!banner) return;
-  if(typeof Notification==='undefined'){banner.style.display='none';return;}
-  if(Notification.permission==='granted'){spNotifGranted=true;banner.style.display='none';}
-  else if(Notification.permission==='denied'){banner.style.display='none';}
-  else{banner.style.display='flex';}
+  const b=document.getElementById('spNotifBanner'); if(!b) return;
+  if(typeof Notification==='undefined'){b.style.display='none';return;}
+  if(Notification.permission==='granted'){spNotifGranted=true;b.style.display='none';}
+  else if(Notification.permission==='denied'){b.style.display='none';}
+  else{b.style.display='flex';}
 }
 async function spRequestNotif(){
   if(typeof Notification==='undefined') return;
-  const perm=await Notification.requestPermission();
-  spNotifGranted=(perm==='granted');
+  const p=await Notification.requestPermission();
+  spNotifGranted=(p==='granted');
   spCheckNotifBanner();
-  if(spNotifGranted) new Notification('Casino Royale 🎰',{body:'¡Notificaciones activadas! Te avisaremos cuando tus apuestas se liquiden.'});
+  if(spNotifGranted) new Notification('Casino Royale 🎰',{body:'Notificaciones activadas.'});
 }
 function spSendNotif(title,body){
   if(!spNotifGranted||typeof Notification==='undefined') return;
-  try{ const n=new Notification(title,{body,tag:'sp-bet'}); setTimeout(()=>n.close(),8000); }catch(e){}
+  try{const n=new Notification(title,{body,tag:'sp-bet'});setTimeout(()=>n.close(),8000);}catch(e){}
 }
 
 // ── League picker ─────────────────────────────────────────────
@@ -16859,7 +16871,7 @@ function spOpenLeaguePicker(){
     </div>`).join('');
   document.getElementById('spLeagueModal').style.display='flex';
 }
-function spCloseLeaguePicker(){ document.getElementById('spLeagueModal').style.display='none'; }
+function spCloseLeaguePicker(){document.getElementById('spLeagueModal').style.display='none';}
 function spPickLeague(id){
   spActiveLeague=id;
   const lg=SP_LEAGUES.find(l=>l.id===id)||SP_LEAGUES[0];
@@ -16868,160 +16880,161 @@ function spPickLeague(id){
   spCloseLeaguePicker(); spRender();
 }
 
-// ── Fetch ─────────────────────────────────────────────────────
-// Moneyline american → decimal
+// ── Odds helpers ──────────────────────────────────────────────
 function ml2dec(ml){
   ml=parseFloat(ml); if(isNaN(ml)||ml===0) return null;
-  return ml>0 ? +(ml/100+1).toFixed(2) : +(100/Math.abs(ml)+1).toFixed(2);
+  return ml>0?+(ml/100+1).toFixed(2):+(100/Math.abs(ml)+1).toFixed(2);
 }
-
-// Parse ESPN "details" string like "-1.5 (-110)" or "Arsenal -130, Draw +260, City +320"
-function spParseDetails(details, isNBA){
-  if(!details) return null;
-  // Soccer: "Team1 -130, Draw +260, Team2 +350" — extract numbers after comma separators
-  const nums=details.match(/[+-]?\d+/g)||[];
-  if(!isNBA && nums.length>=3){
-    const h=ml2dec(parseFloat(nums[0]));
-    const d=ml2dec(parseFloat(nums[1]));
-    const a=ml2dec(parseFloat(nums[2]));
-    if(h&&a) return {home:h,draw:d,away:a};
-  }
-  // NBA: "-3 (-110)" style — spread only, return symmetric odds
-  if(isNBA && nums.length>=1){
-    const juice=ml2dec(parseFloat(nums[1])||(-110));
-    return {home:juice||1.91, away:juice||1.91};
-  }
-  return null;
-}
-
-// Parse odds from a competition object
-function spParseCompOdds(comp, isNBA){
+function spParseCompOdds(comp,isNBA){
   const arr=comp.odds||[]; if(!arr.length) return null;
   const o=arr[0];
-  // Try moneyline fields directly (ESPN returns numbers, not strings)
-  let home=null,away=null,draw=null;
-  // homeTeamOdds.moneyLine
-  if(o.homeTeamOdds?.moneyLine) home=ml2dec(o.homeTeamOdds.moneyLine);
-  if(o.awayTeamOdds?.moneyLine) away=ml2dec(o.awayTeamOdds.moneyLine);
-  // drawOdds can be object or direct number
+  let home=ml2dec(o.homeTeamOdds?.moneyLine), away=ml2dec(o.awayTeamOdds?.moneyLine), draw=null;
   if(!isNBA){
-    if(o.drawOdds?.moneyLine) draw=ml2dec(o.drawOdds.moneyLine);
-    else if(typeof o.drawOdds==='number') draw=ml2dec(o.drawOdds);
+    draw=o.drawOdds?.moneyLine?ml2dec(o.drawOdds.moneyLine):(typeof o.drawOdds==='number'?ml2dec(o.drawOdds):null);
   }
   if(home&&away) return {
-    home,away,draw,
-    ou: o.overUnder!=null?parseFloat(o.overUnder):null,
-    ouOver:  o.overOdds?.moneyLine ? ml2dec(o.overOdds.moneyLine) : (typeof o.overOdds==='number'?ml2dec(o.overOdds):null),
-    ouUnder: o.underOdds?.moneyLine ? ml2dec(o.underOdds.moneyLine) : (typeof o.underOdds==='number'?ml2dec(o.underOdds):null),
+    home, away, draw,
+    ou:   o.overUnder!=null?parseFloat(o.overUnder):null,
+    ouOver:  o.overOdds?.moneyLine?ml2dec(o.overOdds.moneyLine):(typeof o.overOdds==='number'?ml2dec(o.overOdds):null),
+    ouUnder: o.underOdds?.moneyLine?ml2dec(o.underOdds.moneyLine):(typeof o.underOdds==='number'?ml2dec(o.underOdds):null),
     source:'espn'
   };
-  // Fall back: parse details string
-  const fromDetails=spParseDetails(o.details,isNBA);
-  if(fromDetails) return {...fromDetails,
-    ou:o.overUnder!=null?parseFloat(o.overUnder):null,
-    ouOver:null,ouUnder:null,source:'espn'};
   return null;
 }
-
-// Deterministic fallback odds
 function spCalcOdds(seed,isNBA){
   let h=0; const s=String(seed||'x');
   for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0;
   h=Math.abs(h);
-  const r=(a,b,m)=>+(a+((h%m)/m)*(b-a)).toFixed(2);
-  if(isNBA) return {home:r(1.55,2.60,101),away:r(1.55,2.60,173),source:'calc'};
-  return {home:r(1.45,3.80,103),draw:r(2.80,3.90,71),away:r(1.45,4.20,137),source:'calc'};
+  const rnd=(a,b,m)=>+(a+((h%m)/m)*(b-a)).toFixed(2);
+  if(isNBA) return {home:rnd(1.55,2.60,101),away:rnd(1.55,2.60,173),source:'calc'};
+  return {home:rnd(1.45,3.80,103),draw:rnd(2.80,3.90,71),away:rnd(1.45,4.20,137),source:'calc'};
+}
+function spBuildOdds(real,seed,isNBA){
+  const base=real||spCalcOdds(seed,isNBA);
+  let h=0;const s=String(seed||'x');
+  for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0; h=Math.abs(h);
+  const rnd=(a,b,m)=>+(a+((h%m)/m)*(b-a)).toFixed(2);
+  const ouLine=base.ou!=null?base.ou:(isNBA?rnd(208,228,29):2.5);
+  const ouOver=base.ouOver||rnd(1.78,2.05,79);
+  const ouUnder=base.ouUnder||rnd(1.78,2.05,83);
+  const pDiff=1/base.home-1/base.away;
+  const ahLine=isNBA?+(pDiff*22).toFixed(1):(pDiff>0.15?-0.5:pDiff<-0.15?0.5:0);
+  const ahLineStr=ahLine>=0?'+'+ahLine:String(ahLine);
+  // Extra markets (soccer only)
+  const pH_n=1/base.home, pD_n=base.draw?1/base.draw:0.26, pA_n=1/base.away;
+  const tot=pH_n+pD_n+pA_n;
+  const pH=pH_n/tot, pD=pD_n/tot, pA=pA_n/tot;
+  // BTTS
+  const bal=1-Math.abs(pH-pA);
+  const pBTTS=Math.min(0.72,Math.max(0.38,0.52+bal*0.18));
+  const bttsYes=isNBA?null:+(1/pBTTS*0.91).toFixed(2);
+  const bttsNo =isNBA?null:+(1/(1-pBTTS)*0.91).toFixed(2);
+  // Double Chance
+  const dc1X =isNBA?null:+((1/(pH+pD))*0.94).toFixed(2);
+  const dcX2 =isNBA?null:+((1/(pD+pA))*0.94).toFixed(2);
+  const dc12 =isNBA?null:+((1/(pH+pA))*0.94).toFixed(2);
+  // 1st Half Result (home odds * 1.3, capped at 5.5)
+  const htHome=isNBA?null:+Math.min(5.5,base.home*1.30).toFixed(2);
+  const htDraw=isNBA?null:rnd(2.10,2.60,61);
+  const htAway=isNBA?null:+Math.min(5.8,base.away*1.28).toFixed(2);
+  const nbaHtHome=isNBA?rnd(1.82,2.05,67):null;
+  const nbaHtAway=isNBA?rnd(1.82,2.05,73):null;
+  return {...base,ouLine,ouOver,ouUnder,ahLine:ahLineStr,ahHome:rnd(1.82,1.96,97),ahAway:rnd(1.82,1.96,89),
+    bttsYes,bttsNo,dc1X,dcX2,dc12,htHome,htDraw,htAway,nbaHtHome,nbaHtAway};
 }
 
-// Build full odds object (real + derived markets)
-function spBuildOdds(realOdds,seed,isNBA){
-  const base=realOdds||spCalcOdds(seed,isNBA);
-  let h=0; const s=String(seed||'x');
-  for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0;
-  h=Math.abs(h);
-  const r=(a,b,m)=>+(a+((h%m)/m)*(b-a)).toFixed(2);
-  // O/U line
-  const ouLine=base.ou!=null?base.ou:(isNBA?r(208,228,29):2.5);
-  const ouOver=base.ouOver||r(1.78,2.05,79);
-  const ouUnder=base.ouUnder||r(1.78,2.05,83);
-  // Handicap
-  const homePr=1/base.home, awayPr=1/base.away;
-  const diff=homePr-awayPr;
-  const ahLine=isNBA?+(diff*22).toFixed(1):(diff>0.15?-0.5:diff<-0.15?0.5:0);
-  const ahLineStr=ahLine>=0?'+'+ahLine:String(ahLine);
-  const ahHome=r(1.82,1.96,97);
-  const ahAway=r(1.82,1.96,89);
-  return {...base,ouLine,ouOver,ouUnder,ahLine:ahLineStr,ahHome,ahAway};
+// ── Fetch — one league at a time, render progressively ────────
+function spFmtDate(d){
+  // YYYYMMDD in Colombia timezone
+  try{
+    const s=d.toLocaleDateString('en-CA',{timeZone:'America/Bogota'}); // "YYYY-MM-DD"
+    return s.replace(/-/g,'');
+  }catch(e){
+    return d.toISOString().slice(0,10).replace(/-/g,'');
+  }
+}
+
+async function spFetchOne(url){
+  // Simple fetch, no AbortSignal (mobile compat), 8s manual timeout
+  return new Promise(resolve=>{
+    const t=setTimeout(()=>resolve(null),8000);
+    fetch(url).then(r=>{
+      clearTimeout(t);
+      return r.ok?r.json():null;
+    }).then(d=>resolve(d)).catch(()=>{ clearTimeout(t); resolve(null); });
+  });
 }
 
 async function spFetchLeague(lg){
-  try{
-    const fmtDate=d=>{
-      // Format as YYYYMMDD in local Colombia time
-      const col=new Date(d.toLocaleString('en-US',{timeZone:'America/Bogota'}));
-      return col.getFullYear()+String(col.getMonth()+1).padStart(2,'0')+String(col.getDate()).padStart(2,'0');
-    };
-    const today=new Date();
-    const tomorrow=new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
-    const tdStr=fmtDate(today), tmStr=fmtDate(tomorrow);
-
-    // Fetch URLs: no-date (catches live) + today explicit + tomorrow
-    let urls;
-    if(lg.sport==='basketball'){
-      urls=[
-        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?limit=30&enable=odds`,
-        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tdStr}&limit=20&enable=odds`,
-        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tmStr}&limit=20&enable=odds`,
-      ];
-    } else {
-      urls=[
-        `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?limit=20&enable=odds`,
-        `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tdStr}&limit=20&enable=odds`,
-        `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tmStr}&limit=20&enable=odds`,
-      ];
-    }
-
-    // Fetch all 3 in parallel, then deduplicate by event id
-    const responses=await Promise.allSettled(urls.map(u=>
-      fetch(u,{signal:AbortSignal.timeout(9000)}).then(r=>r.ok?r.json():null)
-    ));
-    const seenIds=new Set();
-    const events=[];
-    responses.forEach(res=>{
-      if(res.status!=='fulfilled'||!res.value) return;
-      (res.value.events||[]).forEach(ev=>{
-        if(!seenIds.has(ev.id)){ seenIds.add(ev.id); events.push(ev); }
-      });
+  const td=spFmtDate(new Date());
+  const tm=spFmtDate(new Date(Date.now()+86400000));
+  let urls;
+  if(lg.sport==='basketball'){
+    // NBA: today + tomorrow only (no-date returns season schedule which is huge)
+    urls=[
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${td}&limit=20`,
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tm}&limit=20`,
+    ];
+  } else {
+    urls=[
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${td}&limit=20`,
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tm}&limit=20`,
+    ];
+  }
+  const seenIds=new Set();
+  const events=[];
+  // Sequential to avoid hitting rate limits
+  for(const url of urls){
+    const data=await spFetchOne(url);
+    if(!data) continue;
+    (data.events||[]).forEach(ev=>{
+      if(ev.id&&!seenIds.has(ev.id)){ seenIds.add(ev.id); events.push(ev); }
     });
+  }
+  return events.map(ev=>({
+    leagueId:lg.id, leagueName:SP_LN[lg.id]||lg.label,
+    leagueIcon:lg.icon, sport:lg.sport, event:ev
+  }));
+}
 
-    return events.map(ev=>({leagueId:lg.id,leagueName:SP_LN[lg.id]||lg.label,leagueIcon:lg.icon,sport:lg.sport,event:ev}));
-  }catch(e){ return []; }
+function spCacheMatch(m){
+  const ev=m.event, comp=ev.competitions?.[0]; if(!comp) return;
+  const home=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
+  const away=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
+  const isNBA=m.sport==='basketball';
+  const sname=comp.status?.type?.name||'';
+  const real=spParseCompOdds(comp,isNBA);
+  spMatchCache[ev.id]={
+    homeTeam:home.team?.shortDisplayName||home.team?.displayName||'?',
+    awayTeam:away.team?.shortDisplayName||away.team?.displayName||'?',
+    leagueId:m.leagueId, leagueIcon:m.leagueIcon, sport:m.sport,
+    odds:spBuildOdds(real,ev.id||ev.name,isNBA),
+    isNBA, isLive:SP_LIVE_STATUSES.has(sname),
+    isFinal:SP_FINAL_STATUSES.has(sname),
+    hasRealOdds:!!real
+  };
 }
 
 async function spLoad(){
-  document.getElementById('spContent').innerHTML='<div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>';
+  spAllMatches=[];
+  document.getElementById('spContent').innerHTML=
+    '<div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>';
+
   const leagues=SP_LEAGUES.filter(l=>l.id!=='all');
-  const results=await Promise.all(leagues.map(l=>spFetchLeague(l)));
-  spAllMatches=results.flat();
-  // Build cache
-  spAllMatches.forEach(m=>{
-    const ev=m.event,comp=ev.competitions?.[0]; if(!comp) return;
-    const home=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
-    const away=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
-    const isNBA=m.sport==='basketball';
-    const statusName=comp.status?.type?.name||'';
-    const isLiveNow=SP_LIVE_STATUSES.has(statusName);
-    const isFinalNow=SP_FINAL_STATUSES.has(comp.status?.type?.name||'');
-    const realOdds=spParseCompOdds(comp,isNBA);
-    const odds=spBuildOdds(realOdds,ev.id||ev.name,isNBA);
-    spMatchCache[ev.id]={
-      homeTeam:home.team?.shortDisplayName||home.team?.displayName||'?',
-      awayTeam:away.team?.shortDisplayName||away.team?.displayName||'?',
-      leagueId:m.leagueId, leagueIcon:m.leagueIcon, sport:m.sport,
-      odds, isNBA, isLive:isLiveNow, isFinal:isFinalNow,
-      hasRealOdds:!!realOdds
-    };
-  });
+  let loaded=0;
+
+  // Fetch leagues one by one, render after each one arrives
+  for(const lg of leagues){
+    const matches=await spFetchLeague(lg);
+    // Add to global list and cache
+    matches.forEach(m=>{ spAllMatches.push(m); spCacheMatch(m); });
+    loaded++;
+    // Re-render progressively so user sees content ASAP
+    if(loaded===1||loaded%2===0||loaded===leagues.length){
+      spRender();
+    }
+  }
+  // Final render + settlement
   spRender();
   spSettlePendingBets();
 }
@@ -17029,24 +17042,27 @@ async function spLoad(){
 // ── Render ────────────────────────────────────────────────────
 function spRender(){
   const content=document.getElementById('spContent'); if(!content) return;
-  let matches=spAllMatches;
+  let matches=spAllMatches.slice(); // copy
   if(spActiveLeague!=='all') matches=matches.filter(m=>m.leagueId===spActiveLeague);
+
   if(!matches.length){
-    content.innerHTML='<div class="sp-empty">📅 Sin partidos disponibles<br>para esta liga.<br><small style="color:rgba(255,255,255,.12)">Prueba otra liga o vuelve más tarde</small></div>';
+    // If still loading (spAllMatches empty), keep spinner
+    if(spAllMatches.length===0){
+      content.innerHTML='<div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>';
+    } else {
+      content.innerHTML='<div class="sp-empty">📅 Sin partidos disponibles para esta liga.<br><small style="color:rgba(255,255,255,.12)">Prueba otra liga o vuelve más tarde</small></div>';
+    }
     return;
   }
-  // Sort: live → scheduled → final
-  const order=s=>{
-    if(SP_LIVE_STATUSES.has(s)) return 0;
-    if(SP_FINAL_STATUSES.has(s)) return 2;
-    return 1;
-  };
+
+  const order=s=>SP_LIVE_STATUSES.has(s)?0:SP_FINAL_STATUSES.has(s)?2:1;
   matches.sort((a,b)=>{
     const sa=a.event.competitions?.[0]?.status?.type?.name||'';
     const sb=b.event.competitions?.[0]?.status?.type?.name||'';
     const oa=order(sa),ob=order(sb);
     return oa!==ob?oa-ob:new Date(a.event.date)-new Date(b.event.date);
   });
+
   let html='';
   if(spActiveLeague==='all'){
     const groups={};
@@ -17056,73 +17072,67 @@ function spRender(){
     });
     Object.values(groups).forEach(g=>{
       html+=`<div class="sp-league-hdr"><span>${g.icon} ${g.name}</span><div class="sp-league-hdr-line"></div></div>`;
-      g.items.forEach(m=>{ html+=spMatchCard(m); });
+      g.items.forEach(m=>{html+=spMatchCard(m);});
     });
   } else {
-    matches.forEach(m=>{ html+=spMatchCard(m); });
+    matches.forEach(m=>{html+=spMatchCard(m);});
   }
+  // Preserve scroll position
+  const prev=content.scrollTop;
   content.innerHTML=html||'<div class="sp-empty">Sin partidos hoy</div>';
+  content.scrollTop=prev;
 }
 
 function spMatchCard(m){
-  const ev=m.event,comp=ev.competitions?.[0]; if(!comp) return '';
-  const statusName=comp.status?.type?.name||'STATUS_SCHEDULED';
-  const isLive=SP_LIVE_STATUSES.has(statusName);
-  const isFinal=SP_FINAL_STATUSES.has(statusName); // don't use .completed — causes false positives on pre-match events
+  const ev=m.event, comp=ev.competitions?.[0]; if(!comp) return '';
+  const sname=comp.status?.type?.name||'STATUS_SCHEDULED';
+  const isLive=SP_LIVE_STATUSES.has(sname);
+  const isFinal=SP_FINAL_STATUSES.has(sname);
   const isScheduled=!isLive&&!isFinal;
   const clock=comp.status?.displayClock||'';
   const period=comp.status?.period||0;
-  const isHT=statusName==='STATUS_HALFTIME';
+  const isHT=sname==='STATUS_HALFTIME';
   const home=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
   const away=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
   const homeName=home.team?.shortDisplayName||home.team?.displayName||'?';
   const awayName=away.team?.shortDisplayName||away.team?.displayName||'?';
-  const homeLogo=home.team?.logo||'', awayLogo=away.team?.logo||'';
+  const homeLogo=home.team?.logo||''; const awayLogo=away.team?.logo||'';
   const evId=ev.id||ev.uid||'';
   const isNBA=m.sport==='basketball';
   const mc=spMatchCache[evId];
   const odds=mc?.odds||spBuildOdds(null,evId,isNBA);
 
-  // Date/time
   const eDate=new Date(ev.date);
   const lTime=eDate.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',timeZone:'America/Bogota'});
   const lDate=eDate.toLocaleDateString('es-CO',{day:'2-digit',month:'short',timeZone:'America/Bogota'});
 
-  // Status badge
   let badge='';
-  if(isHT){
-    badge=`<div class="sp-live-badge"><div class="sp-live-dot"></div>DESCANSO</div>`;
-  } else if(isLive){
-    const clk=isNBA?`${period}T ${clock}`:(clock?`${clock}'`:'EN VIVO');
-    badge=`<div class="sp-live-badge"><div class="sp-live-dot"></div>${clk}</div>`;
-  } else if(isFinal){
-    badge=`<div class="sp-fin-badge">FINALIZADO</div>`;
-  } else {
-    badge=`<span class="sp-time">${lDate} · ${lTime}</span>`;
-  }
+  if(isHT) badge=`<div class="sp-live-badge"><div class="sp-live-dot"></div>DESCANSO</div>`;
+  else if(isLive){const clk=isNBA?`${period}T ${clock}`:(clock?`${clock}'`:'EN VIVO');badge=`<div class="sp-live-badge"><div class="sp-live-dot"></div>${clk}</div>`;}
+  else if(isFinal) badge=`<div class="sp-fin-badge">FINALIZADO</div>`;
+  else badge=`<span class="sp-time">${lDate} · ${lTime}</span>`;
 
-  // Odds source tag
-  const srcCls=mc?.hasRealOdds?'real':'calc';
-  const srcTxt=mc?.hasRealOdds?'ESPN':'—';
-  const srcTag=`<span class="sp-odds-src ${srcCls}">${srcTxt}</span>`;
+  const srcTag=mc?.hasRealOdds?`<span class="sp-odds-src real">✓ REAL</span>`:`<span class="sp-odds-src calc">EST.</span>`;
 
-  // Score
   const hs=home.score??'', as_=away.score??'';
-  let scoreHTML='';
-  if(isScheduled) scoreHTML=`<div class="sp-score upcoming">VS</div>`;
-  else scoreHTML=`<div class="sp-score${isLive?' live':''}">${hs} - ${as_}</div>${isLive?`<div class="sp-clock">⏱ ${isNBA?(period+'T'):''}</div>`:''}`;
+  const scoreHTML=isScheduled
+    ?`<div class="sp-score upcoming">VS</div>`
+    :`<div class="sp-score${isLive?' live':''}">${hs} - ${as_}</div>${isLive?`<div class="sp-clock">⏱</div>`:''}`;
 
-  const logoEl=(url,n)=>url?`<div class="sp-team-logo"><img src="${url}" onerror="this.style.display='none'" loading="lazy"></div>`:`<div class="sp-team-logo">${n.charAt(0)}</div>`;
+  const logoEl=(url,n)=>url
+    ?`<div class="sp-team-logo"><img src="${url}" onerror="this.style.display='none'" loading="lazy"></div>`
+    :`<div class="sp-team-logo">${n.charAt(0)}</div>`;
 
-  // Betting is blocked for live AND final matches
-  // Live = no more pre-match betting allowed
   const canBet=isScheduled;
   const dis=canBet?'':'disabled-odd';
 
-  const mkOddBtn=(side,label,oddsVal,cls)=>{
+  // Pass isScheduled flag directly into onclick so toggleSlip doesn't need cache
+  const mkOddBtn=(side,label,val,cls)=>{
     const sel=spSlip.find(s=>s.matchId===evId&&s.market==='1x2'&&s.side===side)?'selected':'';
-    const click=canBet?` spToggleSlip('${evId}','${side}','1x2',${oddsVal})`:'';
-    return `<button class="sp-odd-btn ${cls} ${dis} ${sel}" onclick="${click}"><span class="sp-odd-label">${label}</span><span class="sp-odd-val">${oddsVal.toFixed(2)}</span></button>`;
+    const click=canBet?`spToggleSlip('${evId}','${side}','1x2',${val},'${label}','${homeName.replace(/'/g,"\\'")}','${awayName.replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','${m.sport}')`:
+      (isLive?`toast('Partido en curso — apuestas cerradas')`:``);
+    return `<button class="sp-odd-btn ${cls} ${dis} ${sel}" onclick="${click}">
+      <span class="sp-odd-label">${label}</span><span class="sp-odd-val">${val.toFixed(2)}</span></button>`;
   };
 
   let main1X2='';
@@ -17132,16 +17142,16 @@ function spMatchCard(m){
     main1X2=`<div class="sp-odds-row c3">${mkOddBtn('home','LOCAL',odds.home,'home-odd')}${mkOddBtn('draw','EMPATE',odds.draw||3.20,'draw-odd')}${mkOddBtn('away','VISITANTE',odds.away,'away-odd')}</div>`;
   }
 
-  // Live no-bet banner
   const liveBanner=isLive?`<div class="sp-live-nob">⚽ Partido en curso — apuestas cerradas</div>`:'';
 
-  // Extra markets (only for scheduled)
-  const ahOppLine=parseFloat(odds.ahLine)||0;
-  const ahOppStr=ahOppLine===0?'0':(ahOppLine>0?'-'+ahOppLine:'+'+ Math.abs(ahOppLine));
-  const mkMktBtn=(mkt,side,label,oddsVal)=>{
+  const ahOpp=parseFloat(odds.ahLine)||0;
+  const ahOppStr=ahOpp===0?'0':(ahOpp>0?'-'+ahOpp:'+'+ Math.abs(ahOpp));
+  const mkMktBtn=(mkt,side,label,val)=>{
     const sel=spSlip.find(s=>s.matchId===evId&&s.market===mkt&&s.side===side)?'selected':'';
-    const click=canBet?` spToggleSlip('${evId}','${side}','${mkt}',${oddsVal},'${label}')`:'';
-    return `<button class="sp-mkt-btn ${dis} ${sel}" onclick="${click}"><span class="sp-mkt-label">${label}</span><span class="sp-mkt-odds">${oddsVal.toFixed(2)}</span></button>`;
+    const click=canBet?`spToggleSlip('${evId}','${side}','${mkt}',${val},'${label}','${homeName.replace(/'/g,"\\'")}','${awayName.replace(/'/g,"\\'")}','${m.leagueId}','${m.leagueIcon}','${m.sport}')`:
+      '';
+    return `<button class="sp-mkt-btn ${dis} ${sel}" onclick="${click}">
+      <span class="sp-mkt-label">${label}</span><span class="sp-mkt-odds">${val.toFixed(2)}</span></button>`;
   };
   const extraMkts=`<div class="sp-markets-panel" id="spmkp-${evId}">
     <div class="sp-mkt-hdr">${isNBA?'🏀 Total puntos':'⚽ Total goles'} — ${odds.ouLine}</div>
@@ -17154,8 +17164,38 @@ function spMatchCard(m){
       ${mkMktBtn('ah','ahHome',`Local ${odds.ahLine}`,odds.ahHome)}
       ${mkMktBtn('ah','ahAway',`Visit. ${ahOppStr}`,odds.ahAway)}
     </div>
-  </div>`;
 
+    ${!isNBA&&odds.bttsYes?`
+    <div class="sp-mkt-hdr">⚽ Ambos Marcan (BTTS)</div>
+    <div class="sp-markets-row">
+      ${mkMktBtn('btts','bttsYes','Sí marcan',odds.bttsYes)}
+      ${mkMktBtn('btts','bttsNo','No marcan',odds.bttsNo)}
+    </div>`:''}
+
+    ${!isNBA&&odds.dc1X?`
+    <div class="sp-mkt-hdr">🔁 Doble Oportunidad</div>
+    <div class="sp-markets-row-3">
+      ${mkMktBtn('dc','dc1X','1X Local/Empate',odds.dc1X)}
+      ${mkMktBtn('dc','dcX2','X2 Empate/Visit.',odds.dcX2)}
+      ${mkMktBtn('dc','dc12','12 Sin Empate',odds.dc12)}
+    </div>`:''}
+
+    ${!isNBA&&odds.htHome?`
+    <div class="sp-mkt-hdr">🕐 Resultado 1er Tiempo</div>
+    <div class="sp-markets-row-3">
+      ${mkMktBtn('ht','htHome','Local',odds.htHome)}
+      ${mkMktBtn('ht','htDraw','Empate',odds.htDraw)}
+      ${mkMktBtn('ht','htAway','Visitante',odds.htAway)}
+    </div>`:''}
+
+    ${isNBA&&odds.nbaHtHome?`
+    <div class="sp-mkt-hdr">🕐 Ganador 1er Cuarto</div>
+    <div class="sp-markets-row">
+      ${mkMktBtn('ht','htHome','Local 1T',odds.nbaHtHome)}
+      ${mkMktBtn('ht','htAway','Visit. 1T',odds.nbaHtAway)}
+    </div>`:''}
+
+  </div>`;
   const moreBtn=isScheduled?`<div class="sp-markets-toggle" onclick="spToggleMarkets('spmkp-${evId}',this)"><span>más mercados</span><span class="arr">▾</span></div>`:'';
 
   return `<div class="sp-card${isLive?' live-card':''}" data-evid="${evId}">
@@ -17165,77 +17205,56 @@ function spMatchCard(m){
       <div class="sp-score-col">${scoreHTML}</div>
       <div class="sp-team-col">${logoEl(awayLogo,awayName)}<div class="sp-team-name">${awayName}</div></div>
     </div>
-    ${liveBanner}
-    ${main1X2}
-    ${extraMkts}
-    ${moreBtn}
+    ${liveBanner}${main1X2}${extraMkts}${moreBtn}
   </div>`;
 }
 
-function spToggleMarkets(panelId,btn){
-  const panel=document.getElementById(panelId); if(!panel) return;
-  const open=panel.classList.toggle('open');
-  btn.querySelector('.arr').style.transform=open?'rotate(180deg)':'';
+function spToggleMarkets(id,btn){
+  const p=document.getElementById(id);if(!p)return;
+  const o=p.classList.toggle('open');
+  btn.querySelector('.arr').style.transform=o?'rotate(180deg)':'';
 }
 
 // ── Betslip ───────────────────────────────────────────────────
-function spToggleSlip(matchId,side,market,oddsVal,customLabel){
-  const mc=spMatchCache[matchId]; if(!mc) return;
-  // Re-derive live/final from fresh event data (not stale cache)
-  const liveEv=spAllMatches.find(m=>m.event.id===matchId);
-  if(liveEv){
-    const sn=liveEv.event.competitions?.[0]?.status?.type?.name||'';
-    const isNowLive=SP_LIVE_STATUSES.has(sn);
-    const isNowFinal=SP_FINAL_STATUSES.has(sn); // don't use .completed here
-    if(isNowLive||isNowFinal){ toast('Apuestas cerradas para este partido'); return; }
-  } else if(mc.isFinal){
-    // Only block if explicitly final (not just from .completed flag)
-    toast('Apuestas cerradas para este partido'); return;
-  }
-  const existing=spSlip.findIndex(s=>s.matchId===matchId&&s.market===market&&s.side===side);
-  if(existing>=0){ spSlip.splice(existing,1); }
-  else {
+// Now receives all match info directly — no cache dependency
+function spToggleSlip(matchId,side,market,oddsVal,sideLabel,homeTeam,awayTeam,leagueId,leagueIcon,sport){
+  // Remove existing selection for same match+market
+  const existIdx=spSlip.findIndex(s=>s.matchId===matchId&&s.market===market&&s.side===side);
+  if(existIdx>=0){spSlip.splice(existIdx,1);}
+  else{
     const sameMarket=spSlip.findIndex(s=>s.matchId===matchId&&s.market===market);
     if(sameMarket>=0) spSlip.splice(sameMarket,1);
     const mktLabels={'1x2':'1X2','ou':'Goles','ah':'Hándicap'};
-    const sideLabels={home:'LOCAL',away:'VISITANTE',draw:'EMPATE',over:'MÁS',under:'MENOS',ahHome:'HAC LOCAL',ahAway:'HAC VISIT.'};
-    spSlip.push({matchId,homeTeam:mc.homeTeam,awayTeam:mc.awayTeam,
-      leagueId:mc.leagueId,leagueIcon:mc.leagueIcon,
-      side,sideLabel:customLabel||(sideLabels[side]||side),
-      market,marketLabel:mktLabels[market]||market,odds:oddsVal,sport:mc.sport});
+    spSlip.push({matchId,homeTeam,awayTeam,leagueId,leagueIcon,
+      side,sideLabel,market,marketLabel:mktLabels[market]||market,
+      odds:oddsVal,sport});
   }
-  spUpdateCardOddsUI(matchId);
+  // Update card UI
+  const card=document.querySelector(`[data-evid="${matchId}"]`);
+  if(card){
+    card.querySelectorAll('.sp-odd-btn,.sp-mkt-btn').forEach(btn=>{
+      const oc=btn.getAttribute('onclick')||'';
+      // Check if this button's side+market matches any slip entry
+      const matched=spSlip.find(s=>s.matchId===matchId&&oc.includes(`'${s.side}'`)&&oc.includes(`'${s.market}'`));
+      btn.classList.toggle('selected',!!matched);
+    });
+  }
   spUpdateSlipFAB();
   if(spSlip.length>0) playTone(660,.08,'sine',.06);
 }
 
-function spUpdateCardOddsUI(matchId){
-  ['home','away','draw','over','under','ahHome','ahAway'].forEach(side=>{
-    // find all buttons for this match — use data-evid
-    const card=document.querySelector(`[data-evid="${matchId}"]`); if(!card) return;
-    card.querySelectorAll('.sp-odd-btn, .sp-mkt-btn').forEach(btn=>{
-      // side encoded in onclick attr
-      const oc=btn.getAttribute('onclick')||'';
-      if(!oc.includes(`'${side}'`)) return;
-      const inSlip=spSlip.find(s=>s.matchId===matchId&&s.side===side);
-      btn.classList.toggle('selected',!!inSlip);
-    });
-  });
-}
-
-function spGetCombinedOdds(){ return +spSlip.reduce((acc,s)=>+(acc*s.odds).toFixed(4),1).toFixed(2); }
+function spGetCombinedOdds(){return +spSlip.reduce((acc,s)=>+(acc*s.odds).toFixed(4),1).toFixed(2);}
 function spUpdateSlipFAB(){
-  const fab=document.getElementById('spSlipFab');
-  if(!fab) return;
+  const fab=document.getElementById('spSlipFab'); if(!fab) return;
   if(spSlip.length>0){
     fab.style.display='flex';
     document.getElementById('spSlipBadge').textContent=spSlip.length;
     document.getElementById('spSlipFabOdds').textContent='@'+spGetCombinedOdds().toFixed(2);
-  } else { fab.style.display='none'; }
+  } else {fab.style.display='none';}
 }
-function spOpenSlip(){ spRenderSlip(); document.getElementById('spSlipModal').style.display='flex'; }
-function spCloseSlip(){ document.getElementById('spSlipModal').style.display='none'; }
-function spClearSlip(){ spSlip=[]; spUpdateSlipFAB(); spRenderSlip(); spRender(); }
+function spOpenSlip(){spRenderSlip();document.getElementById('spSlipModal').style.display='flex';}
+function spCloseSlip(){document.getElementById('spSlipModal').style.display='none';}
+function spClearSlip(){spSlip=[];spUpdateSlipFAB();spRenderSlip();spRender();}
 
 function spRenderSlip(){
   const scroll=document.getElementById('spSlipScroll');
@@ -17258,15 +17277,15 @@ function spRenderSlip(){
       <button class="sp-si-del" onclick="spRemoveFromSlip(${i})">✕</button>
     </div>`).join('');
   const total=spGetCombinedOdds(); const isP=spSlip.length>1;
-  if(combined){ combined.style.display='flex';
+  if(combined){combined.style.display='flex';
     document.getElementById('spSlipCombinedVal').textContent=total.toFixed(2);
     const tb=document.getElementById('spSlipTypeBadge');
-    if(tb){ tb.textContent=isP?'COMBINADA':'SIMPLE'; tb.className='sp-slip-type-badge '+(isP?'parlay':'single'); }
+    if(tb){tb.textContent=isP?'COMBINADA':'SIMPLE';tb.className='sp-slip-type-badge '+(isP?'parlay':'single');}
   }
   document.getElementById('spSlipConfirm').disabled=false;
   spSlipCalcPotential();
 }
-function spRemoveFromSlip(idx){ spSlip.splice(idx,1); spUpdateSlipFAB(); spRenderSlip(); spRender(); }
+function spRemoveFromSlip(i){spSlip.splice(i,1);spUpdateSlipFAB();spRenderSlip();spRender();}
 function spSlipSetAmt(amt){
   document.getElementById('spSlipAmt').value=amt;
   document.querySelectorAll('.sp-slip-chip').forEach(c=>c.classList.toggle('active',parseInt(c.textContent.replace('$',''))===amt));
@@ -17274,8 +17293,7 @@ function spSlipSetAmt(amt){
 }
 function spSlipCalcPotential(){
   const amt=parseFloat(document.getElementById('spSlipAmt').value)||0;
-  const combined=spGetCombinedOdds();
-  document.getElementById('spSlipPotential').textContent='$'+(amt*combined).toFixed(2);
+  document.getElementById('spSlipPotential').textContent='$'+(amt*spGetCombinedOdds()).toFixed(2);
   document.getElementById('spSlipConfirm').disabled=amt<=0||amt>myBal||!spSlip.length;
 }
 function spConfirmBet(){
@@ -17288,13 +17306,12 @@ function spConfirmBet(){
   document.getElementById('spBal').textContent=myBal.toLocaleString();
   const bet={id:'sp_'+Date.now(),type:isP?'parlay':'single',
     legs:spSlip.map(s=>{
-      const mc_=spMatchCache[s.matchId];
+      const mc=spMatchCache[s.matchId];
       return {matchId:s.matchId,homeTeam:s.homeTeam,awayTeam:s.awayTeam,
         leagueId:s.leagueId,leagueIcon:s.leagueIcon,side:s.side,
         sideLabel:s.sideLabel,market:s.market||'1x2',marketLabel:s.marketLabel||'1X2',
         odds:s.odds,sport:s.sport||'soccer',status:'pending',
-        ouLine:mc_?.odds?.ouLine??2.5,
-        ahLine:mc_?.odds?.ahLine??'0'};
+        ouLine:mc?.odds?.ouLine??2.5, ahLine:mc?.odds?.ahLine??'0'};
     }),
     combinedOdds:combined,amount:amt,potential:+(amt*combined).toFixed(2),
     status:'pending',placedAt:Date.now()};
@@ -17306,16 +17323,16 @@ function spConfirmBet(){
 }
 
 // ── My bets ───────────────────────────────────────────────────
-function spGetBets(){ try{return JSON.parse(localStorage.getItem('sp_bets'))||[];}catch(e){return[];} }
-function spSaveBets(b){ localStorage.setItem('sp_bets',JSON.stringify(b)); }
+function spGetBets(){try{return JSON.parse(localStorage.getItem('sp_bets'))||[];}catch(e){return[];}}
+function spSaveBets(b){localStorage.setItem('sp_bets',JSON.stringify(b));}
 function spOpenMyBets(){
   spMbActiveTab='pending';
   document.querySelectorAll('.sp-mb-tab').forEach(t=>t.classList.remove('active'));
-  const pt=document.getElementById('spMbTabPending'); if(pt) pt.classList.add('active');
+  const pt=document.getElementById('spMbTabPending');if(pt)pt.classList.add('active');
   document.getElementById('spMyBetsModal').style.display='flex';
   spMbRender();
 }
-function spCloseMyBets(){ document.getElementById('spMyBetsModal').style.display='none'; }
+function spCloseMyBets(){document.getElementById('spMyBetsModal').style.display='none';}
 function spMbShowTab(tab){
   spMbActiveTab=tab;
   ['pending','won','lost'].forEach(t=>{
@@ -17326,7 +17343,7 @@ function spMbShowTab(tab){
 }
 function spMbRender(){
   const bets=spGetBets().filter(b=>b.status===spMbActiveTab);
-  const list=document.getElementById('spMbList'); if(!list) return;
+  const list=document.getElementById('spMbList');if(!list)return;
   if(!bets.length){
     const lbl=spMbActiveTab==='pending'?'pendientes':spMbActiveTab==='won'?'ganadas':'perdidas';
     list.innerHTML=`<div class="sp-empty" style="padding:50px 20px;">Sin apuestas ${lbl}</div>`;
@@ -17336,28 +17353,22 @@ function spMbRender(){
     const date=new Date(b.placedAt).toLocaleString('es-CO',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
     const isP=b.type==='parlay'||b.legs?.length>1;
     const stLbl=b.status==='won'?'GANADA':b.status==='lost'?'PERDIDA':'PENDIENTE';
-    let profitTxt=''; const pc=b.status;
+    let profitTxt='',pc=b.status;
     if(b.status==='won') profitTxt='+$'+(b.potential||0).toLocaleString();
     else if(b.status==='lost') profitTxt='-$'+(b.amount||0).toLocaleString();
     else profitTxt='→ $'+(b.potential||0).toLocaleString();
     let content='';
     if(isP&&b.legs){
-      const legRows=b.legs.map(l=>{
-        const lgs=l.status||'pending';
-        return `<div class="sp-bet-leg ${lgs==='won'?'won':lgs==='lost'?'lost':''}">${l.leagueIcon||''} ${l.homeTeam} vs ${l.awayTeam} · ${l.marketLabel||'1X2'} ${l.sideLabel} @ ${l.odds.toFixed(2)}</div>`;
-      }).join('');
-      content=`<div class="sp-bet-match-name">Combinada (${b.legs.length} partidos)</div><div class="sp-bet-legs">${legRows}</div>`;
+      const rows=b.legs.map(l=>{const ls=l.status||'pending';return`<div class="sp-bet-leg ${ls==='won'?'won':ls==='lost'?'lost':''}">${l.leagueIcon||''} ${l.homeTeam} vs ${l.awayTeam} · ${l.marketLabel||'1X2'} ${l.sideLabel} @${l.odds.toFixed(2)}</div>`;}).join('');
+      content=`<div class="sp-bet-match-name">Combinada (${b.legs.length} partidos)</div><div class="sp-bet-legs">${rows}</div>`;
     } else {
       const leg=b.legs?.[0]||b;
       content=`<div class="sp-bet-match-name">${leg.homeTeam||'?'} vs ${leg.awayTeam||'?'}</div>
-      <div class="sp-bet-pick">${leg.leagueIcon||''} ${SP_LN[leg.leagueId]||''} · ${leg.marketLabel||'1X2'} ${leg.sideLabel} @ ${(b.combinedOdds||1).toFixed(2)}</div>`;
+      <div class="sp-bet-pick">${leg.leagueIcon||''} ${SP_LN[leg.leagueId]||''} · ${leg.marketLabel||'1X2'} ${leg.sideLabel} @${(b.combinedOdds||1).toFixed(2)}</div>`;
     }
     return `<div class="sp-bet-card ${b.status}">
       <div class="sp-bet-card-head">
-        <div class="sp-bet-type-row">
-          <span class="sp-bet-type-lbl ${isP?'parlay':'single'}">${isP?'COMBINADA':'SIMPLE'}</span>
-          <span style="font-size:9px;color:rgba(255,255,255,.2);">${date}</span>
-        </div>
+        <div class="sp-bet-type-row"><span class="sp-bet-type-lbl ${isP?'parlay':'single'}">${isP?'COMBINADA':'SIMPLE'}</span><span style="font-size:9px;color:rgba(255,255,255,.2);">${date}</span></div>
         <div class="sp-bet-status ${b.status}">${stLbl}</div>
       </div>
       ${content}
@@ -17374,110 +17385,79 @@ function spUpdateBadge(){
   const badge=document.getElementById('spNavBadge');
   const cnt=document.getElementById('spMyBetsCnt');
   if(badge) badge.style.display=pending>0?'block':'none';
-  if(cnt){ cnt.textContent=pending; cnt.style.display=pending>0?'inline':'none'; }
+  if(cnt){cnt.textContent=pending;cnt.style.display=pending>0?'inline':'none';}
 }
-// ── Settlement — fetches results directly, NO dependency on spAllMatches ──
-// Called on login AND every time sports tab opens.
-// For each pending leg, hits ESPN summary endpoint to get final score.
-async function spFetchEventResult(leagueId, eventId, sport){
+
+// ── Settlement ────────────────────────────────────────────────
+async function spFetchEventResult(leagueId,eventId,sport){
   try{
-    const base = sport==='basketball'
-      ? 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba'
-      : `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueId}`;
-    const res = await fetch(`${base}/summary?event=${eventId}`, {signal:AbortSignal.timeout(8000)});
-    if(!res.ok) return null;
-    const d = await res.json();
-    const comp = d.header?.competitions?.[0] || d.competitions?.[0];
+    const base=sport==='basketball'
+      ?'https://site.api.espn.com/apis/site/v2/sports/basketball/nba'
+      :`https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueId}`;
+    const data=await spFetchOne(`${base}/summary?event=${eventId}`);
+    if(!data) return null;
+    const comp=data.header?.competitions?.[0]||data.competitions?.[0];
     if(!comp) return null;
-    const sname = comp.status?.type?.name || comp.status?.name || '';
-    const scompleted = comp.status?.type?.completed || false;
-    const isFinal = scompleted || SP_FINAL_STATUSES.has(sname);
-    if(!isFinal) return null; // still in progress or not started
-    const home = comp.competitors?.find(c=>c.homeAway==='home') || comp.competitors?.[0] || {};
-    const away = comp.competitors?.find(c=>c.homeAway==='away') || comp.competitors?.[1] || {};
-    return {
-      homeScore: parseInt(home.score ?? home.linescores?.reduce((s,l)=>s+parseInt(l.value||0),0) ?? 0),
-      awayScore: parseInt(away.score ?? away.linescores?.reduce((s,l)=>s+parseInt(l.value||0),0) ?? 0),
-    };
-  } catch(e){ return null; }
+    const sname=comp.status?.type?.name||comp.status?.name||'';
+    const isFinal=comp.status?.type?.completed||SP_FINAL_STATUSES.has(sname);
+    if(!isFinal) return null;
+    const hm=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
+    const aw=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
+    return{homeScore:parseInt(hm.score||0),awayScore:parseInt(aw.score||0)};
+  }catch(e){return null;}
 }
 
 async function spSettlePendingBets(){
-  const bets = spGetBets();
-  const pending = bets.filter(b => b.status==='pending');
-  if(!pending.length){ spUpdateBadge(); return; }
-
-  // Collect unique legs that still need a result
-  const toFetch = []; // {betId, legIdx, leagueId, matchId, sport}
-  pending.forEach(b=>{
-    (b.legs||[]).forEach((leg,i)=>{
-      if(leg.status==='won'||leg.status==='lost') return;
-      toFetch.push({betId:b.id, legIdx:i, leagueId:leg.leagueId,
-        matchId:leg.matchId, sport:leg.sport||'soccer'});
-    });
-  });
-  if(!toFetch.length) return;
-
-  // De-duplicate: fetch each unique matchId only once
-  const unique = {};
-  toFetch.forEach(t=>{ unique[t.matchId] = t; });
-
-  // Fetch all in parallel
-  const results = {}; // matchId → {homeScore, awayScore} | null
-  await Promise.all(Object.values(unique).map(async t=>{
-    results[t.matchId] = await spFetchEventResult(t.leagueId, t.matchId, t.sport);
+  const bets=spGetBets();
+  const pending=bets.filter(b=>b.status==='pending');
+  if(!pending.length){spUpdateBadge();return;}
+  const unique={};
+  pending.forEach(b=>(b.legs||[]).forEach(leg=>{
+    if(leg.status!=='won'&&leg.status!=='lost') unique[leg.matchId]={leagueId:leg.leagueId,sport:leg.sport||'soccer'};
   }));
-
-  // Apply results
-  let changed = false;
+  if(!Object.keys(unique).length) return;
+  const results={};
+  await Promise.all(Object.entries(unique).map(async([mid,info])=>{
+    results[mid]=await spFetchEventResult(info.leagueId,mid,info.sport);
+  }));
+  let changed=false;
   pending.forEach(b=>{
-    const bIdx = bets.findIndex(x=>x.id===b.id); if(bIdx<0) return;
+    const bIdx=bets.findIndex(x=>x.id===b.id);if(bIdx<0) return;
     (b.legs||[]).forEach((leg,i)=>{
       if(leg.status==='won'||leg.status==='lost') return;
-      const res = results[leg.matchId];
-      if(!res) return; // not finished yet
-      const hs = res.homeScore, as_ = res.awayScore;
-      let legWon = false;
-      const mkt = leg.market||'1x2';
-      if(mkt==='1x2'){
-        const r3 = hs>as_?'home':as_>hs?'away':'draw';
-        legWon = leg.side===r3;
-      } else if(mkt==='ou'){
-        const line = leg.ouLine ?? 2.5;
-        legWon = leg.side==='over' ? (hs+as_>line) : (hs+as_<line);
-      } else if(mkt==='ah'){
-        const line = parseFloat(leg.ahLine||0);
-        legWon = leg.side==='ahHome' ? (hs-as_+line>0) : (as_-hs-line>0);
+      const res=results[leg.matchId];if(!res) return;
+      const{homeScore:hs,awayScore:as_}=res;
+      let won=false;
+      const mkt=leg.market||'1x2';
+      const r3w=hs>as_?'home':as_>hs?'away':'draw';
+      if(mkt==='1x2'){won=leg.side===r3w;}
+      else if(mkt==='ou'){const line=leg.ouLine??2.5;won=leg.side==='over'?(hs+as_>line):(hs+as_<line);}
+      else if(mkt==='btts'){const btts=hs>0&&as_>0;won=leg.side==='bttsYes'?btts:!btts;}
+      else if(mkt==='dc'){
+        if(leg.side==='dc1X')won=r3w==='home'||r3w==='draw';
+        else if(leg.side==='dcX2')won=r3w==='draw'||r3w==='away';
+        else if(leg.side==='dc12')won=r3w==='home'||r3w==='away';
       }
-      bets[bIdx].legs[i].status = legWon?'won':'lost';
-      changed = true;
+      else if(mkt==='ah'){const line=parseFloat(leg.ahLine||0);won=leg.side==='ahHome'?(hs-as_+line>0):(as_-hs-line>0);}
+      bets[bIdx].legs[i].status=won?'won':'lost';
+      changed=true;
     });
-
-    // Check if whole bet is now resolved
-    if(!bets[bIdx].legs.every(l=>l.status==='won'||l.status==='lost')) return;
-    const wonAll = bets[bIdx].legs.every(l=>l.status==='won');
-    bets[bIdx].status = wonAll?'won':'lost';
-
+    if(bets[bIdx].legs.some(l=>l.status!=='won'&&l.status!=='lost')) return;
+    const wonAll=bets[bIdx].legs.every(l=>l.status==='won');
+    bets[bIdx].status=wonAll?'won':'lost';
     if(wonAll){
-      myBal += b.potential; saveLocal(); updateRanking();
-      const msg = (b.type==='parlay'?'¡Combinada ganada!':'¡Apuesta ganada!') + ' +$' + b.potential.toLocaleString();
-      toast('🏆 ' + msg);
-      spSendNotif('🏆 Casino Royale – ' + msg,
-        b.legs.map(l=>l.homeTeam+' vs '+l.awayTeam).join(' · '));
-      setTimeout(()=>burst(innerWidth/2, 200, 16), 300);
+      myBal+=b.potential;saveLocal();updateRanking();
+      const msg=(b.type==='parlay'?'¡Combinada ganada!':'¡Apuesta ganada!')+' +$'+b.potential.toLocaleString();
+      toast('🏆 '+msg);spSendNotif('🏆 Casino Royale',msg);
+      setTimeout(()=>burst(innerWidth/2,200,16),300);
     } else {
-      const msg = (b.type==='parlay'?'Combinada perdida':'Apuesta perdida') + ' -$' + b.amount.toLocaleString();
-      toast('❌ ' + msg);
-      spSendNotif('❌ Casino Royale – ' + msg,
-        b.legs.map(l=>l.homeTeam+' vs '+l.awayTeam).join(' · '));
+      const msg=(b.type==='parlay'?'Combinada perdida':'Apuesta perdida')+' -$'+b.amount.toLocaleString();
+      toast('❌ '+msg);spSendNotif('❌ Casino Royale',msg);
     }
   });
-
   if(changed){
-    spSaveBets(bets);
-    spUpdateBadge();
-    const balEl = document.getElementById('spBal'); if(balEl) balEl.textContent = myBal.toLocaleString();
-    // Refresh my bets modal if open
+    spSaveBets(bets);spUpdateBadge();
+    const balEl=document.getElementById('spBal');if(balEl)balEl.textContent=myBal.toLocaleString();
     if(document.getElementById('spMyBetsModal')?.style.display==='flex') spMbRender();
   }
 }
