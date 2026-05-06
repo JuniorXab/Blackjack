@@ -1562,25 +1562,125 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 #scKeno{background:radial-gradient(ellipse at 50% 0%,#001a35,#000c1a);}
 #scKeno .mg-topbar{border-bottom:1px solid rgba(0,180,255,.2);}
 #scKeno .mg-bottom{background:rgba(0,8,20,.95);border-top:1px solid rgba(0,150,255,.15);}
-.kn-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;padding:8px 10px;width:100%;box-sizing:border-box;}
-.kn-ball{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;cursor:pointer;border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
-.kn-ball:active{transform:scale(.88);}
-.kn-ball.picked{background:linear-gradient(135deg,#0080ff,#0040cc);border-color:#40a0ff;color:#fff;box-shadow:0 0 10px rgba(0,128,255,.5);}
-.kn-ball.drawn{border-color:rgba(255,220,0,.5);background:rgba(255,200,0,.08);color:rgba(255,220,0,.7);}
-.kn-ball.hit{background:linear-gradient(135deg,#f0d060,#c8900a);border-color:#f0d060;color:#1a0800;box-shadow:0 0 14px rgba(240,200,0,.6);animation:knHitPop .35s ease;}
-@keyframes knHitPop{0%{transform:scale(1.3);}60%{transform:scale(.9);}100%{transform:scale(1);}}
-.kn-info-row{display:flex;justify-content:space-between;align-items:center;padding:4px 14px;flex-shrink:0;}
-.kn-picked-lbl{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:1px;}
-.kn-picked-val{font-size:13px;font-weight:800;color:#40a0ff;}
-.kn-pay-table{display:flex;gap:6px;overflow-x:auto;padding:4px 10px;scrollbar-width:none;flex-shrink:0;}
-.kn-pay-row{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;text-align:center;flex-shrink:0;}
-.kn-pay-row.active{border-color:rgba(240,200,0,.4);background:rgba(240,200,0,.08);}
-.kn-pay-match{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.5px;}
+/* ── KENO v2 ── */
+.kn-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;padding:6px 8px;width:100%;box-sizing:border-box;flex-shrink:0;}
+.kn-ball{
+  aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.1);
+  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.12),rgba(255,255,255,.03));
+  color:rgba(255,255,255,.5);transition:transform .12s,box-shadow .12s,background .15s,border-color .15s;
+  user-select:none;-webkit-tap-highlight-color:transparent;position:relative;
+}
+.kn-ball:active{transform:scale(.84);}
+.kn-ball.picked{
+  background:radial-gradient(circle at 35% 30%,#60b8ff,#0050cc);
+  border-color:#40a0ff;color:#fff;
+  box-shadow:0 0 12px rgba(0,130,255,.6),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.kn-ball.drawn{
+  border-color:rgba(255,220,80,.4);
+  background:radial-gradient(circle at 35% 30%,rgba(255,220,80,.18),rgba(200,140,0,.06));
+  color:rgba(255,220,60,.8);
+}
+.kn-ball.hit{
+  background:radial-gradient(circle at 35% 30%,#ffe060,#c07800);
+  border-color:#f0d060;color:#1a0800;
+  box-shadow:0 0 18px rgba(240,200,0,.7),inset 0 1px 0 rgba(255,255,255,.4);
+  animation:knHitPop .4s cubic-bezier(.36,.07,.19,.97);
+}
+@keyframes knHitPop{
+  0%{transform:scale(1);}
+  25%{transform:scale(1.45);}
+  50%{transform:scale(.88);}
+  75%{transform:scale(1.12);}
+  100%{transform:scale(1);}
+}
+/* info row */
+.kn-info-row{display:flex;justify-content:space-between;align-items:center;padding:4px 12px;flex-shrink:0;}
+.kn-picked-lbl{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;font-weight:700;}
+.kn-picked-val{font-size:13px;font-weight:900;color:#40a0ff;}
+/* pay table */
+.kn-pay-table{display:flex;gap:5px;overflow-x:auto;padding:5px 10px;scrollbar-width:none;flex-shrink:0;}
+.kn-pay-table::-webkit-scrollbar{display:none;}
+.kn-pay-row{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:5px 9px;text-align:center;flex-shrink:0;min-width:44px;
+}
+.kn-pay-row.active{border-color:rgba(240,200,0,.4);background:rgba(240,200,0,.07);}
+.kn-pay-match{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px;font-weight:700;}
 .kn-pay-mult{font-size:12px;font-weight:900;color:#f0d060;}
-.kn-draw-area{display:flex;flex-wrap:wrap;gap:4px;padding:4px 10px;min-height:36px;justify-content:center;align-items:center;}
-.kn-drawn-ball{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.3);color:rgba(255,200,0,.8);}
-.kn-drawn-ball.hit{background:linear-gradient(135deg,#f0d060,#c8900a);color:#1a0800;border-color:#f0d060;}
-.kn-result-banner{text-align:center;padding:6px 14px;font-size:13px;font-weight:900;letter-spacing:1px;flex-shrink:0;min-height:28px;}
+/* machine display — tube with falling balls */
+.kn-machine{
+  flex-shrink:0;display:flex;flex-direction:column;align-items:center;
+  padding:6px 10px 2px;gap:6px;
+}
+.kn-tube{
+  position:relative;width:calc(100% - 8px);height:52px;
+  background:rgba(0,0,0,.4);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:14px;
+  overflow:hidden;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.5);
+}
+.kn-tube-shine{
+  position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,transparent 60%);
+  pointer-events:none;z-index:2;
+}
+/* ball that drops into tube */
+.kn-drop{
+  position:absolute;top:-40px;
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;
+  box-shadow:0 3px 8px rgba(0,0,0,.5),inset 0 2px 0 rgba(255,255,255,.3);
+  animation:knDrop .45s cubic-bezier(.4,0,.2,1.6) forwards;
+  z-index:1;
+}
+.kn-drop.normal{
+  background:radial-gradient(circle at 35% 30%,#ffe080,#c07800);
+  color:#1a0800;border:2px solid #f0d060;
+}
+.kn-drop.hit{
+  background:radial-gradient(circle at 35% 30%,#60ffb0,#00a040);
+  color:#001a0a;border:2px solid #22ff88;
+  box-shadow:0 0 16px rgba(34,255,100,.6),inset 0 2px 0 rgba(255,255,255,.4);
+}
+@keyframes knDrop{
+  0%  {top:-40px;transform:scale(.7) rotate(-20deg);opacity:0;}
+  40% {opacity:1;}
+  70% {top:7px;transform:scale(1.05) rotate(5deg);}
+  85% {top:4px;transform:scale(.97);}
+  100%{top:7px;transform:scale(1) rotate(0deg);}
+}
+/* drawn balls row below tube */
+.kn-drawn-row{
+  display:flex;flex-wrap:wrap;gap:3px;justify-content:center;
+  padding:0 6px;max-height:62px;overflow:hidden;
+}
+.kn-drawn-ball{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:900;flex-shrink:0;
+  background:rgba(255,200,0,.1);border:1px solid rgba(255,200,0,.25);
+  color:rgba(255,200,0,.7);
+  animation:knBallIn .2s ease;
+}
+.kn-drawn-ball.hit{
+  background:radial-gradient(circle at 40% 35%,#60ff90,#00b040);
+  border-color:#22cc55;color:#001a08;
+  box-shadow:0 0 6px rgba(34,200,80,.5);
+}
+@keyframes knBallIn{
+  from{transform:scale(0) rotate(-90deg);opacity:0;}
+  to{transform:scale(1) rotate(0deg);opacity:1;}
+}
+/* result banner */
+.kn-result-banner{
+  text-align:center;padding:6px 14px;
+  font-size:13px;font-weight:900;letter-spacing:.5px;
+  flex-shrink:0;min-height:28px;
+}
 .gs-card-keno{background:linear-gradient(135deg,rgba(0,180,255,.15),rgba(0,80,200,.04));border:1px solid rgba(0,180,255,.3);}
 .gs-card-keno:hover{box-shadow:0 0 30px rgba(0,180,255,.15);}
 
@@ -3074,12 +3174,27 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
   <!-- Info row -->
   <div class="kn-info-row">
     <span class="kn-picked-lbl">ELEGIDOS: <span class="kn-picked-val" id="knPickedCount">0</span> / 10</span>
-    <span class="kn-picked-lbl">SORTEADOS: <span style="color:#f0d060;" id="knDrawnCount">0</span> / 20</span>
+    <span class="kn-picked-lbl">SORTEADOS: <span style="color:#f0d060;" id="knDrawnCountInfo">0</span> / 20</span>
   </div>
   <!-- Number grid 1-80 -->
   <div class="kn-grid" id="knGrid"></div>
-  <!-- Drawn numbers display -->
-  <div class="kn-draw-area" id="knDrawArea"></div>
+  <!-- Ball machine display -->
+  <div class="kn-machine">
+    <!-- Tube: shows current ball dropping -->
+    <div class="kn-tube" id="knTube">
+      <div class="kn-tube-shine"></div>
+      <!-- counter left, current ball center, drawn count right -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:3;pointer-events:none;">
+        <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:1px;">BOLA</div>
+        <div id="knTubeNum" style="font-size:22px;font-weight:900;color:rgba(255,255,255,.08);letter-spacing:2px;">—</div>
+        <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.3);text-align:right;">
+          <span id="knDrawnCount">0</span><span style="color:rgba(255,255,255,.2);">/20</span>
+        </div>
+      </div>
+    </div>
+    <!-- Drawn balls history -->
+    <div class="kn-drawn-row" id="knDrawnRow"></div>
+  </div>
   <!-- Result -->
   <div class="kn-result-banner" id="knResultBanner"></div>
   <!-- Bottom -->
@@ -10283,8 +10398,11 @@ function knInit(){
   knBuildGrid();
   knRenderPayTable();
   document.getElementById('knResultBanner').textContent='';
-  document.getElementById('knDrawArea').innerHTML='';
-  document.getElementById('knDrawnCount').textContent='0';
+  const drEl=document.getElementById('knDrawnRow'); if(drEl) drEl.innerHTML='';
+  const cEl=document.getElementById('knDrawnCount'); if(cEl) cEl.textContent='0';
+  const cInfoEl=document.getElementById('knDrawnCountInfo'); if(cInfoEl) cInfoEl.textContent='0';
+  const tGhost=document.getElementById('knTubeNum'); if(tGhost) tGhost.textContent='—';
+  const tubeEl=document.getElementById('knTube'); if(tubeEl){tubeEl.querySelectorAll('.kn-drop').forEach(e=>e.remove()); tubeEl.style.boxShadow='';}
   document.getElementById('knPickedCount').textContent='0';
   document.getElementById('knPlayBtn').disabled=false;
 }
@@ -10342,46 +10460,96 @@ function knAdjBet(v){
   knRenderPayTable();
 }
 
+async function knDropBall(num, isHit, tube){
+  // Clear previous drop
+  tube.querySelectorAll('.kn-drop').forEach(e=>e.remove());
+  // Show big number ghost in background
+  const ghost=document.getElementById('knTubeNum');
+  if(ghost){ ghost.textContent=num; ghost.style.color=isHit?'rgba(34,255,100,.25)':'rgba(255,255,255,.1)'; }
+  // Create falling ball
+  const ball=document.createElement('div');
+  ball.className='kn-drop '+(isHit?'hit':'normal');
+  ball.textContent=num;
+  // Random horizontal position
+  const pct=15+Math.random()*55;
+  ball.style.left=`calc(${pct}% - 19px)`;
+  tube.appendChild(ball);
+  // Sound
+  if(isHit) playTone(isHit?880:440, 0.07,'sine',0.1);
+  else playTone(300+Math.random()*80, 0.04,'sine',0.06);
+}
+
 async function knPlay(){
   if(knPlaying) return;
   const picks=knPicked.size;
-  if(!picks){ toast('Elige al menos 1 número',1500); return; }
+  if(!picks){ toast('Elige al menos 1 número'); return; }
   const bet=parseInt(document.getElementById('knBetInput').value||50);
-  if(!bet||bet<1||bet>myBal){ toast('Apuesta inválida',1500); return; }
+  if(!bet||bet<1||bet>myBal){ toast('Apuesta inválida'); return; }
 
   knPlaying=true;
   document.getElementById('knPlayBtn').disabled=true;
-  document.getElementById('knPlayBtn').textContent='⏳ Sorteando...';
+  document.getElementById('knPlayBtn').textContent='🎱 Sorteando...';
   document.getElementById('knResultBanner').innerHTML='';
 
   myBal-=bet; saveLocal(); mgUpdateBal('knBal'); updateRanking();
 
-  // Shuffle 1-80 and take 20
-  const pool=[];for(let i=1;i<=80;i++)pool.push(i);
-  for(let i=79;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  // Shuffle 1-80, take 20
+  const pool=[]; for(let i=1;i<=80;i++) pool.push(i);
+  for(let i=79;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
   const drawn=pool.slice(0,20);
   knDrawnNums=drawn.slice();
 
-  const drawArea=document.getElementById('knDrawArea');
+  const tube=document.getElementById('knTube');
+  const drawnRow=document.getElementById('knDrawnRow');
   const cntEl=document.getElementById('knDrawnCount');
-  drawArea.innerHTML=''; cntEl.textContent='0';
+  const cntInfo=document.getElementById('knDrawnCountInfo');
+  if(drawnRow) drawnRow.innerHTML='';
+  if(cntEl) cntEl.textContent='0';
+  if(cntInfo) cntInfo.textContent='0';
 
   let hits=0;
+  // Speed: start at 420ms, accelerate to 160ms
   for(let i=0;i<20;i++){
-    await new Promise(r=>setTimeout(r,95));
+    const delay=Math.round(420 - i*12);
+    await new Promise(res=>setTimeout(res,delay));
+
     const num=drawn[i];
     const isHit=knPicked.has(num);
     if(isHit) hits++;
-    const db2=document.createElement('div');
-    db2.className='kn-drawn-ball'+(isHit?' hit':'');
-    db2.textContent=num;
-    drawArea.appendChild(db2);
-    cntEl.textContent=String(i+1);
+
+    // Animate drop in tube
+    if(tube) knDropBall(num,isHit,tube);
+
+    // Update counter
+    const cnt=String(i+1);
+    if(cntEl) cntEl.textContent=cnt;
+    if(cntInfo) cntInfo.textContent=cnt;
+
+    // Add small ball to history row
+    if(drawnRow){
+      const db=document.createElement('div');
+      db.className='kn-drawn-ball'+(isHit?' hit':'');
+      db.textContent=num;
+      drawnRow.appendChild(db);
+    }
+
+    // Update main grid
     const gb=document.querySelector('.kn-ball[data-n="'+num+'"]');
-    if(gb){ gb.classList.add(isHit?'hit':'drawn'); if(isHit)playTone(880,0.06,'sine',0.15); }
+    if(gb) gb.classList.add(isHit?'hit':'drawn');
+
+    // Hit flash effect
+    if(isHit){
+      playTone(660+hits*40, 0.09,'sine',0.14);
+      if(tube){ tube.style.boxShadow='0 0 24px rgba(34,255,100,.5)'; setTimeout(()=>{ tube.style.boxShadow=''; },300); }
+    }
   }
 
-  await new Promise(r=>setTimeout(r,300));
+  // Clear tube ghost text
+  const ghost=document.getElementById('knTubeNum');
+  if(ghost) ghost.textContent='✓';
+  if(tube) tube.querySelectorAll('.kn-drop').forEach(e=>e.remove());
+
+  await new Promise(res=>setTimeout(res,350));
 
   const table=KN_PAYOUTS[picks]||{};
   const mult=table[hits]||0;
@@ -10391,26 +10559,34 @@ async function knPlay(){
 
   if(mult>0){
     myBal+=payout; saveLocal(); mgUpdateBal('knBal'); updateRanking();
-    bannerEl.innerHTML='<div style="color:#f0d060;font-weight:900;">🎉 '+hits+' acierto'+(hits!==1?'s':'')+' · '+mult+'× · <span style="color:#2ecc71;">+$'+profit.toLocaleString()+'</span></div>';
-    sfxWin(); burst(window.innerWidth/2,200,14);
-    mlRecordGameStat('keno',true,profit,{bet:bet,hits:hits});
+    bannerEl.innerHTML=`<div style="color:#f0d060;font-weight:900;font-size:15px;">
+      🎉 ${hits} acierto${hits!==1?'s':''} <span style="color:rgba(255,255,255,.4);">·</span>
+      <span style="background:rgba(240,200,0,.15);padding:2px 10px;border-radius:8px;">${mult}×</span>
+      <span style="color:#2ecc71;"> +$${profit.toLocaleString()}</span>
+    </div>`;
+    sfxWin(); burst(window.innerWidth/2, 180, 16);
+    mlRecordGameStat('keno',true,profit);
   } else {
-    bannerEl.innerHTML='<div style="color:rgba(255,255,255,.45);">😔 '+hits+' acierto'+(hits!==1?'s':'')+' · Sin premio · <span style="color:#e74c3c;">−$'+bet.toLocaleString()+'</span></div>';
+    bannerEl.innerHTML=`<div style="color:rgba(255,255,255,.4);font-size:13px;">
+      😔 ${hits} acierto${hits!==1?'s':''} &nbsp;·&nbsp;
+      <span style="color:rgba(231,76,60,.7);">−$${bet.toLocaleString()}</span>
+    </div>`;
     sfxLose();
-    mlRecordGameStat('keno',false,-bet,{bet:bet,hits:hits});
+    mlRecordGameStat('keno',false,-bet);
   }
+
   if(myBal<=0){ knPlaying=false; mgCheckBankruptcy('knBal'); return; }
 
   // Action buttons
   const btnDiv=document.createElement('div');
-  btnDiv.style.cssText='margin-top:8px;display:flex;gap:8px;justify-content:center;';
+  btnDiv.style.cssText='margin-top:10px;display:flex;gap:8px;justify-content:center;';
   const btnRepeat=document.createElement('button');
   btnRepeat.textContent='🔄 Repetir';
-  btnRepeat.style.cssText='padding:8px 20px;border-radius:12px;background:rgba(0,128,255,.25);border:1.5px solid rgba(0,128,255,.5);color:#40a0ff;font-size:12px;font-weight:800;cursor:pointer;';
+  btnRepeat.style.cssText='padding:9px 22px;border-radius:12px;background:rgba(0,128,255,.2);border:1.5px solid rgba(0,128,255,.45);color:#40a0ff;font-size:12px;font-weight:800;cursor:pointer;';
   btnRepeat.onclick=knReplay;
   const btnNew=document.createElement('button');
   btnNew.textContent='🔀 Nueva';
-  btnNew.style.cssText='padding:8px 16px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:12px;cursor:pointer;';
+  btnNew.style.cssText='padding:9px 18px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;';
   btnNew.onclick=knClear;
   btnDiv.appendChild(btnRepeat); btnDiv.appendChild(btnNew);
   bannerEl.appendChild(btnDiv);
@@ -16885,20 +17061,33 @@ function ml2dec(ml){
   ml=parseFloat(ml); if(isNaN(ml)||ml===0) return null;
   return ml>0?+(ml/100+1).toFixed(2):+(100/Math.abs(ml)+1).toFixed(2);
 }
+// Accept decimal value if in valid range 1.01–40
+function spDecSafe(v){ const n=parseFloat(v); return (n>1.01&&n<40)?+n.toFixed(2):null; }
+
 function spParseCompOdds(comp,isNBA){
   const arr=comp.odds||[]; if(!arr.length) return null;
-  const o=arr[0];
-  let home=ml2dec(o.homeTeamOdds?.moneyLine), away=ml2dec(o.awayTeamOdds?.moneyLine), draw=null;
-  if(!isNBA){
-    draw=o.drawOdds?.moneyLine?ml2dec(o.drawOdds.moneyLine):(typeof o.drawOdds==='number'?ml2dec(o.drawOdds):null);
+  for(const o of arr){
+    // Moneyline → decimal (US format)
+    let home = ml2dec(o.homeTeamOdds?.moneyLine)||ml2dec(o.homeTeamOdds?.spreadOdds);
+    let away = ml2dec(o.awayTeamOdds?.moneyLine)||ml2dec(o.awayTeamOdds?.spreadOdds);
+    let draw = null;
+    // Some providers give decimal directly in .value
+    if(!home) home=spDecSafe(o.homeTeamOdds?.value);
+    if(!away) away=spDecSafe(o.awayTeamOdds?.value);
+    if(!isNBA){
+      if(o.drawOdds?.moneyLine) draw=ml2dec(o.drawOdds.moneyLine);
+      else if(typeof o.drawOdds==='number') draw=ml2dec(o.drawOdds);
+      else if(o.drawOdds?.value) draw=spDecSafe(o.drawOdds.value);
+    }
+    if(home>1.01&&away>1.01) return {
+      home:+home.toFixed(2), away:+away.toFixed(2),
+      draw: draw?+draw.toFixed(2):null,
+      ou:   o.overUnder!=null?parseFloat(o.overUnder):null,
+      ouOver:  ml2dec(o.overOdds?.moneyLine)||spDecSafe(o.overOdds?.value)||null,
+      ouUnder: ml2dec(o.underOdds?.moneyLine)||spDecSafe(o.underOdds?.value)||null,
+      source:'espn', provider:o.provider?.name||'ESPN'
+    };
   }
-  if(home&&away) return {
-    home, away, draw,
-    ou:   o.overUnder!=null?parseFloat(o.overUnder):null,
-    ouOver:  o.overOdds?.moneyLine?ml2dec(o.overOdds.moneyLine):(typeof o.overOdds==='number'?ml2dec(o.overOdds):null),
-    ouUnder: o.underOdds?.moneyLine?ml2dec(o.underOdds.moneyLine):(typeof o.underOdds==='number'?ml2dec(o.underOdds):null),
-    source:'espn'
-  };
   return null;
 }
 function spCalcOdds(seed,isNBA){
@@ -16970,15 +17159,14 @@ async function spFetchLeague(lg){
   const tm=spFmtDate(new Date(Date.now()+86400000));
   let urls;
   if(lg.sport==='basketball'){
-    // NBA: today + tomorrow only (no-date returns season schedule which is huge)
     urls=[
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${td}&limit=20`,
-      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tm}&limit=20`,
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${td}&limit=20&enable=odds`,
+      `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${tm}&limit=20&enable=odds`,
     ];
   } else {
     urls=[
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${td}&limit=20`,
-      `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tm}&limit=20`,
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${td}&limit=20&enable=odds`,
+      `https://site.api.espn.com/apis/site/v2/sports/soccer/${lg.id}/scoreboard?dates=${tm}&limit=20&enable=odds`,
     ];
   }
   const seenIds=new Set();
@@ -16999,16 +17187,19 @@ async function spFetchLeague(lg){
 
 function spCacheMatch(m){
   const ev=m.event, comp=ev.competitions?.[0]; if(!comp) return;
+  const evId=String(ev.id||ev.uid||ev.name||''); if(!evId) return;
   const home=comp.competitors?.find(c=>c.homeAway==='home')||comp.competitors?.[0]||{};
   const away=comp.competitors?.find(c=>c.homeAway==='away')||comp.competitors?.[1]||{};
   const isNBA=m.sport==='basketball';
   const sname=comp.status?.type?.name||'';
   const real=spParseCompOdds(comp,isNBA);
-  spMatchCache[ev.id]={
+  const builtOdds=spBuildOdds(real,ev.id||ev.name,isNBA);
+  if(real?.provider) builtOdds.provider=real.provider;
+  spMatchCache[evId]={
     homeTeam:home.team?.shortDisplayName||home.team?.displayName||'?',
     awayTeam:away.team?.shortDisplayName||away.team?.displayName||'?',
     leagueId:m.leagueId, leagueIcon:m.leagueIcon, sport:m.sport,
-    odds:spBuildOdds(real,ev.id||ev.name,isNBA),
+    odds:builtOdds,
     isNBA, isLive:SP_LIVE_STATUSES.has(sname),
     isFinal:SP_FINAL_STATUSES.has(sname),
     hasRealOdds:!!real
@@ -17017,24 +17208,20 @@ function spCacheMatch(m){
 
 async function spLoad(){
   spAllMatches=[];
-  document.getElementById('spContent').innerHTML=
-    '<div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>';
-
-  const leagues=SP_LEAGUES.filter(l=>l.id!=='all');
-  let loaded=0;
-
-  // Fetch leagues one by one, render after each one arrives
-  for(const lg of leagues){
-    const matches=await spFetchLeague(lg);
-    // Add to global list and cache
-    matches.forEach(m=>{ spAllMatches.push(m); spCacheMatch(m); });
-    loaded++;
-    // Re-render progressively so user sees content ASAP
-    if(loaded===1||loaded%2===0||loaded===leagues.length){
-      spRender();
+  const content=document.getElementById('spContent');
+  if(content) content.innerHTML='<div class="sp-loading"><div class="sp-spinner"></div>Cargando partidos...</div>';
+  try{
+    const leagues=SP_LEAGUES.filter(l=>l.id!=='all');
+    let loaded=0;
+    for(const lg of leagues){
+      try{
+        const matches=await spFetchLeague(lg);
+        matches.forEach(m=>{ spAllMatches.push(m); try{ spCacheMatch(m); }catch(ce){} });
+        loaded++;
+        if(loaded===1||loaded%2===0||loaded===leagues.length) spRender();
+      }catch(le){ console.warn('League error',lg.id,le); }
     }
-  }
-  // Final render + settlement
+  }catch(e){ console.warn('spLoad:',e); }
   spRender();
   spSettlePendingBets();
 }
@@ -17042,6 +17229,7 @@ async function spLoad(){
 // ── Render ────────────────────────────────────────────────────
 function spRender(){
   const content=document.getElementById('spContent'); if(!content) return;
+  try{
   let matches=spAllMatches.slice(); // copy
   if(spActiveLeague!=='all') matches=matches.filter(m=>m.leagueId===spActiveLeague);
 
@@ -17081,8 +17269,11 @@ function spRender(){
   const prev=content.scrollTop;
   content.innerHTML=html||'<div class="sp-empty">Sin partidos hoy</div>';
   content.scrollTop=prev;
+  }catch(re){
+    console.warn('spRender:',re);
+    if(content) content.innerHTML='<div class="sp-empty">⚠️ Error al cargar. Toca ↻ para reintentar.</div>';
+  }
 }
-
 function spMatchCard(m){
   const ev=m.event, comp=ev.competitions?.[0]; if(!comp) return '';
   const sname=comp.status?.type?.name||'STATUS_SCHEDULED';
@@ -17097,7 +17288,7 @@ function spMatchCard(m){
   const homeName=home.team?.shortDisplayName||home.team?.displayName||'?';
   const awayName=away.team?.shortDisplayName||away.team?.displayName||'?';
   const homeLogo=home.team?.logo||''; const awayLogo=away.team?.logo||'';
-  const evId=ev.id||ev.uid||'';
+  const evId=String(ev.id||ev.uid||ev.name||''); if(!evId) return '';
   const isNBA=m.sport==='basketball';
   const mc=spMatchCache[evId];
   const odds=mc?.odds||spBuildOdds(null,evId,isNBA);
@@ -17112,7 +17303,7 @@ function spMatchCard(m){
   else if(isFinal) badge=`<div class="sp-fin-badge">FINALIZADO</div>`;
   else badge=`<span class="sp-time">${lDate} · ${lTime}</span>`;
 
-  const srcTag=mc?.hasRealOdds?`<span class="sp-odds-src real">✓ REAL</span>`:`<span class="sp-odds-src calc">EST.</span>`;
+  const srcTag=mc?.hasRealOdds?`<span class="sp-odds-src real">${mc.odds?.provider||'ESPN'}</span>`:`<span class="sp-odds-src calc">EST.</span>`;
 
   const hs=home.score??'', as_=away.score??'';
   const scoreHTML=isScheduled
