@@ -1737,135 +1737,156 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .sc-theme-space{    background:linear-gradient(135deg,#0a0a2e,#1a0a4a); border:1.5px solid #7b68ee;}
 .sc-theme-gold{     background:linear-gradient(135deg,#3d2000,#6b3800); border:1.5px solid #f0d060;}
 
-/* ── TOWER ── */
-#scTower{background:linear-gradient(180deg,#0a0014,#050008);display:flex;flex-direction:column;height:calc(100dvh - 62px);overflow:hidden;}
-.tw-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(180,100,255,.15);flex-shrink:0;}
-.tw-field{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column-reverse;padding:8px 12px;gap:4px;min-height:0;}
-.tw-row{
-  display:flex;gap:4px;flex-shrink:0;
-  transition:transform .25s ease, opacity .25s ease;
+/* ── TOWER v2 ── */
+#scTower{
+  background:linear-gradient(180deg,#060010 0%,#0d0020 50%,#060010 100%);
+  display:flex;flex-direction:column;height:calc(100dvh - 62px);overflow:hidden;
+  position:relative;
 }
+/* starfield pseudo-element */
+#scTower::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 20% 15%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 5%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 25%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 10% 40%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 55%,rgba(255,255,255,.25) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 60%,rgba(255,255,255,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 30% 80%,rgba(255,255,255,.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 70% 90%,rgba(255,255,255,.3) 0%,transparent 100%);
+  z-index:0;
+}
+#scTower > *{position:relative;z-index:1;}
+/* field */
+.tw-field{
+  flex:1;display:flex;flex-direction:column-reverse;
+  padding:6px 12px;gap:5px;min-height:0;overflow:hidden;
+}
+/* row number indicator */
+.tw-row{display:flex;gap:5px;flex-shrink:0;align-items:center;}
+.tw-row-num{
+  width:16px;flex-shrink:0;font-size:8px;font-weight:900;
+  color:rgba(255,255,255,.2);text-align:center;
+}
+/* bricks */
 .tw-brick{
-  flex:1;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:900;
-  transition:all .2s;
-  position:relative;overflow:hidden;
+  flex:1;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;
+  border:1.5px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.15);
+  transition:all .18s;position:relative;overflow:hidden;
+  cursor:default;
 }
+/* idle rows above current */
+.tw-row.idle .tw-brick{
+  background:linear-gradient(135deg,rgba(160,100,255,.08),rgba(100,50,200,.04));
+  border-color:rgba(160,100,255,.15);
+}
+/* current row — playable */
+.tw-brick.pickable{
+  background:linear-gradient(135deg,rgba(180,120,255,.2),rgba(110,60,220,.1));
+  border:2px solid rgba(160,100,255,.5);
+  color:rgba(255,255,255,.5);cursor:pointer;
+  box-shadow:0 0 14px rgba(160,100,255,.2);
+  animation:twPickPulse 1.4s ease-in-out infinite;
+}
+.tw-brick.pickable:active{transform:scale(.9);}
+@keyframes twPickPulse{
+  0%,100%{border-color:rgba(160,100,255,.4);box-shadow:0 0 10px rgba(160,100,255,.15);}
+  50%{border-color:rgba(200,160,255,.8);box-shadow:0 0 22px rgba(180,120,255,.4);}
+}
+/* cleared — safe pick */
 .tw-brick.safe{
-  background:linear-gradient(135deg,rgba(160,100,255,.25),rgba(100,50,200,.1));
-  border:1.5px solid rgba(160,100,255,.4);color:rgba(255,255,255,.7);
+  background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(21,128,61,.1));
+  border:2px solid #4ade80;color:#4ade80;
+  box-shadow:0 0 16px rgba(34,197,94,.3);
+  animation:twSafeIn .3s cubic-bezier(.36,.07,.19,.97);
 }
-.tw-brick.danger{
-  background:rgba(255,50,50,.08);border:1.5px solid rgba(255,50,50,.2);color:rgba(255,80,80,.4);
-}
-.tw-brick.current{
-  background:linear-gradient(135deg,rgba(200,140,255,.4),rgba(130,60,255,.2));
-  border:2px solid #c080ff;color:#fff;
-  box-shadow:0 0 16px rgba(180,100,255,.5);
-  animation:twPulse 1s ease-in-out infinite;
-}
-.tw-brick.selected{
-  background:linear-gradient(135deg,#22c55e,#15803d);
-  border-color:#4ade80;color:#fff;
-  box-shadow:0 0 14px rgba(34,197,94,.4);
-}
+@keyframes twSafeIn{0%{transform:scale(.8);}60%{transform:scale(1.08);}100%{transform:scale(1);}}
+/* cleared — was bomb */
 .tw-brick.bomb{
-  background:linear-gradient(135deg,#ef4444,#991b1b);
-  border-color:#f87171;color:#fff;
-  animation:twExplode .5s ease;
+  background:linear-gradient(135deg,rgba(239,68,68,.35),rgba(153,27,27,.2));
+  border:2px solid #f87171;color:#fff;
+  box-shadow:0 0 20px rgba(239,68,68,.4);
+  animation:twBomb .45s cubic-bezier(.36,.07,.19,.97);
 }
-@keyframes twPulse{0%,100%{box-shadow:0 0 12px rgba(180,100,255,.4);}50%{box-shadow:0 0 24px rgba(180,100,255,.7);}}
-@keyframes twExplode{0%{transform:scale(1);}30%{transform:scale(1.3);}60%{transform:scale(.8);}100%{transform:scale(1);}}
-.tw-multiplier-strip{
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:8px 14px;background:rgba(0,0,0,.4);border-top:1px solid rgba(255,255,255,.06);
+@keyframes twBomb{0%{transform:scale(1);}20%{transform:scale(1.4);}50%{transform:scale(.85);}100%{transform:scale(1);}}
+/* past safe row */
+.tw-brick.past-safe{
+  background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(21,128,61,.04));
+  border-color:rgba(74,222,128,.2);color:rgba(74,222,128,.5);
 }
-.tw-mult-val{font-size:28px;font-weight:900;color:#c080ff;letter-spacing:1px;}
-.tw-mult-lbl{font-size:10px;color:rgba(255,255,255,.3);font-weight:700;}
+.tw-brick.past-empty{
+  background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.05);color:rgba(255,255,255,.1);
+}
+/* multiplier strip */
+.tw-mult-strip{
+  flex-shrink:0;
+  background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(20,0,40,.8),rgba(0,0,0,.6));
+  border-top:1px solid rgba(180,100,255,.15);
+  border-bottom:1px solid rgba(180,100,255,.1);
+  padding:8px 16px;display:flex;align-items:center;justify-content:space-between;
+}
+.tw-mult-val{
+  font-size:32px;font-weight:900;color:#c080ff;letter-spacing:1px;
+  text-shadow:0 0 24px rgba(180,100,255,.6);
+  transition:all .2s;
+}
+.tw-mult-val.win{color:#22c55e;text-shadow:0 0 24px rgba(34,197,94,.6);}
+.tw-mult-val.loss{color:#ef4444;text-shadow:0 0 24px rgba(239,68,68,.5);}
+.tw-gain-val{font-size:18px;font-weight:900;color:#22c55e;}
+/* progress bar */
+.tw-progress-wrap{
+  flex-shrink:0;height:3px;background:rgba(255,255,255,.06);
+}
+.tw-progress-bar{
+  height:100%;background:linear-gradient(90deg,#c080ff,#22c55e);
+  transition:width .25s ease;width:0%;
+}
+/* cashout btn */
 .tw-cashout-btn{
-  flex-shrink:0;margin:0 14px 10px;height:48px;border-radius:14px;border:none;
+  flex-shrink:0;margin:8px 14px 6px;height:48px;border-radius:16px;border:none;
   background:linear-gradient(135deg,#22c55e,#15803d);
   color:#fff;font-size:15px;font-weight:900;cursor:pointer;
-  box-shadow:0 4px 20px rgba(34,197,94,.35);
-  transition:transform .12s, opacity .12s;
+  box-shadow:0 4px 24px rgba(34,197,94,.35);
+  transition:transform .12s,opacity .15s;letter-spacing:.5px;
 }
 .tw-cashout-btn:active{transform:scale(.97);}
-.tw-cashout-btn:disabled{opacity:.35;cursor:not-allowed;}
-.tw-bet-panel{flex-shrink:0;padding:10px 14px 12px;background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.07);}
-.tw-diff-row{display:flex;gap:6px;margin-bottom:10px;}
-.tw-diff-btn{flex:1;padding:7px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-size:10px;font-weight:800;cursor:pointer;transition:all .12s;letter-spacing:.5px;}
-.tw-diff-btn.active{border-color:#c080ff;background:rgba(180,100,255,.15);color:#c080ff;}
-.tw-start-btn{width:100%;height:46px;border-radius:14px;border:none;background:linear-gradient(135deg,#9b59b6,#6c3483);color:#fff;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(155,89,182,.3);transition:transform .12s;}
+.tw-cashout-btn:disabled{opacity:.2;cursor:not-allowed;transform:none;}
+/* bet panel */
+.tw-bet-panel{
+  flex-shrink:0;padding:8px 14px 10px;
+  background:rgba(0,0,0,.55);border-top:1px solid rgba(255,255,255,.07);
+}
+.tw-diff-row{display:flex;gap:5px;margin-bottom:10px;}
+.tw-diff-btn{
+  flex:1;padding:7px 2px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  color:rgba(255,255,255,.4);font-size:9px;font-weight:900;
+  cursor:pointer;transition:all .12s;letter-spacing:.3px;text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.tw-diff-btn.active{
+  border-color:#c080ff;background:rgba(180,100,255,.15);color:#c080ff;
+}
+.tw-diff-btn .tw-diff-sub{font-size:7.5px;opacity:.6;display:block;margin-top:1px;}
+.tw-start-btn{
+  width:100%;height:46px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#9b59b6,#6c3483);
+  color:#fff;font-size:15px;font-weight:900;cursor:pointer;
+  box-shadow:0 4px 20px rgba(155,89,182,.35);
+  transition:transform .12s,opacity .12s;letter-spacing:.5px;
+}
 .tw-start-btn:active{transform:scale(.97);}
+.tw-start-btn:disabled{opacity:.35;cursor:not-allowed;}
+/* game selector card */
 .gs-card-tower{background:linear-gradient(135deg,rgba(155,89,182,.18),rgba(100,40,160,.05));border:1.5px solid rgba(155,89,182,.35);}
 .gs-card-tower:hover{box-shadow:0 8px 28px rgba(155,89,182,.2);}
 
-/* ── LIMBO ── */
-#scLimbo{background:linear-gradient(180deg,#080010,#030008);display:flex;flex-direction:column;height:calc(100dvh - 62px);overflow:hidden;}
-.lb-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(100,200,255,.12);flex-shrink:0;}
-.lb-field{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:10px;position:relative;overflow:hidden;}
-/* Starfield */
-.lb-field::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(100,200,255,.06),transparent 70%);
-  pointer-events:none;
-}
-.lb-multiplier-display{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  position:relative;z-index:1;
-}
-.lb-mult-val{
-  font-size:72px;font-weight:900;color:#fff;line-height:1;
-  font-variant-numeric:tabular-nums;
-  transition:color .15s;
-  text-shadow:0 0 40px rgba(100,200,255,.4);
-}
-.lb-mult-val.running{
-  animation:lbCountUp .1s linear;
-  text-shadow:0 0 60px rgba(100,220,255,.7);
-}
-.lb-mult-val.crashed{color:#ef4444;text-shadow:0 0 30px rgba(239,68,68,.5);}
-.lb-mult-val.cashed{color:#22c55e;text-shadow:0 0 30px rgba(34,197,94,.5);}
-@keyframes lbCountUp{from{transform:scale(1.04);}to{transform:scale(1);}}
-.lb-target-line{
-  display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;padding:8px 16px;
-}
-.lb-target-lbl{font-size:11px;color:rgba(255,255,255,.4);font-weight:700;}
-.lb-target-val{font-size:20px;font-weight:900;color:#f0d060;}
-/* progress rocket */
-.lb-rocket{
-  font-size:40px;transition:transform .1s linear;
-  filter:drop-shadow(0 0 12px rgba(100,200,255,.6));
-}
-.lb-rocket.launched{animation:lbRise .1s linear;}
-@keyframes lbRise{from{transform:translateY(4px);}to{transform:translateY(-4px);}}
-.lb-status{
-  font-size:13px;font-weight:800;color:rgba(255,255,255,.4);
-  min-height:20px;letter-spacing:.5px;
-}
-.lb-bet-panel{flex-shrink:0;padding:10px 14px 12px;background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.07);}
-.lb-target-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.lb-target-presets{display:flex;gap:5px;flex:1;overflow-x:auto;scrollbar-width:none;}
-.lb-target-presets::-webkit-scrollbar{display:none;}
-.lb-preset-btn{flex-shrink:0;height:32px;padding:0 10px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:10px;font-weight:800;cursor:pointer;transition:all .12s;}
-.lb-preset-btn.active,.lb-preset-btn:active{background:rgba(100,200,255,.15);border-color:rgba(100,200,255,.5);color:#64c8ff;}
-.lb-custom-inp{
-  width:72px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
-  border-radius:10px;color:#f0d060;font-size:14px;font-weight:900;
-  padding:6px 8px;outline:none;text-align:center;flex-shrink:0;
-}
-.lb-custom-inp:focus{border-color:rgba(100,200,255,.5);}
-.lb-chips{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;}
-.lb-chips::-webkit-scrollbar{display:none;}
-.lb-chip{flex-shrink:0;height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:800;cursor:pointer;transition:all .12s;}
-.lb-chip.active{background:rgba(240,208,96,.15);border-color:#f0d060;color:#f0d060;}
-.lb-play-btn{width:100%;height:46px;border-radius:14px;border:none;background:linear-gradient(135deg,#0ea5e9,#0369a1);color:#fff;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px rgba(14,165,233,.3);transition:transform .12s,opacity .12s;letter-spacing:.5px;}
-.lb-play-btn:active{transform:scale(.97);}
-.lb-play-btn:disabled{opacity:.35;cursor:not-allowed;}
-.gs-card-limbo{background:linear-gradient(135deg,rgba(14,165,233,.18),rgba(3,105,161,.05));border:1.5px solid rgba(14,165,233,.3);}
-.gs-card-limbo:hover{box-shadow:0 8px 28px rgba(14,165,233,.2);}
 
 .gs-card-keno{background:linear-gradient(135deg,rgba(0,180,255,.15),rgba(0,80,200,.04));border:1px solid rgba(0,180,255,.3);}
 .gs-card-keno:hover{box-shadow:0 0 30px rgba(0,180,255,.15);}
@@ -2606,11 +2627,7 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:13px;font-weight:900;color:#c080ff;">Tower</div>
         <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;">Sube sin caer · ×6 difícil</div>
       </div>
-      <div onclick="selectGame('limbo')" class="gs-card gs-card-limbo" style="border-radius:16px;padding:18px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-        <div style="font-size:28px;margin-bottom:6px;">🚀</div>
-        <div style="font-size:13px;font-weight:900;color:#64c8ff;">Limbo</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;">Objetivo · hasta 100×</div>
-      </div>
+
       <div onclick="selectGame('scratch')" style="background:linear-gradient(135deg,rgba(46,213,115,.2),rgba(30,150,80,.06));border:1.5px solid rgba(46,213,115,.45);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
         <div style="font-size:32px;">🎟️</div>
         <div style="font-size:13px;font-weight:900;color:#2ed573;letter-spacing:1px;">RASCA Y GANA</div>
@@ -3227,8 +3244,9 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
   </div>
   <div class="mg-body">
     <div class="cr-hist-bar" id="crHistory"></div>
-    <div class="cr-graph" id="crGraph">
+    <div class="cr-graph" id="crGraph" style="position:relative;">
       <canvas id="crashCanvas"></canvas>
+      <div id="crRocket" style="position:absolute;font-size:28px;pointer-events:none;z-index:4;transition:left .08s linear,bottom .08s linear;filter:drop-shadow(0 0 8px rgba(46,204,113,.7));display:none;">🚀</div>
       <div class="cr-status" id="crStatus">ESPERANDO APUESTA</div>
       <div class="cr-multiplier" id="crMult">1.00×</div>
       <div class="cr-live-profit" id="crLiveProfit">+$0</div>
@@ -8673,7 +8691,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -9373,8 +9391,7 @@ function selectGame(game) {
     knInit();
   } else if (game === 'tower') {
     twInit();
-  } else if (game === 'limbo') {
-    lbInit();
+
   } else if (game === 'football') {
     startFootball();
   } else if (game === 'rummy') {
@@ -10280,6 +10297,30 @@ function crDrawGraph(){
     ctx.fillStyle='#f0d060';ctx.strokeStyle='#000';ctx.lineWidth=1.5;ctx.fill();ctx.stroke();
     ctx.fillStyle='#f0d060';ctx.font='bold 9px Inter,sans-serif';ctx.textAlign='center';
     ctx.fillText(crMult.toFixed(2)+'×',px(cp.t),py(cp.m)-10);
+  }
+  // Position rocket at tip of curve
+  const rocket=document.getElementById('crRocket');
+  if(rocket){
+    if(crState==='running'&&crPoints.length>1){
+      rocket.style.display='block';
+      // Calculate angle for rotation
+      const prev=crPoints[Math.max(0,crPoints.length-2)];
+      const dx=px(last.t)-px(prev.t); const dy=py(last.m)-py(prev.m);
+      const angle=Math.atan2(-dy,dx)*180/Math.PI; // invert Y because canvas Y is flipped
+      const clampedAngle=Math.max(0,Math.min(80,angle));
+      rocket.style.left=(px(last.t)-14)+'px';
+      rocket.style.bottom=(H-py(last.m)-14)+'px';
+      rocket.style.transform=`rotate(${-(90-clampedAngle)}deg)`;
+      rocket.style.filter=crashed
+        ?'drop-shadow(0 0 6px rgba(239,68,68,.8)) grayscale(1)'
+        :'drop-shadow(0 0 10px rgba(46,204,113,.8))';
+    } else if(crState==='crashed'){
+      // Show explosion briefly
+      rocket.textContent='💥';
+      setTimeout(()=>{ rocket.style.display='none'; rocket.textContent='🚀'; },1200);
+    } else {
+      rocket.style.display='none';
+    }
   }
 }
 function crRenderHistory(){
@@ -13051,7 +13092,7 @@ function bnGo(tab){
     'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
     'scSlotsSection','scGemSlots','scHiLoCards','scHiLoDice',
     'scCartasSection','scMesaSection','scArcadeSection','scMultiSection',
-    'scDominoLobby','scDomino','scDuelo','scBingo','scSports'];
+    'scDominoLobby','scDomino','scDuelo','scBingo','scSports','scTower'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -13120,7 +13161,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -17865,7 +17906,7 @@ async function spSettlePendingBets(){
 }
 
 // ══════════════════════════════════════════════════════════════
-//  TOWER — 8 rows, choose a safe brick, climb for multiplier
+//  TOWER v2 — immersive redesign
 // ══════════════════════════════════════════════════════════════
 const TW_DIFFS=[
   {bombs:1,cols:4,mults:[1.35,1.82,2.46,3.32,4.48,6.05,8.17,11.0]},
@@ -17874,6 +17915,16 @@ const TW_DIFFS=[
   {bombs:4,cols:5,mults:[3.20,10.2,32.7,104,334,1068,3418,10937]},
 ];
 let twDiff=0,twBet=50,twPlaying=false,twRow=0,twBombRows=[];
+
+// Safe exit — always works even mid-game
+function twExit(){
+  if(twPlaying){
+    if(!confirm('¿Salir? Perderás tu apuesta actual.')) return;
+    twPlaying=false;
+  }
+  hide('scTower');
+  goGameSelect();
+}
 
 function twInit(){
   const el=document.getElementById('scTower'); el.classList.remove('hidden'); el.style.display='flex';
@@ -17902,26 +17953,34 @@ function twBuildField(){
   field.innerHTML='';
   for(let row=7;row>=0;row--){
     const div=document.createElement('div');
-    div.className='tw-row'; div.id='tw-row-'+row;
+    div.className='tw-row idle'; div.id='tw-row-'+row;
+    // Row number label
+    const num=document.createElement('div');
+    num.className='tw-row-num'; num.textContent=row+1;
+    div.appendChild(num);
     for(let col=0;col<cfg.cols;col++){
       const brick=document.createElement('div');
-      brick.className='tw-brick'+(row===0?'  current':'');
+      brick.className='tw-brick';
       brick.dataset.row=row; brick.dataset.col=col;
-      brick.textContent=row===0?'⬆':'';
-      brick.onclick=()=>twClick(row,col);
       div.appendChild(brick);
     }
     field.appendChild(div);
   }
+  document.getElementById('twFloorDisplay').textContent='0 / 8';
+  document.getElementById('twProgressBar').style.width='0%';
 }
 
 function twUpdateMultDisplay(){
   const cfg=TW_DIFFS[twDiff];
-  const mult=twPlaying?(cfg.mults[twRow-1]||1):1;
+  const mult=twPlaying&&twRow>0?(cfg.mults[twRow-1]||1):1;
   document.getElementById('twMultDisplay').textContent=mult.toFixed(2)+'×';
   const bet=parseInt(document.getElementById('twBetInput').value||50);
-  const gain=twPlaying?Math.floor(bet*mult)-bet:0;
-  document.getElementById('twGainDisplay').textContent=(gain>=0?'+':'')+gain.toLocaleString();
+  const gain=twPlaying&&twRow>0?Math.floor(bet*mult)-bet:0;
+  document.getElementById('twGainDisplay').textContent=(gain>0?'+':'')+gain.toLocaleString();
+  // Update cashout button text
+  if(twPlaying&&twRow>0){
+    document.getElementById('twCashBtn').textContent='💰 COBRAR '+mult.toFixed(2)+'× = $'+Math.floor(bet*mult).toLocaleString();
+  }
 }
 
 function twStart(){
@@ -17948,21 +18007,22 @@ function twStart(){
 }
 
 function twSetCurrentRow(row){
-  const cfg=TW_DIFFS[twDiff];
-  const rowEl=document.getElementById('tw-row-'+row);
-  if(!rowEl) return;
+  const rowEl=document.getElementById('tw-row-'+row); if(!rowEl) return;
+  rowEl.className='tw-row active';
   rowEl.querySelectorAll('.tw-brick').forEach((b,i)=>{
-    b.className='tw-brick current';
-    b.textContent='❓';
-    b.style.cursor='pointer';
+    b.className='tw-brick pickable';
+    b.textContent='?';
     b.onclick=()=>twClick(row,i);
   });
-  // Rows above look faded
-  for(let r=row+1;r<8;r++){
-    const el=document.getElementById('tw-row-'+r);
-    if(el) el.style.opacity='0.4';
+  // Dim future rows
+  for(let i=row+1;i<8;i++){
+    const el=document.getElementById('tw-row-'+i);
+    if(el){ el.style.opacity='0.35'; }
   }
-  if(rowEl) rowEl.style.opacity='1';
+  rowEl.style.opacity='1';
+  // Update floor display + progress
+  document.getElementById('twFloorDisplay').textContent=row+' / 8';
+  document.getElementById('twProgressBar').style.width=(row/8*100)+'%';
 }
 
 async function twClick(row,col){
@@ -17972,15 +18032,16 @@ async function twClick(row,col){
   const rowEl=document.getElementById('tw-row-'+row); if(!rowEl) return;
   const bricks=rowEl.querySelectorAll('.tw-brick');
   // Reveal all bricks in this row
+  rowEl.className='tw-row revealed';
   bricks.forEach((b,i)=>{
     b.onclick=null;
     const bomb=twBombRows[row].has(i);
     if(i===col){
-      b.className='tw-brick '+(isBomb?'bomb':'selected');
+      b.className='tw-brick '+(isBomb?'bomb':'safe');
       b.textContent=isBomb?'💣':'✅';
     } else {
-      b.className='tw-brick '+(bomb?'bomb':'safe');
-      b.textContent=bomb?'💣':'⬛';
+      b.className='tw-brick '+(bomb?'bomb':'past-empty');
+      b.textContent=bomb?'💣':'';
     }
   });
   if(isBomb){
@@ -17988,15 +18049,25 @@ async function twClick(row,col){
     playTone(120,.2,'sawtooth',.25);
     twPlaying=false;
     await new Promise(res=>setTimeout(res,600));
+    document.getElementById('twMultDisplay').className='tw-mult-val loss';
     toast('💣 ¡Boom! Perdiste $'+twBet.toLocaleString());
     mlRecordGameStat('tower',false,-twBet);
-    sfxLose();
+    sfxLose(); playTone(80,.3,'sawtooth',.3);
+    await new Promise(res=>setTimeout(res,1000));
     twResetUI(); return;
   }
   // Safe
-  playTone(600+twRow*60,.07,'sine',.1);
+  playTone(500+twRow*80,.08,'sine',.12);
   twRow++;
   twUpdateMultDisplay();
+  // Mark previous row bricks as past
+  bricks.forEach((b,i)=>{
+    if(!twBombRows[row].has(i)&&b.className.includes('safe')){}
+    else if(!twBombRows[row].has(i)) b.className='tw-brick past-empty';
+  });
+  // Update progress
+  document.getElementById('twFloorDisplay').textContent=twRow+' / 8';
+  document.getElementById('twProgressBar').style.width=(twRow/8*100)+'%';
   if(twRow>=8){
     // Completed all rows!
     const mult=cfg.mults[7];
@@ -18009,7 +18080,7 @@ async function twClick(row,col){
   }
   twSetCurrentRow(twRow);
   document.getElementById('twCashBtn').disabled=false;
-  document.getElementById('twCashBtn').textContent='💰 COBRAR '+cfg.mults[twRow-1].toFixed(2)+'×';
+  twUpdateMultDisplay();
 }
 
 function twCashOut(){
@@ -18018,6 +18089,7 @@ function twCashOut(){
   const mult=cfg.mults[twRow-1];
   const payout=Math.floor(twBet*mult);
   myBal+=payout; saveLocal(); updateRanking(); mgUpdateBal('twBal');
+  document.getElementById('twMultDisplay').className='tw-mult-val win';
   toast('💰 Cobrado '+mult.toFixed(2)+'× · +$'+(payout-twBet).toLocaleString());
   sfxWin(); if(payout>twBet*3) burst(innerWidth/2,200,14);
   mlRecordGameStat('tower',true,payout-twBet);
@@ -18028,113 +18100,15 @@ function twResetUI(){
   twPlaying=false; twRow=0;
   document.getElementById('twStartBtn').disabled=false;
   document.getElementById('twCashBtn').disabled=true;
-  document.getElementById('twCashBtn').textContent='💰 COBRAR';
+  document.getElementById('twCashBtn').textContent='💰 COBRAR AHORA';
   document.getElementById('twDiffRow').style.opacity='1';
   document.getElementById('twDiffRow').style.pointerEvents='auto';
+  document.getElementById('twMultDisplay').className='tw-mult-val';
+  document.getElementById('twProgressBar').style.width='0%';
+  document.getElementById('twFloorDisplay').textContent='0 / 8';
   twUpdateMultDisplay(); twBuildField();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  LIMBO — Set a target multiplier, rocket flies up
-// ══════════════════════════════════════════════════════════════
-let lbBet=50, lbTarget=2.00, lbPlaying=false, lbAnimId=null;
-
-function lbInit(){
-  const el=document.getElementById('scLimbo'); el.classList.remove('hidden'); el.style.display='flex';
-  mgUpdateBal('lbBal'); bnShow(); bnSync('scLimbo');
-  lbPlaying=false;
-  lbUpdateTarget(2.00);
-  document.getElementById('lbMultVal').textContent='1.00×';
-  document.getElementById('lbMultVal').className='lb-mult-val';
-  document.getElementById('lbStatus').textContent='Elige tu objetivo y apuesta';
-  document.getElementById('lbRocket').style.transform='';
-}
-
-function lbSetBet(amt){
-  lbBet=amt;
-  document.querySelectorAll('.lb-chip').forEach(c=>c.classList.toggle('active',parseInt(c.textContent.replace('$',''))===amt));
-}
-
-function lbSetTarget(val){
-  lbUpdateTarget(val);
-  document.querySelectorAll('.lb-preset-btn').forEach(b=>b.classList.toggle('active',parseFloat(b.textContent)===val));
-}
-
-function lbCustomTarget(val){
-  const n=parseFloat(val);
-  if(n>=1.01) { lbTarget=+n.toFixed(2); document.getElementById('lbTargetDisplay').textContent=lbTarget.toFixed(2)+'×'; }
-  document.querySelectorAll('.lb-preset-btn').forEach(b=>b.classList.remove('active'));
-}
-
-function lbUpdateTarget(val){
-  lbTarget=+parseFloat(val).toFixed(2);
-  document.getElementById('lbTargetDisplay').textContent=lbTarget.toFixed(2)+'×';
-  document.getElementById('lbTargetInp').value=lbTarget.toFixed(2);
-}
-
-// House edge ~5%. Crash point = floor(100 / (rand * 1.05))
-function lbGenCrash(){
-  const e=0.05;
-  const r=Math.random();
-  if(r<e) return 1.00; // instant crash (house edge)
-  return Math.max(1.00, +(100/(r*100*(1+e))).toFixed(2));
-}
-
-async function lbPlay(){
-  if(lbPlaying) return;
-  // Use last set lbBet
-  const bet=lbBet;
-  if(lbBet<1||lbBet>myBal){toast('Apuesta inválida');return;}
-  if(lbTarget<1.01){toast('Objetivo mínimo 1.01×');return;}
-  const crashAt=lbGenCrash();
-  const won=lbTarget<=crashAt;
-  myBal-=lbBet; saveLocal(); mgUpdateBal('lbBal'); updateRanking();
-  lbPlaying=true;
-  document.getElementById('lbPlayBtn').disabled=true;
-  document.getElementById('lbStatus').textContent='🚀 Despegando...';
-  const multEl=document.getElementById('lbMultVal');
-  const rocketEl=document.getElementById('lbRocket');
-  multEl.className='lb-mult-val running';
-  // Animate from 1.00 up toward crashAt or target
-  const stopAt=won?lbTarget:crashAt;
-  const duration=Math.min(3000, 400+stopAt*120);
-  const start=performance.now();
-  await new Promise(res=>{
-    function frame(now){
-      const t=Math.min(1,(now-start)/duration);
-      const eased=1+Math.pow(t,1.8)*(stopAt-1);
-      const cur=Math.min(eased,stopAt);
-      multEl.textContent=cur.toFixed(2)+'×';
-      rocketEl.style.transform=`translateY(-${Math.round(t*60)}px) rotate(-${Math.round(t*15)}deg)`;
-      if(t<1) lbAnimId=requestAnimationFrame(frame);
-      else res();
-    }
-    lbAnimId=requestAnimationFrame(frame);
-  });
-  if(won){
-    const payout=+(lbBet*lbTarget).toFixed(0);
-    myBal+=payout; saveLocal(); updateRanking(); mgUpdateBal('lbBal');
-    multEl.className='lb-mult-val cashed';
-    multEl.textContent=lbTarget.toFixed(2)+'×';
-    document.getElementById('lbStatus').textContent='🎉 ¡Objetivo alcanzado! +$'+(payout-lbBet).toLocaleString();
-    sfxWin(); if(payout>lbBet*5) burst(innerWidth/2,200,16);
-    mlRecordGameStat('limbo',true,payout-lbBet);
-  } else {
-    multEl.className='lb-mult-val crashed';
-    multEl.textContent=crashAt.toFixed(2)+'×';
-    document.getElementById('lbStatus').textContent='💥 Crasheó en '+crashAt.toFixed(2)+'× · -$'+lbBet.toLocaleString();
-    playTone(150,.2,'sawtooth',.2); sfxLose();
-    rocketEl.textContent='💥'; setTimeout(()=>{ rocketEl.textContent='🚀'; },1500);
-    mlRecordGameStat('limbo',false,-lbBet);
-  }
-  await new Promise(res=>setTimeout(res,1800));
-  lbPlaying=false;
-  document.getElementById('lbPlayBtn').disabled=false;
-  multEl.className='lb-mult-val';
-  multEl.textContent='1.00×';
-  document.getElementById('lbStatus').textContent='Elige tu objetivo y apuesta';
-  rocketEl.style.transform='';
-}
 
 
 </script>
@@ -18600,84 +18574,64 @@ async function lbPlay(){
 
 <!-- ════════ TOWER ════════ -->
 <div class="fullscreen hidden" id="scTower">
-  <div class="mg-topbar" style="border-bottom:1px solid rgba(180,100,255,.2);background:rgba(0,0,0,.7);">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
-    <div style="font-size:14px;font-weight:900;color:#c080ff;">🗼 TOWER</div>
+
+  <!-- Topbar — always interactive via z-index -->
+  <div class="mg-topbar" style="border-bottom:1px solid rgba(180,100,255,.2);background:rgba(0,0,0,.8);z-index:10;position:relative;">
+    <button class="mg-back" onclick="twExit()">← Salir</button>
+    <div style="font-size:14px;font-weight:900;color:#c080ff;letter-spacing:1px;">🗼 TOWER</div>
     <div style="font-size:12px;font-weight:800;color:#f0d060;">$<span id="twBal">0</span></div>
   </div>
+
+  <!-- Progress bar -->
+  <div class="tw-progress-wrap"><div class="tw-progress-bar" id="twProgressBar"></div></div>
+
+  <!-- Tower field -->
   <div class="tw-field" id="twField"></div>
-  <div class="tw-multiplier-strip">
-    <div style="text-align:center;">
-      <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:1px;">MULTIPLICADOR</div>
-      <div class="tw-mult-val" id="twMultDisplay">1.00×</div>
+
+  <!-- Multiplier strip -->
+  <div class="tw-mult-strip">
+    <div>
+      <div style="font-size:8px;font-weight:800;color:rgba(255,255,255,.25);letter-spacing:1.5px;margin-bottom:2px;">PISO</div>
+      <div style="font-size:16px;font-weight:900;color:rgba(255,255,255,.5);" id="twFloorDisplay">0 / 8</div>
     </div>
-    <div style="width:1px;height:36px;background:rgba(255,255,255,.08);"></div>
-    <div style="text-align:center;">
-      <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:1px;">GANANCIA</div>
-      <div style="font-size:18px;font-weight:900;color:#22c55e;" id="twGainDisplay">$0</div>
+    <div class="tw-mult-val" id="twMultDisplay">1.00×</div>
+    <div style="text-align:right;">
+      <div style="font-size:8px;font-weight:800;color:rgba(255,255,255,.25);letter-spacing:1.5px;margin-bottom:2px;">GANANCIA</div>
+      <div class="tw-gain-val" id="twGainDisplay">$0</div>
     </div>
   </div>
-  <button class="tw-cashout-btn" id="twCashBtn" onclick="twCashOut()" disabled>💰 COBRAR</button>
+
+  <!-- Cashout -->
+  <button class="tw-cashout-btn" id="twCashBtn" onclick="twCashOut()" disabled>💰 COBRAR AHORA</button>
+
+  <!-- Bet panel -->
   <div class="tw-bet-panel">
     <div class="tw-diff-row" id="twDiffRow">
-      <button class="tw-diff-btn active" onclick="twSetDiff(0,this)">FÁCIL<br><span style="font-size:8px;opacity:.6;">1 trampa</span></button>
-      <button class="tw-diff-btn" onclick="twSetDiff(1,this)">MEDIO<br><span style="font-size:8px;opacity:.6;">2 trampas</span></button>
-      <button class="tw-diff-btn" onclick="twSetDiff(2,this)">DIFÍCIL<br><span style="font-size:8px;opacity:.6;">3 trampas</span></button>
-      <button class="tw-diff-btn" onclick="twSetDiff(3,this)">EXTREMO<br><span style="font-size:8px;opacity:.6;">4 trampas</span></button>
+      <button class="tw-diff-btn active" onclick="twSetDiff(0,this)">FÁCIL<span class="tw-diff-sub">1 trampa</span></button>
+      <button class="tw-diff-btn" onclick="twSetDiff(1,this)">MEDIO<span class="tw-diff-sub">2 trampas</span></button>
+      <button class="tw-diff-btn" onclick="twSetDiff(2,this)">DIFÍCIL<span class="tw-diff-sub">3 trampas</span></button>
+      <button class="tw-diff-btn" onclick="twSetDiff(3,this)">EXTREMO<span class="tw-diff-sub">4/5</span></button>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
-      <input id="twBetInput" type="number" value="50" min="1" style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;font-weight:800;padding:9px 12px;outline:none;box-sizing:border-box;">
-      <button onclick="twAdjBet(.5)" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.6);font-size:11px;padding:8px 10px;cursor:pointer;">½</button>
-      <button onclick="twAdjBet(2)"  style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.6);font-size:11px;padding:8px 10px;cursor:pointer;">×2</button>
-      <button onclick="twAdjBet('max')" style="background:rgba(240,208,96,.12);border:1px solid rgba(240,208,96,.3);border-radius:8px;color:#f0d060;font-size:11px;padding:8px 10px;cursor:pointer;">MAX</button>
+    <div style="display:flex;gap:7px;align-items:center;margin-bottom:10px;">
+      <input id="twBetInput" type="number" value="50" min="1"
+        style="flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);
+        border-radius:11px;color:#fff;font-size:15px;font-weight:800;padding:9px 12px;outline:none;
+        box-sizing:border-box;">
+      <button onclick="twAdjBet(.5)"
+        style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;
+        color:rgba(255,255,255,.5);font-size:11px;font-weight:800;padding:9px 11px;cursor:pointer;">½</button>
+      <button onclick="twAdjBet(2)"
+        style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;
+        color:rgba(255,255,255,.5);font-size:11px;font-weight:800;padding:9px 11px;cursor:pointer;">×2</button>
+      <button onclick="twAdjBet('max')"
+        style="background:rgba(240,208,96,.12);border:1px solid rgba(240,208,96,.28);border-radius:9px;
+        color:#f0d060;font-size:11px;font-weight:800;padding:9px 10px;cursor:pointer;">MAX</button>
     </div>
     <button class="tw-start-btn" id="twStartBtn" onclick="twStart()">🗼 SUBIR LA TORRE</button>
   </div>
 </div>
 
-<!-- ════════ LIMBO ════════ -->
-<div class="fullscreen hidden" id="scLimbo">
-  <div class="mg-topbar" style="border-bottom:1px solid rgba(100,200,255,.15);background:rgba(0,0,0,.7);">
-    <button class="mg-back" onclick="goGameSelect()">← Salir</button>
-    <div style="font-size:14px;font-weight:900;color:#64c8ff;">🚀 LIMBO</div>
-    <div style="font-size:12px;font-weight:800;color:#f0d060;">$<span id="lbBal">0</span></div>
-  </div>
-  <div class="lb-field">
-    <div class="lb-rocket" id="lbRocket">🚀</div>
-    <div class="lb-multiplier-display">
-      <div class="lb-mult-val" id="lbMultVal">1.00×</div>
-    </div>
-    <div class="lb-target-line">
-      <span class="lb-target-lbl">OBJETIVO</span>
-      <span class="lb-target-val" id="lbTargetDisplay">2.00×</span>
-    </div>
-    <div class="lb-status" id="lbStatus">Elige tu objetivo y apuesta</div>
-  </div>
-  <div class="lb-bet-panel">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <span style="font-size:11px;color:rgba(255,255,255,.4);font-weight:700;white-space:nowrap;">OBJETIVO</span>
-      <div class="lb-target-presets" id="lbPresets">
-        <button class="lb-preset-btn" onclick="lbSetTarget(1.5)">1.5×</button>
-        <button class="lb-preset-btn active" onclick="lbSetTarget(2)">2×</button>
-        <button class="lb-preset-btn" onclick="lbSetTarget(3)">3×</button>
-        <button class="lb-preset-btn" onclick="lbSetTarget(5)">5×</button>
-        <button class="lb-preset-btn" onclick="lbSetTarget(10)">10×</button>
-        <button class="lb-preset-btn" onclick="lbSetTarget(25)">25×</button>
-        <button class="lb-preset-btn" onclick="lbSetTarget(100)">100×</button>
-      </div>
-      <input class="lb-custom-inp" id="lbTargetInp" type="number" value="2.00" min="1.01" step=".1" oninput="lbCustomTarget(this.value)">
-    </div>
-    <div class="lb-chips">
-      <button class="lb-chip" onclick="lbSetBet(10)">$10</button>
-      <button class="lb-chip" onclick="lbSetBet(25)">$25</button>
-      <button class="lb-chip" onclick="lbSetBet(50)">$50</button>
-      <button class="lb-chip" onclick="lbSetBet(100)">$100</button>
-      <button class="lb-chip" onclick="lbSetBet(250)">$250</button>
-      <button class="lb-chip" onclick="lbSetBet(500)">$500</button>
-    </div>
-    <button class="lb-play-btn" id="lbPlayBtn" onclick="lbPlay()">🚀 LANZAR</button>
-  </div>
-</div>
+
 
 <!-- ════════════════════════════════════════════════════════
      🎟️  SCRATCH CARDS
