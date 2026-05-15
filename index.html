@@ -18861,7 +18861,7 @@ function twResetUI(){
 <!-- ════════════════════════════════════════════════════════
      ⚽ PENALTIS — LOBBY
 ════════════════════════════════════════════════════════ -->
-<div class="fullscreen hidden" id="scPenaltisLobby">
+<div class="fullscreen hidden" id="scPenaltisLobby" style="justify-content:flex-start;overflow-y:auto;">
   <div class="pl-wrap">
     <!-- Header -->
     <div style="width:100%;max-width:340px;display:flex;align-items:center;gap:10px;">
@@ -18943,7 +18943,7 @@ function twResetUI(){
 <!-- ════════════════════════════════════════════════════════
      ⚽ PENALTIS — GAME
 ════════════════════════════════════════════════════════ -->
-<div class="fullscreen hidden" id="scPenaltisGame" style="flex-direction:column;justify-content:flex-start;">
+<div class="fullscreen hidden" id="scPenaltisGame" style="flex-direction:column;justify-content:flex-start;align-items:stretch;padding:0;">
   <!-- Header scores -->
   <div class="pg-header">
     <div class="pg-score-board">
@@ -19032,7 +19032,7 @@ function twResetUI(){
 <!-- ════════════════════════════════════════════════════════
      ⚽ PENALTIS — RESULT
 ════════════════════════════════════════════════════════ -->
-<div class="fullscreen hidden" id="scPenaltisResult">
+<div class="fullscreen hidden" id="scPenaltisResult" style="justify-content:flex-start;overflow-y:auto;">
   <div class="pr-wrap">
     <div class="pr-trophy" id="prTrophy">🏆</div>
     <div class="pr-title" id="prTitle">¡CAMPEÓN!</div>
@@ -19128,14 +19128,13 @@ function plBuildLobby(){
 
 function openPenaltis(){
   plBuildLobby();
-  hideAllScreens();
   show('scPenaltisLobby');
   bnShow(); bnSync('scPenaltisLobby');
 }
 
 function plGoLobby(){
   plBuildLobby();
-  hideAllScreens();
+  hide('scPenaltisGame'); hide('scPenaltisResult');
   show('scPenaltisLobby');
   bnShow(); bnSync('scPenaltisLobby');
 }
@@ -19143,9 +19142,8 @@ function plGoLobby(){
 function plStartGame(){
   if(plMyTeam.id===plRivalTeam.id) plRivalTeam=PL_TEAMS.find(t=>t.id!==plMyTeam.id);
   // Deduct bet
-  const bal=getLocalBal();
-  if(bal<plBet){toast('❌ Fichas insuficientes',1600);return;}
-  addLocalBal(-plBet);
+  if(myBal<plBet){toast('❌ Fichas insuficientes',1600);return;}
+  myBal-=plBet; saveLocal(); updateRanking();
 
   plMyScore=0; plRivalScore=0; plCurrentPenalty=1; plIsPlayerTurn=true;
   plMyGoals=[]; plRivalGoals=[];
@@ -19159,7 +19157,7 @@ function plStartGame(){
   ['prHFlag','prAFlag'].forEach((id,i)=>document.getElementById(id).textContent=[plMyTeam.flag,plRivalTeam.flag][i]);
   ['prHName','prAName'].forEach((id,i)=>document.getElementById(id).textContent=[plMyTeam.short,plRivalTeam.short][i]);
 
-  hideAllScreens();
+  ['scPenaltisLobby','scPenaltisResult'].forEach(function(id){hide(id);});
   show('scPenaltisGame');
   bnShow(); bnSync('scPenaltisGame');
 
@@ -19202,10 +19200,13 @@ function plPlayerTurn(){
   plStartPower();
 }
 
-const pgAimCanvas=document.getElementById('pgAimCanvas');
-const pgAimCtx=pgAimCanvas.getContext('2d');
+let pgAimCanvas=null, pgAimCtx=null;
+function plInitCanvas(){
+  if(!pgAimCanvas){ pgAimCanvas=document.getElementById('pgAimCanvas'); pgAimCtx=pgAimCanvas.getContext('2d'); }
+}
 
 function plSetupAimCanvas(){
+  plInitCanvas();
   plDrawAim(plAimX,plAimY,false);
   pgAimCanvas.ontouchstart=pgAimCanvas.onmousedown=plAimStart;
   pgAimCanvas.ontouchmove=pgAimCanvas.onmousemove=plAimMove;
@@ -19351,8 +19352,8 @@ function plShowGameResult(){
   document.getElementById('prAScore').textContent=plRivalScore;
   // Winnings
   let winAmt=0;
-  if(won){winAmt=Math.round(plBet*1.9);addLocalBal(winAmt);}
-  else if(tied){winAmt=plBet;addLocalBal(winAmt);}
+  if(won){winAmt=Math.round(plBet*1.9);myBal+=winAmt;saveLocal();updateRanking();}
+  else if(tied){winAmt=plBet;myBal+=winAmt;saveLocal();updateRanking();}
   const ww=document.getElementById('prWinnings');
   if(won||tied){
     ww.style.display='block';
@@ -19367,7 +19368,7 @@ function plShowGameResult(){
     <div class="pr-stat-row"><span class="pr-stat-lbl">🎯 Efectividad</span><span class="pr-stat-val">${acc}%</span></div>
     <div class="pr-stat-row"><span class="pr-stat-lbl">💰 Apuesta</span><span class="pr-stat-val">$${plBet}</span></div>
   `;
-  hideAllScreens();
+  ['scPenaltisLobby','scPenaltisGame'].forEach(function(id){hide(id);});
   show('scPenaltisResult');
   bnShow(); bnSync('scPenaltisResult');
   if(won)plSpawnParticles(true);
@@ -19375,9 +19376,7 @@ function plShowGameResult(){
   try{mlRecordGameStat('penaltis',won,won?winAmt-plBet:-plBet);}catch(e){}
 }
 
-// Helper: get/set local balance (uses same function as rest of app)
-function getLocalBal(){try{return parseInt(localStorage.getItem('bjmp_bal')||'0');}catch(e){return 0;}}
-function addLocalBal(n){try{const b=getLocalBal()+n;localStorage.setItem('bjmp_bal',b);const el=document.getElementById('topBalVal');if(el)el.textContent='$'+b.toLocaleString();}catch(e){}}
+// Penaltis uses the app's myBal variable and saveLocal/updateRanking directly
 </script>
 </body>
 </html>
