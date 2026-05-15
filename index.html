@@ -1888,6 +1888,180 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
 .gs-card-tower:hover{box-shadow:0 8px 28px rgba(155,89,182,.2);}
 
 
+
+/* ══════════════════════════════════
+   PENALTIS ⚽
+══════════════════════════════════ */
+#scPenaltis{
+  background:linear-gradient(180deg,#001a00 0%,#003300 40%,#004400 100%);
+  display:flex;flex-direction:column;height:calc(100dvh - 62px);overflow:hidden;
+  position:relative;
+}
+#scPenaltis::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,220,50,.05),transparent 55%),
+             radial-gradient(ellipse at 50% 100%,rgba(0,180,0,.12),transparent 55%);
+}
+#scPenaltis>*{position:relative;z-index:1;}
+.pk-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(34,197,94,.15);flex-shrink:0;
+}
+.pk-series{
+  display:flex;gap:7px;align-items:center;justify-content:center;
+  padding:7px 14px;flex-shrink:0;
+}
+.pk-kick-dot{
+  width:24px;height:24px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+  transition:all .25s;
+}
+.pk-kick-dot.saved{background:rgba(34,197,94,.3);border-color:#22c55e;}
+.pk-kick-dot.lost{background:rgba(239,68,68,.3);border-color:#ef4444;}
+.pk-kick-dot.current{background:rgba(255,200,50,.15);border-color:#f0d060;
+  animation:pkDotPulse 1s ease infinite alternate;}
+@keyframes pkDotPulse{from{box-shadow:0 0 0 rgba(240,208,96,0);}to{box-shadow:0 0 10px rgba(240,208,96,.5);}}
+.pk-status{
+  text-align:center;padding:4px 14px;min-height:26px;font-size:13px;
+  font-weight:900;letter-spacing:.5px;flex-shrink:0;color:rgba(255,255,255,.5);
+}
+/* Scene */
+.pk-scene{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-end;position:relative;min-height:0;overflow:hidden;
+}
+.pk-grass{
+  position:absolute;bottom:0;left:0;right:0;height:32%;
+  background:linear-gradient(180deg,#005500,#003300);
+  border-top:3px solid rgba(255,255,255,.18);
+}
+.pk-grass::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(0,0,0,.1) 28px,rgba(0,0,0,.1) 56px);
+}
+.pk-spot{
+  position:absolute;bottom:26%;left:50%;transform:translateX(-50%);
+  width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);
+}
+/* Goal */
+.pk-goal{
+  width:86%;max-width:340px;aspect-ratio:2.8/1.4;
+  position:relative;flex-shrink:0;margin-bottom:26%;
+}
+.pk-net{
+  position:absolute;inset:0;border-radius:4px 4px 0 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);
+  background-size:16px 16px;
+  background-color:rgba(0,0,0,.25);
+}
+.pk-goal-frame{
+  position:absolute;inset:0;border-radius:4px 4px 0 0;
+  border:4px solid rgba(255,255,255,.92);border-bottom:none;
+  box-shadow:0 0 24px rgba(255,255,255,.15),inset 0 0 20px rgba(0,0,0,.3);
+}
+/* Zone grid — 3×2 inside goal */
+.pk-zones{
+  position:absolute;inset:5px 5px 0 5px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:1fr 1fr;gap:4px;
+}
+.pk-zone{
+  border-radius:7px;cursor:pointer;
+  border:2px solid transparent;
+  transition:background .12s, border-color .12s, transform .1s;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+.pk-zone:hover{ background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3); }
+.pk-zone:active{ transform:scale(.92); }
+.pk-zone.sel-z{ background:rgba(34,197,94,.25);border-color:#22c55e; }
+.pk-zone.win-z{ background:rgba(34,197,94,.35);border-color:#4ade80;
+  box-shadow:inset 0 0 16px rgba(34,197,94,.4); animation:pkFlash .35s ease; }
+.pk-zone.lose-z{ background:rgba(239,68,68,.3);border-color:#f87171;
+  box-shadow:inset 0 0 16px rgba(239,68,68,.4); animation:pkFlash .35s ease; }
+.pk-zone.ball-z{ background:rgba(255,200,50,.15);border-color:#f0d060; }
+.pk-zone.disabled{ pointer-events:none; }
+@keyframes pkFlash{0%{transform:scale(1.06);}100%{transform:scale(1);}}
+/* Goalkeeper emoji */
+.pk-gk{
+  position:absolute;bottom:1px;
+  font-size:32px;line-height:1;pointer-events:none;
+  transition:left .22s cubic-bezier(.4,0,.2,1), transform .22s;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));
+  transform:translateX(-50%);left:50%;
+}
+/* Ball */
+.pk-ball-el{
+  position:absolute;bottom:2px;left:50%;
+  transform:translateX(-50%) scale(0);font-size:20px;pointer-events:none;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.7));
+  transition:all .38s cubic-bezier(.2,.8,.4,1);
+}
+/* Hint overlay */
+.pk-hint{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:6px 14px;font-size:11px;font-weight:800;
+  color:rgba(255,255,255,.55);white-space:nowrap;pointer-events:none;
+  backdrop-filter:blur(4px);opacity:0;transition:opacity .2s;
+}
+.pk-hint.vis{ opacity:1; }
+/* Bet panel */
+.pk-panel{
+  flex-shrink:0;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);
+  border-top:1px solid rgba(255,255,255,.07);padding:10px 14px 12px;
+}
+.pk-mode-row{display:flex;gap:6px;margin-bottom:9px;}
+.pk-mode-btn{
+  flex:1;padding:8px 4px;border-radius:12px;
+  border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.4);font-size:10px;font-weight:900;cursor:pointer;
+  transition:all .15s;text-align:center;
+}
+.pk-mode-btn.active{ background:rgba(34,197,94,.14);border-color:#22c55e;color:#22c55e; }
+.pk-info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:11px;padding:7px 12px;margin-bottom:9px;
+}
+.pk-info-lbl{font-size:10px;color:rgba(255,255,255,.35);font-weight:700;}
+.pk-info-val{font-size:15px;font-weight:900;color:#22c55e;}
+.pk-input-row{display:flex;gap:6px;align-items:center;margin-bottom:8px;}
+.pk-bet-inp{
+  flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;color:#fff;font-size:14px;font-weight:800;
+  padding:9px 12px;outline:none;
+}
+.pk-bet-inp:focus{border-color:rgba(34,197,94,.5);}
+.pk-adj{height:38px;padding:0 11px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;}
+.pk-max-btn{height:38px;padding:0 11px;border-radius:10px;background:rgba(240,208,96,.1);border:1px solid rgba(240,208,96,.25);color:#f0d060;font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;}
+.pk-start-btn{
+  width:100%;height:48px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#16a34a,#15803d);
+  color:#fff;font-size:16px;font-weight:900;cursor:pointer;
+  box-shadow:0 4px 20px rgba(22,163,74,.3);letter-spacing:.5px;
+  transition:transform .12s,opacity .12s;
+}
+.pk-start-btn:active{transform:scale(.97);}
+.pk-start-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.pk-cash-btn{
+  width:100%;height:44px;border-radius:14px;border:none;margin-top:6px;
+  background:linear-gradient(135deg,#d97706,#b45309);
+  color:#fff;font-size:14px;font-weight:900;cursor:pointer;
+  box-shadow:0 4px 16px rgba(217,119,6,.3);letter-spacing:.5px;
+  transition:transform .12s,opacity .12s;
+}
+.pk-cash-btn:active{transform:scale(.97);}
+.pk-cash-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.gs-card-penaltis{
+  background:linear-gradient(135deg,rgba(22,163,74,.18),rgba(15,120,55,.05));
+  border:1.5px solid rgba(22,163,74,.4);
+}
+.gs-card-penaltis:hover{box-shadow:0 8px 28px rgba(22,163,74,.2);}
 .gs-card-keno{background:linear-gradient(135deg,rgba(0,180,255,.15),rgba(0,80,200,.04));border:1px solid rgba(0,180,255,.3);}
 .gs-card-keno:hover{box-shadow:0 0 30px rgba(0,180,255,.15);}
 
@@ -2628,6 +2802,12 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;">Sube sin caer · ×6 difícil</div>
       </div>
 
+      <div onclick="selectGame('penaltis')" class="gs-card gs-card-penaltis" style="border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s;">
+        <div style="font-size:32px;">⚽</div>
+        <div style="font-size:12px;font-weight:900;color:#22c55e;">PENALTIS</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.4);text-align:center;">5 lanzamientos · ×17</div>
+        <div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:6px;padding:2px 7px;font-size:8px;color:#ffd700;font-weight:800;">🌍 MUNDIAL 2026</div>
+      </div>
       <div onclick="selectGame('scratch')" style="background:linear-gradient(135deg,rgba(46,213,115,.2),rgba(30,150,80,.06));border:1.5px solid rgba(46,213,115,.45);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
         <div style="font-size:32px;">🎟️</div>
         <div style="font-size:13px;font-weight:900;color:#2ed573;letter-spacing:1px;">RASCA Y GANA</div>
@@ -8691,7 +8871,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scPenaltis'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -9391,6 +9571,8 @@ function selectGame(game) {
     knInit();
   } else if (game === 'tower') {
     twInit();
+  } else if (game === 'penaltis') {
+    pkInit();
 
   } else if (game === 'football') {
     startFootball();
@@ -13092,7 +13274,7 @@ function bnGo(tab){
     'scMines','scDice','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy',
     'scSlotsSection','scGemSlots','scHiLoCards','scHiLoDice',
     'scCartasSection','scMesaSection','scArcadeSection','scMultiSection',
-    'scDominoLobby','scDomino','scDuelo','scBingo','scSports','scTower'];
+    'scDominoLobby','scDomino','scDuelo','scBingo','scSports','scTower','scPenaltis'];
   allScreens.forEach(id=>hide(id));
   currentGame = '';
 
@@ -13161,7 +13343,7 @@ window.addEventListener('popstate', function(e) {
   // Determine which screen is currently visible
   const screens = ['scRummy','scRummyLobby','scLobby','scRoulette','scRouletteLobby',
     'scSlots','scCrash','scMines','scDice','scWheel','scBaccarat','scKeno','scFootball',
-    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scGameSelect','scProfile','scChat','scMainLobby'];
+    'scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scPenaltis','scGameSelect','scProfile','scChat','scMainLobby'];
 
   let current = '';
   for (const id of screens) {
@@ -18111,6 +18293,257 @@ function twResetUI(){
 
 
 
+
+// ══════════════════════════════════════════════════════════════
+//  PENALTIS ⚽ — World Cup penalty shootout
+// ══════════════════════════════════════════════════════════════
+// 6 zones: 0=TL 1=TC 2=TR 3=BL 4=BC 5=BR
+// Each zone maps to one of 3 horizontal columns (L/C/R)
+const PK_COL      = [0,1,2,0,1,2]; // zone → column
+const PK_GK_LEFT  = ['12%','50%','88%']; // GK left per column
+// Ball target positions inside goal (CSS left/bottom of .pk-goal)
+const PK_BALL_POS = [
+  {l:'18%',b:'68%'},{l:'50%',b:'72%'},{l:'82%',b:'68%'},
+  {l:'18%',b:'28%'},{l:'50%',b:'25%'},{l:'82%',b:'28%'},
+];
+// Shooter column weights (prefers corners)
+const PK_SHOOTER_W = [0.22,0.14,0.22,0.22,0.06,0.14]; // zones 0-5
+
+const PK_SERIES = 5;
+const PK_GK_MULT = 2.80;  // per save
+const PK_ST_MULT = 1.38;  // per goal
+// House edge: GK=(1/3×2.80)^5≈ wait — P(save GK)≈1/3 so EV per kick=2.80/3=0.933 → ~7% edge
+// ST: P(goal ST)≈2/3 so EV=1.38×2/3=0.920 → ~8% edge
+
+let pkMode='gk', pkBet=50, pkPlaying=false, pkWaiting=false;
+let pkKick=0, pkStreak=0, pkResults=[];
+
+function pkLeave(){
+  if(pkPlaying){ if(!confirm('¿Salir? Perderás la apuesta actual.')) return; }
+  pkPlaying=false; pkWaiting=false;
+  hide('scPenaltis'); goGameSelect();
+}
+
+function pkInit(){
+  show('scPenaltis'); bnShow(); bnSync('scPenaltis');
+  mgUpdateBal('pkBal');
+  pkPlaying=false; pkWaiting=false; pkKick=0; pkStreak=0; pkResults=[];
+  pkSetMode('gk'); pkBuildDots(); pkResetScene(); pkUpdatePot();
+  document.getElementById('pkStartBtn').style.display='block';
+  document.getElementById('pkCashBtn').style.display='none';
+  pkStatus('Elige el modo y apuesta ⬇️');
+}
+
+function pkSetMode(m){
+  pkMode=m;
+  document.getElementById('pkBtnGK').classList.toggle('active', m==='gk');
+  document.getElementById('pkBtnST').classList.toggle('active', m==='st');
+  document.getElementById('pkModeLabel').textContent = m==='gk'?'MODO PORTERO':'MODO DELANTERO';
+  pkUpdatePot();
+}
+
+function pkAdj(v){
+  const inp=document.getElementById('pkBetInp');
+  if(v==='max') pkBet=Math.min(myBal,5000);
+  else pkBet=Math.max(1,Math.floor((parseInt(inp.value)||50)*v));
+  inp.value=pkBet; pkUpdatePot();
+}
+
+function pkUpdatePot(){
+  const bet=parseInt(document.getElementById('pkBetInp').value||50)||50;
+  const m=pkMode==='gk'?PK_GK_MULT:PK_ST_MULT;
+  const pot=Math.floor(bet*Math.pow(m,PK_SERIES));
+  document.getElementById('pkPotVal').textContent='$'+pot.toLocaleString()+' (×'+m.toFixed(2)+'⁵)';
+}
+
+function pkBuildDots(){
+  const wrap=document.getElementById('pkSeries'); if(!wrap) return;
+  wrap.innerHTML='';
+  for(let i=0;i<PK_SERIES;i++){
+    const d=document.createElement('div');
+    d.className='pk-kick-dot'+(i===0?' current':'');
+    d.id='pkDot'+i; d.textContent='⚽';
+    wrap.appendChild(d);
+  }
+}
+
+function pkUpdateDots(){
+  for(let i=0;i<PK_SERIES;i++){
+    const d=document.getElementById('pkDot'+i); if(!d) continue;
+    if(i<pkResults.length){
+      const ok=pkResults[i];
+      d.className='pk-kick-dot '+(ok?'saved':'lost');
+      d.textContent=ok?(pkMode==='gk'?'🧤':'⚽'):(pkMode==='gk'?'💥':'💨');
+    } else if(i===pkKick){
+      d.className='pk-kick-dot current'; d.textContent='⚽';
+    } else {
+      d.className='pk-kick-dot'; d.textContent='⚽';
+    }
+  }
+}
+
+function pkResetScene(){
+  const gk=document.getElementById('pkGK');
+  if(gk){ gk.style.left='50%'; gk.style.transform='translateX(-50%)'; gk.textContent='🧤'; }
+  const ball=document.getElementById('pkBallEl');
+  if(ball){ ball.style.transition='none'; ball.style.left='50%'; ball.style.bottom='2px';
+    ball.style.transform='translateX(-50%) scale(0)'; ball.textContent='⚽'; }
+  for(let i=0;i<6;i++){
+    const z=document.getElementById('pkZ'+i);
+    if(z){ z.className='pk-zone disabled'; }
+  }
+  const hint=document.getElementById('pkHint'); if(hint) hint.className='pk-hint';
+}
+
+function pkSetZones(active){
+  const hint=document.getElementById('pkHint');
+  const label=pkMode==='gk'?'🧤 Elige dónde atajar':'⚽ Elige dónde disparar';
+  if(hint) hint.className='pk-hint'+(active?' vis':'');
+  if(hint&&active) hint.textContent=label;
+  for(let i=0;i<6;i++){
+    const z=document.getElementById('pkZ'+i);
+    if(z) z.className='pk-zone'+(active?'':' disabled');
+  }
+  pkWaiting=active;
+}
+
+function pkStatus(msg){ const e=document.getElementById('pkStatus'); if(e) e.textContent=msg; }
+
+function pkStart(){
+  if(pkPlaying) return;
+  pkBet=parseInt(document.getElementById('pkBetInp').value||50)||50;
+  if(pkBet<1||pkBet>myBal){ toast('Apuesta inválida'); return; }
+  myBal-=pkBet; saveLocal(); mgUpdateBal('pkBal'); updateRanking();
+  pkPlaying=true; pkWaiting=false; pkKick=0; pkStreak=0; pkResults=[];
+  pkBuildDots(); pkResetScene();
+  document.getElementById('pkStartBtn').style.display='none';
+  document.getElementById('pkBtnGK').disabled=true;
+  document.getElementById('pkBtnST').disabled=true;
+  pkNextKick();
+}
+
+function pkNextKick(){
+  if(pkKick>=PK_SERIES){ pkFinish(); return; }
+  pkResetScene(); pkUpdateDots();
+  pkStatus((pkMode==='gk'?`🧤 Lanzamiento ${pkKick+1}/${PK_SERIES} — ¿A dónde te tiras?`
+                         :`⚽ Lanzamiento ${pkKick+1}/${PK_SERIES} — ¿A dónde disparas?`));
+  // Show cashout if streak>0
+  const cb=document.getElementById('pkCashBtn');
+  if(cb){
+    if(pkStreak>0){
+      const mult=+Math.pow(pkMode==='gk'?PK_GK_MULT:PK_ST_MULT,pkStreak).toFixed(2);
+      const pay=Math.floor(pkBet*mult);
+      cb.style.display='block';
+      cb.textContent=`💰 Cobrar ahora $${pay.toLocaleString()} (×${mult})`;
+    } else { cb.style.display='none'; }
+  }
+  pkSetZones(true);
+}
+
+async function pkPickZone(zone){
+  if(!pkPlaying||!pkWaiting) return;
+  pkSetZones(false);
+  // Highlight player choice
+  const zEl=document.getElementById('pkZ'+zone);
+  if(zEl) zEl.classList.add('sel-z');
+
+  // Shooter picks zone (weighted towards corners)
+  let rnd=Math.random(), shooterZone=5;
+  let cum=0;
+  for(let i=0;i<6;i++){ cum+=PK_SHOOTER_W[i]; if(rnd<=cum){ shooterZone=i; break; } }
+
+  const playerCol=PK_COL[zone];
+  const shooterCol=PK_COL[shooterZone];
+
+  // GK mode: player = goalkeeper, success if playerCol===shooterCol (dives same side as shot)
+  // ST mode: player = striker, success if playerCol!==shooterCol (shoots away from GK)
+  const success = pkMode==='gk' ? playerCol===shooterCol : playerCol!==shooterCol;
+
+  // Animate GK to shooter's column
+  const gkEl=document.getElementById('pkGK');
+  const gkTargetCol = pkMode==='gk' ? playerCol : shooterCol;
+  if(gkEl){
+    gkEl.style.left=PK_GK_LEFT[gkTargetCol];
+    gkEl.style.transform='translateX(-50%)'+(gkTargetCol===0?' rotate(-15deg)':gkTargetCol===2?' rotate(15deg)':'');
+  }
+
+  // Animate ball to shooter's zone position
+  const ballEl=document.getElementById('pkBallEl');
+  const bp=PK_BALL_POS[shooterZone];
+  if(ballEl){
+    ballEl.style.transition='none'; ballEl.style.left='50%';
+    ballEl.style.bottom='2px'; ballEl.style.transform='translateX(-50%) scale(0.4)';
+    await new Promise(res=>setTimeout(res,30));
+    ballEl.style.transition='all .38s cubic-bezier(.2,.8,.4,1)';
+    ballEl.style.left=bp.l; ballEl.style.bottom=bp.b;
+    ballEl.style.transform='translateX(-50%) scale(1)';
+  }
+
+  await new Promise(res=>setTimeout(res,430));
+
+  // Show result on zones
+  const sEl=document.getElementById('pkZ'+shooterZone);
+  if(sEl) sEl.classList.add(success?'win-z':'lose-z');
+
+  if(success){
+    pkStreak++; pkResults.push(true);
+    if(gkEl) gkEl.textContent = pkMode==='gk'?'🙌':'⚽';
+    playTone(pkMode==='gk'?660:880, .09,'sine',.12);
+    pkStatus(pkMode==='gk'?`🙌 ¡ATAJADA! ${pkKick+1}/${PK_SERIES}`:`⚽ ¡GOOOL! ${pkKick+1}/${PK_SERIES}`);
+    pkUpdateDots();
+    await new Promise(res=>setTimeout(res,1100));
+    pkKick++;
+    pkNextKick();
+  } else {
+    pkResults.push(false);
+    if(gkEl) gkEl.textContent = pkMode==='gk'?'😓':'🧤';
+    if(ballEl) ballEl.textContent = pkMode==='gk'?'💥':'💨';
+    playTone(160,.2,'sawtooth',.22);
+    pkStatus(pkMode==='gk'?'💥 ¡Gol en contra! Serie terminada':`🧤 ¡Atajado! Serie terminada`);
+    pkUpdateDots(); sfxLose();
+    pkPlaying=false;
+    await new Promise(res=>setTimeout(res,1500));
+    toast(pkMode==='gk'?'💥 Perdiste $'+pkBet.toLocaleString():'🧤 Atajado — perdiste $'+pkBet.toLocaleString());
+    mlRecordGameStat('penaltis',false,-pkBet);
+    pkEndRound();
+  }
+}
+
+function pkCashOut(){
+  if(!pkPlaying||pkStreak===0) return;
+  pkSetZones(false);
+  const mult=+Math.pow(pkMode==='gk'?PK_GK_MULT:PK_ST_MULT,pkStreak).toFixed(2);
+  const payout=Math.floor(pkBet*mult);
+  myBal+=payout; saveLocal(); updateRanking(); mgUpdateBal('pkBal');
+  pkStatus(`💰 ¡Cobrado! ×${mult} = +$${(payout-pkBet).toLocaleString()}`);
+  toast(`💰 ×${mult} cobrado → +$${(payout-pkBet).toLocaleString()}`);
+  sfxWin(); if(payout>pkBet*3) burst(innerWidth/2,200,16);
+  mlRecordGameStat('penaltis',true,payout-pkBet);
+  pkPlaying=false; pkEndRound();
+}
+
+function pkFinish(){
+  const mult=+Math.pow(pkMode==='gk'?PK_GK_MULT:PK_ST_MULT,PK_SERIES).toFixed(2);
+  const payout=Math.floor(pkBet*mult);
+  myBal+=payout; saveLocal(); updateRanking(); mgUpdateBal('pkBal');
+  pkStatus(`🏆 ¡SERIE COMPLETA! ×${mult} = +$${(payout-pkBet).toLocaleString()}`);
+  toast(`🏆 ¡5/5 completos! +$${(payout-pkBet).toLocaleString()}`);
+  sfxWin(); burst(innerWidth/2,200,22); burst(innerWidth*.3,300,14);
+  mlRecordGameStat('penaltis',true,payout-pkBet);
+  pkUpdateDots(); pkPlaying=false;
+  setTimeout(()=>pkEndRound(), 1800);
+}
+
+function pkEndRound(){
+  pkWaiting=false; pkSetZones(false);
+  document.getElementById('pkCashBtn').style.display='none';
+  const sb=document.getElementById('pkStartBtn');
+  if(sb){ sb.style.display='block'; sb.textContent='⚽ NUEVA SERIE'; }
+  const gb=document.getElementById('pkBtnGK'); if(gb) gb.disabled=false;
+  const stb=document.getElementById('pkBtnST'); if(stb) stb.disabled=false;
+  mgCheckBankruptcy?.('pkBal');
+}
+
 </script>
 
 <!-- ════════ BOTTOM NAV BAR ════════ -->
@@ -18636,6 +19069,66 @@ function twResetUI(){
 <!-- ════════════════════════════════════════════════════════
      🎟️  SCRATCH CARDS
 ════════════════════════════════════════════════════════ -->
+<!-- ════════ PENALTIS ════════ -->
+<div class="fullscreen hidden" id="scPenaltis">
+  <!-- Topbar -->
+  <div class="pk-topbar">
+    <button class="mg-back" onclick="pkLeave()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:13px;padding:7px 14px;cursor:pointer;">← Salir</button>
+    <div style="text-align:center;">
+      <div style="font-size:14px;font-weight:900;color:#22c55e;letter-spacing:1px;">⚽ PENALTIS</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.5px;" id="pkModeLabel">MODO PORTERO</div>
+    </div>
+    <div style="font-size:12px;font-weight:800;color:#f0d060;">$<span id="pkBal">0</span></div>
+  </div>
+  <!-- Series dots -->
+  <div class="pk-series" id="pkSeries"></div>
+  <!-- Status -->
+  <div class="pk-status" id="pkStatus">Elige el modo y apuesta</div>
+  <!-- Scene -->
+  <div class="pk-scene" id="pkScene">
+    <div class="pk-grass"></div>
+    <div class="pk-spot"></div>
+    <div class="pk-ball-el" id="pkBallEl">⚽</div>
+    <div class="pk-goal">
+      <div class="pk-net"></div>
+      <div class="pk-goal-frame"></div>
+      <div class="pk-zones" id="pkZones">
+        <div class="pk-zone disabled" id="pkZ0" onclick="pkPickZone(0)"></div>
+        <div class="pk-zone disabled" id="pkZ1" onclick="pkPickZone(1)"></div>
+        <div class="pk-zone disabled" id="pkZ2" onclick="pkPickZone(2)"></div>
+        <div class="pk-zone disabled" id="pkZ3" onclick="pkPickZone(3)"></div>
+        <div class="pk-zone disabled" id="pkZ4" onclick="pkPickZone(4)"></div>
+        <div class="pk-zone disabled" id="pkZ5" onclick="pkPickZone(5)"></div>
+      </div>
+      <div class="pk-hint" id="pkHint">Toca una zona</div>
+      <div class="pk-gk" id="pkGK">🧤</div>
+    </div>
+  </div>
+  <!-- Bet panel -->
+  <div class="pk-panel">
+    <div class="pk-mode-row">
+      <button class="pk-mode-btn active" id="pkBtnGK" onclick="pkSetMode('gk')">
+        🧤 PORTERO<br><span style="font-size:8px;opacity:.55;">Ataja · ×2.80 c/parada</span>
+      </button>
+      <button class="pk-mode-btn" id="pkBtnST" onclick="pkSetMode('st')">
+        ⚽ DELANTERO<br><span style="font-size:8px;opacity:.55;">Mete gol · ×1.38 c/gol</span>
+      </button>
+    </div>
+    <div class="pk-info-row">
+      <div class="pk-info-lbl">GANANCIA SI COMPLETAS 5</div>
+      <div class="pk-info-val" id="pkPotVal">—</div>
+    </div>
+    <div class="pk-input-row">
+      <input class="pk-bet-inp" id="pkBetInp" type="number" value="50" min="1" oninput="pkUpdatePot()">
+      <button class="pk-adj" onclick="pkAdj(.5)">½</button>
+      <button class="pk-adj" onclick="pkAdj(2)">×2</button>
+      <button class="pk-max-btn" onclick="pkAdj('max')">MAX</button>
+    </div>
+    <button class="pk-start-btn" id="pkStartBtn" onclick="pkStart()">⚽ EMPEZAR SERIE</button>
+    <button class="pk-cash-btn" id="pkCashBtn" onclick="pkCashOut()" style="display:none;"></button>
+  </div>
+</div>
+
 <div class="fullscreen hidden" id="scScratch" style="overflow-y:auto;justify-content:flex-start;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#001a08,#010802);">
   <!-- Top bar -->
   <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,.55);border-bottom:1px solid rgba(46,213,115,.18);flex-shrink:0;">
