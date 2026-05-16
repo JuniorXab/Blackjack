@@ -297,6 +297,54 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .ab-stat-val{font-size:14px;font-weight:900;color:#fff;}
 .ab-detail-close{width:100%;margin-top:14px;padding:13px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:rgba(255,255,255,.5);font-size:13px;font-weight:700;cursor:pointer;}
 
+
+/* ═══════════════════════════════
+   INTERCAMBIO DE FIGURITAS
+═══════════════════════════════ */
+#abTradeModal{position:fixed;inset:0;z-index:9400;display:none;flex-direction:column;background:radial-gradient(ellipse at 50% 0%,#1a1200,#06040a);}
+#abTradeModal.open{display:flex;}
+.tr-topbar{padding:12px 14px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(240,208,96,.1);background:rgba(6,4,10,.95);flex-shrink:0;}
+.tr-back{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;color:rgba(255,255,255,.6);font-size:14px;width:34px;height:34px;cursor:pointer;flex-shrink:0;}
+.tr-title{font-size:16px;font-weight:900;color:#f0d060;letter-spacing:1px;}
+.tr-body{flex:1;overflow-y:auto;padding:0 14px 90px;}
+/* Tabs */
+.tr-tabs{display:flex;gap:6px;padding:12px 0 0;}
+.tr-tab{flex:1;padding:8px 4px;border-radius:14px;font-size:11px;font-weight:800;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.4);text-align:center;transition:all .15s;}
+.tr-tab.active{background:rgba(240,208,96,.15);border-color:rgba(240,208,96,.5);color:#f0d060;}
+/* Mis repetidas */
+.tr-dupes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 0 0;}
+.tr-dupe-card{border-radius:12px;overflow:hidden;aspect-ratio:.72;cursor:pointer;position:relative;border:1.5px solid rgba(240,208,96,.3);background:linear-gradient(135deg,#1a1400,#3a2a00);transition:transform .15s;}
+.tr-dupe-card.selected{border-color:#f0d060;box-shadow:0 0 12px rgba(240,208,96,.4);}
+.tr-dupe-card:active{transform:scale(.95);}
+.tr-dupe-badge{position:absolute;top:3px;right:3px;background:rgba(240,208,96,.9);border-radius:6px;padding:1px 5px;font-size:7px;font-weight:900;color:#1a0a00;z-index:10;}
+/* Offer builder */
+.tr-offer-wrap{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;margin-top:12px;}
+.tr-offer-title{font-size:10px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:8px;}
+.tr-offer-slots{display:flex;gap:8px;flex-wrap:wrap;}
+.tr-offer-slot{width:56px;height:78px;border-radius:10px;border:1.5px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(255,255,255,.2);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0;}
+.tr-offer-slot.filled{border-style:solid;border-color:rgba(240,208,96,.4);}
+.tr-offer-slot .tr-rm{position:absolute;top:1px;right:1px;background:rgba(192,57,43,.9);border-radius:4px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:900;cursor:pointer;}
+.tr-send-btn{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,#c9a84c,#8a5c00);border:none;border-radius:14px;color:#fff;font-size:13px;font-weight:900;cursor:pointer;letter-spacing:1px;}
+.tr-send-btn:disabled{opacity:.4;cursor:not-allowed;}
+.tr-send-btn:active:not(:disabled){transform:scale(.98);}
+/* Incoming trades */
+.tr-trade-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;margin-top:10px;}
+.tr-trade-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.tr-trade-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.tr-trade-from{font-size:12px;font-weight:800;color:#fff;}
+.tr-trade-time{font-size:9px;color:rgba(255,255,255,.3);margin-top:1px;}
+.tr-trade-stickers{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;}
+.tr-mini-sticker{width:40px;height:56px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;flex-shrink:0;}
+.tr-mini-top{flex:1;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(255,255,255,.05);}
+.tr-mini-bot{background:rgba(0,0,0,.5);padding:2px 3px;font-size:5.5px;color:#fff;text-align:center;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tr-trade-actions{display:flex;gap:6px;margin-top:8px;}
+.tr-btn-accept{flex:1;padding:9px;background:linear-gradient(135deg,#1a7a30,#0a4018);border:1px solid rgba(46,204,113,.4);border-radius:11px;color:#fff;font-size:11px;font-weight:900;cursor:pointer;}
+.tr-btn-reject{flex:1;padding:9px;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);border-radius:11px;color:#e74c3c;font-size:11px;font-weight:900;cursor:pointer;}
+.tr-btn-accept:active,.tr-btn-reject:active{transform:scale(.97);}
+.tr-empty{text-align:center;padding:40px 20px;color:rgba(255,255,255,.25);font-size:12px;}
+/* Notif badge on album entry */
+.ab-trade-notif{position:absolute;top:-4px;right:-4px;background:#e74c3c;border-radius:50%;width:16px;height:16px;font-size:8px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;}
+
 /* ════════════════════════════
    PENALTIS
 ════════════════════════════ */
@@ -8891,6 +8939,8 @@ function openMesaSection(){
   show('scMesaSection'); bnShow(); bnSync('scMesaSection'); navPush('scMesaSection');
 }
 function openArcadeSection(){
+  try{abCloseTrade();}catch(e){}
+  try{document.getElementById('abPackOverlay').classList.remove('open');}catch(e){}
   goGameSelect(); hide('scGameSelect');
   show('scArcadeSection'); bnShow(); bnSync('scArcadeSection'); navPush('scArcadeSection');
 }
@@ -8901,7 +8951,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scPenaltisLobby','scPenaltisGame','scPenaltisResult','scAlbum'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scPenaltisLobby','scPenaltisGame','scPenaltisResult','scAlbum','abTradeModal'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -18987,6 +19037,10 @@ function twResetUI(){
         <div class="ab-subtitle">COLECCIÓN OFICIAL · PANINI</div>
       </div>
       <div class="ab-progress-pill" id="abProgressPill">0/120</div>
+      <div style="position:relative;cursor:pointer;" onclick="abOpenTrade()">
+        <div style="background:rgba(240,208,96,.1);border:1px solid rgba(240,208,96,.3);border-radius:11px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;">🔄</div>
+        <div id="abTradeNotifDot" style="display:none;position:absolute;top:-4px;right:-4px;background:#e74c3c;border-radius:50%;width:14px;height:14px;font-size:7px;font-weight:900;color:#fff;display:none;align-items:center;justify-content:center;" id="abTradeNotifDot">!</div>
+      </div>
     </div>
 
     <!-- Progress bar -->
@@ -19033,6 +19087,51 @@ function twResetUI(){
     <div class="ab-detail-badges" id="abDetBadges"></div>
     <div class="ab-detail-stats" id="abDetStats"></div>
     <button class="ab-detail-close" onclick="abCloseDetail()">Cerrar</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     🔄 INTERCAMBIO DE FIGURITAS
+════════════════════════════════════════════════════════ -->
+<div id="abTradeModal">
+  <div class="tr-topbar">
+    <button class="tr-back" onclick="abCloseTrade()">←</button>
+    <div style="flex:1;">
+      <div class="tr-title">🔄 INTERCAMBIOS</div>
+    </div>
+    <div id="trNotifBadge" style="display:none;background:#e74c3c;border-radius:20px;padding:3px 9px;font-size:10px;font-weight:900;color:#fff;"></div>
+  </div>
+  <div class="tr-body">
+    <div class="tr-tabs">
+      <div class="tr-tab active" id="trTab1" onclick="trSelTab('offer')">📤 Ofrecer</div>
+      <div class="tr-tab" id="trTab2" onclick="trSelTab('incoming')">📥 Recibidas <span id="trIncomingCount"></span></div>
+      <div class="tr-tab" id="trTab3" onclick="trSelTab('sent')">📨 Enviadas</div>
+    </div>
+
+    <!-- TAB: OFRECER -->
+    <div id="trPanelOffer">
+      <div style="font-size:10px;color:rgba(255,255,255,.35);margin:12px 0 6px;letter-spacing:1px;">Tus figuritas repetidas — toca para añadir a la oferta</div>
+      <div class="tr-dupes-grid" id="trDupesGrid"></div>
+      <div class="tr-offer-wrap">
+        <div class="tr-offer-title">FIGURITAS QUE OFRECES</div>
+        <div class="tr-offer-slots" id="trOfferSlots"></div>
+        <div style="margin-top:10px;">
+          <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:6px;letter-spacing:1px;">¿QUÉ PIDES A CAMBIO?</div>
+          <input id="trWantInput" placeholder="Ej: Messi, Mbappé, Brasil..." style="width:100%;padding:10px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:11px;color:#fff;font-size:12px;font-family:inherit;outline:none;" maxlength="60">
+        </div>
+        <button class="tr-send-btn" id="trSendBtn" onclick="trSendOffer()">📤 Publicar intercambio</button>
+      </div>
+    </div>
+
+    <!-- TAB: RECIBIDAS -->
+    <div id="trPanelIncoming" style="display:none;">
+      <div id="trIncomingList"><div class="tr-empty">Cargando...</div></div>
+    </div>
+
+    <!-- TAB: ENVIADAS -->
+    <div id="trPanelSent" style="display:none;">
+      <div id="trSentList"><div class="tr-empty">Cargando...</div></div>
+    </div>
   </div>
 </div>
 
@@ -19606,6 +19705,8 @@ const AB_SECTIONS = [
   { id:'s4', name:'SPECIAL',  label:'✨ Shinies' },
 ];
 
+
+const AB_PHOTOS = {41: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg/120px-Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg", 42: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Cristiano_Ronaldo_2018.jpg/120px-Cristiano_Ronaldo_2018.jpg", 43: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/2019-07-17_SG_Dynamo_Dresden_v_Paris_Saint-Germain_FC_by_Sandro_Halank–010_%28cropped%29.jpg/120px-2019-07-17_SG_Dynamo_Dresden_v_Paris_Saint-Germain_FC_by_Sandro_Halank–010_%28cropped%29.jpg", 44: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Vinicius_Junior_2023.jpg/120px-Vinicius_Junior_2023.jpg", 45: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Erling_Haaland_2023.jpg/120px-Erling_Haaland_2023.jpg", 46: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Jude_Bellingham_2023.jpg/120px-Jude_Bellingham_2023.jpg", 47: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Pedri_2022_%28cropped%29.jpg/120px-Pedri_2022_%28cropped%29.jpg", 48: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Luka_Modrić_2019_%28cropped%29.jpg/120px-Luka_Modrić_2019_%28cropped%29.jpg", 54: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Kevin_De_Bruyne_2021.jpg/120px-Kevin_De_Bruyne_2021.jpg", 59: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Harry_Kane_2021-08-06.jpg/120px-Harry_Kane_2021-08-06.jpg", 60: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Neymar_-_2019_%28cropped%29.jpg/120px-Neymar_-_2019_%28cropped%29.jpg", 51: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Mohamed_Salah_2018.jpg/120px-Mohamed_Salah_2018.jpg", 80: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Rodri_2023.jpg/120px-Rodri_2023.jpg"};
 const AB_STICKERS = [
   // ── SECCIÓN 1: SELECCIONES AMÉRICAS ───────────────────
   {id:1,sec:'s1',emoji:'🇧🇷',name:'Brasil',sub:'Favorito',pos:'Selección',rating:94,rare:'gold'},
@@ -19739,6 +19840,7 @@ function openAlbum(){
   show('scAlbum');
   bnShow(); bnSync('scAlbum');
   abRender();
+  abStartTradeNotifs();
 }
 
 // ── RENDER ─────────────────────────────────────────────────────────
@@ -19821,12 +19923,16 @@ function abStickerOwnedHTML(st,count){
   const accent=abAccentForRare(st.rare);
   const dupes=count>1?'<div class="ab-sticker-dupes">x'+count+'</div>':'';
   const shimmer=st.rare==='shiny'?'<div class="ab-shiny-shimmer"></div>':'';
+  const photo=AB_PHOTOS[st.id];
+  const mediaHTML=photo
+    ?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none';this.nextSibling.style.display='flex';" loading="lazy"><div class="ab-sticker-emoji" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">'+st.emoji+'</div>'
+    :'<div class="ab-sticker-emoji">'+st.emoji+'</div>';
   return '<div class="ab-sticker-inner" style="'+bg+'">'
-    +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;">'
+    +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;overflow:hidden;position:relative;">'
     +shimmer
-    +'<div class="ab-sticker-num">#'+String(st.id).padStart(3,'0')+'</div>'
-    +'<div class="ab-sticker-shine"></div>'
-    +'<div class="ab-sticker-emoji">'+st.emoji+'</div>'
+    +'<div class="ab-sticker-num" style="position:absolute;top:3px;left:4px;z-index:5;">#'+String(st.id).padStart(3,'0')+'</div>'
+    +'<div class="ab-sticker-shine" style="position:absolute;inset:0;z-index:4;pointer-events:none;"></div>'
+    +mediaHTML
     +dupes
     +'</div>'
     +'<div class="ab-sticker-bottom" style="background:'+accent+'22;">'
@@ -19919,10 +20025,14 @@ function abRevealPack(){
     const shimmer=st.rare==='shiny'?'<div class="ab-shiny-shimmer"></div>':'';
     const count=abCollection[st.id];
     const dupeBadge=count>1?'<div style="position:absolute;top:2px;right:2px;background:rgba(46,204,113,.9);border-radius:5px;padding:1px 3px;font-size:6px;font-weight:900;color:#fff;">+1</div>':'';
+    const rPhoto=AB_PHOTOS[st.id];
+    const rMedia=rPhoto
+      ?'<img src="'+rPhoto+'" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\';" loading="lazy"><div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;font-size:22px;">'+st.emoji+'</div>'
+      :'<div style="font-size:22px;">'+st.emoji+'</div>';
     card.innerHTML='<div class="ab-sticker-inner" style="'+bg+'">'
-      +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;">'
+      +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;overflow:hidden;position:relative;">'
       +shimmer+'<div class="ab-shiny-shimmer" style="animation-delay:'+(i*0.3)+'s;"></div>'
-      +'<div class="ab-sticker-emoji" style="font-size:22px;">'+st.emoji+'</div>'
+      +rMedia
       +dupeBadge
       +'</div>'
       +'<div class="ab-sticker-bottom" style="background:'+accent+'22;">'
@@ -19993,6 +20103,308 @@ function abShowDetail(st,count){
 
 function abCloseDetail(){
   document.getElementById('abDetailModal').classList.remove('open');
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  🔄 SISTEMA DE INTERCAMBIOS — FIREBASE REALTIME
+// ═══════════════════════════════════════════════════════
+
+let trCurrentTab = 'offer';
+let trOfferStickers = []; // array of sticker ids (max 3)
+let trIncomingListener = null;
+let trSentListener = null;
+let trNotifListener = null;
+
+// ── OPEN / CLOSE ───────────────────────────────────────
+function abOpenTrade(){
+  document.getElementById('abTradeModal').classList.add('open');
+  trSelTab('offer');
+  trRenderDupes();
+  trRenderOfferSlots();
+  trListenIncoming();
+  trListenSent();
+}
+function abCloseTrade(){
+  document.getElementById('abTradeModal').classList.remove('open');
+}
+
+// ── TAB SWITCH ─────────────────────────────────────────
+function trSelTab(tab){
+  trCurrentTab = tab;
+  ['offer','incoming','sent'].forEach(t=>{
+    document.getElementById('trPanel'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab?'block':'none';
+    document.getElementById('trTab'+(t==='offer'?1:t==='incoming'?2:3)).classList.toggle('active', t===tab);
+  });
+  if(tab==='incoming') trRenderIncoming();
+  if(tab==='sent') trRenderSent();
+}
+
+// ── DUPES GRID ─────────────────────────────────────────
+function trRenderDupes(){
+  const grid = document.getElementById('trDupesGrid');
+  const dupes = AB_STICKERS.filter(s => (abCollection[s.id]||0) > 1);
+  if(!dupes.length){
+    grid.innerHTML = '<div class="tr-empty" style="grid-column:1/-1;">No tienes figuritas repetidas aún.<br>¡Abre más sobres!</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  dupes.forEach(st=>{
+    const count = abCollection[st.id];
+    const selected = trOfferStickers.includes(st.id);
+    const el = document.createElement('div');
+    el.className = 'tr-dupe-card' + (selected?' selected':'');
+    el.onclick = () => trToggleDupe(st.id);
+    const photo = AB_PHOTOS[st.id];
+    const bg = abBgForRare(st.rare);
+    el.innerHTML = '<div style="'+bg+';width:100%;height:100%;display:flex;flex-direction:column;">'
+      +'<div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;">'
+      +(photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none'">':'')
+      +'<div style="font-size:20px;'+(photo?'display:none;':'')+'align-items:center;justify-content:center;width:100%;height:100%;">'+st.emoji+'</div>'
+      +'<div class="tr-dupe-badge">x'+count+'</div>'
+      +(selected?'<div style="position:absolute;inset:0;background:rgba(240,208,96,.25);display:flex;align-items:center;justify-content:center;font-size:18px;">✅</div>':'')
+      +'</div>'
+      +'<div style="background:rgba(0,0,0,.6);padding:3px 4px;text-align:center;">'
+      +'<div style="font-size:6.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+st.name+'</div>'
+      +'</div></div>';
+    grid.appendChild(el);
+  });
+}
+
+function trToggleDupe(id){
+  if(trOfferStickers.includes(id)){
+    trOfferStickers = trOfferStickers.filter(x=>x!==id);
+  } else {
+    if(trOfferStickers.length >= 3){ toast('Máximo 3 figuritas por oferta',1400); return; }
+    trOfferStickers.push(id);
+  }
+  trRenderDupes();
+  trRenderOfferSlots();
+}
+
+// ── OFFER SLOTS ────────────────────────────────────────
+function trRenderOfferSlots(){
+  const wrap = document.getElementById('trOfferSlots');
+  wrap.innerHTML = '';
+  const slots = 3;
+  for(let i=0;i<slots;i++){
+    const sid = trOfferStickers[i];
+    const div = document.createElement('div');
+    div.className = 'tr-offer-slot' + (sid?' filled':'');
+    if(sid){
+      const st = AB_STICKERS.find(s=>s.id===sid);
+      const photo = AB_PHOTOS[sid];
+      const bg = abBgForRare(st.rare);
+      div.style.cssText = bg;
+      div.innerHTML = (photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;position:absolute;inset:0;" onerror="this.style.display='none'">':'')
+        +'<div style="font-size:20px;position:absolute;">'+st.emoji+'</div>'
+        +'<div class="tr-rm" onclick="trRemoveOffer('+sid+',event)">✕</div>';
+    } else {
+      div.innerHTML = '+';
+      div.onclick = () => trSelTab('offer');
+    }
+    wrap.appendChild(div);
+  }
+  document.getElementById('trSendBtn').disabled = trOfferStickers.length === 0;
+}
+
+function trRemoveOffer(id, e){
+  e.stopPropagation();
+  trOfferStickers = trOfferStickers.filter(x=>x!==id);
+  trRenderDupes();
+  trRenderOfferSlots();
+}
+
+// ── SEND OFFER ─────────────────────────────────────────
+function trSendOffer(){
+  if(!db){ toast('⚠️ Sin conexión Firebase',1600); return; }
+  if(!trOfferStickers.length){ toast('Selecciona figuritas para ofrecer',1400); return; }
+  const want = document.getElementById('trWantInput').value.trim();
+  if(!want){ toast('Escribe qué pides a cambio',1400); return; }
+
+  // Check user still has duplicates
+  for(const sid of trOfferStickers){
+    if((abCollection[sid]||0) < 2){ toast('Ya no tienes repetidas de '+AB_STICKERS.find(s=>s.id===sid).name,1600); return; }
+  }
+
+  const offer = {
+    fromId: myId,
+    fromName: myName || 'Jugador',
+    fromColor: myColor || '#f0d060',
+    stickers: trOfferStickers,
+    want: want,
+    ts: Date.now(),
+    status: 'open'
+  };
+
+  db.ref('ab_trades').push(offer).then(()=>{
+    toast('✅ Oferta publicada',1400);
+    trOfferStickers = [];
+    document.getElementById('trWantInput').value = '';
+    trRenderDupes();
+    trRenderOfferSlots();
+  }).catch(()=>toast('❌ Error al publicar',1600));
+}
+
+// ── INCOMING (all open offers except mine) ─────────────
+let trIncomingData = [];
+let trSentData = [];
+
+function trListenIncoming(){
+  if(!db) return;
+  if(trIncomingListener) trIncomingListener();
+  const ref = db.ref('ab_trades').orderByChild('status').equalTo('open');
+  trIncomingListener = ()=>ref.off();
+  ref.on('value', snap=>{
+    trIncomingData = [];
+    snap.forEach(ch=>{
+      const d = ch.val();
+      if(d.fromId !== myId) trIncomingData.push({key:ch.key,...d});
+    });
+    // notification badge
+    const badge = document.getElementById('abTradeNotifDot');
+    if(badge){badge.style.display=trIncomingData.length>0?'flex':'none';badge.textContent=trIncomingData.length;}
+    const pill = document.getElementById('trNotifBadge');
+    if(pill){pill.style.display=trIncomingData.length>0?'block':'none';pill.textContent=trIncomingData.length+' nuevas';}
+    const cnt = document.getElementById('trIncomingCount');
+    if(cnt) cnt.textContent = trIncomingData.length>0?' ('+trIncomingData.length+')':'';
+    if(trCurrentTab==='incoming') trRenderIncoming();
+  });
+}
+
+function trListenSent(){
+  if(!db) return;
+  const ref = db.ref('ab_trades').orderByChild('fromId').equalTo(myId);
+  ref.on('value', snap=>{
+    trSentData = [];
+    snap.forEach(ch=>trSentData.push({key:ch.key,...ch.val()}));
+    trSentData.sort((a,b)=>b.ts-a.ts);
+    if(trCurrentTab==='sent') trRenderSent();
+  });
+}
+
+function trRenderIncoming(){
+  const list = document.getElementById('trIncomingList');
+  if(!trIncomingData.length){list.innerHTML='<div class="tr-empty">No hay intercambios disponibles.<br>¡Vuelve más tarde!</div>';return;}
+  list.innerHTML = '';
+  trIncomingData.forEach(offer=>{
+    list.appendChild(trBuildCard(offer, true));
+  });
+}
+
+function trRenderSent(){
+  const list = document.getElementById('trSentList');
+  if(!trSentData.length){list.innerHTML='<div class="tr-empty">No has enviado ofertas aún.</div>';return;}
+  list.innerHTML = '';
+  trSentData.forEach(offer=>{
+    list.appendChild(trBuildCard(offer, false));
+  });
+}
+
+function trBuildCard(offer, canAccept){
+  const el = document.createElement('div');
+  el.className = 'tr-trade-card';
+  const ago = trTimeAgo(offer.ts);
+  const statusColor = offer.status==='accepted'?'#2ecc71':offer.status==='rejected'?'#e74c3c':'rgba(255,255,255,.3)';
+  const statusLabel = offer.status==='accepted'?'✅ Aceptado':offer.status==='rejected'?'❌ Rechazado':'🟡 Abierto';
+
+  let stickersHTML = '';
+  (offer.stickers||[]).forEach(sid=>{
+    const st = AB_STICKERS.find(s=>s.id===sid);
+    if(!st) return;
+    const photo = AB_PHOTOS[sid];
+    const bg = abBgForRare(st.rare);
+    stickersHTML += '<div class="tr-mini-sticker" style="'+bg+'">'
+      +'<div class="tr-mini-top">'
+      +(photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none'">':'')
+      +'<span style="font-size:16px;'+(photo?'display:none;':'')+'">'+st.emoji+'</span>'
+      +'</div>'
+      +'<div class="tr-mini-bot">'+st.name+'</div>'
+      +'</div>';
+  });
+
+  el.innerHTML = '<div class="tr-trade-header">'
+    +'<div class="tr-trade-avatar" style="background:'+offer.fromColor+'33;color:'+offer.fromColor+';">'+offer.fromName.charAt(0).toUpperCase()+'</div>'
+    +'<div><div class="tr-trade-from">'+offer.fromName+'</div>'
+    +'<div class="tr-trade-time">'+ago+' · <span style="color:'+statusColor+';">'+statusLabel+'</span></div></div>'
+    +'</div>'
+    +'<div style="font-size:9px;color:rgba(255,255,255,.35);margin-bottom:4px;">OFRECE:</div>'
+    +'<div class="tr-trade-stickers">'+stickersHTML+'</div>'
+    +'<div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:6px;">PIDE: <span style="color:rgba(255,255,255,.7);font-weight:700;">'+offer.want+'</span></div>';
+
+  if(canAccept && offer.status==='open'){
+    const actions = document.createElement('div');
+    actions.className = 'tr-trade-actions';
+    const acc = document.createElement('button');
+    acc.className = 'tr-btn-accept';
+    acc.textContent = '✅ Aceptar';
+    acc.onclick = ()=>trAcceptOffer(offer);
+    const rej = document.createElement('button');
+    rej.className = 'tr-btn-reject';
+    rej.textContent = '❌ Rechazar';
+    rej.onclick = ()=>trRejectOffer(offer.key);
+    actions.appendChild(acc);
+    actions.appendChild(rej);
+    el.appendChild(actions);
+  } else if(!canAccept && offer.status==='open'){
+    const del = document.createElement('button');
+    del.style.cssText='width:100%;margin-top:8px;padding:8px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:11px;color:#e74c3c;font-size:11px;font-weight:700;cursor:pointer;';
+    del.textContent='🗑️ Cancelar oferta';
+    del.onclick=()=>trDeleteOffer(offer.key);
+    el.appendChild(del);
+  }
+  return el;
+}
+
+function trAcceptOffer(offer){
+  if(!db) return;
+  // Give offerer's stickers to me, take nothing from me automatically
+  // (honor system — user manually gives their sticker)
+  // Add stickers to my collection
+  offer.stickers.forEach(sid=>{
+    abCollection[sid] = (abCollection[sid]||0) + 1;
+  });
+  abSave();
+
+  // Mark trade as accepted
+  db.ref('ab_trades/'+offer.key).update({status:'accepted', acceptedBy:myId, acceptedName:myName||'Jugador', acceptedTs:Date.now()})
+    .then(()=>{
+      toast('✅ ¡Intercambio aceptado! Figuritas añadidas',2000);
+      abRenderProgress();
+    }).catch(()=>toast('❌ Error al aceptar',1600));
+}
+
+function trRejectOffer(key){
+  if(!db) return;
+  db.ref('ab_trades/'+key).update({status:'rejected'})
+    .then(()=>toast('Oferta rechazada',1200))
+    .catch(()=>toast('❌ Error',1400));
+}
+
+function trDeleteOffer(key){
+  if(!db) return;
+  db.ref('ab_trades/'+key).remove()
+    .then(()=>toast('Oferta cancelada',1200))
+    .catch(()=>toast('❌ Error',1400));
+}
+
+function trTimeAgo(ts){
+  const diff = Date.now()-ts;
+  if(diff<60000) return 'ahora';
+  if(diff<3600000) return Math.floor(diff/60000)+'m';
+  if(diff<86400000) return Math.floor(diff/3600000)+'h';
+  return Math.floor(diff/86400000)+'d';
+}
+
+// ── LISTEN FOR NOTIFICATIONS FROM ALBUM SCREEN ─────────
+function abStartTradeNotifs(){
+  if(!db||!myId) return;
+  db.ref('ab_trades').orderByChild('status').equalTo('open').on('value', snap=>{
+    let count=0;
+    snap.forEach(ch=>{ if(ch.val().fromId!==myId) count++; });
+    const dot = document.getElementById('abTradeNotifDot');
+    if(dot) dot.style.display = count>0?'flex':'none';
+  });
 }
 
 </script>
