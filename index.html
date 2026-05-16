@@ -18943,7 +18943,7 @@ function twResetUI(){
 <!-- ════════════════════════════════════════════════════════
      ⚽ PENALTIS — GAME
 ════════════════════════════════════════════════════════ -->
-<div class="fullscreen hidden" id="scPenaltisGame" style="flex-direction:column;justify-content:flex-start;align-items:stretch;padding:0;">
+<div class="fullscreen hidden" id="scPenaltisGame" style="flex-direction:column;justify-content:flex-start;align-items:stretch;padding:0;background:#04080f;">
   <!-- Header scores -->
   <div class="pg-header">
     <div class="pg-score-board">
@@ -18969,8 +18969,8 @@ function twResetUI(){
   <!-- Kick tracker dots -->
   <div class="pg-kicks" id="pgKicksTrack"></div>
 
-  <!-- Field -->
-  <div class="pg-field" id="pgFieldWrap">
+  <!-- Field — takes remaining space, all interactive overlays inside -->
+  <div id="pgFieldWrap" style="position:relative;flex:1;overflow:hidden;background:#1a7a35;">
     <svg id="pgFieldSvg" width="100%" height="100%" viewBox="0 0 400 480" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
       <rect width="400" height="480" fill="#1a7a35"/>
       <rect x="0" y="0" width="50" height="480" fill="#158030" opacity=".35"/>
@@ -18982,12 +18982,10 @@ function twResetUI(){
       <rect x="110" y="320" width="180" height="118" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.5"/>
       <circle cx="200" cy="414" r="3.5" fill="rgba(255,255,255,.65)"/>
       <path d="M110 260 A90 90 0 0 1 290 260" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>
-      <!-- Goal -->
       <rect x="88" y="28" width="224" height="178" fill="rgba(0,0,0,.22)" rx="2"/>
       <rect x="88" y="28" width="224" height="6" fill="#e8e8e8" rx="2"/>
       <rect x="88" y="28" width="6" height="178" fill="#e8e8e8" rx="2"/>
       <rect x="306" y="28" width="6" height="178" fill="#e8e8e8" rx="2"/>
-      <!-- Net -->
       <line x1="94" y1="38" x2="94" y2="206" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
       <line x1="138" y1="38" x2="138" y2="206" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
       <line x1="182" y1="38" x2="182" y2="206" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
@@ -18997,35 +18995,36 @@ function twResetUI(){
       <line x1="94" y1="106" x2="312" y2="106" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
       <line x1="94" y1="150" x2="312" y2="150" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
       <line x1="94" y1="190" x2="312" y2="190" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-      <!-- Ball -->
       <circle id="pgBall" cx="200" cy="418" r="11" fill="#fff"/>
       <path id="pgBallPat" d="M200 412l3.5 2.5-1.5 4h-4l-1.5-4Z" fill="#111"/>
     </svg>
 
-    <!-- GK -->
-    <div class="pg-gk" id="pgGk" style="bottom:288px;left:50%;">🧤</div>
+    <!-- GK — absolute inside field -->
+    <div id="pgGk" style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);font-size:38px;z-index:50;transition:all .35s cubic-bezier(.22,.68,0,1.2);">🧤</div>
 
-    <!-- Aim zone -->
-    <div class="pg-aim-zone" id="pgAimZone" style="display:none;">
-      <div class="pg-aim-lbl">APUNTA AL ARCO</div>
-      <div class="pg-aim-canvas-wrap">
-        <canvas id="pgAimCanvas" width="360" height="188"></canvas>
+    <!-- Status overlay — absolute inside field -->
+    <div id="pgStatus" class="hidden" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;text-align:center;pointer-events:none;">
+      <div id="pgStIcon" style="font-size:58px;animation:pg-pop .3s cubic-bezier(.175,.885,.32,1.275);"></div>
+      <div id="pgStText" style="font-size:38px;font-weight:900;letter-spacing:3px;margin-top:2px;color:#fff;"></div>
+      <div id="pgStSub" style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;letter-spacing:1px;"></div>
+    </div>
+
+    <!-- Aim zone — absolute at bottom of field, shown after tapping -->
+    <div id="pgAimZone" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;padding:0 8px 4px;">
+      <div style="text-align:center;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:3px;">APUNTA AL ARCO</div>
+      <div style="position:relative;width:100%;padding-bottom:50%;">
+        <canvas id="pgAimCanvas" width="360" height="180" style="position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;touch-action:none;"></canvas>
       </div>
     </div>
 
-    <!-- Status overlay -->
-    <div class="pg-status hidden" id="pgStatus">
-      <div class="pg-st-icon" id="pgStIcon"></div>
-      <div class="pg-st-text" id="pgStText"></div>
-      <div class="pg-st-sub" id="pgStSub"></div>
+    <!-- Power bar + shoot button — absolute at very bottom, shown after aiming -->
+    <div id="pgPowerWrap" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:300;background:rgba(4,8,15,.85);padding:8px 16px 16px;display:none;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-size:8px;color:rgba(255,255,255,.4);letter-spacing:2px;">POTENCIA</div>
+      <div style="width:100%;max-width:320px;height:8px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden;">
+        <div id="pgPowerFill" style="height:100%;width:50%;border-radius:6px;background:linear-gradient(90deg,#2ecc71,#f0d060,#e74c3c);transition:width .04s;"></div>
+      </div>
+      <button onclick="plShoot()" style="padding:14px 48px;background:linear-gradient(135deg,#1a7a30,#0a4018);border:1.5px solid rgba(46,204,113,.5);border-radius:16px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:2px;-webkit-tap-highlight-color:transparent;">⚡ DISPARAR</button>
     </div>
-  </div>
-
-  <!-- Power bar -->
-  <div class="pg-power-wrap" id="pgPowerWrap" style="display:none;">
-    <div class="pg-power-lbl">POTENCIA</div>
-    <div class="pg-power-bg"><div class="pg-power-fill" id="pgPowerFill" style="width:50%;"></div></div>
-    <button class="pg-shoot-btn" onclick="plShoot()">⚡ DISPARAR</button>
   </div>
 </div>
 
@@ -19219,7 +19218,7 @@ function plGetPos(e){
   const cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
   return{x:Math.max(0,Math.min(1,cx/r.width)),y:Math.max(0,Math.min(1,cy/r.height))};
 }
-function plAimStart(e){e.preventDefault();const p=plGetPos(e);plAimX=p.x;plAimY=p.y;plHasAimed=true;plDrawAim(plAimX,plAimY,true);document.getElementById('pgPowerWrap').style.display='flex';}
+function plAimStart(e){e.preventDefault();const p=plGetPos(e);plAimX=p.x;plAimY=p.y;plHasAimed=true;plDrawAim(plAimX,plAimY,true);const pw=document.getElementById('pgPowerWrap');pw.style.display='flex';pw.style.flexDirection='column';}
 function plAimMove(e){if(!plHasAimed)return;e.preventDefault();const p=plGetPos(e);plAimX=p.x;plAimY=p.y;plDrawAim(plAimX,plAimY,true);}
 function plAimEnd(e){e.preventDefault();}
 
@@ -19317,14 +19316,14 @@ function plRivalTurn(){
 
 function plResetGK(){
   const gk=document.getElementById('pgGk');
-  gk.style.transition='none';gk.style.left='50%';gk.style.bottom='288px';
+  gk.style.transition='none';gk.style.left='50%';gk.style.bottom='60px';gk.style.transform='translateX(-50%)';
 }
 function plAnimateGK(bx){
   const gk=document.getElementById('pgGk');
   const gkX=bx+(Math.random()-.5)*.42;
   const pct=Math.max(12,Math.min(88,gkX*100));
   gk.style.transition='all .35s cubic-bezier(.22,.68,0,1.2)';
-  gk.style.left=pct+'%';gk.style.bottom='320px';
+  gk.style.left=pct+'%';gk.style.bottom='90px';gk.style.transform='translateX(-50%)';
 }
 function plShowStatus(icon,text,sub){
   const m=document.getElementById('pgStatus');m.classList.remove('hidden');
