@@ -19010,7 +19010,7 @@ function twResetUI(){
     </div>
 
     <!-- Aim zone — absolute at bottom of field, shown after tapping -->
-    <div id="pgAimZone" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:200;padding:0 8px 4px;">
+    <div id="pgAimZone" style="display:none;position:absolute;bottom:calc(62px + env(safe-area-inset-bottom));left:0;right:0;z-index:200;padding:0 8px 4px;">
       <div style="text-align:center;font-size:8px;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:3px;">APUNTA AL ARCO</div>
       <div style="position:relative;width:100%;padding-bottom:50%;">
         <canvas id="pgAimCanvas" width="360" height="180" style="position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;touch-action:none;"></canvas>
@@ -19018,7 +19018,7 @@ function twResetUI(){
     </div>
 
     <!-- Power bar + shoot button — absolute at very bottom, shown after aiming -->
-    <div id="pgPowerWrap" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:300;background:rgba(4,8,15,.85);padding:8px 16px 16px;display:none;flex-direction:column;align-items:center;gap:6px;">
+    <div id="pgPowerWrap" style="display:none;position:absolute;bottom:calc(62px + env(safe-area-inset-bottom));left:0;right:0;z-index:9100;background:rgba(4,8,15,.95);padding:8px 16px 14px;flex-direction:column;align-items:center;gap:6px;border-top:1px solid rgba(46,204,113,.15);">
       <div style="font-size:8px;color:rgba(255,255,255,.4);letter-spacing:2px;">POTENCIA</div>
       <div style="width:100%;max-width:320px;height:8px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden;">
         <div id="pgPowerFill" style="height:100%;width:50%;border-radius:6px;background:linear-gradient(90deg,#2ecc71,#f0d060,#e74c3c);transition:width .04s;"></div>
@@ -19256,6 +19256,32 @@ function plStartPower(){
   },38);
 }
 
+function plAnimateBall(targetX, targetY, cb){
+  // targetX/Y are 0-1 fractions within the goal area
+  // Goal in SVG: x:88-312, y:28-206
+  const ball = document.getElementById('pgBall');
+  const pat  = document.getElementById('pgBallPat');
+  const goalX = 88 + targetX * 224;
+  const goalY = 28 + targetY * 178;
+  // animate via SVG animate element trick — use JS steps
+  const startX=200, startY=418;
+  const steps=18;
+  let step=0;
+  const iv=setInterval(()=>{
+    step++;
+    const t=step/steps;
+    const ease=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    const cx=startX+(goalX-startX)*ease;
+    const cy=startY+(goalY-startY)*ease;
+    const scale=1-ease*0.55; // ball shrinks as it goes away
+    ball.setAttribute('cx', cx);
+    ball.setAttribute('cy', cy);
+    ball.setAttribute('r', 11*scale);
+    pat.setAttribute('transform',`rotate(${step*25},${cx},${cy}) scale(${scale}) translate(${cx-200*(1-scale)},${cy-418*(1-scale)})`);
+    if(step>=steps){clearInterval(iv);cb();}
+  },28);
+}
+
 function plShoot(){
   if(!plHasAimed){toast('⚠️ Apunta primero al arco',1400);return;}
   clearInterval(plPowerInterval);
@@ -19269,7 +19295,7 @@ function plShoot(){
   const saveProb=plRivalTeam.gkSave-cornerBonus-highBonus-powerBonus;
   const isGoal=Math.random()>Math.max(0.07,saveProb);
   plAnimateGK(plAimX);
-  setTimeout(()=>{
+  plAnimateBall(plAimX, plAimY, ()=>{
     if(isGoal){
       plMyScore++;plStats.scored++;
       document.getElementById('pgHScore').textContent=plMyScore;
@@ -19282,8 +19308,15 @@ function plShoot(){
       plShowStatus('🧤','ATAJADO','El portero lo detuvo');
     }
     plMyGoals.push(isGoal);
+    // reset ball position
+    setTimeout(()=>{
+      document.getElementById('pgBall').setAttribute('cx',200);
+      document.getElementById('pgBall').setAttribute('cy',418);
+      document.getElementById('pgBall').setAttribute('r',11);
+      document.getElementById('pgBallPat').setAttribute('transform','');
+    },800);
     setTimeout(plRivalTurn,1700);
-  },750);
+  });
 }
 
 // ── Rival turn ──
@@ -19295,6 +19328,11 @@ function plRivalTurn(){
   setTimeout(()=>{
     document.getElementById('pgStatus').classList.add('hidden');
     const isGoal=Math.random()>plMyTeam.gkSave;
+    // rival aims at a random spot
+    const rx=0.1+Math.random()*0.8, ry=0.1+Math.random()*0.8;
+    // animate GK opposite side sometimes
+    plAnimateGK(1-rx);
+    plAnimateBall(rx, ry, ()=>{
     if(isGoal){
       plRivalScore++;plStats.rivalScored++;
       document.getElementById('pgAScore').textContent=plRivalScore;
@@ -19305,6 +19343,8 @@ function plRivalTurn(){
       plUpdateKickDot('A',plCurrentPenalty,false);
     }
     plRivalGoals.push(isGoal);
+    setTimeout(()=>{document.getElementById('pgBall').setAttribute('cx',200);document.getElementById('pgBall').setAttribute('cy',418);document.getElementById('pgBall').setAttribute('r',11);document.getElementById('pgBallPat').setAttribute('transform','');},800);
+    });
     setTimeout(()=>{
       const remaining=plMode-plCurrentPenalty;
       const early=(plMyScore-plRivalScore>remaining)||(plRivalScore-plMyScore>remaining);
