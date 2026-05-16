@@ -192,6 +192,111 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* Extra bottom padding for screens that use the nav bar */
 .has-bottom-nav{ padding-bottom:70px!important; }
 
+
+/* ═══════════════════════════════
+   ÁLBUM PANINI
+═══════════════════════════════ */
+#scAlbum{background:radial-gradient(ellipse at 50% 0%,#1a1200,#06040a);justify-content:flex-start;overflow-y:auto;}
+.ab-wrap{width:100%;max-width:440px;margin:0 auto;padding:0 0 90px;}
+
+/* Top bar */
+.ab-topbar{position:sticky;top:0;z-index:100;background:rgba(6,4,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(240,208,96,.12);padding:10px 14px 8px;display:flex;align-items:center;gap:10px;}
+.ab-back{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;color:rgba(255,255,255,.6);font-size:14px;width:34px;height:34px;cursor:pointer;flex-shrink:0;}
+.ab-title-block{flex:1;}
+.ab-title{font-size:17px;font-weight:900;color:#f0d060;letter-spacing:1.5px;}
+.ab-subtitle{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1.5px;margin-top:1px;}
+.ab-progress-pill{background:rgba(240,208,96,.1);border:1px solid rgba(240,208,96,.3);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:900;color:#f0d060;white-space:nowrap;}
+
+/* Progress bar */
+.ab-prog-wrap{padding:10px 14px 0;}
+.ab-prog-bg{width:100%;height:6px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.ab-prog-fill{height:100%;background:linear-gradient(90deg,#f0d060,#c9a84c);border-radius:4px;transition:width .5s;}
+
+/* Sobre banner */
+.ab-pack-banner{margin:12px 14px 0;background:linear-gradient(135deg,rgba(240,208,96,.14),rgba(180,100,0,.08));border:1.5px solid rgba(240,208,96,.3);border-radius:18px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.ab-pack-icon{font-size:40px;flex-shrink:0;animation:ab-float 3s ease-in-out infinite;}
+@keyframes ab-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.ab-pack-info{flex:1;}
+.ab-pack-name{font-size:13px;font-weight:900;color:#f0d060;}
+.ab-pack-desc{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;}
+.ab-pack-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.ab-pack-btn{padding:7px 12px;border-radius:11px;font-size:10px;font-weight:900;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+.ab-pack-btn.free{background:linear-gradient(135deg,#2ecc71,#1a8a45);color:#fff;}
+.ab-pack-btn.buy{background:linear-gradient(135deg,rgba(240,208,96,.2),rgba(180,100,0,.1));border:1px solid rgba(240,208,96,.4)!important;color:#f0d060;}
+.ab-pack-btn:disabled{opacity:.4;cursor:not-allowed;}
+.ab-pack-btn:active:not(:disabled){transform:scale(.96);}
+
+/* Tabs */
+.ab-tabs{display:flex;gap:6px;padding:12px 14px 0;overflow-x:auto;scrollbar-width:none;}
+.ab-tabs::-webkit-scrollbar{display:none;}
+.ab-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:800;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.4);transition:all .15s;}
+.ab-tab.active{background:rgba(240,208,96,.15);border-color:rgba(240,208,96,.5);color:#f0d060;}
+.ab-tab:active{transform:scale(.96);}
+
+/* Grid */
+.ab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 14px 0;}
+
+/* Sticker card */
+.ab-sticker{border-radius:12px;overflow:hidden;aspect-ratio:.72;cursor:pointer;position:relative;transition:transform .15s;border:1.5px solid rgba(255,255,255,.08);}
+.ab-sticker:active{transform:scale(.95);}
+.ab-sticker.owned{border-color:rgba(240,208,96,.4);}
+.ab-sticker.shiny{border-color:rgba(160,120,255,.6);}
+.ab-sticker-inner{width:100%;height:100%;display:flex;flex-direction:column;}
+.ab-sticker-top{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.ab-sticker-emoji{font-size:28px;z-index:2;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));}
+.ab-sticker-num{position:absolute;top:3px;left:4px;font-size:7px;font-weight:900;color:rgba(255,255,255,.5);z-index:3;}
+.ab-sticker-shine{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 50%);z-index:2;}
+.ab-sticker-bottom{background:rgba(0,0,0,.55);padding:3px 4px;text-align:center;}
+.ab-sticker-name{font-size:6.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ab-sticker-sub{font-size:5.5px;color:rgba(255,255,255,.4);margin-top:0.5px;}
+.ab-sticker-dupes{position:absolute;top:3px;right:3px;background:rgba(46,204,113,.9);border-radius:6px;padding:1px 4px;font-size:7px;font-weight:900;color:#fff;z-index:10;}
+
+/* Empty sticker */
+.ab-sticker-empty{background:rgba(255,255,255,.04);}
+.ab-sticker-empty .ab-sticker-top{background:rgba(255,255,255,.03);}
+.ab-sticker-question{font-size:22px;opacity:.25;}
+
+/* Shiny gradient */
+.ab-shiny-bg{background:linear-gradient(135deg,#1a0a2e,#2e0a1a,#0a1a2e);}
+.ab-shiny-shimmer{position:absolute;inset:0;background:linear-gradient(45deg,transparent 30%,rgba(200,150,255,.25) 50%,transparent 70%);animation:ab-shimmer 2.5s infinite;}
+@keyframes ab-shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(200%);}}
+
+/* Section header */
+.ab-section-hdr{padding:12px 14px 0;display:flex;align-items:center;gap:8px;}
+.ab-section-hdr-line{flex:1;height:1px;background:rgba(255,255,255,.06);}
+.ab-section-hdr-text{font-size:9px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:2px;}
+
+/* Sobre opening overlay */
+#abPackOverlay{position:fixed;inset:0;z-index:9200;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.92);}
+#abPackOverlay.open{display:flex;}
+.ab-pack-stage{width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:0;padding:0 16px;}
+.ab-pack-envelope{font-size:90px;cursor:pointer;animation:ab-pulse2 1s ease-in-out infinite;transition:transform .2s;}
+@keyframes ab-pulse2{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.ab-pack-envelope:active{transform:scale(.92)!important;animation:none;}
+.ab-pack-tap-hint{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2px;margin-top:10px;}
+.ab-reveal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;}
+.ab-reveal-card{border-radius:12px;overflow:hidden;aspect-ratio:.72;position:relative;animation:ab-card-in .4s cubic-bezier(.175,.885,.32,1.275) both;}
+@keyframes ab-card-in{0%{transform:scale(0) rotateY(90deg);opacity:0;}100%{transform:scale(1) rotateY(0);opacity:1;}}
+.ab-reveal-card .ab-sticker-emoji{font-size:22px;}
+.ab-reveal-done-btn{margin-top:16px;padding:13px 40px;background:linear-gradient(135deg,#f0d060,#c9a84c);border:none;border-radius:16px;color:#1a0a00;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:1px;}
+.ab-reveal-done-btn:active{transform:scale(.97);}
+
+/* Detail modal */
+#abDetailModal{position:fixed;inset:0;z-index:9300;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.7);}
+#abDetailModal.open{display:flex;}
+.ab-detail-sheet{width:100%;max-width:400px;background:linear-gradient(180deg,#1a1400,#0a0810);border-radius:24px 24px 0 0;border-top:1.5px solid rgba(240,208,96,.25);padding:20px 20px calc(20px + env(safe-area-inset-bottom));animation:ab-slide-up .25s ease;}
+@keyframes ab-slide-up{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.ab-detail-emoji{font-size:72px;text-align:center;display:block;filter:drop-shadow(0 0 20px rgba(240,208,96,.3));}
+.ab-detail-name{font-size:22px;font-weight:900;color:#fff;text-align:center;margin-top:6px;}
+.ab-detail-sub{font-size:11px;color:rgba(255,255,255,.4);text-align:center;margin-top:2px;letter-spacing:1px;}
+.ab-detail-badges{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
+.ab-detail-badge{padding:4px 10px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1px;}
+.ab-detail-stats{background:rgba(255,255,255,.04);border-radius:14px;padding:12px 14px;margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ab-stat-item{display:flex;flex-direction:column;gap:2px;}
+.ab-stat-lbl{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:1px;}
+.ab-stat-val{font-size:14px;font-weight:900;color:#fff;}
+.ab-detail-close{width:100%;margin-top:14px;padding:13px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:rgba(255,255,255,.5);font-size:13px;font-weight:700;cursor:pointer;}
+
 /* ════════════════════════════
    PENALTIS
 ════════════════════════════ */
@@ -2731,6 +2836,12 @@ canvas#crashCanvas{position:absolute;inset:0;width:100%;height:100%;}
         <div style="font-size:13px;font-weight:900;color:#2ecc71;letter-spacing:1px;">PENALTIS</div>
         <div style="font-size:9px;color:rgba(46,204,113,.65);text-align:center;">Mundial 2026 · Tanda de penaltis</div>
         <div style="background:rgba(240,208,96,.15);border:1px solid rgba(240,208,96,.35);border-radius:6px;padding:2px 8px;font-size:8px;color:#f0d060;font-weight:800;">🏆 MUNDIAL</div>
+      </div>
+      <div onclick="selectGame('album')" style="background:linear-gradient(135deg,rgba(240,208,96,.18),rgba(120,80,0,.08));border:1.5px solid rgba(240,208,96,.45);border-radius:18px;padding:16px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform=''">
+        <div style="font-size:32px;">📒</div>
+        <div style="font-size:13px;font-weight:900;color:#f0d060;letter-spacing:1px;">ÁLBUM PANINI</div>
+        <div style="font-size:9px;color:rgba(240,208,96,.6);text-align:center;">Colecciona · Sobres · Mundial 2026</div>
+        <div style="background:rgba(240,208,96,.15);border:1px solid rgba(240,208,96,.35);border-radius:6px;padding:2px 8px;font-size:8px;color:#f0d060;font-weight:800;">✨ NUEVO</div>
       </div>
     </div>
   </div>
@@ -8790,7 +8901,7 @@ function openMultiSection(){
 function goGameSelect() {
   rlStopTimer();
   if(crAnimFrame){cancelAnimationFrame(crAnimFrame);crAnimFrame=null;}
-    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scPenaltisLobby','scPenaltisGame','scPenaltisResult'].forEach(id=>hide(id));
+    ['scLobby','scRouletteLobby','scRoulette','scSlots','scCrash','scMines','scDice','scMainLobby','scWheel','scBaccarat','scKeno','scFootball','scRummyLobby','scRummy','scSlotsSection','scDominoLobby','scDomino','scGemSlots','scHiLoCards','scHiLoDice','scCartasSection','scMesaSection','scArcadeSection','scMultiSection','scDuelo','scBingo','scScratch','scTower','scPenaltisLobby','scPenaltisGame','scPenaltisResult','scAlbum'].forEach(id=>hide(id));
   currentGame = '';
   document.getElementById('gsBal').textContent = myBal.toLocaleString();
   show('scGameSelect');
@@ -9511,6 +9622,8 @@ function selectGame(game) {
     scratchInit();
   } else if (game === 'penaltis') {
     openPenaltis();
+  } else if (game === 'album') {
+    openAlbum();
   }
 }
 
@@ -13225,7 +13338,8 @@ function bnSync(screenId){
     scRouletteLobby:'games', scLobby:'games', scFootball:'games',
     scRummyLobby:'games', scRummy:'games', scSlotsSection:'games', scDominoLobby:'games', scDomino:'games', scGemSlots:'games', scHiLoCards:'games', scHiLoDice:'games', scCartasSection:'games', scMesaSection:'games', scArcadeSection:'games', scMultiSection:'games',
     scDuelo:'games', scBingo:'games', scScratch:'games',
-    scPenaltisLobby:'games', scPenaltisGame:'games', scPenaltisResult:'games'
+    scPenaltisLobby:'games', scPenaltisGame:'games', scPenaltisResult:'games',
+    scAlbum:'games'
   };
   bnSetActive(map[screenId]||'');
   // Push a history state so the phone's back button is intercepted
@@ -13311,6 +13425,8 @@ window.addEventListener('popstate', function(e) {
     case 'scPenaltisResult':
       goGameSelect(); break;
     case 'scPenaltisLobby':
+      openArcadeSection(); break;
+    case 'scAlbum':
       openArcadeSection(); break;
     case 'scGameSelect':
       bnGo('lobby'); break;
@@ -18859,6 +18975,68 @@ function twResetUI(){
 
 
 <!-- ════════════════════════════════════════════════════════
+     📒 ÁLBUM PANINI — MAIN SCREEN
+════════════════════════════════════════════════════════ -->
+<div class="fullscreen hidden" id="scAlbum" style="justify-content:flex-start;overflow-y:auto;">
+  <div class="ab-wrap">
+    <!-- Top bar -->
+    <div class="ab-topbar">
+      <button class="ab-back" onclick="openArcadeSection()">←</button>
+      <div class="ab-title-block">
+        <div class="ab-title">📒 ÁLBUM MUNDIAL 2026</div>
+        <div class="ab-subtitle">COLECCIÓN OFICIAL · PANINI</div>
+      </div>
+      <div class="ab-progress-pill" id="abProgressPill">0/120</div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="ab-prog-wrap">
+      <div class="ab-prog-bg"><div class="ab-prog-fill" id="abProgFill" style="width:0%;"></div></div>
+    </div>
+
+    <!-- Pack banner -->
+    <div class="ab-pack-banner">
+      <div class="ab-pack-icon">📦</div>
+      <div class="ab-pack-info">
+        <div class="ab-pack-name">SOBRE MUNDIAL</div>
+        <div class="ab-pack-desc">5 figuritas · 1 puede ser ✨ SHINY</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.25);margin-top:3px;" id="abFreeTimer">Sobre gratis disponible</div>
+      </div>
+      <div class="ab-pack-actions">
+        <button class="ab-pack-btn free" id="abFreeBtn" onclick="abOpenFreePack()">🎁 GRATIS</button>
+        <button class="ab-pack-btn buy" onclick="abOpenBuyPack(250)">💰 $250</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="ab-tabs" id="abTabs"></div>
+
+    <!-- Sticker grid -->
+    <div id="abGrid"></div>
+  </div>
+</div>
+
+<!-- Pack opening overlay -->
+<div id="abPackOverlay">
+  <div class="ab-pack-stage" id="abPackStage">
+    <div class="ab-pack-envelope" id="abEnvelope" onclick="abRevealPack()">📦</div>
+    <div class="ab-pack-tap-hint" id="abPackHint">TAP PARA ABRIR</div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div id="abDetailModal" onclick="abCloseDetail()">
+  <div class="ab-detail-sheet" onclick="event.stopPropagation()">
+    <span class="ab-detail-emoji" id="abDetEmoji">🏅</span>
+    <div class="ab-detail-name" id="abDetName">Jugador</div>
+    <div class="ab-detail-sub" id="abDetSub">Selección · Posición</div>
+    <div class="ab-detail-badges" id="abDetBadges"></div>
+    <div class="ab-detail-stats" id="abDetStats"></div>
+    <button class="ab-detail-close" onclick="abCloseDetail()">Cerrar</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
      ⚽ PENALTIS — LOBBY
 ════════════════════════════════════════════════════════ -->
 <div class="fullscreen hidden" id="scPenaltisLobby" style="justify-content:flex-start;overflow-y:auto;">
@@ -19416,6 +19594,407 @@ function plShowGameResult(){
 }
 
 // Penaltis uses the app's myBal variable and saveLocal/updateRanking directly
+
+// ═══════════════════════════════════════════════════════
+//  📒 ÁLBUM PANINI — LÓGICA COMPLETA
+// ═══════════════════════════════════════════════════════
+
+const AB_SECTIONS = [
+  { id:'s1', name:'GRUPO A', label:'🌎 América' },
+  { id:'s2', name:'GRUPO B', label:'🌍 Europa' },
+  { id:'s3', name:'GRUPO C', label:'⭐ Estrellas' },
+  { id:'s4', name:'SPECIAL',  label:'✨ Shinies' },
+];
+
+const AB_STICKERS = [
+  // ── SECCIÓN 1: SELECCIONES AMÉRICAS ───────────────────
+  {id:1,sec:'s1',emoji:'🇧🇷',name:'Brasil',sub:'Favorito',pos:'Selección',rating:94,rare:'gold'},
+  {id:2,sec:'s1',emoji:'🇦🇷',name:'Argentina',sub:'Campeón',pos:'Selección',rating:95,rare:'gold'},
+  {id:3,sec:'s1',emoji:'🇨🇴',name:'Colombia',sub:'Cafeteros',pos:'Selección',rating:82,rare:'silver'},
+  {id:4,sec:'s1',emoji:'🇺🇾',name:'Uruguay',sub:'Celeste',pos:'Selección',rating:80,rare:'silver'},
+  {id:5,sec:'s1',emoji:'🇲🇽',name:'México',sub:'El Tri',pos:'Selección',rating:78,rare:'normal'},
+  {id:6,sec:'s1',emoji:'🇺🇸',name:'USA',sub:'USMNT',pos:'Selección',rating:77,rare:'normal'},
+  {id:7,sec:'s1',emoji:'🇨🇦',name:'Canadá',sub:'Maple Leafs',pos:'Selección',rating:76,rare:'normal'},
+  {id:8,sec:'s1',emoji:'🇪🇨',name:'Ecuador',sub:'La Tri',pos:'Selección',rating:74,rare:'normal'},
+  {id:9,sec:'s1',emoji:'🇨🇱',name:'Chile',sub:'La Roja',pos:'Selección',rating:73,rare:'normal'},
+  {id:10,sec:'s1',emoji:'🇵🇪',name:'Perú',sub:'Blanquirroja',pos:'Selección',rating:72,rare:'normal'},
+  {id:11,sec:'s1',emoji:'🇻🇪',name:'Venezuela',sub:'Vinotinto',pos:'Selección',rating:71,rare:'normal'},
+  {id:12,sec:'s1',emoji:'🇧🇴',name:'Bolivia',sub:'Verde',pos:'Selección',rating:65,rare:'normal'},
+  {id:13,sec:'s1',emoji:'🇵🇦',name:'Panamá',sub:'Canaleros',pos:'Selección',rating:69,rare:'normal'},
+  {id:14,sec:'s1',emoji:'🇭🇳',name:'Honduras',sub:'Catrachos',pos:'Selección',rating:67,rare:'normal'},
+  {id:15,sec:'s1',emoji:'🇸🇻',name:'El Salvador',sub:'Cuscatlecos',pos:'Selección',rating:64,rare:'normal'},
+  {id:16,sec:'s1',emoji:'🇯🇲',name:'Jamaica',sub:'Reggae Boyz',pos:'Selección',rating:66,rare:'normal'},
+  {id:17,sec:'s1',emoji:'🇹🇹',name:'Trinidad',sub:'Soca Warriors',pos:'Selección',rating:63,rare:'normal'},
+  {id:18,sec:'s1',emoji:'🇨🇷',name:'Costa Rica',sub:'Ticos',pos:'Selección',rating:70,rare:'normal'},
+  {id:19,sec:'s1',emoji:'🇵🇾',name:'Paraguay',sub:'Guaraní',pos:'Selección',rating:71,rare:'normal'},
+  {id:20,sec:'s1',emoji:'🇭🇹',name:'Haití',sub:'Les Grenadiers',pos:'Selección',rating:62,rare:'normal'},
+
+  // ── SECCIÓN 2: SELECCIONES EUROPA ─────────────────────
+  {id:21,sec:'s2',emoji:'🇫🇷',name:'Francia',sub:'Les Bleus',pos:'Selección',rating:93,rare:'gold'},
+  {id:22,sec:'s2',emoji:'🇪🇸',name:'España',sub:'La Roja',pos:'Selección',rating:92,rare:'gold'},
+  {id:23,sec:'s2',emoji:'🇩🇪',name:'Alemania',sub:'Der Panzer',pos:'Selección',rating:89,rare:'silver'},
+  {id:24,sec:'s2',emoji:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'Inglaterra',sub:'Three Lions',pos:'Selección',rating:88,rare:'silver'},
+  {id:25,sec:'s2',emoji:'🇵🇹',name:'Portugal',sub:'Seleção',pos:'Selección',rating:90,rare:'silver'},
+  {id:26,sec:'s2',emoji:'🇮🇹',name:'Italia',sub:'Gli Azzurri',pos:'Selección',rating:87,rare:'silver'},
+  {id:27,sec:'s2',emoji:'🇳🇱',name:'Holanda',sub:'Oranje',pos:'Selección',rating:86,rare:'silver'},
+  {id:28,sec:'s2',emoji:'🇧🇪',name:'Bélgica',sub:'Diablos Rojos',pos:'Selección',rating:84,rare:'silver'},
+  {id:29,sec:'s2',emoji:'🇨🇭',name:'Suiza',sub:'Nati',pos:'Selección',rating:81,rare:'normal'},
+  {id:30,sec:'s2',emoji:'🇩🇰',name:'Dinamarca',sub:'Danish Dynamite',pos:'Selección',rating:80,rare:'normal'},
+  {id:31,sec:'s2',emoji:'🇦🇹',name:'Austria',sub:'Wunderteam',pos:'Selección',rating:78,rare:'normal'},
+  {id:32,sec:'s2',emoji:'🇵🇱',name:'Polonia',sub:'Biało-Czerwoni',pos:'Selección',rating:77,rare:'normal'},
+  {id:33,sec:'s2',emoji:'🇸🇪',name:'Suecia',sub:'Blågult',pos:'Selección',rating:76,rare:'normal'},
+  {id:34,sec:'s2',emoji:'🇸🇰',name:'Eslovaquia',sub:'Repre',pos:'Selección',rating:73,rare:'normal'},
+  {id:35,sec:'s2',emoji:'🇨🇿',name:'Chequia',sub:'Národní Tým',pos:'Selección',rating:74,rare:'normal'},
+  {id:36,sec:'s2',emoji:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',name:'Escocia',sub:'The Tartan Army',pos:'Selección',rating:72,rare:'normal'},
+  {id:37,sec:'s2',emoji:'🇷🇸',name:'Serbia',sub:'Orlovi',pos:'Selección',rating:75,rare:'normal'},
+  {id:38,sec:'s2',emoji:'🇺🇦',name:'Ucrania',sub:'Zbirna',pos:'Selección',rating:74,rare:'normal'},
+  {id:39,sec:'s2',emoji:'🇭🇷',name:'Croacia',sub:'Vatreni',pos:'Selección',rating:83,rare:'silver'},
+  {id:40,sec:'s2',emoji:'🇲🇦',name:'Marruecos',sub:'Atlas Lions',pos:'Selección',rating:83,rare:'silver'},
+
+  // ── SECCIÓN 3: ESTRELLAS ───────────────────────────────
+  {id:41,sec:'s3',emoji:'🐐',name:'Messi',sub:'Argentina · CAM',pos:'Delantero',rating:99,rare:'legendary'},
+  {id:42,sec:'s3',emoji:'👑',name:'C. Ronaldo',sub:'Portugal · CF',pos:'Delantero',rating:97,rare:'legendary'},
+  {id:43,sec:'s3',emoji:'⚡',name:'Mbappé',sub:'Francia · ALI',pos:'Delantero',rating:96,rare:'legendary'},
+  {id:44,sec:'s3',emoji:'🦁',name:'Vinicius Jr',sub:'Brasil · ALI',pos:'Delantero',rating:94,rare:'gold'},
+  {id:45,sec:'s3',emoji:'🎯',name:'Haaland',sub:'Noruega · CF',pos:'Delantero',rating:95,rare:'gold'},
+  {id:46,sec:'s3',emoji:'🌟',name:'Bellingham',sub:'Inglaterra · MED',pos:'Mediocampista',rating:91,rare:'gold'},
+  {id:47,sec:'s3',emoji:'🔥',name:'Pedri',sub:'España · MED',pos:'Mediocampista',rating:90,rare:'gold'},
+  {id:48,sec:'s3',emoji:'💎',name:'Modric',sub:'Croacia · MED',pos:'Mediocampista',rating:88,rare:'gold'},
+  {id:49,sec:'s3',emoji:'🛡️',name:'Alisson',sub:'Brasil · POR',pos:'Portero',rating:92,rare:'gold'},
+  {id:50,sec:'s3',emoji:'🧤',name:'Ter Stegen',sub:'Alemania · POR',pos:'Portero',rating:89,rare:'silver'},
+  {id:51,sec:'s3',emoji:'🦅',name:'Salah',sub:'Egipto · ALI',pos:'Delantero',rating:90,rare:'gold'},
+  {id:52,sec:'s3',emoji:'⚽',name:'Son',sub:'Corea · ALI',pos:'Delantero',rating:87,rare:'silver'},
+  {id:53,sec:'s3',emoji:'🏃',name:'Musiala',sub:'Alemania · MED',pos:'Mediocampista',rating:89,rare:'silver'},
+  {id:54,sec:'s3',emoji:'💪',name:'De Bruyne',sub:'Bélgica · MED',pos:'Mediocampista',rating:91,rare:'gold'},
+  {id:55,sec:'s3',emoji:'🧱',name:'Rüdiger',sub:'Alemania · DEF',pos:'Defensa',rating:87,rare:'silver'},
+  {id:56,sec:'s3',emoji:'🎪',name:'Dembélé',sub:'Francia · ALI',pos:'Delantero',rating:88,rare:'silver'},
+  {id:57,sec:'s3',emoji:'🌊',name:'Yamal',sub:'España · ALI',pos:'Delantero',rating:86,rare:'silver'},
+  {id:58,sec:'s3',emoji:'🦊',name:'Rashford',sub:'Inglaterra · ALI',pos:'Delantero',rating:85,rare:'silver'},
+  {id:59,sec:'s3',emoji:'🗡️',name:'Kane',sub:'Inglaterra · CF',pos:'Delantero',rating:91,rare:'gold'},
+  {id:60,sec:'s3',emoji:'🎭',name:'Neymar',sub:'Brasil · ALI',pos:'Delantero',rating:89,rare:'silver'},
+
+  // ── SECCIÓN 4: SHINIES ESPECIALES ─────────────────────
+  {id:61,sec:'s4',emoji:'✨',name:'Messi Gold',sub:'Edición Especial',pos:'Leyenda',rating:100,rare:'shiny'},
+  {id:62,sec:'s4',emoji:'💫',name:'CR7 Diamante',sub:'Hall of Fame',pos:'Leyenda',rating:100,rare:'shiny'},
+  {id:63,sec:'s4',emoji:'🌙',name:'Mbappé Noche',sub:'Edición Nocturna',pos:'Estrella',rating:98,rare:'shiny'},
+  {id:64,sec:'s4',emoji:'🔮',name:'Haaland Orbe',sub:'Edición Mística',pos:'Estrella',rating:97,rare:'shiny'},
+  {id:65,sec:'s4',emoji:'🏆',name:'Copa del Mundo',sub:'El Trofeo',pos:'Especial',rating:100,rare:'shiny'},
+  {id:66,sec:'s4',emoji:'🌈',name:'Vinicius Rainbow',sub:'Edición Arcoíris',pos:'Estrella',rating:96,rare:'shiny'},
+  {id:67,sec:'s4',emoji:'⚡',name:'Bellingham Rayo',sub:'Edición Eléctrica',pos:'Estrella',rating:95,rare:'shiny'},
+  {id:68,sec:'s4',emoji:'🔥',name:'Pedri Llamas',sub:'Edición Fuego',pos:'Estrella',rating:93,rare:'shiny'},
+  {id:69,sec:'s4',emoji:'❄️',name:'Ter Stegen Hielo',sub:'Muro de Hielo',pos:'Portero',rating:92,rare:'shiny'},
+  {id:70,sec:'s4',emoji:'🌟',name:'Yamal Estrella',sub:'La Joya',pos:'Futuro',rating:94,rare:'shiny'},
+  // Extra stickers to fill to 120 total
+  {id:71,sec:'s1',emoji:'🇯🇵',name:'Japón',sub:'Samurai Blue',pos:'Selección',rating:79,rare:'normal'},
+  {id:72,sec:'s1',emoji:'🇰🇷',name:'Corea del Sur',sub:'Taeguk Warriors',pos:'Selección',rating:78,rare:'normal'},
+  {id:73,sec:'s2',emoji:'🇸🇳',name:'Senegal',sub:'Lions of Teranga',pos:'Selección',rating:81,rare:'silver'},
+  {id:74,sec:'s2',emoji:'🇨🇮',name:'Costa de Marfil',sub:'Elephants',pos:'Selección',rating:79,rare:'normal'},
+  {id:75,sec:'s2',emoji:'🇬🇭',name:'Ghana',sub:'Black Stars',pos:'Selección',rating:76,rare:'normal'},
+  {id:76,sec:'s2',emoji:'🇳🇬',name:'Nigeria',sub:'Super Eagles',pos:'Selección',rating:78,rare:'normal'},
+  {id:77,sec:'s2',emoji:'🇦🇺',name:'Australia',sub:'Socceroos',pos:'Selección',rating:75,rare:'normal'},
+  {id:78,sec:'s3',emoji:'🦋',name:'Griezmann',sub:'Francia · MED',pos:'Mediocampista',rating:88,rare:'silver'},
+  {id:79,sec:'s3',emoji:'🎨',name:'Thiago Alcântara',sub:'España · MED',pos:'Mediocampista',rating:85,rare:'silver'},
+  {id:80,sec:'s3',emoji:'🏋️',name:'Rodri',sub:'España · MED',pos:'Mediocampista',rating:90,rare:'gold'},
+
+  // Fill to 120 with more stickers
+  ...Array.from({length:40},(_,i)=>({
+    id:81+i, sec:['s1','s2','s3'][i%3],
+    emoji:['🎽','🥅','🔴','🟡','🟢','🔵','⚪','🟤'][i%8],
+    name:`Jugador ${81+i}`,
+    sub:`Equipo ${i+1}`,
+    pos:['Delantero','Mediocampista','Defensa','Portero'][i%4],
+    rating:60+Math.floor(i*0.8),
+    rare:'normal'
+  }))
+];
+
+// ── STATE ──────────────────────────────────────────────────────────
+let abCollection = {}; // {stickerId: count}
+let abCurrentTab = 's1';
+let abFreePackUsed = null; // timestamp
+let abRevealQueue = [];
+let abRevealPhase = 'envelope'; // 'envelope' | 'reveal' | 'done'
+
+const AB_PACK_COST = 250;
+const AB_FREE_COOLDOWN = 4 * 60 * 60 * 1000; // 4 horas
+
+// ── STORAGE ────────────────────────────────────────────────────────
+function abSave(){
+  try{ localStorage.setItem('ab_col', JSON.stringify(abCollection));
+       localStorage.setItem('ab_free', abFreePackUsed||''); }catch(e){}
+}
+function abLoad(){
+  try{
+    const c=localStorage.getItem('ab_col');
+    abCollection = c ? JSON.parse(c) : {};
+    const f=localStorage.getItem('ab_free');
+    abFreePackUsed = f ? parseInt(f) : null;
+  }catch(e){ abCollection={}; abFreePackUsed=null; }
+}
+
+// ── OPEN ALBUM ─────────────────────────────────────────────────────
+function openAlbum(){
+  abLoad();
+  ['scPenaltisLobby','scPenaltisGame','scPenaltisResult'].forEach(function(id){hide(id);});
+  show('scAlbum');
+  bnShow(); bnSync('scAlbum');
+  abRender();
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────
+function abRender(){
+  abRenderProgress();
+  abRenderTabs();
+  abRenderGrid();
+  abRenderFreeTimer();
+}
+
+function abRenderProgress(){
+  const owned = Object.keys(abCollection).filter(id=>abCollection[id]>0).length;
+  const total = AB_STICKERS.length;
+  document.getElementById('abProgressPill').textContent = owned + '/' + total;
+  document.getElementById('abProgFill').style.width = Math.round(owned/total*100)+'%';
+}
+
+function abRenderTabs(){
+  const tabs = document.getElementById('abTabs');
+  tabs.innerHTML='';
+  AB_SECTIONS.forEach(sec=>{
+    const owned=AB_STICKERS.filter(s=>s.sec===sec.id&&abCollection[s.id]>0).length;
+    const total=AB_STICKERS.filter(s=>s.sec===sec.id).length;
+    const div=document.createElement('div');
+    div.className='ab-tab'+(abCurrentTab===sec.id?' active':'');
+    div.innerHTML=sec.label+' <span style="font-size:8px;opacity:.6;">('+owned+'/'+total+')</span>';
+    div.onclick=()=>{ abCurrentTab=sec.id; abRenderTabs(); abRenderGrid(); };
+    tabs.appendChild(div);
+  });
+}
+
+function abRenderGrid(){
+  const container=document.getElementById('abGrid');
+  container.innerHTML='';
+  const stickers=AB_STICKERS.filter(s=>s.sec===abCurrentTab);
+
+  // Section header
+  const sec=AB_SECTIONS.find(s=>s.id===abCurrentTab);
+  const hdr=document.createElement('div');
+  hdr.className='ab-section-hdr';
+  hdr.innerHTML='<div class="ab-section-hdr-line"></div><div class="ab-section-hdr-text">'+sec.name+'</div><div class="ab-section-hdr-line"></div>';
+  container.appendChild(hdr);
+
+  const grid=document.createElement('div');
+  grid.className='ab-grid';
+
+  stickers.forEach(st=>{
+    const count=abCollection[st.id]||0;
+    const el=document.createElement('div');
+    el.className='ab-sticker'+(count>0?' owned':'')+(st.rare==='shiny'?' shiny':'');
+    if(count>0){
+      el.innerHTML=abStickerOwnedHTML(st,count);
+    } else {
+      el.innerHTML=abStickerEmptyHTML(st);
+    }
+    el.onclick=()=>{ if(count>0) abShowDetail(st,count); };
+    grid.appendChild(el);
+  });
+  container.appendChild(grid);
+}
+
+function abBgForRare(rare){
+  if(rare==='legendary') return 'background:linear-gradient(135deg,#2d1a00,#5a3800);';
+  if(rare==='gold') return 'background:linear-gradient(135deg,#1a1400,#3a2a00);';
+  if(rare==='silver') return 'background:linear-gradient(135deg,#141420,#282840);';
+  if(rare==='shiny') return 'background:linear-gradient(135deg,#1a0a2e,#2e1a0a,#0a1a2e);';
+  return 'background:linear-gradient(135deg,#0e1520,#141c28);';
+}
+
+function abAccentForRare(rare){
+  if(rare==='legendary') return '#f0d060';
+  if(rare==='gold') return '#c9a84c';
+  if(rare==='silver') return '#a0a8c0';
+  if(rare==='shiny') return '#c878ff';
+  return 'rgba(255,255,255,.2)';
+}
+
+function abStickerOwnedHTML(st,count){
+  const bg=abBgForRare(st.rare);
+  const accent=abAccentForRare(st.rare);
+  const dupes=count>1?'<div class="ab-sticker-dupes">x'+count+'</div>':'';
+  const shimmer=st.rare==='shiny'?'<div class="ab-shiny-shimmer"></div>':'';
+  return '<div class="ab-sticker-inner" style="'+bg+'">'
+    +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;">'
+    +shimmer
+    +'<div class="ab-sticker-num">#'+String(st.id).padStart(3,'0')+'</div>'
+    +'<div class="ab-sticker-shine"></div>'
+    +'<div class="ab-sticker-emoji">'+st.emoji+'</div>'
+    +dupes
+    +'</div>'
+    +'<div class="ab-sticker-bottom" style="background:'+accent+'22;">'
+    +'<div class="ab-sticker-name">'+st.name+'</div>'
+    +'<div class="ab-sticker-sub">'+st.pos+'</div>'
+    +'</div>'
+    +'</div>';
+}
+
+function abStickerEmptyHTML(st){
+  return '<div class="ab-sticker-inner ab-sticker-empty">'
+    +'<div class="ab-sticker-top">'
+    +'<div class="ab-sticker-num">#'+String(st.id).padStart(3,'0')+'</div>'
+    +'<div class="ab-sticker-question">?</div>'
+    +'</div>'
+    +'<div class="ab-sticker-bottom">'
+    +'<div class="ab-sticker-name" style="color:rgba(255,255,255,.2);">???</div>'
+    +'</div>'
+    +'</div>';
+}
+
+// ── FREE TIMER ─────────────────────────────────────────────────────
+function abRenderFreeTimer(){
+  const btn=document.getElementById('abFreeBtn');
+  const lbl=document.getElementById('abFreeTimer');
+  if(!abFreePackUsed){
+    btn.disabled=false; lbl.textContent='Sobre gratis disponible ✅'; return;
+  }
+  const elapsed=Date.now()-abFreePackUsed;
+  if(elapsed>=AB_FREE_COOLDOWN){
+    abFreePackUsed=null; btn.disabled=false; lbl.textContent='Sobre gratis disponible ✅'; return;
+  }
+  btn.disabled=true;
+  const rem=AB_FREE_COOLDOWN-elapsed;
+  const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000);
+  lbl.textContent='Próximo gratis en '+h+'h '+m+'m';
+}
+
+// ── OPEN PACKS ─────────────────────────────────────────────────────
+function abPickPack(){
+  const pool=AB_STICKERS.filter(s=>s.sec!=='s4'); // non-shiny pool
+  const shinyPool=AB_STICKERS.filter(s=>s.sec==='s4');
+  const picks=[];
+  // 4 normal draws, weighted by rarity
+  for(let i=0;i<4;i++){
+    const r=Math.random();
+    let candidates;
+    if(r<0.04) candidates=pool.filter(s=>s.rare==='legendary');
+    else if(r<0.15) candidates=pool.filter(s=>s.rare==='gold');
+    else if(r<0.40) candidates=pool.filter(s=>s.rare==='silver');
+    else candidates=pool.filter(s=>s.rare==='normal');
+    if(!candidates.length) candidates=pool;
+    picks.push(candidates[Math.floor(Math.random()*candidates.length)]);
+  }
+  // 1 bonus: 12% shiny chance, else normal
+  if(Math.random()<0.12 && shinyPool.length){
+    picks.push(shinyPool[Math.floor(Math.random()*shinyPool.length)]);
+  } else {
+    const c=pool[Math.floor(Math.random()*pool.length)];
+    picks.push(c);
+  }
+  return picks;
+}
+
+function abShowPackOverlay(stickers){
+  abRevealQueue=stickers;
+  abRevealPhase='envelope';
+  const overlay=document.getElementById('abPackOverlay');
+  const stage=document.getElementById('abPackStage');
+  stage.innerHTML='<div class="ab-pack-envelope" id="abEnvelope" onclick="abRevealPack()">📦</div><div class="ab-pack-tap-hint">TAP PARA ABRIR</div>';
+  overlay.classList.add('open');
+}
+
+function abRevealPack(){
+  if(abRevealPhase!=='envelope') return;
+  abRevealPhase='reveal';
+  const stage=document.getElementById('abPackStage');
+  // Add stickers to collection
+  abRevealQueue.forEach(st=>{ abCollection[st.id]=(abCollection[st.id]||0)+1; });
+  abSave();
+  // Build reveal grid
+  const grid=document.createElement('div');
+  grid.className='ab-reveal-grid';
+  abRevealQueue.forEach((st,i)=>{
+    const card=document.createElement('div');
+    card.className='ab-reveal-card';
+    card.style.animationDelay=(i*0.12)+'s';
+    const bg=abBgForRare(st.rare);
+    const accent=abAccentForRare(st.rare);
+    const shimmer=st.rare==='shiny'?'<div class="ab-shiny-shimmer"></div>':'';
+    const count=abCollection[st.id];
+    const dupeBadge=count>1?'<div style="position:absolute;top:2px;right:2px;background:rgba(46,204,113,.9);border-radius:5px;padding:1px 3px;font-size:6px;font-weight:900;color:#fff;">+1</div>':'';
+    card.innerHTML='<div class="ab-sticker-inner" style="'+bg+'">'
+      +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;">'
+      +shimmer+'<div class="ab-shiny-shimmer" style="animation-delay:'+(i*0.3)+'s;"></div>'
+      +'<div class="ab-sticker-emoji" style="font-size:22px;">'+st.emoji+'</div>'
+      +dupeBadge
+      +'</div>'
+      +'<div class="ab-sticker-bottom" style="background:'+accent+'22;">'
+      +'<div class="ab-sticker-name" style="font-size:6px;">'+st.name+'</div>'
+      +(st.rare!=='normal'?'<div style="font-size:5px;color:'+accent+';">'+st.rare.toUpperCase()+'</div>':'')
+      +'</div></div>';
+    grid.appendChild(card);
+  });
+  const btn=document.createElement('button');
+  btn.className='ab-reveal-done-btn';
+  btn.textContent='¡Ver mi álbum!';
+  btn.onclick=abClosePack;
+  stage.innerHTML='';
+  stage.appendChild(grid);
+  stage.appendChild(btn);
+  abRevealPhase='done';
+  // Particles for any shiny
+  if(abRevealQueue.some(s=>s.rare==='shiny'||s.rare==='legendary')) plSpawnParticles(true);
+}
+
+function abClosePack(){
+  document.getElementById('abPackOverlay').classList.remove('open');
+  abRender();
+}
+
+function abOpenFreePack(){
+  abFreePackUsed=Date.now();
+  abSave();
+  abRenderFreeTimer();
+  abShowPackOverlay(abPickPack());
+}
+
+function abOpenBuyPack(cost){
+  if(myBal<cost){ toast('❌ Fichas insuficientes',1600); return; }
+  myBal-=cost; saveLocal(); updateRanking();
+  abShowPackOverlay(abPickPack());
+}
+
+// ── DETAIL MODAL ───────────────────────────────────────────────────
+function abShowDetail(st,count){
+  const accent=abAccentForRare(st.rare);
+  document.getElementById('abDetEmoji').textContent=st.emoji;
+  document.getElementById('abDetName').textContent=st.name;
+  document.getElementById('abDetSub').textContent=st.sub+' · '+st.pos;
+  // Badges
+  const badges=document.getElementById('abDetBadges');
+  badges.innerHTML='';
+  const rareLabel={normal:'COMÚN',silver:'POCO COMÚN',gold:'RARO',legendary:'LEGENDARIO',shiny:'✨ SHINY'};
+  [
+    {label:rareLabel[st.rare]||st.rare,color:accent},
+    {label:'#'+String(st.id).padStart(3,'0'),color:'rgba(255,255,255,.2)'},
+    count>1?{label:'x'+count+' DUPLICADAS',color:'rgba(46,204,113,.7)'}:null
+  ].filter(Boolean).forEach(b=>{
+    const bd=document.createElement('div');
+    bd.className='ab-detail-badge';
+    bd.style.cssText='background:'+b.color+'22;border:1px solid '+b.color+'55;color:'+b.color+';';
+    bd.textContent=b.label;
+    badges.appendChild(bd);
+  });
+  // Stats
+  document.getElementById('abDetStats').innerHTML=
+    '<div class="ab-stat-item"><div class="ab-stat-lbl">RATING</div><div class="ab-stat-val" style="color:'+accent+';">'+st.rating+'</div></div>'
+    +'<div class="ab-stat-item"><div class="ab-stat-lbl">POSICIÓN</div><div class="ab-stat-val">'+st.pos+'</div></div>'
+    +'<div class="ab-stat-item"><div class="ab-stat-lbl">SECCIÓN</div><div class="ab-stat-val">'+AB_SECTIONS.find(s=>s.id===st.sec).label+'</div></div>'
+    +'<div class="ab-stat-item"><div class="ab-stat-lbl">EN ÁLBUM</div><div class="ab-stat-val" style="color:#2ecc71;">'+count+'x</div></div>';
+  document.getElementById('abDetailModal').classList.add('open');
+}
+
+function abCloseDetail(){
+  document.getElementById('abDetailModal').classList.remove('open');
+}
+
 </script>
 </body>
 </html>
