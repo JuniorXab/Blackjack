@@ -19404,13 +19404,16 @@ function plBuildLobby(){
 
 function openPenaltis(){
   plBuildLobby();
+  goGameSelect();
+  hide('scGameSelect');
   show('scPenaltisLobby');
   bnShow(); bnSync('scPenaltisLobby');
 }
 
 function plGoLobby(){
   plBuildLobby();
-  hide('scPenaltisGame'); hide('scPenaltisResult');
+  goGameSelect();
+  hide('scGameSelect');
   show('scPenaltisLobby');
   bnShow(); bnSync('scPenaltisLobby');
 }
@@ -19433,7 +19436,8 @@ function plStartGame(){
   ['prHFlag','prAFlag'].forEach((id,i)=>document.getElementById(id).textContent=[plMyTeam.flag,plRivalTeam.flag][i]);
   ['prHName','prAName'].forEach((id,i)=>document.getElementById(id).textContent=[plMyTeam.short,plRivalTeam.short][i]);
 
-  ['scPenaltisLobby','scPenaltisResult'].forEach(function(id){hide(id);});
+  goGameSelect();
+  hide('scGameSelect');
   show('scPenaltisGame');
   bnShow(); bnSync('scPenaltisGame');
 
@@ -19684,7 +19688,8 @@ function plShowGameResult(){
     <div class="pr-stat-row"><span class="pr-stat-lbl">🎯 Efectividad</span><span class="pr-stat-val">${acc}%</span></div>
     <div class="pr-stat-row"><span class="pr-stat-lbl">💰 Apuesta</span><span class="pr-stat-val">$${plBet}</span></div>
   `;
-  ['scPenaltisLobby','scPenaltisGame'].forEach(function(id){hide(id);});
+  goGameSelect();
+  hide('scGameSelect');
   show('scPenaltisResult');
   bnShow(); bnSync('scPenaltisResult');
   if(won)plSpawnParticles(true);
@@ -19910,6 +19915,8 @@ function abLoad(){
 // ── OPEN ALBUM ─────────────────────────────────────────────────────
 function openAlbum(){
   abLoad();
+  goGameSelect();
+  hide('scGameSelect');
   show('scAlbum');
   bnShow(); bnSync('scAlbum');
   abRender();
