@@ -17835,7 +17835,7 @@ function spMatchCard(m){
     :`<div class="sp-score${isLive?' live':''}">${hs} - ${as_}</div>${isLive?`<div class="sp-clock">⏱</div>`:''}`;
 
   const logoEl=(url,n)=>url
-    ?`<div class="sp-team-logo"><img src="${url}" onerror="this.style.display='none'" loading="lazy"></div>`
+    ?`<div class="sp-team-logo"><img src="${url}" onerror="this.src=AB_SILHOUETTE" loading="lazy"></div>`
     :`<div class="sp-team-logo">${n.charAt(0)}</div>`;
 
   const canBet=isScheduled;
@@ -20277,7 +20277,7 @@ function trRenderOfferSlots(){
       const photo = AB_PHOTOS[sid];
       const bg = abBgForRare(st.rare);
       div.style.cssText = bg;
-      div.innerHTML = (photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;position:absolute;inset:0;" onerror="this.style.display='none'">':'')
+      div.innerHTML = (photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;position:absolute;inset:0;" onerror="this.src=AB_SILHOUETTE">':'')
         +'<div style="font-size:20px;position:absolute;">'+st.emoji+'</div>'
         +'<div class="tr-rm" onclick="trRemoveOffer('+sid+',event)">✕</div>';
     } else {
@@ -20397,7 +20397,7 @@ function trBuildCard(offer, canAccept){
     const bg = abBgForRare(st.rare);
     stickersHTML += '<div class="tr-mini-sticker" style="'+bg+'">'
       +'<div class="tr-mini-top">'
-      +(photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none'">':'')
+      +(photo?'<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.src=AB_SILHOUETTE">':'')
       +'<span style="font-size:16px;'+(photo?'display:none;':'')+'">'+st.emoji+'</span>'
       +'</div>'
       +'<div class="tr-mini-bot">'+st.name+'</div>'
