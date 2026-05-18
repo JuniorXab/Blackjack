@@ -345,6 +345,39 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* Notif badge on album entry */
 .ab-trade-notif{position:absolute;top:-4px;right:-4px;background:#e74c3c;border-radius:50%;width:16px;height:16px;font-size:8px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;}
 
+
+/* ── Album page navigation ── */
+.ab-page-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 0;gap:8px;}
+.ab-nav-arrow{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:11px;
+  color:rgba(255,255,255,.6);font-size:18px;width:38px;height:38px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.ab-nav-arrow:active{background:rgba(255,255,255,.15);transform:scale(.93);}
+.ab-nav-arrow:disabled{opacity:.2;cursor:default;}
+.ab-page-counter{flex:1;text-align:center;}
+.ab-page-num{font-size:13px;font-weight:900;color:#fff;}
+.ab-page-total{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px;}
+.ab-country-emoji{font-size:22px;}
+
+/* Swipe animation */
+@keyframes ab-slide-left{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes ab-slide-right{from{transform:translateX(-60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.ab-grid-enter-left{animation:ab-slide-left .22s ease;}
+.ab-grid-enter-right{animation:ab-slide-right .22s ease;}
+
+/* Reset modal */
+#abResetModal{position:fixed;inset:0;z-index:9600;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.8);}
+#abResetModal.open{display:flex;}
+.ab-reset-sheet{background:#0e1520;border:1.5px solid rgba(192,57,43,.4);border-radius:20px;
+  padding:24px 20px;width:90%;max-width:320px;text-align:center;}
+.ab-reset-title{font-size:18px;font-weight:900;color:#e74c3c;margin-bottom:8px;}
+.ab-reset-body{font-size:12px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:18px;}
+.ab-reset-btns{display:flex;gap:10px;}
+.ab-reset-cancel{flex:1;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:13px;color:rgba(255,255,255,.5);font-size:13px;font-weight:700;cursor:pointer;}
+.ab-reset-confirm{flex:1;padding:12px;background:rgba(192,57,43,.2);border:1.5px solid rgba(192,57,43,.5);
+  border-radius:13px;color:#e74c3c;font-size:13px;font-weight:900;cursor:pointer;}
+.ab-reset-confirm:active{transform:scale(.97);}
+
 /* ════════════════════════════
    PENALTIS
 ════════════════════════════ */
@@ -19044,6 +19077,7 @@ function twResetUI(){
         <div style="background:rgba(240,208,96,.1);border:1px solid rgba(240,208,96,.3);border-radius:11px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;">🔄</div>
         <div id="abTradeNotifDot" style="display:none;position:absolute;top:-4px;right:-4px;background:#e74c3c;border-radius:50%;width:14px;height:14px;font-size:7px;font-weight:900;color:#fff;display:none;align-items:center;justify-content:center;" id="abTradeNotifDot">!</div>
       </div>
+      <div onclick="abShowResetModal()" style="background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);border-radius:11px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;" title="Reiniciar álbum">🗑️</div>
     </div>
 
     <!-- Progress bar -->
@@ -19069,6 +19103,17 @@ function twResetUI(){
 
     <!-- Tabs -->
     <div class="ab-tabs" id="abTabs"></div>
+
+    <!-- Page navigation arrows -->
+    <div class="ab-page-nav" id="abPageNav">
+      <button class="ab-nav-arrow" id="abNavPrev" onclick="abNavPage(-1)">&#8592;</button>
+      <div class="ab-page-counter">
+        <div class="ab-country-emoji" id="abNavEmoji">🌍</div>
+        <div class="ab-page-num" id="abNavPageNum">1 / 48</div>
+        <div class="ab-page-total" id="abNavPageName">Colombia</div>
+      </div>
+      <button class="ab-nav-arrow" id="abNavNext" onclick="abNavPage(1)">&#8594;</button>
+    </div>
 
     <!-- Sticker grid -->
     <div id="abGrid"></div>
@@ -19788,13 +19833,13 @@ function openAlbum(){
 
 // ── RENDER ─────────────────────────────────────────────────────────
 function abRender(){
-  // Ensure abCurrentTab is valid for current sections
   if(AB_SECTIONS.length && !AB_SECTIONS.find(s=>s.id===abCurrentTab)){
     abCurrentTab = AB_SECTIONS[0].id;
   }
   abRenderProgress();
   abRenderTabs();
-  abRenderGrid();
+  abRenderGrid('none');
+  abUpdatePageNav();
   abRenderFreeTimer();
 }
 
@@ -19814,40 +19859,121 @@ function abRenderTabs(){
     const div=document.createElement('div');
     div.className='ab-tab'+(abCurrentTab===sec.id?' active':'');
     div.innerHTML=sec.label+' <span style="font-size:8px;opacity:.6;">('+owned+'/'+total+')</span>';
-    div.onclick=()=>{ abCurrentTab=sec.id; abRenderTabs(); abRenderGrid(); };
+    div.onclick=()=>{ abGoToSection(sec.id,'none'); };
     tabs.appendChild(div);
+    // Scroll active tab into view
+    if(abCurrentTab===sec.id) setTimeout(()=>div.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),50);
   });
 }
 
-function abRenderGrid(){
+// ── Page navigation ────────────────────────────────────────────────────────
+function abNavPage(dir){
+  if(!AB_SECTIONS.length) return;
+  const idx = AB_SECTIONS.findIndex(s=>s.id===abCurrentTab);
+  const next = idx + dir;
+  if(next < 0 || next >= AB_SECTIONS.length) return;
+  abGoToSection(AB_SECTIONS[next].id, dir > 0 ? 'left' : 'right');
+}
+
+function abGoToSection(secId, animDir){
+  abCurrentTab = secId;
+  abRenderTabs();
+  abRenderGrid(animDir);
+  abUpdatePageNav();
+}
+
+function abUpdatePageNav(){
+  if(!AB_SECTIONS.length) return;
+  const idx = AB_SECTIONS.findIndex(s=>s.id===abCurrentTab);
+  const sec = AB_SECTIONS[idx];
+  const emoji = sec ? sec.label.split(' ')[0] : '🌍';
+  const name  = sec ? sec.label.split(' ').slice(1).join(' ') : '';
+  const numEl = document.getElementById('abNavPageNum');
+  const nameEl= document.getElementById('abNavPageName');
+  const emojiEl=document.getElementById('abNavEmoji');
+  const prev  = document.getElementById('abNavPrev');
+  const next  = document.getElementById('abNavNext');
+  if(numEl)  numEl.textContent  = (idx+1) + ' / ' + AB_SECTIONS.length;
+  if(nameEl) nameEl.textContent = name;
+  if(emojiEl)emojiEl.textContent= emoji;
+  if(prev)   prev.disabled      = idx === 0;
+  if(next)   next.disabled      = idx === AB_SECTIONS.length - 1;
+}
+
+// ── Swipe support ──────────────────────────────────────────────────────────
+(function initSwipe(){
+  let tx=0, ty=0, swiping=false;
+  document.addEventListener('touchstart',e=>{
+    const t=e.touches[0];
+    tx=t.clientX; ty=t.clientY; swiping=true;
+  },{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(!swiping) return; swiping=false;
+    const sc=document.getElementById('scAlbum');
+    if(!sc||sc.classList.contains('hidden')) return;
+    const dx=e.changedTouches[0].clientX-tx;
+    const dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>Math.abs(dy)*1.5 && Math.abs(dx)>45){
+      abNavPage(dx<0?1:-1);
+    }
+  },{passive:true});
+})();
+
+function abRenderGrid(animDir){
   const container=document.getElementById('abGrid');
   container.innerHTML='';
   const stickers=AB_STICKERS.filter(s=>s.sec===abCurrentTab);
+  if(!stickers.length) return;
 
-  // Section header
   const sec=AB_SECTIONS.find(s=>s.id===abCurrentTab);
+  if(!sec) return;
+
+  // Country header
   const hdr=document.createElement('div');
-  hdr.className='ab-section-hdr';
-  hdr.innerHTML='<div class="ab-section-hdr-line"></div><div class="ab-section-hdr-text">'+sec.name+'</div><div class="ab-section-hdr-line"></div>';
+  hdr.style.cssText='padding:10px 14px 2px;display:flex;align-items:center;gap:10px;';
+  const owned=stickers.filter(s=>abCollection[s.id]>0).length;
+  const pct=Math.round(owned/stickers.length*100);
+  hdr.innerHTML='<div style="font-size:28px;">'+sec.label.split(' ')[0]+'</div>'
+    +'<div style="flex:1;">'
+    +'<div style="font-size:14px;font-weight:900;color:#fff;">'+sec.label.split(' ').slice(1).join(' ')+'</div>'
+    +'<div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:1px;">'+owned+'/'+stickers.length+' figuritas · '+pct+'%</div>'
+    +'<div style="margin-top:4px;height:4px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">'
+    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#2ecc71,#f0d060);border-radius:3px;transition:width .4s;"></div>'
+    +'</div></div>';
   container.appendChild(hdr);
 
   const grid=document.createElement('div');
   grid.className='ab-grid';
+  if(animDir==='left')  grid.classList.add('ab-grid-enter-left');
+  if(animDir==='right') grid.classList.add('ab-grid-enter-right');
 
   stickers.forEach(st=>{
     const count=abCollection[st.id]||0;
     const el=document.createElement('div');
     el.className='ab-sticker'+(count>0?' owned':'')+(st.rare==='shiny'?' shiny':'');
     el.setAttribute('data-ab-id',st.id);
-    if(count>0){
-      el.innerHTML=abStickerOwnedHTML(st,count);
-    } else {
-      el.innerHTML=abStickerEmptyHTML(st);
-    }
+    el.innerHTML=count>0 ? abStickerOwnedHTML(st,count) : abStickerEmptyHTML(st);
     el.onclick=()=>{ if(count>0) abShowDetail(st,count); };
     grid.appendChild(el);
   });
   container.appendChild(grid);
+}
+
+// ── Reset ──────────────────────────────────────────────────────────────────
+function abShowResetModal(){ document.getElementById('abResetModal').classList.add('open'); }
+
+function abConfirmReset(){
+  // Clear collection
+  abCollection = {};
+  abFreePackUsed = null;
+  try { localStorage.removeItem('ab_col'); localStorage.removeItem('ab_free'); localStorage.removeItem('ab_photos_v5'); } catch(e){}
+  abSave();
+  document.getElementById('abResetModal').classList.remove('open');
+  toast('🗑️ Álbum reiniciado',1600);
+  abCurrentTab = AB_SECTIONS.length ? AB_SECTIONS[0].id : 'sec_col';
+  abRender();
+  // Reload photos
+  if(typeof abLoadPlayerPhotos==='function') setTimeout(abLoadPlayerPhotos, 300);
 }
 
 function abBgForRare(rare){
@@ -20370,6 +20496,18 @@ function abStartTradeNotifs(){
 }
 
 </script>
+
+<!-- Album reset modal -->
+<div id="abResetModal">
+  <div class="ab-reset-sheet">
+    <div class="ab-reset-title">⚠️ Reiniciar álbum</div>
+    <div class="ab-reset-body">Perderás TODAS tus figuritas y el progreso del álbum. Esta acción no se puede deshacer.</div>
+    <div class="ab-reset-btns">
+      <button class="ab-reset-cancel" onclick="document.getElementById('abResetModal').classList.remove('open')">Cancelar</button>
+      <button class="ab-reset-confirm" onclick="abConfirmReset()">🗑️ Reiniciar</button>
+    </div>
+  </div>
+</div>
 <script src="players.js"></script>
 </body>
 </html>
