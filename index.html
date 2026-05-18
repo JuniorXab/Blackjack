@@ -19746,218 +19746,14 @@ function plShowGameResult(){
 //  📒 ÁLBUM PANINI — LÓGICA COMPLETA
 // ═══════════════════════════════════════════════════════
 
-const AB_SECTIONS = [
-  { id:'s1', name:'GRUPO A', label:'🌎 América' },
-  { id:'s2', name:'GRUPO B', label:'🌍 Europa' },
-  { id:'s3', name:'GRUPO C', label:'⭐ Estrellas' },
-  { id:'s4', name:'SPECIAL',  label:'✨ Shinies' },
-];
-
-
-const AB_PHOTOS = {
-  // ── Selecciones IDs 1-40: banderas (object-fit: contain) ──────────────
-  1:'https://flagcdn.com/h120/br.png',
-  2:'https://flagcdn.com/h120/ar.png',
-  3:'https://flagcdn.com/h120/co.png',
-  4:'https://flagcdn.com/h120/uy.png',
-  5:'https://flagcdn.com/h120/mx.png',
-  6:'https://flagcdn.com/h120/us.png',
-  7:'https://flagcdn.com/h120/ca.png',
-  8:'https://flagcdn.com/h120/ec.png',
-  9:'https://flagcdn.com/h120/cl.png',
-  10:'https://flagcdn.com/h120/pe.png',
-  11:'https://flagcdn.com/h120/ve.png',
-  12:'https://flagcdn.com/h120/bo.png',
-  13:'https://flagcdn.com/h120/pa.png',
-  14:'https://flagcdn.com/h120/hn.png',
-  15:'https://flagcdn.com/h120/sv.png',
-  16:'https://flagcdn.com/h120/jm.png',
-  17:'https://flagcdn.com/h120/tt.png',
-  18:'https://flagcdn.com/h120/cr.png',
-  19:'https://flagcdn.com/h120/py.png',
-  20:'https://flagcdn.com/h120/ht.png',
-  21:'https://flagcdn.com/h120/fr.png',
-  22:'https://flagcdn.com/h120/es.png',
-  23:'https://flagcdn.com/h120/de.png',
-  24:'https://flagcdn.com/h120/gb-eng.png',
-  25:'https://flagcdn.com/h120/pt.png',
-  26:'https://flagcdn.com/h120/it.png',
-  27:'https://flagcdn.com/h120/nl.png',
-  28:'https://flagcdn.com/h120/be.png',
-  29:'https://flagcdn.com/h120/ch.png',
-  30:'https://flagcdn.com/h120/dk.png',
-  31:'https://flagcdn.com/h120/at.png',
-  32:'https://flagcdn.com/h120/pl.png',
-  33:'https://flagcdn.com/h120/se.png',
-  34:'https://flagcdn.com/h120/sk.png',
-  35:'https://flagcdn.com/h120/cz.png',
-  36:'https://flagcdn.com/h120/gb-sct.png',
-  37:'https://flagcdn.com/h120/rs.png',
-  38:'https://flagcdn.com/h120/ua.png',
-  39:'https://flagcdn.com/h120/hr.png',
-  40:'https://flagcdn.com/h120/ma.png'
-  // IDs 41-140 (jugadores) se cargan dinámicamente desde players.js via Wikipedia API
-};
-const AB_STICKERS = [
-  // ── SECCIÓN 1: SELECCIONES AMÉRICAS ───────────────────
-  {id:1,sec:'s1',emoji:'🇧🇷',name:'Brasil',sub:'Favorito',pos:'Selección',rating:94,rare:'gold'},
-  {id:2,sec:'s1',emoji:'🇦🇷',name:'Argentina',sub:'Campeón',pos:'Selección',rating:95,rare:'gold'},
-  {id:3,sec:'s1',emoji:'🇨🇴',name:'Colombia',sub:'Cafeteros',pos:'Selección',rating:82,rare:'silver'},
-  {id:4,sec:'s1',emoji:'🇺🇾',name:'Uruguay',sub:'Celeste',pos:'Selección',rating:80,rare:'silver'},
-  {id:5,sec:'s1',emoji:'🇲🇽',name:'México',sub:'El Tri',pos:'Selección',rating:78,rare:'normal'},
-  {id:6,sec:'s1',emoji:'🇺🇸',name:'USA',sub:'USMNT',pos:'Selección',rating:77,rare:'normal'},
-  {id:7,sec:'s1',emoji:'🇨🇦',name:'Canadá',sub:'Maple Leafs',pos:'Selección',rating:76,rare:'normal'},
-  {id:8,sec:'s1',emoji:'🇪🇨',name:'Ecuador',sub:'La Tri',pos:'Selección',rating:74,rare:'normal'},
-  {id:9,sec:'s1',emoji:'🇨🇱',name:'Chile',sub:'La Roja',pos:'Selección',rating:73,rare:'normal'},
-  {id:10,sec:'s1',emoji:'🇵🇪',name:'Perú',sub:'Blanquirroja',pos:'Selección',rating:72,rare:'normal'},
-  {id:11,sec:'s1',emoji:'🇻🇪',name:'Venezuela',sub:'Vinotinto',pos:'Selección',rating:71,rare:'normal'},
-  {id:12,sec:'s1',emoji:'🇧🇴',name:'Bolivia',sub:'Verde',pos:'Selección',rating:65,rare:'normal'},
-  {id:13,sec:'s1',emoji:'🇵🇦',name:'Panamá',sub:'Canaleros',pos:'Selección',rating:69,rare:'normal'},
-  {id:14,sec:'s1',emoji:'🇭🇳',name:'Honduras',sub:'Catrachos',pos:'Selección',rating:67,rare:'normal'},
-  {id:15,sec:'s1',emoji:'🇸🇻',name:'El Salvador',sub:'Cuscatlecos',pos:'Selección',rating:64,rare:'normal'},
-  {id:16,sec:'s1',emoji:'🇯🇲',name:'Jamaica',sub:'Reggae Boyz',pos:'Selección',rating:66,rare:'normal'},
-  {id:17,sec:'s1',emoji:'🇹🇹',name:'Trinidad',sub:'Soca Warriors',pos:'Selección',rating:63,rare:'normal'},
-  {id:18,sec:'s1',emoji:'🇨🇷',name:'Costa Rica',sub:'Ticos',pos:'Selección',rating:70,rare:'normal'},
-  {id:19,sec:'s1',emoji:'🇵🇾',name:'Paraguay',sub:'Guaraní',pos:'Selección',rating:71,rare:'normal'},
-  {id:20,sec:'s1',emoji:'🇭🇹',name:'Haití',sub:'Les Grenadiers',pos:'Selección',rating:62,rare:'normal'},
-
-  // ── SECCIÓN 2: SELECCIONES EUROPA ─────────────────────
-  {id:21,sec:'s2',emoji:'🇫🇷',name:'Francia',sub:'Les Bleus',pos:'Selección',rating:93,rare:'gold'},
-  {id:22,sec:'s2',emoji:'🇪🇸',name:'España',sub:'La Roja',pos:'Selección',rating:92,rare:'gold'},
-  {id:23,sec:'s2',emoji:'🇩🇪',name:'Alemania',sub:'Der Panzer',pos:'Selección',rating:89,rare:'silver'},
-  {id:24,sec:'s2',emoji:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',name:'Inglaterra',sub:'Three Lions',pos:'Selección',rating:88,rare:'silver'},
-  {id:25,sec:'s2',emoji:'🇵🇹',name:'Portugal',sub:'Seleção',pos:'Selección',rating:90,rare:'silver'},
-  {id:26,sec:'s2',emoji:'🇮🇹',name:'Italia',sub:'Gli Azzurri',pos:'Selección',rating:87,rare:'silver'},
-  {id:27,sec:'s2',emoji:'🇳🇱',name:'Holanda',sub:'Oranje',pos:'Selección',rating:86,rare:'silver'},
-  {id:28,sec:'s2',emoji:'🇧🇪',name:'Bélgica',sub:'Diablos Rojos',pos:'Selección',rating:84,rare:'silver'},
-  {id:29,sec:'s2',emoji:'🇨🇭',name:'Suiza',sub:'Nati',pos:'Selección',rating:81,rare:'normal'},
-  {id:30,sec:'s2',emoji:'🇩🇰',name:'Dinamarca',sub:'Danish Dynamite',pos:'Selección',rating:80,rare:'normal'},
-  {id:31,sec:'s2',emoji:'🇦🇹',name:'Austria',sub:'Wunderteam',pos:'Selección',rating:78,rare:'normal'},
-  {id:32,sec:'s2',emoji:'🇵🇱',name:'Polonia',sub:'Biało-Czerwoni',pos:'Selección',rating:77,rare:'normal'},
-  {id:33,sec:'s2',emoji:'🇸🇪',name:'Suecia',sub:'Blågult',pos:'Selección',rating:76,rare:'normal'},
-  {id:34,sec:'s2',emoji:'🇸🇰',name:'Eslovaquia',sub:'Repre',pos:'Selección',rating:73,rare:'normal'},
-  {id:35,sec:'s2',emoji:'🇨🇿',name:'Chequia',sub:'Národní Tým',pos:'Selección',rating:74,rare:'normal'},
-  {id:36,sec:'s2',emoji:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',name:'Escocia',sub:'The Tartan Army',pos:'Selección',rating:72,rare:'normal'},
-  {id:37,sec:'s2',emoji:'🇷🇸',name:'Serbia',sub:'Orlovi',pos:'Selección',rating:75,rare:'normal'},
-  {id:38,sec:'s2',emoji:'🇺🇦',name:'Ucrania',sub:'Zbirna',pos:'Selección',rating:74,rare:'normal'},
-  {id:39,sec:'s2',emoji:'🇭🇷',name:'Croacia',sub:'Vatreni',pos:'Selección',rating:83,rare:'silver'},
-  {id:40,sec:'s2',emoji:'🇲🇦',name:'Marruecos',sub:'Atlas Lions',pos:'Selección',rating:83,rare:'silver'},
-
-  // ── SECCIÓN 3: ESTRELLAS ───────────────────────────────
-  {id:41,sec:'s3',emoji:'🐐',name:'Messi',sub:'Argentina · CAM',pos:'Delantero',rating:99,rare:'legendary'},
-  {id:42,sec:'s3',emoji:'👑',name:'C. Ronaldo',sub:'Portugal · CF',pos:'Delantero',rating:97,rare:'legendary'},
-  {id:43,sec:'s3',emoji:'⚡',name:'Mbappé',sub:'Francia · ALI',pos:'Delantero',rating:96,rare:'legendary'},
-  {id:44,sec:'s3',emoji:'🦁',name:'Vinicius Jr',sub:'Brasil · ALI',pos:'Delantero',rating:94,rare:'gold'},
-  {id:45,sec:'s3',emoji:'🎯',name:'Haaland',sub:'Noruega · CF',pos:'Delantero',rating:95,rare:'gold'},
-  {id:46,sec:'s3',emoji:'🌟',name:'Bellingham',sub:'Inglaterra · MED',pos:'Mediocampista',rating:91,rare:'gold'},
-  {id:47,sec:'s3',emoji:'🔥',name:'Pedri',sub:'España · MED',pos:'Mediocampista',rating:90,rare:'gold'},
-  {id:48,sec:'s3',emoji:'💎',name:'Modric',sub:'Croacia · MED',pos:'Mediocampista',rating:88,rare:'gold'},
-  {id:49,sec:'s3',emoji:'🛡️',name:'Alisson',sub:'Brasil · POR',pos:'Portero',rating:92,rare:'gold'},
-  {id:50,sec:'s3',emoji:'🧤',name:'Ter Stegen',sub:'Alemania · POR',pos:'Portero',rating:89,rare:'silver'},
-  {id:51,sec:'s3',emoji:'🦅',name:'Salah',sub:'Egipto · ALI',pos:'Delantero',rating:90,rare:'gold'},
-  {id:52,sec:'s3',emoji:'⚽',name:'Son',sub:'Corea · ALI',pos:'Delantero',rating:87,rare:'silver'},
-  {id:53,sec:'s3',emoji:'🏃',name:'Musiala',sub:'Alemania · MED',pos:'Mediocampista',rating:89,rare:'silver'},
-  {id:54,sec:'s3',emoji:'💪',name:'De Bruyne',sub:'Bélgica · MED',pos:'Mediocampista',rating:91,rare:'gold'},
-  {id:55,sec:'s3',emoji:'🧱',name:'Rüdiger',sub:'Alemania · DEF',pos:'Defensa',rating:87,rare:'silver'},
-  {id:56,sec:'s3',emoji:'🎪',name:'Dembélé',sub:'Francia · ALI',pos:'Delantero',rating:88,rare:'silver'},
-  {id:57,sec:'s3',emoji:'🌊',name:'Yamal',sub:'España · ALI',pos:'Delantero',rating:86,rare:'silver'},
-  {id:58,sec:'s3',emoji:'🦊',name:'Rashford',sub:'Inglaterra · ALI',pos:'Delantero',rating:85,rare:'silver'},
-  {id:59,sec:'s3',emoji:'🗡️',name:'Kane',sub:'Inglaterra · CF',pos:'Delantero',rating:91,rare:'gold'},
-  {id:60,sec:'s3',emoji:'🎭',name:'Neymar',sub:'Brasil · ALI',pos:'Delantero',rating:89,rare:'silver'},
-  {id:60,sec:'s3',emoji:'⚡',name:'Luis Díaz',sub:'Colombia · ALI',pos:'Delantero',rating:86,rare:'gold'},
-  {id:61,sec:'s3',emoji:'💎',name:'James R.',sub:'Colombia · MED',pos:'Mediocampista',rating:87,rare:'gold'},
-  {id:62,sec:'s3',emoji:'🌟',name:'Julián Á.',sub:'Colombia · CF',pos:'Delantero',rating:87,rare:'gold'},
-  {id:63,sec:'s3',emoji:'🔥',name:'Cuadrado',sub:'Colombia · MED',pos:'Mediocampista',rating:81,rare:'silver'},
-  {id:64,sec:'s3',emoji:'🦁',name:'Rodri',sub:'España · MED',pos:'Mediocampista',rating:92,rare:'legendary'},
-  {id:65,sec:'s3',emoji:'⚽',name:'Neymar Jr',sub:'Brasil · ALI',pos:'Delantero',rating:92,rare:'legendary'},
-  {id:66,sec:'s3',emoji:'🏆',name:'Lewandowski',sub:'Polonia · CF',pos:'Delantero',rating:90,rare:'gold'},
-  {id:67,sec:'s3',emoji:'👑',name:'Courtois',sub:'Bélgica · POR',pos:'Portero',rating:91,rare:'gold'},
-  {id:68,sec:'s3',emoji:'🌊',name:'Lautaro',sub:'Argentina · CF',pos:'Delantero',rating:89,rare:'gold'},
-  {id:69,sec:'s3',emoji:'🎯',name:'Di María',sub:'Argentina · ALI',pos:'Delantero',rating:87,rare:'gold'},
-  {id:70,sec:'s3',emoji:'🦅',name:'Griezmann',sub:'Francia · CAM',pos:'Mediocampista',rating:88,rare:'gold'},
-  {id:71,sec:'s3',emoji:'💫',name:'Osimhen',sub:'Nigeria · CF',pos:'Delantero',rating:88,rare:'gold'},
-  {id:72,sec:'s3',emoji:'🔥',name:'Camavinga',sub:'Francia · MED',pos:'Mediocampista',rating:85,rare:'silver'},
-  {id:73,sec:'s3',emoji:'⚡',name:'Musiala',sub:'Alemania · MED',pos:'Mediocampista',rating:89,rare:'gold'},
-  {id:74,sec:'s3',emoji:'🛡️',name:'Rüdiger',sub:'Alemania · DEF',pos:'Defensa',rating:87,rare:'silver'},
-  {id:75,sec:'s3',emoji:'🦊',name:'Yamal',sub:'España · ALI',pos:'Delantero',rating:87,rare:'gold'},
-  {id:76,sec:'s3',emoji:'🌟',name:'Rodrygo',sub:'Brasil · ALI',pos:'Delantero',rating:87,rare:'gold'},
-  {id:77,sec:'s3',emoji:'💎',name:'Alisson',sub:'Brasil · POR',pos:'Portero',rating:92,rare:'gold'},
-  {id:78,sec:'s3',emoji:'🏃',name:'Son',sub:'Corea · ALI',pos:'Delantero',rating:87,rare:'silver'},
-  {id:79,sec:'s3',emoji:'🦅',name:'Salah',sub:'Egipto · ALI',pos:'Delantero',rating:90,rare:'gold'},
-  {id:80,sec:'s3',emoji:'💪',name:'De Bruyne',sub:'Bélgica · MED',pos:'Mediocampista',rating:91,rare:'gold'},
-
-  // ── SECCIÓN 4: SHINIES ESPECIALES ─────────────────────
-  {id:61,sec:'s4',emoji:'✨',name:'Messi Gold',sub:'Edición Especial',pos:'Leyenda',rating:100,rare:'shiny'},
-  {id:62,sec:'s4',emoji:'💫',name:'CR7 Diamante',sub:'Hall of Fame',pos:'Leyenda',rating:100,rare:'shiny'},
-  {id:63,sec:'s4',emoji:'🌙',name:'Mbappé Noche',sub:'Edición Nocturna',pos:'Estrella',rating:98,rare:'shiny'},
-  {id:64,sec:'s4',emoji:'🔮',name:'Haaland Orbe',sub:'Edición Mística',pos:'Estrella',rating:97,rare:'shiny'},
-  {id:65,sec:'s4',emoji:'🏆',name:'Copa del Mundo',sub:'El Trofeo',pos:'Especial',rating:100,rare:'shiny'},
-  {id:66,sec:'s4',emoji:'🌈',name:'Vinicius Rainbow',sub:'Edición Arcoíris',pos:'Estrella',rating:96,rare:'shiny'},
-  {id:67,sec:'s4',emoji:'⚡',name:'Bellingham Rayo',sub:'Edición Eléctrica',pos:'Estrella',rating:95,rare:'shiny'},
-  {id:68,sec:'s4',emoji:'🔥',name:'Pedri Llamas',sub:'Edición Fuego',pos:'Estrella',rating:93,rare:'shiny'},
-  {id:69,sec:'s4',emoji:'❄️',name:'Ter Stegen Hielo',sub:'Muro de Hielo',pos:'Portero',rating:92,rare:'shiny'},
-  {id:70,sec:'s4',emoji:'🌟',name:'Yamal Estrella',sub:'La Joya',pos:'Futuro',rating:94,rare:'shiny'},
-  // Extra stickers to fill to 120 total
-  {id:71,sec:'s1',emoji:'🇯🇵',name:'Japón',sub:'Samurai Blue',pos:'Selección',rating:79,rare:'normal'},
-  {id:72,sec:'s1',emoji:'🇰🇷',name:'Corea del Sur',sub:'Taeguk Warriors',pos:'Selección',rating:78,rare:'normal'},
-  {id:73,sec:'s2',emoji:'🇸🇳',name:'Senegal',sub:'Lions of Teranga',pos:'Selección',rating:81,rare:'silver'},
-  {id:74,sec:'s2',emoji:'🇨🇮',name:'Costa de Marfil',sub:'Elephants',pos:'Selección',rating:79,rare:'normal'},
-  {id:75,sec:'s2',emoji:'🇬🇭',name:'Ghana',sub:'Black Stars',pos:'Selección',rating:76,rare:'normal'},
-  {id:76,sec:'s2',emoji:'🇳🇬',name:'Nigeria',sub:'Super Eagles',pos:'Selección',rating:78,rare:'normal'},
-  {id:77,sec:'s2',emoji:'🇦🇺',name:'Australia',sub:'Socceroos',pos:'Selección',rating:75,rare:'normal'},
-  {id:78,sec:'s3',emoji:'🦋',name:'Griezmann',sub:'Francia · MED',pos:'Mediocampista',rating:88,rare:'silver'},
-  {id:79,sec:'s3',emoji:'🎨',name:'Thiago Alcântara',sub:'España · MED',pos:'Mediocampista',rating:85,rare:'silver'},
-  {id:80,sec:'s3',emoji:'🏋️',name:'Rodri',sub:'España · MED',pos:'Mediocampista',rating:90,rare:'gold'},
-
-  // Sección 1 extra
-  {id:81,sec:'s1',name:'Lautaro Martínez',sub:'Argentina · CF',pos:'Delantero',rating:88,rare:'silver'},
-  {id:82,sec:'s1',name:'Firmino',sub:'Brasil · CF',pos:'Delantero',rating:82,rare:'normal'},
-  {id:83,sec:'s1',name:'James Rodríguez',sub:'Colombia · MED',pos:'Mediocampista',rating:83,rare:'silver'},
-  {id:84,sec:'s1',name:'Darwin Núñez',sub:'Uruguay · CF',pos:'Delantero',rating:84,rare:'silver'},
-  {id:85,sec:'s1',name:'Hirving Lozano',sub:'México · ALI',pos:'Delantero',rating:80,rare:'normal'},
-  {id:86,sec:'s1',name:'Christian Pulisic',sub:'USA · ALI',pos:'Delantero',rating:82,rare:'silver'},
-  {id:87,sec:'s1',name:'Alphonso Davies',sub:'Canadá · LAT',pos:'Defensa',rating:86,rare:'silver'},
-  {id:88,sec:'s1',name:'Enner Valencia',sub:'Ecuador · CF',pos:'Delantero',rating:78,rare:'normal'},
-  {id:89,sec:'s1',name:'Arturo Vidal',sub:'Chile · MED',pos:'Mediocampista',rating:77,rare:'normal'},
-  {id:90,sec:'s1',name:'Paolo Guerrero',sub:'Perú · CF',pos:'Delantero',rating:75,rare:'normal'},
-  // Sección 2 extra
-  {id:91,sec:'s2',name:'Antoine Griezmann',sub:'Francia · MED',pos:'Mediocampista',rating:88,rare:'silver'},
-  {id:92,sec:'s2',name:'Kylian Mbappé',sub:'Francia · ALI',pos:'Delantero',rating:96,rare:'gold'},
-  {id:93,sec:'s2',name:'Gavi',sub:'España · MED',pos:'Mediocampista',rating:87,rare:'silver'},
-  {id:94,sec:'s2',name:'Ferran Torres',sub:'España · ALI',pos:'Delantero',rating:82,rare:'normal'},
-  {id:95,sec:'s2',name:'Thomas Müller',sub:'Alemania · MED',pos:'Mediocampista',rating:84,rare:'silver'},
-  {id:96,sec:'s2',name:'Jamal Musiala',sub:'Alemania · MED',pos:'Mediocampista',rating:89,rare:'silver'},
-  {id:97,sec:'s2',name:'Phil Foden',sub:'Inglaterra · MED',pos:'Mediocampista',rating:87,rare:'silver'},
-  {id:98,sec:'s2',name:'Bruno Fernandes',sub:'Portugal · MED',pos:'Mediocampista',rating:88,rare:'silver'},
-  {id:99,sec:'s2',name:'Rafael Leão',sub:'Portugal · ALI',pos:'Delantero',rating:85,rare:'silver'},
-  {id:100,sec:'s2',name:'Achraf Hakimi',sub:'Marruecos · LAT',pos:'Defensa',rating:87,rare:'silver'},
-  // Sección 3 extra
-  {id:101,sec:'s3',name:'Karim Benzema',sub:'Francia · CF',pos:'Delantero',rating:90,rare:'gold'},
-  {id:102,sec:'s3',name:'Robert Lewandowski',sub:'Polonia · CF',pos:'Delantero',rating:89,rare:'silver'},
-  {id:103,sec:'s3',name:'Virgil van Dijk',sub:'Holanda · DEF',pos:'Defensa',rating:88,rare:'silver'},
-  {id:104,sec:'s3',name:'Marc-André ter Stegen',sub:'Alemania · POR',pos:'Portero',rating:88,rare:'silver'},
-  {id:105,sec:'s3',name:'Thibaut Courtois',sub:'Bélgica · POR',pos:'Portero',rating:90,rare:'gold'},
-  {id:106,sec:'s3',name:'Bernardo Silva',sub:'Portugal · MED',pos:'Mediocampista',rating:87,rare:'silver'},
-  {id:107,sec:'s3',name:'Riyad Mahrez',sub:'Argelia · ALI',pos:'Delantero',rating:85,rare:'silver'},
-  {id:108,sec:'s3',name:'Ivan Perišić',sub:'Croacia · ALI',pos:'Delantero',rating:82,rare:'normal'},
-  {id:109,sec:'s3',name:'Nicolò Barella',sub:'Italia · MED',pos:'Mediocampista',rating:86,rare:'silver'},
-  {id:110,sec:'s3',name:'Federico Valverde',sub:'Uruguay · MED',pos:'Mediocampista',rating:87,rare:'silver'},
-  // Sección 4 extra shinies
-  {id:111,sec:'s4',name:'Pedri Cosmos',sub:'Edición Espacial',pos:'Estrella',rating:95,rare:'shiny'},
-  {id:112,sec:'s4',name:'Vinicius Oro',sub:'Edición Dorada',pos:'Estrella',rating:96,rare:'shiny'},
-  {id:113,sec:'s4',name:'Kane Platino',sub:'Edición Platino',pos:'Estrella',rating:94,rare:'shiny'},
-  {id:114,sec:'s4',name:'Haaland Nórdico',sub:'Edición Vikingo',pos:'Estrella',rating:96,rare:'shiny'},
-  {id:115,sec:'s4',name:'Bellingham Fuego',sub:'Edición Llamas',pos:'Estrella',rating:94,rare:'shiny'},
-  {id:116,sec:'s4',name:'Modric Leyenda',sub:'Edición Inmortal',pos:'Leyenda',rating:93,rare:'shiny'},
-  {id:117,sec:'s4',name:'De Bruyne Mago',sub:'Edición Mística',pos:'Estrella',rating:93,rare:'shiny'},
-  {id:118,sec:'s4',name:'Salah Faraón',sub:'Edición Faraón',pos:'Estrella',rating:91,rare:'shiny'},
-  {id:119,sec:'s4',name:'Alisson Muro',sub:'Edición Diamante',pos:'Portero',rating:93,rare:'shiny'},
-  {id:120,sec:'s4',name:'Mbappé Velocidad',sub:'Edición Sonic',pos:'Leyenda',rating:98,rare:'shiny'}
-];
+// AB_SECTIONS, AB_STICKERS, AB_PHOTOS populated by players.js
+var AB_SECTIONS = [];
+var AB_STICKERS = [];
+var AB_PHOTOS = {};
 
 // ── STATE ──────────────────────────────────────────────────────────
 let abCollection = {}; // {stickerId: count}
-let abCurrentTab = 's1';
+let abCurrentTab = 'sec_col'; // updated by players.js
 let abFreePackUsed = null; // timestamp
 let abRevealQueue = [];
 let abRevealPhase = 'envelope'; // 'envelope' | 'reveal' | 'done'
@@ -19992,6 +19788,10 @@ function openAlbum(){
 
 // ── RENDER ─────────────────────────────────────────────────────────
 function abRender(){
+  // Ensure abCurrentTab is valid for current sections
+  if(AB_SECTIONS.length && !AB_SECTIONS.find(s=>s.id===abCurrentTab)){
+    abCurrentTab = AB_SECTIONS[0].id;
+  }
   abRenderProgress();
   abRenderTabs();
   abRenderGrid();
@@ -20073,11 +19873,11 @@ function abStickerOwnedHTML(st,count){
   const dupes=count>1?'<div class="ab-sticker-dupes">x'+count+'</div>':'';
   const shimmer=st.rare==='shiny'?'<div class="ab-shiny-shimmer"></div>':'';
   const photo=AB_PHOTOS[st.id]||AB_SILHOUETTE;
-  const isFlag=photo.includes('flagcdn');
+  const isFlag=!!st.isFlag;
   const fit=isFlag?'contain':'cover';
   const pos=isFlag?'center':'top center';
   const mediaHTML='<img src="'+photo+'" style="width:100%;height:100%;object-fit:'+fit+';object-position:'+pos+';background:#111;" onerror="this.src=AB_SILHOUETTE;" loading="lazy">';
-  return '<div class="ab-sticker-inner" style="'+bg+'" data-ab-id="'+st.id+'">'
+  return '<div class="ab-sticker-inner" style="'+bg+'">'
     +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;overflow:hidden;position:relative;">'
     +shimmer
     +'<div class="ab-sticker-num" style="position:absolute;top:3px;left:4px;z-index:5;background:rgba(0,0,0,.55);border-radius:3px;padding:1px 3px;">#'+String(st.id).padStart(3,'0')+'</div>'
@@ -20093,10 +19893,11 @@ function abStickerOwnedHTML(st,count){
 }
 
 function abStickerEmptyHTML(st){
-  return '<div class="ab-sticker-inner ab-sticker-empty">'
-    +'<div class="ab-sticker-top">'
-    +'<div class="ab-sticker-num">#'+String(st.id).padStart(3,'0')+'</div>'
-    +'<div class="ab-sticker-question">?</div>'
+  const bg=abBgForRare(st.rare)||'background:rgba(255,255,255,.03);';
+  return '<div class="ab-sticker-inner" style="'+bg+'opacity:.4;">'
+    +'<div class="ab-sticker-top" style="align-items:center;justify-content:center;display:flex;flex-direction:column;gap:2px;">'
+    +'<div class="ab-sticker-num" style="position:absolute;top:3px;left:4px;font-size:6px;color:rgba(255,255,255,.3);">#'+String(st.id).padStart(4,'0')+'</div>'
+    +'<div style="font-size:18px;opacity:.2;">?</div>'
     +'</div>'
     +'<div class="ab-sticker-bottom">'
     +'<div class="ab-sticker-name" style="color:rgba(255,255,255,.2);">???</div>'
@@ -20123,8 +19924,8 @@ function abRenderFreeTimer(){
 
 // ── OPEN PACKS ─────────────────────────────────────────────────────
 function abPickPack(){
-  const pool=AB_STICKERS.filter(s=>s.sec!=='s4'); // non-shiny pool
-  const shinyPool=AB_STICKERS.filter(s=>s.sec==='s4');
+  const pool=AB_STICKERS.filter(s=>s.rare!=='shiny');
+  const shinyPool=AB_STICKERS.filter(s=>s.rare==='shiny');
   const picks=[];
   // 4 normal draws, weighted by rarity
   for(let i=0;i<4;i++){
@@ -20150,9 +19951,11 @@ function abPickPack(){
 function abShowPackOverlay(stickers){
   abRevealQueue=stickers;
   abRevealPhase='envelope';
+  abRevealIndex=0;
   const overlay=document.getElementById('abPackOverlay');
   const stage=document.getElementById('abPackStage');
-  stage.innerHTML='<div class="ab-pack-envelope" id="abEnvelope" onclick="abRevealPack()">📦</div><div class="ab-pack-tap-hint">TAP PARA ABRIR</div>';
+  stage.innerHTML='<div class="ab-pack-envelope" id="abEnvelope" onclick="abRevealPack()" style="cursor:pointer;animation:ab-pulse2 1s ease-in-out infinite;">📦</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2px;margin-top:10px;">TAP PARA ABRIR</div>';
   overlay.classList.add('open');
 }
 
@@ -20176,7 +19979,7 @@ function abRevealPack(){
     const count=abCollection[st.id];
     const dupeBadge=count>1?'<div style="position:absolute;top:2px;right:2px;background:rgba(46,204,113,.9);border-radius:5px;padding:1px 3px;font-size:6px;font-weight:900;color:#fff;">+1</div>':'';
     const rPhoto=AB_PHOTOS[st.id]||AB_SILHOUETTE;
-    const rIsFlag=rPhoto&&rPhoto.includes('flagcdn');
+    const rIsFlag=!!st.isFlag;
     const rMedia='<img src="'+rPhoto+'" style="width:100%;height:100%;object-fit:'+(rIsFlag?'contain':'cover')+';object-position:'+(rIsFlag?'center':'top center')+';background:#111;" onerror="this.src=AB_SILHOUETTE;" loading="lazy">';
     card.innerHTML='<div class="ab-sticker-inner" style="'+bg+'">'
       +'<div class="ab-sticker-top" style="border-bottom:1px solid '+accent+'22;overflow:hidden;position:relative;">'
@@ -20315,7 +20118,7 @@ function trRenderDupes(){
     el.className = 'tr-dupe-card' + (selected?' selected':'');
     el.onclick = () => trToggleDupe(st.id);
     const photo = AB_PHOTOS[st.id]||AB_SILHOUETTE;
-    const isFlg=photo.includes('flagcdn');
+    const isFlg=!!st.isFlag;
     const bg = abBgForRare(st.rare);
     el.innerHTML = '<div style="'+bg+';width:100%;height:100%;display:flex;flex-direction:column;">'
       +'<div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;">'
