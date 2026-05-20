@@ -19096,6 +19096,7 @@ function twResetUI(){
       <div class="ab-pack-actions">
         <button class="ab-pack-btn free" id="abFreeBtn" onclick="abOpenFreePack()">🎁 GRATIS</button>
         <button class="ab-pack-btn buy" onclick="abOpenBuyPack(1200)">💰 $1.200 · 1 sobre</button>
+      <div id="abPackLimitInfo" style="font-size:9px;color:rgba(255,255,255,.3);text-align:center;margin-top:3px;">Máx. 10 sobres/día</div>
       <button class="ab-pack-btn buy" onclick="abOpenMultiPack(3)" style="margin-top:4px;background:linear-gradient(135deg,rgba(240,208,96,.2),rgba(160,100,0,.08));border:1px solid rgba(240,208,96,.35);color:#f0d060;">🃏 $3.600 · 3 sobres</button>
       <button class="ab-pack-btn buy" onclick="abOpenMultiPack(5)" style="margin-top:4px;background:linear-gradient(135deg,rgba(240,208,96,.3),rgba(160,100,0,.12));border:1.5px solid rgba(240,208,96,.55);color:#f0d060;font-weight:900;">🎁 $6.000 · 5 sobres ⭐</button>
       </div>
@@ -20143,19 +20144,39 @@ function abOpenFreePack(){
   abShowPackOverlay(abPickPack());
 }
 
+// Daily pack limit helpers
+function abGetPacksToday(){
+  const key='ab_packs_'+new Date().toISOString().slice(0,10)+'_'+myId;
+  return parseInt(localStorage.getItem(key)||'0');
+}
+function abAddPacksToday(n){
+  const key='ab_packs_'+new Date().toISOString().slice(0,10)+'_'+myId;
+  localStorage.setItem(key, abGetPacksToday()+n);
+}
+const AB_DAILY_LIMIT = 10;
+
 function abOpenBuyPack(cost){
+  if(abGetPacksToday()>=AB_DAILY_LIMIT){
+    toast('⛔ Límite diario ('+AB_DAILY_LIMIT+' sobres) — vuelve mañana',2000); return;
+  }
   if(myBal<cost){ toast('❌ Fichas insuficientes',1600); return; }
   myBal-=cost; saveLocal(); updateRanking();
+  abAddPacksToday(1);
   abShowPackOverlay(abPickPack());
 }
 
 function abOpenMultiPack(qty){
-  const total = AB_PACK_COST * qty;
+  const used=abGetPacksToday();
+  const available=Math.min(qty, AB_DAILY_LIMIT-used);
+  if(available<=0){ toast('⛔ Límite diario alcanzado — vuelve mañana',2000); return; }
+  if(available<qty) toast('⚠️ Solo puedes comprar '+available+' sobre'+(available>1?'s':'')+'  hoy',1800);
+  const total = AB_PACK_COST * available;
   if(myBal < total){ toast('❌ Necesitas $'+total.toLocaleString()+' fichas',1800); return; }
   myBal -= total; saveLocal(); updateRanking();
+  abAddPacksToday(available);
   // Merge all packs into one reveal queue
   const all=[];
-  for(let i=0;i<qty;i++) all.push(...abPickPack());
+  for(let i=0;i<available;i++) all.push(...abPickPack());
   abShowPackOverlay(all);
 }
 
